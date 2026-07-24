@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数据助理 - 粮巴巴 CRM</title>
+    <link rel="stylesheet" href="crm-common.css">
+    <style>
+        body.da-page {
+            padding-bottom: 72px;
+            background: var(--bg-page);
+        }
+
+        .da-no-more {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-placeholder);
+            padding: 8px 0 4px;
+        }
+
+        .da-chat-area {
+            padding: 0 16px 12px;
+        }
+
+        .da-sender {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .da-bubble {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text);
+            line-height: 1.5;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* 横向快捷入口 → 使用 crm-common.css .quick-entry-* / .icon-circle */
+
+        /* 猜你想问主卡片 */
+        .da-guess-card {
+            margin: 0 12px 16px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .da-guess-side {
+            width: 72px;
+            flex-shrink: 0;
+            background: linear-gradient(180deg, #e8f3ff 0%, #f7fbff 60%, #fff 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px;
+        }
+
+        .da-guess-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: auto;
+        }
+
+        .da-guess-vertical {
+            writing-mode: vertical-rl;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 4px;
+            margin-top: 16px;
+        }
+
+        .da-guess-main {
+            flex: 1;
+            padding: 10px 16px 12px;
+            min-width: 0;
+        }
+
+        .da-guess-tabs {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 4px;
+        }
+
+        .da-guess-tabs::-webkit-scrollbar { display: none; }
+
+        .da-guess-tab {
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            cursor: pointer;
+            padding-bottom: 8px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .da-guess-tab.active {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .da-guess-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .da-question-list {
+            list-style: none;
+        }
+
+        .da-question-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 4px 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .da-question-item:last-child { border-bottom: none; }
+
+        .da-question-item svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-placeholder);
+            flex-shrink: 0;
+        }
+
+        /* 底部输入区 */
+        .da-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--bg-page);
+            padding: 8px 12px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .da-input-wrap {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 10px 14px;
+            box-shadow: var(--shadow-card);
+            gap: 8px;
+        }
+
+        .da-input-wrap input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: var(--text);
+            background: transparent;
+        }
+
+        .da-input-wrap input::placeholder { color: var(--text-placeholder); }
+
+        .da-input-icons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .da-input-icons svg {
+            width: 22px;
+            height: 22px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .da-input-plus {
+            width: 24px;
+            height: 24px;
+            border: 1.5px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="da-page">
+
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" onclick="location.href='01_crm_homepage.html'"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <span class="nav-title">粮巴巴</span>
+        <div class="nav-more" style="gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#1d2129"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+    </div>
+
+    <div class="da-no-more">没有更多</div>
+
+    <div class="da-chat-area">
+        <div class="da-sender">数据助理</div>
+        <div class="da-bubble">Hi，我是数据助理，今天有什么可以帮到你？</div>
+    </div>
+
+    <div class="da-guess-card">
+        <!-- <div class="da-guess-side">
+            <div class="da-guess-logo">粮</div>
+            <div class="da-guess-vertical">猜你想问</div>
+        </div> -->
+        <div class="da-guess-main">
+            <div class="da-guess-tabs" id="guessTabs">
+                <div class="da-guess-tab active" data-tab="hot">客户交接</div>
+                <div class="da-guess-tab" data-tab="sales">客户盘点</div>
+                <div class="da-guess-tab" data-tab="perf">团队绩效</div>
+            </div>
+            <ul class="da-question-list" id="questionList"></ul>
+        </div>
+    </div>
+
+    <div class="da-bottom">
+        <div class="da-input-wrap">
+            <input type="text" placeholder="请用一句话描述您的问题" id="questionInput">
+            <div class="da-input-icons">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                <span class="da-input-plus">+</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = {
+            handover: [
+                '按照销售名字查询客户，例如，业务员张三的客户',
+                '按照客户地址查询客户，例如，孟津县的客户？',
+                '按站台地址查询客户，例如：新乡站的客户',
+            ],
+            inventory: [
+                '查询已成交的客户，例如：3月预混料的成交客户？',
+                '盘点异常客户清单',
+                '本月盘点客户数统计',
+                '养殖档案盘点进度'
+            ],
+            team: [
+                '团队绩效排名',
+                '正常出勤天数统计',
+                '异常天数及扣款明细',
+                '本月团队销售吨数',
+                '拜访任务完成率'
+            ]
+        };
+
+        let currentTab = 'handover';
+
+        function renderQuestions() {
+            const list = document.getElementById('questionList');
+            const pool = questions[currentTab] || questions.handover;
+            list.innerHTML = pool.map(q => `
+                <li class="da-question-item">
+                    <span>${q}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </li>
+            `).join('');
+        }
+
+        document.querySelectorAll('.da-guess-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.da-guess-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const tabKey = tab.dataset.tab;
+                const reverseMap = { hot: 'handover', sales: 'inventory', perf: 'team' };
+                currentTab = reverseMap[tabKey] || 'handover';
+                renderQuestions();
+            });
+        });
+
+        document.getElementById('questionList').addEventListener('click', e => {
+            const item = e.target.closest('.da-question-item');
+            if (item) {
+                document.getElementById('questionInput').value = item.querySelector('span').textContent;
+            }
+        });
+
+        renderQuestions();
+    </script>
+</body>
+</html>

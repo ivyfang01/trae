@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>物流订单详情</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <a class="nav-back" href="03-order-list.html">‹</a>
+      <a class="nav-close" href="03-order-list.html">✕</a>
+      <div class="nav-title">订单详情</div>
+      <span class="nav-more">···</span>
+    </div>
+
+    <div class="status-banner">
+      <h1>待付款</h1>
+      <p>请尽快支付运费，超时未付订单将自动取消</p>
+    </div>
+
+    <div class="card">
+      <div class="card-block">
+        <div class="product-name">豆粕 42% · 33 吨</div>
+        <div class="row">
+          <span class="label">订单编号</span>
+          <span class="value">
+            WL20260720001
+            <a class="link" href="javascript:;" style="margin-left:6px">复制</a>
+          </span>
+        </div>
+        <div class="row">
+          <span class="label">创建时间</span>
+          <span class="value">2026-07-20 10:32:18</span>
+        </div>
+        <div class="row">
+          <span class="label">货物名称</span>
+          <span class="value strong">豆粕 42%</span>
+        </div>
+        <div class="row">
+          <span class="label">吨数</span>
+          <span class="value">33 吨</span>
+        </div>
+        <div class="row">
+          <span class="label">配送日期</span>
+          <span class="value">2026-07-22</span>
+        </div>
+        <div class="row">
+          <span class="label">运费单价</span>
+          <span class="value price">80 元/吨</span>
+        </div>
+        <div style="margin-top: 8px">
+          <a class="link" href="javascript:;">查看运输协议 ›</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;padding:14px 16px">
+      <a class="link-brand" href="javascript:;">☎ 联系物流经理</a>
+    </div>
+
+    <div class="card">
+      <div class="card-block">
+        <div class="card-title">线路信息</div>
+        <div class="row">
+          <span class="label">装货地</span>
+          <span class="value">江苏省南通市通州区某某饲料厂</span>
+        </div>
+        <div class="row">
+          <span class="label">卸货地</span>
+          <span class="value">安徽省合肥市肥东县某某养殖场</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-block">
+        <div class="card-title">付款信息</div>
+        <div class="row">
+          <span class="label">应付运费</span>
+          <span class="value strong" style="color:var(--brand)">¥ 2,640.00</span>
+        </div>
+        <div class="row">
+          <span class="label">付款状态</span>
+          <span class="value" style="color:var(--brand)">待付款</span>
+        </div>
+        <div class="row">
+          <span class="label">开票类型</span>
+          <span class="value"><span class="tag">运费专票</span></span>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="footer-bar">
+      <a class="btn-block btn-secondary" href="javascript:;">取消订单</a>
+      <a class="btn-block btn-primary" href="02-pay.html">去支付</a>
+    </div>
+  </div>
+</body>
+</html>

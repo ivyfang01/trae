@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>销售概况 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="nav-title">CRM首页</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="main-tabs" style="margin-top:0;border-radius:0;">
+        <div class="main-tab-list">
+            <div class="main-tab-item" onclick="location.href='01_crm_homepage.html'">绩效</div>
+            <div class="main-tab-item active">销售</div>
+            <div class="main-tab-item">客户</div>
+            <div class="main-tab-item">团队</div>
+        </div>
+    </div>
+    <div class="sub-tabs">
+        <div class="sub-tab-item active">今日</div>
+        <div class="sub-tab-item">本周</div>
+        <div class="sub-tab-item">本月</div>
+        <div class="sub-tab-item">上月</div>
+    </div>
+
+    <div class="sales-card">
+        <div class="sales-card-header">
+            <div class="metric-header" style="margin-bottom:0;">
+                <div class="metric-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    销售概况 <i class="info-icon">i</i>
+                </div>
+                <span class="link-more">查看明细 &gt;</span>
+            </div>
+        </div>
+        <div class="sales-main">
+            <div class="sales-main-label">销售吨数(吨)</div>
+            <div class="sales-main-value">8,388.25</div>
+            <div class="ringbi down"><span>环比</span> -168,158.81% ↓</div>
+        </div>
+
+        <div class="sales-grid-row">
+            <div class="sales-grid">
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">实付金额(元)</div>
+                    <div class="sales-grid-value">34,633,880.45</div>
+                    <div class="ringbi flat">环比 0.00%</div>
+                </div>
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">动销合同</div>
+                    <div class="sales-grid-value">724</div>
+                    <div class="ringbi up">环比 72,300.00% ↑</div>
+                </div>
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">服务客户数</div>
+                    <div class="sales-grid-value">392</div>
+                    <div class="ringbi up">环比 39,100.00% ↑</div>
+                </div>
+            </div>
+        </div>
+        <div class="sales-grid-row">
+            <div class="sales-grid">
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">提货单数</div>
+                    <div class="sales-grid-value">96</div>
+                    <div class="ringbi flat">环比 0.00%</div>
+                </div>
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">吨单价(元)</div>
+                    <div class="sales-grid-value">4,638.24</div>
+                    <div class="ringbi flat">环比 0.00%</div>
+                </div>
+                <div class="sales-grid-item">
+                    <div class="sales-grid-label">客提货单价(元)</div>
+                    <div class="sales-grid-value">99,251.96</div>
+                    <div class="ringbi flat">环比 0.00%</div>
+                </div>
+            </div>
+        </div>
+        <div class="sales-grid">
+            <div class="sales-grid-item">
+                <div class="sales-grid-label">合同申请变价</div>
+                <div class="sales-grid-value">13</div>
+                <div class="ringbi flat">环比 0.00%</div>
+            </div>
+            <div class="sales-grid-item">
+                <div class="sales-grid-label">申请优惠券</div>
+                <div class="sales-grid-value">0</div>
+                <div class="ringbi flat">环比 0.00%</div>
+            </div>
+            <div class="sales-grid-item">
+                <div class="sales-grid-label">物流单数</div>
+                <div class="sales-grid-value">96</div>
+                <div class="ringbi flat">环比 0.00%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>首页</span>
+        </div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>客户</span></div>
+        <div class="nav-item"><span class="clock-icon-box">+</span><span>打卡</span></div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>任务</span></div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>消息</span></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>鸡蛋订单列表</title>
+  <style>
+    :root {
+      --orange: #ff6b00;
+      --orange-soft: #fff3e8;
+      --blue: #2f7cf6;
+      --red: #ff4d4f;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #999999;
+      --line: #eeeeee;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      padding-bottom: calc(12px + var(--safe-bottom));
+    }
+
+    /* 品类 Tab */
+    .cate-tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 0 8px;
+    }
+
+    .cate-tabs a {
+      flex: 1;
+      text-align: center;
+      padding: 14px 0 12px;
+      color: #666;
+      text-decoration: none;
+      font-size: 15px;
+      position: relative;
+    }
+
+    .cate-tabs a.active {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .cate-tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 3px;
+      background: var(--orange);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* 筛选行 */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      gap: 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-row::-webkit-scrollbar { display: none; }
+
+    .station-filter {
+      flex-shrink: 0;
+      color: #666;
+      font-size: 14px;
+      padding: 12px 8px 12px 0;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .station-filter::after {
+      content: "▾";
+      margin-left: 2px;
+      font-size: 10px;
+      color: #999;
+    }
+
+    .status-tabs {
+      display: flex;
+      flex: 1;
+      min-width: max-content;
+    }
+
+    .status-tabs a {
+      padding: 12px 10px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .status-tabs a.active {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .status-tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: var(--orange);
+      border-radius: 1px;
+    }
+
+    /* 列表 */
+    .list {
+      padding: 10px 12px 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 14px 14px 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-head .title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .card-head .status {
+      font-size: 14px;
+      color: var(--red);
+      font-weight: 500;
+    }
+
+    .card-head .status.done {
+      color: #999;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .row .label {
+      width: 96px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .row .value .copy {
+      color: var(--blue);
+      margin-left: 6px;
+      text-decoration: none;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .actions-left {
+      margin-right: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid var(--orange);
+      color: var(--orange);
+      background: #fff;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-more {
+      border-color: #ddd;
+      color: #666;
+      gap: 2px;
+    }
+
+    .btn-more::after {
+      content: "▾";
+      font-size: 10px;
+      color: #999;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--orange);
+      border-color: var(--orange);
+    }
+
+    /* 上传弹层 */
+    .mask {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 20;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .mask.show { display: flex; }
+
+    .sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+      padding: 16px 16px calc(16px + var(--safe-bottom));
+    }
+
+    .sheet h3 {
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .upload-box {
+      border: 1px dashed #ddd;
+      border-radius: 8px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 13px;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: #fafafa;
+    }
+
+    .upload-box .plus {
+      font-size: 28px;
+      color: #ccc;
+      line-height: 1;
+    }
+
+    .upload-rules {
+      margin: -4px 0 16px;
+      padding: 10px 12px;
+      background: #f7f8fa;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .upload-rules li {
+      list-style: none;
+      position: relative;
+      padding-left: 10px;
+    }
+
+    .upload-rules li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      color: #999;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .sheet-actions .btn {
+      flex: 1;
+      height: 44px;
+      font-size: 15px;
+      border-radius: 8px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="phone" id="page">
+    <div class="cate-tabs">
+      <a href="javascript:;">豆粕</a>
+      <a href="javascript:;">玉米</a>
+      <a href="javascript:;">预混料</a>
+      <a class="active" href="javascript:;">鸡蛋</a>
+    </div>
+
+    <div class="filter-row">
+      <a class="station-filter" href="javascript:;">站台</a>
+      <div class="status-tabs">
+        <a class="active" href="javascript:;">全部</a>
+        <a href="javascript:;">待确认</a>
+        <a href="javascript:;">发货中</a>
+        <a href="javascript:;">已完成</a>
+        <a href="javascript:;">已取消</a>
+      </div>
+    </div>
+
+    <div class="list">
+      <!-- 待出库 -->
+      <div class="card">
+        <div class="card-head">
+          <span class="title">红蛋 筐 28</span>
+          <span class="status">待出库</span>
+        </div>
+        <div class="row">
+          <span class="label">订单编号</span>
+          <span class="value">JD20260623JWTESTY41701<a class="copy" href="javascript:;">复制</a></span>
+        </div>
+        <div class="row"><span class="label">下单日期</span><span class="value">2026-06-23</span></div>
+        <div class="row"><span class="label">用户类型</span><span class="value">个人</span></div>
+        <div class="row"><span class="label">发货站台</span><span class="value">测试鸡窝站台</span></div>
+        <div class="row"><span class="label">提货方式</span><span class="value">买家自提</span></div>
+        <div class="row"><span class="label">单价</span><span class="value">1元/斤（上车价）</span></div>
+        <div class="row"><span class="label">购买数量</span><span class="value">1件</span></div>
+        <div class="row"><span class="label">上车总价</span><span class="value">2元</span></div>
+        <div class="row"><span class="label">订单总价</span><span class="value">2.00元</span></div>
+        <div class="row"><span class="label">实际出库重量</span><span class="value">2斤</span></div>
+        <div class="row"><span class="label">应付金额</span><span class="value">2.00元</span></div>
+        <div class="actions">
+          <button type="button" class="btn btn-more actions-left">更多</button>
+          <button type="button" class="btn btn-outline js-upload">上传运费凭证</button>
+          <button type="button" class="btn btn-primary">转发支付链接</button>
+          <button type="button" class="btn btn-primary">转发</button>
+        </div>
+      </div>
+
+      <!-- 已完成 -->
+      <div class="card">
+        <div class="card-head">
+          <span class="title">粉蛋 360枚 箱 44</span>
+          <span class="status done">已完成</span>
+        </div>
+        <div class="row">
+          <span class="label">订单编号</span>
+          <span class="value">JD20260623JWTESTY41700<a class="copy" href="javascript:;">复制</a></span>
+        </div>
+        <div class="row"><span class="label">下单日期</span><span class="value">2026-06-23</span></div>
+        <div class="row"><span class="label">用户类型</span><span class="value">个人</span></div>
+        <div class="row"><span class="label">发货站台</span><span class="value">测试鸡窝站台</span></div>
+        <div class="row"><span class="label">提货方式</span><span class="value">买家自提</span></div>
+        <div class="row"><span class="label">单价</span><span class="value">1元/斤（上车价）</span></div>
+        <div class="row"><span class="label">购买数量</span><span class="value">1件</span></div>
+        <div class="row"><span class="label">上车总价</span><span class="value">2元</span></div>
+        <div class="row"><span class="label">订单总价</span><span class="value">2.00元</span></div>
+        <div class="row"><span class="label">实际出库重量</span><span class="value">2斤</span></div>
+        <div class="row"><span class="label">已付金额</span><span class="value">2.00元</span></div>
+        <div class="actions">
+          <button type="button" class="btn btn-outline js-upload">上传运费凭证</button>
+          <button type="button" class="btn btn-primary">转发</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mask" id="uploadMask">
+      <div class="sheet">
+        <h3>上传运费凭证</h3>
+        <div class="upload-box">
+          <span class="plus">＋</span>
+          <span>点击上传图片 / 拍照</span>
+        </div>
+        <ul class="upload-rules">
+          <li>支持 JPG / JPEG / PNG，单张不超过 5MB</li>
+          <li>每个订单仅 1 张，重新上传将覆盖原凭证</li>
+          <li>请保证金额、单号等信息清晰可辨</li>
+        </ul>
+        <div class="sheet-actions">
+          <button type="button" class="btn" id="btnCancelUpload">取消</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmUpload">确认上传</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">上传成功</div>
+  </div>
+
+  <script>
+    (function () {
+      var mask = document.getElementById("uploadMask");
+      var toast = document.getElementById("toast");
+
+      function showToast(msg) {
+        toast.textContent = msg || "上传成功";
+        toast.classList.add("show");
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 1500);
+      }
+
+      document.querySelectorAll(".js-upload").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          mask.classList.add("show");
+        });
+      });
+
+      document.getElementById("btnCancelUpload").addEventListener("click", function () {
+        mask.classList.remove("show");
+      });
+
+      document.getElementById("btnConfirmUpload").addEventListener("click", function () {
+        mask.classList.remove("show");
+        showToast("运费凭证上传成功");
+      });
+
+      mask.addEventListener("click", function (e) {
+        if (e.target === mask) mask.classList.remove("show");
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>主页</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .page {
+      padding: 10px 12px 16px;
+    }
+
+    .order-card {
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 72px;
+      height: 72px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .order-badge span {
+      position: absolute;
+      top: 14px;
+      right: -18px;
+      width: 100px;
+      text-align: center;
+      background: #ff8533;
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 0;
+      transform: rotate(45deg);
+    }
+
+    .order-head {
+      padding: 14px 14px 10px;
+      font-size: 13px;
+      color: #666;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .route-list {
+      padding: 12px 14px;
+    }
+
+    .route-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .route-item:last-child { margin-bottom: 0; }
+
+    .route-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: #ff8533;
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .route-icon.unload { background: #52c41a; }
+
+    .route-body { flex: 1; min-width: 0; }
+
+    .route-city {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .route-addr {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.5;
+    }
+
+    .info-grid {
+      padding: 0 14px 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .info-label {
+      flex-shrink: 0;
+      width: 72px;
+      color: #999;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #333;
+    }
+
+    .info-link {
+      color: #ff8533;
+      text-decoration: none;
+      margin-left: 8px;
+    }
+
+    .freight-row {
+      padding: 0 14px 14px;
+      font-size: 13px;
+    }
+
+    .freight-row .amount {
+      color: #ff8533;
+      font-weight: 600;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+
+    .btn-outline,
+    .btn-primary {
+      flex: 1;
+      height: 40px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-outline {
+      border: 1px solid #8b3a13;
+      background: #fff;
+      color: #8b3a13;
+    }
+
+    .btn-primary {
+      border: none;
+      background: #8b3a13;
+      color: #fff;
+    }
+
+    .btn-primary:active,
+    .btn-outline:active { opacity: 0.85; }
+
+    /* 底部导航 */
+    .tabbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      display: flex;
+      height: calc(50px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: #999;
+      font-size: 11px;
+    }
+
+    .tab-item.active { color: #ff8533; }
+
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    /* 弹窗 */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 320px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .modal-body {
+      padding: 24px 20px 16px;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .modal-text {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    .modal-text strong { font-weight: 600; }
+
+    .modal-sub {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #999;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    .modal-dispatch {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #333;
+      text-align: left;
+    }
+
+    .modal-dispatch a {
+      color: #1677ff;
+      text-decoration: none;
+    }
+
+    .modal-footer {
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .modal-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      background: #fff;
+      font-size: 16px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .modal-btn:active { background: #fafafa; }
+
+    .overlay.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header class="nav">主页</header>
+
+  <main class="page">
+    <article class="order-card">
+      <div class="order-badge"><span>已接单</span></div>
+      <div class="order-head">物流订单号：LBBWLSP2026021088</div>
+
+      <div class="route-list">
+        <div class="route-item">
+          <div class="route-icon">装</div>
+          <div class="route-body">
+            <div class="route-city">北京市</div>
+            <div class="route-addr">北京市朝阳区建国路88号SOHO现代城A座</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <div class="route-icon unload">卸</div>
+          <div class="route-body">
+            <div class="route-city">鹤岗市</div>
+            <div class="route-addr">黑龙江省鹤岗市工农区西解放路168号</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-row">
+          <span class="info-label">提货时间</span>
+          <span class="info-value">2026/02/10</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">客户信息</span>
+          <span class="info-value">
+            钱梅雨
+            <a class="info-link" href="tel:13800138000">拨打客户电话</a>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">货物信息</span>
+          <span class="info-value">豆粕 50kg 43% 2吨</span>
+        </div>
+      </div>
+
+      <div class="freight-row">预计结算运费 <span class="amount">2</span> 元</div>
+
+      <div class="card-actions">
+        <button type="button" class="btn-outline">上传装货磅单</button>
+        <button type="button" class="btn-primary" id="startLoadBtn">开始装货</button>
+      </div>
+    </article>
+
+    <article class="order-card">
+      <div class="order-badge"><span>已接单</span></div>
+      <div class="order-head">物流订单号：LBBWLSP2026021089</div>
+
+      <div class="route-list">
+        <div class="route-item">
+          <div class="route-icon">装</div>
+          <div class="route-body">
+            <div class="route-city">北京市</div>
+            <div class="route-addr">北京市大兴区黄村镇物流园3号库</div>
+          </div>
+        </div>
+        <div class="route-item">
+          <div class="route-icon unload">卸</div>
+          <div class="route-body">
+            <div class="route-city">鹤岗市</div>
+            <div class="route-addr">黑龙江省鹤岗市向阳区农场路22号</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-row">
+          <span class="info-label">提货时间</span>
+          <span class="info-value">2026/02/11</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">客户信息</span>
+          <span class="info-value">
+            钱梅雨
+            <a class="info-link" href="tel:13800138000">拨打客户电话</a>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">货物信息</span>
+          <span class="info-value">豆粕 50kg 43% 2吨</span>
+        </div>
+      </div>
+
+      <div class="freight-row">预计结算运费 <span class="amount">2</span> 元</div>
+
+      <div class="card-actions">
+        <button type="button" class="btn-outline">上传装货磅单</button>
+        <button type="button" class="btn-primary">开始装货</button>
+      </div>
+    </article>
+  </main>
+
+  <nav class="tabbar">
+    <a class="tab-item" href="javascript:void(0)">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg>
+      我的运单
+    </a>
+    <a class="tab-item active" href="javascript:void(0)">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+      主页
+    </a>
+    <a class="tab-item" href="javascript:void(0)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      我的
+    </a>
+  </nav>
+
+  <!-- 位置异常 · 重要提示弹窗 -->
+  <div class="overlay" id="alertOverlay">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-body">
+        <h2 class="modal-title" id="modalTitle">【重要提示】</h2>
+        <p class="modal-text">
+          <strong>请在实际装货地点附近点击"开始装货"，并完成货物装车，请及时上传装货磅单，正确填写实际装货数量，否则影响运费结算。</strong>
+        </p>
+        <p class="modal-sub">如果您已经在实际卸货地点位置，请联系粮巴巴物流经理：<a href="tel:4001234567">13800138000</a></p>
+        <!-- <p class="modal-dispatch">
+          <a href="tel:4001234567">13800138000</a>
+        </p> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn" id="closeModalBtn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('alertOverlay');
+    const startLoadBtn = document.getElementById('startLoadBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    startLoadBtn.addEventListener('click', () => {
+      overlay.classList.remove('hidden');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

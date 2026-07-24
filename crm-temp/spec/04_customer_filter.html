@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>客户筛选 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body>
+    <!-- 背景：客户列表 -->
+    <div class="nav-bar">
+        <div class="nav-left"><svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <span class="nav-title">粮巴巴</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+    <div class="search-bar">
+        <div class="search-input-wrap"><input type="text" placeholder="搜索客户名称/客户手机号/微信昵称"></div>
+        <button class="search-text-btn" type="button">搜索</button>
+    </div>
+    <div class="customer-list">
+        <div class="customer-card" style="opacity:0.5;"><div class="customer-name">张爱国</div></div>
+    </div>
+
+    <div class="overlay active" id="overlay"></div>
+    <div class="filter-panel active" id="filterPanel">
+        <div class="filter-panel-header">
+            <span class="filter-panel-title">客户筛选</span>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#c0c4cc" stroke-width="2" id="closeBtn" style="cursor:pointer"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <div class="filter-panel-body">
+            <div class="filter-row">
+                <span class="filter-row-label">收货区域</span>
+                <span class="filter-row-value">全部 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">站台</span>
+                <span class="filter-row-value">全部 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">业务归属</span>
+                <span class="filter-row-value">全部 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">未服务天数</span>
+                <span class="filter-row-value">全部 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">标签</span>
+                <span class="filter-row-value placeholder">请选择 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">客户等级</span>
+                <span class="filter-row-value placeholder">请选择 ▾</span>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">本月拜访</span>
+                <div class="filter-options">
+                    <span class="filter-opt">是</span>
+                    <span class="filter-opt">否</span>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">客户类型</span>
+                <div class="filter-options">
+                    <span class="filter-opt">注册客户</span>
+                    <span class="filter-opt">未注册客户</span>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">机会点客户</span>
+                <div class="filter-options">
+                    <span class="filter-opt">是</span>
+                    <span class="filter-opt">否</span>
+                </div>
+            </div>
+            <div class="filter-row" style="align-items:flex-start;">
+                <span class="filter-row-label">养殖档案</span>
+                <div class="filter-options">
+                    <span class="filter-opt">有</span>
+                    <span class="filter-opt">无</span>
+                    <span class="filter-opt">合格</span>
+                    <span class="filter-opt">审核中</span>
+                    <span class="filter-opt">不合格</span>
+                </div>
+            </div>
+            <div class="filter-row">
+                <span class="filter-row-label">货到付款</span>
+                <div class="filter-options">
+                    <span class="filter-opt">是</span>
+                    <span class="filter-opt">否</span>
+                </div>
+            </div>
+        </div>
+        <div class="filter-panel-footer">
+            <button class="btn-outline-equal" type="button">清空</button>
+            <button class="btn-outline-equal" type="button" onclick="location.href='02_customer_list.html'">查询</button>
+        </div>
+    </div>
+
+    <script>
+        function closePanel() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('filterPanel').classList.remove('active');
+            setTimeout(() => location.href = '02_customer_list.html', 300);
+        }
+        document.getElementById('closeBtn').onclick = closePanel;
+        document.getElementById('overlay').onclick = closePanel;
+    </script>
+</body>
+</html>

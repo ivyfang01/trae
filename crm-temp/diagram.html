@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提醒弹窗原型</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trigger-btn {
+            padding: 12px 32px;
+            background: #1677ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .trigger-btn:hover {
+            background: #4096ff;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal */
+        .modal {
+            background: #ffffff;
+            border-radius: 12px;
+            width: 520px;
+            max-width: 92vw;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        /* Header */
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d2129;
+            text-align: center;
+            flex: 1;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: #f2f3f5;
+        }
+
+        .modal-close svg {
+            width: 18px;
+            height: 18px;
+            stroke: #86909c;
+        }
+
+        /* Body */
+        .modal-body {
+            padding: 28px 28px 8px;
+        }
+
+        .warning-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .warning-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #1d2129;
+            margin-bottom: 6px;
+        }
+
+        .warning-list li .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .warning-list li.highlight {
+            color: #e11d48;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .warning-list li.highlight .dot {
+            background: #e11d48;
+            margin-top: 9px;
+        }
+
+        .warning-list li .dot-black {
+            background: #1d2129;
+            margin-top: 9px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e5e6eb;
+            margin: 20px 0;
+        }
+
+        .confirm-text {
+            font-size: 15px;
+            color: #1d2129;
+            font-weight: 500;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* Footer */
+        .modal-footer {
+            display: flex;
+            gap: 16px;
+            padding: 24px 28px 28px;
+            justify-content: center;
+        }
+
+        .btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 10px 24px;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            border: 1px solid #d0d3d6;
+            color: #1d2129;
+        }
+
+        .btn-outline:hover {
+            border-color: #1677ff;
+            color: #1677ff;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            border: 1px solid #d0d3d6;
+            color: #1d2129;
+        }
+
+        .btn-primary:hover {
+            border-color: #1677ff;
+            color: #1677ff;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="trigger-btn" onclick="openModal()">触发提醒弹窗</button>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>提醒</h3>
+                <div class="modal-close" onclick="closeModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body">
+                <ul class="warning-list">
+                    <!-- <li class="highlight"> -->
+                        <span class="dot"></span>
+                        <span>白条逾期客户，每月拜访不能超过8次。</span>
+                    <!-- </li> -->
+                    <!-- <li>
+                        <span class="dot dot-black"></span> -->
+                        <!-- <span>如果有预留科成交流机会点，可无添加机会点，再填写拜访。</span> -->
+                    <!-- </li> -->
+                </ul>
+                <div class="divider"></div>
+                <p class="confirm-text">继续提交，本次拜访无效，是否提交？</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="handleAdd()">取消</button>
+                <button class="btn btn-primary" onclick="handleSubmit()">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function closeOnOverlay(e) {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        }
+
+        function handleAdd() {
+            alert('跳转到：添加机会点页面');
+        }
+
+        function handleSubmit() {
+            alert('已提交，本次拜访记录为无效状态');
+            closeModal();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
+

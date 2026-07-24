@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>客户档案</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      background-color: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .tabs {
+      display: flex;
+      background-color: #ffffff;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .tab-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 15px;
+      color: #666;
+      background: none;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab-item.active {
+      background-color: #006afe;
+      color: #ffffff;
+    }
+
+    .content {
+      background-color: #ffffff;
+      margin-top: 10px;
+      padding: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row.with-btn {
+      justify-content: space-between;
+    }
+
+    .info-label {
+      font-size: 14px;
+      color: #999;
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #333;
+      margin-left: 8px;
+    }
+
+    .info-value.required {
+      color: #ff4d4f;
+    }
+
+    .status-enabled {
+      color: #52c41a;
+    }
+
+    .status-disabled {
+      color: #999;
+    }
+
+    .category-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: 8px;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .category-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #d9d9d9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-radio.active {
+      border-color: #52c41a;
+    }
+
+    .category-radio.active::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background-color: #52c41a;
+      border-radius: 50%;
+    }
+
+    .category-label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .edit-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background-color: #006afe;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 106, 254, 0.3);
+    }
+
+    .edit-btn:active {
+      opacity: 0.8;
+    }
+
+    .sign-btn {
+      display: inline-block;
+      background-color: #006afe;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .sign-btn:active {
+      opacity: 0.8;
+    }
+
+    .btn-wrapper {
+      margin-left: auto;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <h1 class="page-title">客户档案</h1>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-item active" onclick="switchTab('customer')">客户信息</button>
+    <button class="tab-item" onclick="switchTab('breeding')">养殖信息</button>
+    <button class="tab-item" onclick="switchTab('opportunity')">机会点</button>
+    <button class="tab-item" onclick="switchTab('transaction')">交易配置</button>
+  </div>
+
+  <div class="content" id="customerContent">
+    <div class="info-row">
+      <span class="info-label">主体名称:</span>
+      <span class="info-value">山西兴宙生物科技有限公司</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">主体id:</span>
+      <span class="info-value">18861</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">微信昵称:</span>
+      <span class="info-value">铁蛋儿18547838111</span>
+    </div>
+
+    <div class="info-row with-btn">
+      <div>
+        <span class="info-label">上银余额开通状态:</span>
+        <span class="info-value" style="color: #999;">未开通</span>
+      </div>
+      
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">锡商余额开通状态:</span>
+      <span class="info-value status-enabled">已开通</span>
+    </div>
+
+    <div class="info-row with-btn">
+      <div>
+        <span class="info-label">服务协议签约状态:</span>
+        <span class="info-value" style="color: #999;">未签约</span>
+      </div>
+      <div class="btn-wrapper">
+        <button class="sign-btn" onclick="openSignCA()">去签约</button>
+      </div>
+    </div>
+
+    <div class="info-row with-btn">
+      <span class="info-label">经营品类</span>
+      <div class="category-group">
+        <div class="category-item">
+          <div class="category-radio active"></div>
+          <span class="category-label">豆粕/玉米</span>
+        </div>
+        <div class="category-item">
+          <div class="category-radio"></div>
+          <span class="category-label">鸡蛋</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">主体类型:</span>
+      <span class="info-value">企业</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label required">*客户类型</span>
+      <span class="info-value">养殖户</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label required">*养殖类型</span>
+      <span class="info-value">羊</span>
+    </div>
+  </div>
+
+  <div class="content" id="breedingContent" style="display: none;">
+    <div class="info-row">
+      <span class="info-label">养殖规模:</span>
+      <span class="info-value">1000只</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">养殖地址:</span>
+      <span class="info-value">山西省晋中市</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">养殖年限:</span>
+      <span class="info-value">5年</span>
+    </div>
+  </div>
+
+  <div class="content" id="opportunityContent" style="display: none;">
+    <div class="info-row">
+      <span class="info-label">最近商机:</span>
+      <span class="info-value">饲料采购</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">预计金额:</span>
+      <span class="info-value">50万元</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">跟进状态:</span>
+      <span class="info-value">洽谈中</span>
+    </div>
+  </div>
+
+  <div class="content" id="transactionContent" style="display: none;">
+    <div class="info-row">
+      <span class="info-label">交易权限:</span>
+      <span class="info-value status-enabled">已开通</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">信用额度:</span>
+      <span class="info-value">100万元</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">结算方式:</span>
+      <span class="info-value">月结</span>
+    </div>
+  </div>
+
+  <button class="edit-btn" onclick="editProfile()">编辑</button>
+
+  <script>
+    function goBack() {
+      alert('返回上一页');
+    }
+
+    function switchTab(tab) {
+      document.getElementById('customerContent').style.display = 'none';
+      document.getElementById('breedingContent').style.display = 'none';
+      document.getElementById('opportunityContent').style.display = 'none';
+      document.getElementById('transactionContent').style.display = 'none';
+
+      document.querySelectorAll('.tab-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      document.getElementById(tab + 'Content').style.display = 'block';
+      event.target.classList.add('active');
+    }
+
+    function editProfile() {
+      alert('进入编辑模式');
+    }
+
+    function openSign() {
+      window.location.href = 'auth_info.html';
+    }
+
+    function openSignCA() {
+      window.location.href = 'auth_info.html';
+    }
+  </script>
+</body>
+</html>

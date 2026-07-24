@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>任务日程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* 任务日程容器 */
+        .task-schedule {
+            background: #ffffff;
+            border-radius: 12px;
+            margin: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* 头部 */
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 16px 12px;
+            background: #f7f8fa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .schedule-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d2129;
+        }
+
+        .view-more {
+            font-size: 13px;
+            color: #1677ff;
+            cursor: pointer;
+        }
+
+        /* 日历条 */
+        .calendar-strip {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 8px 12px;
+            background: #ffffff;
+        }
+
+        .calendar-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 40px;
+            cursor: pointer;
+        }
+
+        .day-label {
+            font-size: 13px;
+            color: #86909c;
+            font-weight: 500;
+        }
+
+        .day-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1d2129;
+            transition: all 0.2s;
+        }
+
+        .day-number.selected {
+            background: #e8f3ff;
+            color: #1677ff;
+        }
+
+        .day-number.today {
+            background: #1677ff;
+            color: #ffffff;
+        }
+
+        .day-number.other-month {
+            color: #c0c4cc;
+        }
+
+        /* 任务卡片 */
+        .task-card {
+            margin: 8px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .task-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #fafafa;
+        }
+
+        .task-card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1d2129;
+        }
+
+        .task-card-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-percent {
+            font-size: 14px;
+            color: #1d2129;
+            font-weight: 500;
+        }
+
+        .progress-percent.red {
+            color: #e11d48;
+            font-weight: 600;
+        }
+
+        .add-customer {
+            font-size: 13px;
+            color: #1677ff;
+            cursor: pointer;
+        }
+
+        .task-card-body {
+            padding: 4px 16px 12px;
+        }
+
+        .customer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 14px;
+            color: #4e5969;
+        }
+
+        .customer-name {
+            color: #1d2129;
+        }
+
+        .visit-day {
+            color: #86909c;
+        }
+
+        .visit-link {
+            color: #1677ff;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* 机会点任务卡片 */
+        .task-card-simple {
+            margin: 8px 12px;
+            border: 1px solid #e5e6eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .task-card-simple-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #fafafa;
+        }
+
+        .task-card-simple-body {
+            padding: 8px 16px 12px;
+            font-size: 14px;
+            color: #4e5969;
+        }
+
+        /* 客户覆盖卡片 */
+        .coverage-body {
+            padding: 8px 16px 12px;
+            font-size: 14px;
+            color: #4e5969;
+        }
+
+        .coverage-body span {
+            color: #1d2129;
+        }
+
+        /* 原型标注 */
+        .prototype-note {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 1px solid #1677ff;
+            color: #1677ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 100;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="prototype-note"> 任务日程原型图</div>
+
+    <div class="task-schedule">
+        <!-- 头部 -->
+        <div class="schedule-header">
+            <span class="schedule-title">任务日程</span>
+            <span class="view-more" onclick="alert('查看更多任务日程')">查看更多 ›</span>
+        </div>
+
+        <!-- 日历条 -->
+        <div class="calendar-strip">
+            <div class="calendar-day">
+                <span class="day-label">日</span>
+                <span class="day-number">26</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">一</span>
+                <span class="day-number selected">27</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">二</span>
+                <span class="day-number">28</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">三</span>
+                <span class="day-number today">29</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">四</span>
+                <span class="day-number">30</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">五</span>
+                <span class="day-number other-month">1</span>
+            </div>
+            <div class="calendar-day" onclick="selectDay(this)">
+                <span class="day-label">六</span>
+                <span class="day-number other-month">2</span>
+            </div>
+        </div>
+
+        <!-- 周度拜访任务 -->
+        <div class="task-card">
+            <div class="task-card-header">
+                <span class="task-card-title">今日拜访任务</span>
+                <div class="task-card-progress">
+                    <span class="progress-percent">30%</span>
+                    <span class="add-customer" onclick="alert('添加客户')">添加客户</span>
+                </div>
+            </div>
+            <div class="task-card-body">
+                <div class="customer-row">
+                    <span class="customer-name">客户A</span>
+                    <span class="visit-day">今天</span>
+                </div>
+                <div class="customer-row">
+                    <span class="customer-name">客户B</span>
+                    <span class="visit-day">今天</span>
+                </div>
+                <div class="customer-row">
+                    <span class="customer-name">客户C</span>
+                    <span class="visit-link" onclick="alert('查看拜访记录')">拜访记录</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 机会点任务 -->
+        <div class="task-card-simple">
+            <div class="task-card-simple-header">
+                <span class="task-card-title">机会点任务</span>
+                <span class="progress-percent red">30%</span>
+            </div>
+            <div class="task-card-simple-body">
+                机会点数：2个
+            </div>
+        </div>
+
+        <!-- 客户覆盖 -->
+        <div class="task-card-simple">
+            <div class="task-card-simple-header">
+                <span class="task-card-title">客户覆盖</span>
+                <span class="progress-percent red">30%</span>
+            </div>
+            <div class="coverage-body">
+                <span>客户：张三</span>等共10个
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectDay(el) {
+            const numbers = el.querySelectorAll('.day-number');
+            numbers.forEach(num => {
+                if (num.classList.contains('today')) return;
+                num.classList.remove('selected');
+            });
+            const dayNum = el.querySelector('.day-number');
+            if (!dayNum.classList.contains('today') && !dayNum.classList.contains('other-month')) {
+                dayNum.classList.add('selected');
+            }
+        }
+    </script>
+</body>
+</html>
+

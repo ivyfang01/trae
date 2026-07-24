@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>提现失败提醒弹窗 · 预览</title>
+  <style>
+    :root {
+      --color-bg: #f6f6f6;
+      --color-accent: #f46015;
+      --color-accent-text: #e9804c;
+      --color-text: #333333;
+      --color-text-secondary: #666666;
+      --color-text-muted: #999999;
+      --color-border: #eeeeee;
+      --phone-width: 390px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #e8e8e8;
+      color: var(--color-text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .preview-bar {
+      max-width: var(--phone-width);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .preview-bar button {
+      height: 32px;
+      padding: 0 14px;
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .preview-bar button.primary {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      color: #fff;
+    }
+
+    .phone {
+      position: relative;
+      max-width: var(--phone-width);
+      min-height: 720px;
+      margin: 0 auto;
+      background: var(--color-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .nav-back {
+      position: absolute;
+      left: 12px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+    }
+
+    .nav-back::before {
+      content: "";
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid var(--color-text);
+      border-bottom: 2px solid var(--color-text);
+      transform: rotate(45deg);
+      margin-left: 6px;
+    }
+
+    .mock-page {
+      padding: 12px;
+      filter: blur(0);
+      transition: filter 0.2s;
+    }
+
+    .phone.dimmed .mock-page {
+      filter: blur(1px);
+      pointer-events: none;
+    }
+
+    .mock-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .mock-line {
+      height: 12px;
+      border-radius: 4px;
+      background: #f0f0f0;
+      margin-bottom: 10px;
+    }
+
+    .mock-line.short { width: 60%; }
+    .mock-line.btn {
+      height: 46px;
+      margin-top: 24px;
+      background: var(--color-accent);
+      opacity: 0.35;
+      border-radius: 23px;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: opacity 0.2s;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      padding: 32px 24px 28px;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      padding: 0 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      flex: 1;
+      height: 46px;
+      border: none;
+      border-radius: 23px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .btn-primary:active { opacity: 0.85; }
+
+    .btn-secondary {
+      background: #f5f5f5;
+      color: var(--color-text-secondary);
+    }
+
+    .btn-secondary:active { opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="preview-bar">
+    <span>R5 · 上银账号冻结提醒弹窗</span>
+    <div>
+      <button type="button" id="showBtn" class="primary">显示弹窗</button>
+      <button type="button" id="hideBtn">隐藏弹窗</button>
+    </div>
+  </div>
+
+  <div class="phone" id="phone">
+    <header class="nav">
+      <button class="nav-back" type="button" aria-label="返回"></button>
+      提现
+    </header>
+
+    <div class="mock-page">
+      <div class="mock-card">
+        <div class="mock-line short"></div>
+        <div class="mock-line"></div>
+      </div>
+      <div class="mock-card">
+        <div class="mock-line short"></div>
+        <div class="mock-line"></div>
+        <div class="mock-line"></div>
+        <div class="mock-line short"></div>
+      </div>
+      <div class="mock-line btn"></div>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="modal-sheet" role="dialog" aria-labelledby="modalTitle">
+        <h2 class="modal-title" id="modalTitle">提醒</h2>
+        <p class="modal-desc">您的上银账号已冻结，不能提现，请更新身份证信息</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="skipBtn">暂不更新</button>
+          <button type="button" class="btn-primary" id="updateBtn">去更新</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const phone = document.getElementById('phone');
+    const overlay = document.getElementById('overlay');
+
+    function showModal() {
+      overlay.classList.remove('hidden');
+      phone.classList.add('dimmed');
+    }
+
+    function hideModal() {
+      overlay.classList.add('hidden');
+      phone.classList.remove('dimmed');
+    }
+
+    document.getElementById('showBtn').addEventListener('click', showModal);
+    document.getElementById('hideBtn').addEventListener('click', hideModal);
+    document.getElementById('skipBtn').addEventListener('click', hideModal);
+    document.getElementById('updateBtn').addEventListener('click', () => {
+      alert('跳转至身份证更新页（原型演示）');
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) hideModal();
+    });
+
+    showModal();
+  </script>
+</body>
+</html>

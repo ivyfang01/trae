@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>提交审核 · 卸货信息</title>
+  <style>
+    /* 严格按参考图 H5 样式 */
+    :root {
+      --blue: #1677ff;
+      --red: #ff4d4f;
+      --text: #333;
+      --label: #333;
+      --muted: #999;
+      --line: #f0f0f0;
+      --bg: #f5f5f5;
+      --card: #fff;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #e8e8e8;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(64px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute;
+      left: 0;
+      height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 22px;
+    }
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .tabs a {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      color: #666;
+      text-decoration: none;
+      font-size: 15px;
+      position: relative;
+    }
+    .tabs a.active {
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: var(--blue);
+    }
+    .section {
+      background: var(--card);
+      margin-bottom: 10px;
+      padding: 0 16px 12px;
+    }
+    .section-title {
+      position: relative;
+      padding: 14px 0 10px 10px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #222;
+    }
+    .section-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18px;
+      width: 3px;
+      height: 14px;
+      background: var(--blue);
+      border-radius: 1px;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+    .row:last-child { border-bottom: none; }
+    .row .label {
+      width: 96px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .label .req { color: var(--red); margin-right: 2px; }
+    .row .value {
+      flex: 1;
+      text-align: right;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.placeholder { color: var(--muted); }
+    .row.stack {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .row.stack .label { width: auto; }
+    .row.stack .value { text-align: left; width: 100%; }
+    .upload-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .upload-item {
+      width: 72px;
+      height: 72px;
+      border-radius: 4px;
+      position: relative;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+    .upload-item .img {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #d9d9d9, #bfbfbf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(0,0,0,.35);
+      font-size: 11px;
+    }
+    .upload-item .del {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(0,0,0,.55);
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .upload-add {
+      width: 72px;
+      height: 72px;
+      border: 1px dashed #d9d9d9;
+      border-radius: 4px;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 11px;
+      gap: 2px;
+    }
+    .upload-add .plus { font-size: 20px; color: #bbb; line-height: 1; }
+    .weight-right {
+      text-align: right;
+    }
+    .weight-right .ton { color: var(--text); }
+    .weight-right .kg {
+      display: block;
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .remark-box {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      min-height: 48px;
+      font-size: 15px;
+      font-family: inherit;
+      text-align: right;
+      color: var(--text);
+    }
+    .remark-box::placeholder { color: var(--muted); }
+    .char-count {
+      text-align: right;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .addr-block {
+      display: flex;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .addr-block:last-child { border-bottom: none; }
+    .addr-block .side-label {
+      width: 72px;
+      flex-shrink: 0;
+      color: var(--label);
+      padding-top: 2px;
+    }
+    .addr-card {
+      flex: 1;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    .addr-card .addr-text {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: #1677ff;
+      background: #e6f4ff;
+      border-radius: 4px;
+    }
+    .hint {
+      padding: 0 16px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fff;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+    .pending {
+      padding: 8px 0 4px;
+      color: #fa8c16;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .record {
+      padding: 4px 0 8px;
+    }
+    .record + .record {
+      border-top: 1px dashed #e8e8e8;
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+    .footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      padding: 10px 12px calc(10px + var(--safe-bottom));
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      height: 40px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #333;
+    }
+    .btn-cancel { flex: 0 0 72px; }
+    .btn-save {
+      flex: 0 0 72px;
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+    .btn-primary {
+      flex: 1;
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      font-weight: 600;
+    }
+    .demo-switch {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #555;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .demo-switch a {
+      color: var(--blue);
+      margin-right: 12px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== 状态一：未确认 ========== -->
+  <div class="phone" id="page-pending">
+    <div class="nav">
+      <a class="nav-back" href="javascript:;">‹</a>
+      <div class="nav-title">卸货信息</div>
+    </div>
+    <div class="tabs">
+      <a href="javascript:;">装货信息</a>
+      <a class="active" href="javascript:;">卸货信息</a>
+    </div>
+
+    <div class="section">
+      <div class="section-title">卸货信息</div>
+      <div class="row">
+        <span class="label">卸货时间</span>
+        <span class="value">2026-05-09 16:05:34</span>
+      </div>
+      <div class="row stack">
+        <span class="label"><span class="req">*</span>卸货磅单</span>
+        <div class="upload-list">
+          <div class="upload-item">
+            <div class="img">磅单</div>
+            <span class="del">×</span>
+          </div>
+          <div class="upload-add">
+            <span class="plus">+</span>
+            <span>拍照 / 上传</span>
+            <span>(1/5)</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货毛重</span>
+        <div class="value weight-right">
+          <span class="ton">1 吨</span>
+          <span class="kg">= 1000 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货皮重</span>
+        <div class="value weight-right">
+          <span class="ton">0.02 吨</span>
+          <span class="kg">= 20 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货净重</span>
+        <div class="value weight-right">
+          <span class="ton">0.98 吨</span>
+          <span class="kg">= 980 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>袋数</span>
+        <span class="value">20 袋</span>
+      </div>
+      <div class="row">
+        <span class="label">包装规格</span>
+        <span class="value">50kg</span>
+      </div>
+      <div class="row stack">
+        <span class="label">备注</span>
+        <textarea class="remark-box" placeholder="请输入" maxlength="100"></textarea>
+        <div class="char-count">0/100</div>
+      </div>
+    </div>
+
+    <!-- 业务员确认收货 · 未确认（字段对齐 PC） -->
+    <div class="section">
+      <div class="section-title">业务员确认收货</div>
+      <div class="row">
+        <span class="label">确认结果</span>
+        <span class="value">未确认</span>
+      </div>
+      <div class="row">
+        <span class="label">装卸磅差</span>
+        <span class="value">0.15吨（2包）</span>
+      </div>
+      <div class="row">
+        <span class="label">扣除吨数</span>
+        <span class="value">—</span>
+      </div>
+      <div class="row">
+        <span class="label">确认业务员</span>
+        <span class="value">-</span>
+      </div>
+      <div class="row">
+        <span class="label">确认时间</span>
+        <span class="value">-</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">操作记录</div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">1</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">派车</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">管理后台</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">物流运营</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:01:12</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">派单成功</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">2</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">接单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:20:05</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">3</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">上传发货磅单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 19:40:18</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">4</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">上传收货磅单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-24 17:30:44</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">确认路径</div>
+      <div class="addr-block">
+        <div class="side-label">起点</div>
+        <div class="addr-card">
+          <div class="addr-text">河南省焦作市沁阳市怀庆办文帝名邸-丽景苑8号大门附近</div>
+          <div class="pills">
+            <span class="pill">粮点类型</span>
+            <span class="pill">粮点名称</span>
+            <span class="pill">坐标</span>
+          </div>
+        </div>
+      </div>
+      <div class="addr-block">
+        <div class="side-label">站台地址</div>
+        <div class="addr-card">
+          <div class="addr-text">河南省焦作市沁阳市某某饲料厂卸货点</div>
+          <div class="pills">
+            <span class="pill">交货点</span>
+            <span class="pill">坐标</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">若不添加交货点，司机端终点将展示站台地址，可后续更新</p>
+
+    <div class="footer">
+      <button type="button" class="btn btn-cancel">取消</button>
+      <button type="button" class="btn btn-save">保存</button>
+      <button type="button" class="btn btn-primary">提交审核</button>
+    </div>
+  </div>
+
+  <!-- ========== 状态二：已确认 ========== -->
+  <div class="phone" id="page-done" style="display:none">
+    <div class="nav">
+      <a class="nav-back" href="javascript:;">‹</a>
+      <div class="nav-title">卸货信息</div>
+    </div>
+    <div class="tabs">
+      <a href="javascript:;">装货信息</a>
+      <a class="active" href="javascript:;">卸货信息</a>
+    </div>
+
+    <div class="section">
+      <div class="section-title">卸货信息</div>
+      <div class="row">
+        <span class="label">卸货时间</span>
+        <span class="value">2026-05-09 16:05:34</span>
+      </div>
+      <div class="row stack">
+        <span class="label"><span class="req">*</span>卸货磅单</span>
+        <div class="upload-list">
+          <div class="upload-item">
+            <div class="img">磅单</div>
+            <span class="del">×</span>
+          </div>
+          <div class="upload-add">
+            <span class="plus">+</span>
+            <span>拍照 / 上传</span>
+            <span>(1/5)</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货毛重</span>
+        <div class="value weight-right">
+          <span class="ton">10 吨</span>
+          <span class="kg">= 10000 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货皮重</span>
+        <div class="value weight-right">
+          <span class="ton">0.17 吨</span>
+          <span class="kg">= 170 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>卸货净重</span>
+        <div class="value weight-right">
+          <span class="ton">9.83 吨</span>
+          <span class="kg">= 9830 公斤</span>
+        </div>
+      </div>
+      <div class="row">
+        <span class="label"><span class="req">*</span>袋数</span>
+        <span class="value">197 袋</span>
+      </div>
+      <div class="row">
+        <span class="label">包装规格</span>
+        <span class="value">50kg</span>
+      </div>
+      <div class="row stack">
+        <span class="label">备注</span>
+        <div class="value" style="text-align:right;color:var(--muted)">—</div>
+      </div>
+    </div>
+
+    <!-- 业务员确认收货 · 有磅差（字段对齐 PC） -->
+    <div class="section">
+      <div class="section-title">业务员确认收货</div>
+      <div class="row">
+        <span class="label">确认结果</span>
+        <span class="value">有磅差需扣除</span>
+      </div>
+      <div class="row">
+        <span class="label">装卸磅差</span>
+        <span class="value">0.15吨（2包）</span>
+      </div>
+      <div class="row">
+        <span class="label">扣除吨数</span>
+        <span class="value">3吨</span>
+      </div>
+      <div class="row">
+        <span class="label">确认业务员</span>
+        <span class="value">张三</span>
+      </div>
+      <div class="row">
+        <span class="label">确认时间</span>
+        <span class="value">2026-07-24 16:05:18</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">操作记录</div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">1</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">派车</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">管理后台</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">物流运营</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:01:12</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">派单成功</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">2</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">接单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:20:05</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">3</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">上传发货磅单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 19:40:18</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">4</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">上传收货磅单</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-24 17:30:44</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+      </div>
+      <div class="record">
+        <div class="row"><span class="label">序号</span><span class="value">5</span></div>
+        <div class="row"><span class="label">阶段</span><span class="value">业务员确认收货</span></div>
+        <div class="row"><span class="label">操作设备</span><span class="value">钉钉</span></div>
+        <div class="row"><span class="label">操作人</span><span class="value">张三</span></div>
+        <div class="row"><span class="label">操作时间</span><span class="value">2026-07-24 16:05:18</span></div>
+        <div class="row"><span class="label">备注</span><span class="value">业务员已确认：有磅差需扣除0.15 吨</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">确认路径</div>
+      <div class="addr-block">
+        <div class="side-label">起点</div>
+        <div class="addr-card">
+          <div class="addr-text">河南省焦作市沁阳市怀庆办文帝名邸-丽景苑8号大门附近</div>
+          <div class="pills">
+            <span class="pill">粮点类型</span>
+            <span class="pill">粮点名称</span>
+            <span class="pill">坐标</span>
+          </div>
+        </div>
+      </div>
+      <div class="addr-block">
+        <div class="side-label">站台地址</div>
+        <div class="addr-card">
+          <div class="addr-text">河南省焦作市沁阳市某某饲料厂卸货点</div>
+          <div class="pills">
+            <span class="pill">交货点</span>
+            <span class="pill">坐标</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">若不添加交货点，司机端终点将展示站台地址，可后续更新</p>
+
+    <div class="footer">
+      <button type="button" class="btn btn-cancel">取消</button>
+      <button type="button" class="btn btn-save">保存</button>
+      <button type="button" class="btn btn-primary">提交审核</button>
+    </div>
+  </div>
+
+  <div class="demo-switch">
+    <div style="margin-bottom:8px;font-weight:600;color:#222">业务员确认收货 · 对齐 PC</div>
+    <a href="javascript:;" id="showPending">未确认</a>
+    <a href="javascript:;" id="showDone">有磅差需扣除</a>
+  </div>
+
+  <script>
+    (function () {
+      var pending = document.getElementById("page-pending");
+      var done = document.getElementById("page-done");
+      document.getElementById("showPending").addEventListener("click", function () {
+        pending.style.display = "block";
+        done.style.display = "none";
+      });
+      document.getElementById("showDone").addEventListener("click", function () {
+        pending.style.display = "none";
+        done.style.display = "block";
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>完善信息</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: calc(120px + env(safe-area-inset-bottom));
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .nav-back {
+      position: absolute;
+      left: 12px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav-back::before {
+      content: "";
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid #333;
+      border-bottom: 2px solid #333;
+      transform: rotate(45deg);
+      margin-left: 6px;
+    }
+
+    .page { padding: 12px; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    .section-title .required {
+      color: #ff8533;
+      font-weight: 600;
+    }
+
+    .section-title .icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: #666;
+    }
+
+    .section-title .action {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ff8533;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .upload-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .upload-row.single { grid-template-columns: 1fr; }
+
+    .upload-box {
+      aspect-ratio: 1.45;
+      border-radius: 6px;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #999;
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: center;
+      padding: 10px;
+      border: none;
+    }
+
+    .upload-box svg {
+      width: 28px;
+      height: 28px;
+      stroke: #bbb;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .upload-box.small {
+      aspect-ratio: auto;
+      min-height: 88px;
+      max-width: 88px;
+    }
+
+    .upload-box.has-file {
+      background: #fff7f0;
+      color: #ff8533;
+    }
+
+    .field-list { margin-top: 8px; }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+
+    .field-row:last-child { border-bottom: none; }
+
+    .field-label {
+      flex-shrink: 0;
+      color: #ff8533;
+      min-width: 110px;
+    }
+
+    .field-label .star { margin-right: 2px; }
+
+    .field-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      text-align: right;
+      font-size: 14px;
+      color: #333;
+      background: transparent;
+      padding: 8px 0;
+    }
+
+    .field-input::placeholder { color: #ccc; }
+
+    .field-input:read-only { color: #333; }
+
+    .field-tip {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #ff4d4f;
+      line-height: 1.5;
+    }
+
+    .field-hint {
+      margin: -6px 0 12px;
+      font-size: 12px;
+      color: #999;
+      line-height: 1.5;
+    }
+
+    .vehicle-card {
+      border-top: 1px dashed #eee;
+      padding-top: 14px;
+      margin-top: 4px;
+    }
+
+    .vehicle-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      border-radius: 12px;
+      background: #ddd;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+      padding: 0;
+    }
+
+    .toggle.on { background: #ff8533; }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .toggle.on::after { transform: translateX(20px); }
+
+    .sub-field-label {
+      font-size: 14px;
+      color: #ff8533;
+      margin-bottom: 10px;
+    }
+
+    .sub-field-label .star { margin-right: 2px; }
+
+    .field-row.select {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .field-row.select::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #ccc;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .field-row.with-unit .field-input {
+      padding-right: 28px;
+    }
+
+    .field-unit {
+      flex-shrink: 0;
+      font-size: 14px;
+      color: #999;
+      margin-left: 4px;
+    }
+
+    .radio-group {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 24px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .radio-item input { display: none; }
+
+    .radio-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .radio-item input:checked + .radio-circle {
+      border-color: #ff8533;
+      background: #ff8533;
+    }
+
+    .radio-item input:checked + .radio-circle::after {
+      content: "";
+      width: 5px;
+      height: 9px;
+      border: 2px solid #fff;
+      border-top: 0;
+      border-left: 0;
+      transform: rotate(45deg) translateY(-1px);
+    }
+
+    .trailer-fields.hidden { display: none; }
+
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: #ff4d4f;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .field-row.error .field-error,
+    .upload-group.error .field-error,
+    .vehicle-card.error .field-error { display: block; }
+
+    .field-row.error .field-input { color: #ff4d4f; }
+
+    .upload-group.error .upload-box {
+      outline: 1px solid #ff4d4f;
+    }
+
+    .footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+
+    .agreement {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .agreement input { display: none; }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid #ddd;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .agreement input:checked + .checkbox {
+      background: #ff8533;
+      border-color: #ff8533;
+    }
+
+    .agreement input:checked + .checkbox::after {
+      content: "";
+      width: 5px;
+      height: 9px;
+      border: 2px solid #fff;
+      border-top: 0;
+      border-left: 0;
+      transform: rotate(45deg) translateY(-1px);
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 23px;
+      background: #ff8533;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .submit-btn:active { opacity: 0.85; }
+
+    .agreement.error .checkbox {
+      border-color: #ff4d4f;
+    }
+
+    .agreement-error {
+      display: none;
+      font-size: 12px;
+      color: #ff4d4f;
+      margin: -8px 0 10px 26px;
+    }
+
+    .agreement.error + .agreement-error { display: block; }
+
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <button class="nav-back" type="button" aria-label="返回"></button>
+    完善信息
+  </header>
+
+  <main class="page">
+    <!-- 身份证信息 -->
+    <section class="card" id="section-id">
+      <div class="section-title">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <circle cx="9" cy="11" r="2"/>
+          <path d="M14 10h4M14 14h4"/>
+        </svg>
+        身份证信息
+      </div>
+
+      <div class="upload-group" data-field="idFront">
+        <div class="upload-row">
+          <button type="button" class="upload-box" data-upload="idFront">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传身份证人像面
+          </button>
+          <button type="button" class="upload-box" data-upload="idBack">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传身份证国徽面
+          </button>
+        </div>
+        <p class="field-error">请上传身份证人像面/国徽面</p>
+      </div>
+
+      <div class="field-list">
+        <div class="field-row" data-field="name">
+          <label class="field-label"><span class="star">*</span>姓名</label>
+          <input class="field-input" type="text" placeholder="请输入" data-input="name" />
+          <p class="field-error">请输入姓名</p>
+        </div>
+        <div class="field-row" data-field="idNo">
+          <label class="field-label"><span class="star">*</span>身份证号</label>
+          <input class="field-input" type="text" placeholder="请输入" data-input="idNo" maxlength="18" />
+          <p class="field-error">请输入身份证号</p>
+        </div>
+        <div class="field-row">
+          <label class="field-label"><span class="star">*</span>登录手机号</label>
+          <input class="field-input" type="tel" value="18019252508" readonly />
+        </div>
+        <div class="field-row" data-field="realPhone">
+          <label class="field-label"><span class="star">*</span>实名手机号</label>
+          <input class="field-input" type="tel" placeholder="请输入" data-input="realPhone" maxlength="11" />
+          <p class="field-error">请输入实名手机号</p>
+        </div>
+      </div>
+      <p class="field-tip">! 实名手机号必须为本人实名认证</p>
+    </section>
+
+    <!-- 驾驶证信息 -->
+    <section class="card" id="section-license">
+      <div class="section-title">
+        <span class="required">*</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="4" y="3" width="16" height="18" rx="2"/>
+          <path d="M8 8h8M8 12h5"/>
+        </svg>
+        驾驶证信息
+      </div>
+      <div class="upload-group" data-field="license">
+        <div class="upload-row">
+          <button type="button" class="upload-box" data-upload="licenseFront">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传驾驶证正页
+          </button>
+          <button type="button" class="upload-box" data-upload="licenseBack">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传驾驶证副页
+          </button>
+        </div>
+        <p class="field-error">请上传驾驶证正页/副页</p>
+      </div>
+    </section>
+
+    <!-- 车辆信息 -->
+    <section class="card" id="section-vehicle">
+      <div class="section-title">
+        <span class="required">*</span>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M5 17h14M5 17l-1-4 2-5h12l2 5-1 4M7 17v2M17 17v2"/>
+          <circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/>
+        </svg>
+        车辆信息
+        <a class="action" href="javascript:void(0)" id="addVehicle">新增车辆</a>
+      </div>
+
+      <div class="vehicle-card" data-field="vehicle">
+        <div class="vehicle-head">
+          <span>车辆1</span>
+          <div class="toggle-wrap">
+            是否默认：
+            <button type="button" class="toggle on" aria-label="设为默认车辆"></button>
+          </div>
+        </div>
+
+        <p class="sub-field-label"><span class="star">*</span>行驶证</p>
+        <div class="upload-group" data-field="vehicleLicense">
+          <div class="upload-row">
+            <button type="button" class="upload-box" data-upload="vehicleLicenseFront">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              点击上传行驶证正页
+            </button>
+            <button type="button" class="upload-box" data-upload="vehicleLicenseBack">
+              <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              点击上传行驶证副页
+            </button>
+          </div>
+          <p class="field-error">请上传行驶证正页/副页</p>
+        </div>
+
+        <div class="field-list">
+          <div class="field-row" data-field="plateNo">
+            <label class="field-label"><span class="star">*</span>车牌号</label>
+            <input class="field-input" type="text" placeholder="请输入" data-input="plateNo" />
+            <p class="field-error">请输入车牌号</p>
+          </div>
+          <div class="field-row select" data-field="registerDate">
+            <label class="field-label"><span class="star">*</span>车辆注册时间</label>
+            <input class="field-input" type="text" placeholder="请填写日期" data-input="registerDate" readonly />
+            <p class="field-error">请填写车辆注册时间</p>
+          </div>
+          <div class="field-row select" data-field="vehicleType">
+            <label class="field-label"><span class="star">*</span>车辆类型</label>
+            <input class="field-input" type="text" placeholder="请输入" data-input="vehicleType" readonly />
+            <p class="field-error">请选择车辆类型</p>
+          </div>
+          <div class="field-row select" data-field="vehicleLength">
+            <label class="field-label"><span class="star">*</span>车辆长度</label>
+            <input class="field-input" type="text" placeholder="请输入" data-input="vehicleLength" readonly />
+            <p class="field-error">请选择车辆长度</p>
+          </div>
+          <div class="field-row with-unit" data-field="totalMass">
+            <label class="field-label"><span class="star">*</span>总质量</label>
+            <input class="field-input" type="number" placeholder="请输入" data-input="totalMass" />
+            <span class="field-unit">kg</span>
+            <p class="field-error">请输入总质量</p>
+          </div>
+          <div class="field-row with-unit" data-field="loadMass">
+            <label class="field-label"><span class="star">*</span>核定载质量</label>
+            <input class="field-input" type="number" placeholder="请输入" data-input="loadMass" />
+            <span class="field-unit">kg</span>
+            <p class="field-error">请输入核定载质量</p>
+          </div>
+          <div class="field-row with-unit" data-field="curbMass">
+            <label class="field-label"><span class="star">*</span>整备质量</label>
+            <input class="field-input" type="number" placeholder="请输入" data-input="curbMass" />
+            <span class="field-unit">kg</span>
+            <p class="field-error">请输入整备质量</p>
+          </div>
+          <div class="field-row select" data-field="emissionStd">
+            <label class="field-label"><span class="star">*</span>车辆排放标准</label>
+            <input class="field-input" type="text" placeholder="请输入" data-input="emissionStd" readonly />
+            <p class="field-error">请选择车辆排放标准</p>
+          </div>
+          <div class="field-row select" data-field="sizeType">
+            <label class="field-label"><span class="star">*</span>大小车型</label>
+            <input class="field-input" type="text" value="大车型" placeholder="请输入" data-input="sizeType" readonly />
+            <p class="field-error">请选择大小车型</p>
+          </div>
+          <div class="field-row" data-field="isTrailer">
+            <label class="field-label"><span class="star">*</span>是否挂车</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="isTrailer" value="yes" checked />
+                <span class="radio-circle"></span>
+                是
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="isTrailer" value="no" />
+                <span class="radio-circle"></span>
+                否
+              </label>
+            </div>
+          </div>
+          <div class="field-row" data-field="trailerNo" id="trailerNoRow">
+            <label class="field-label"><span class="star">*</span>挂车号</label>
+            <input class="field-input" type="text" placeholder="请输入" data-input="trailerNo" />
+            <p class="field-error">请输入挂车号</p>
+          </div>
+        </div>
+        <p class="field-error">请完善车辆信息</p>
+      </div>
+    </section>
+
+    <div class="trailer-fields" id="trailerFields">
+    <section class="card" id="section-trailer-license">
+      <div class="section-title">
+        <span class="required">*</span>
+        挂车行驶证
+      </div>
+      <div class="upload-group" data-field="trailerLicense">
+        <div class="upload-row">
+          <button type="button" class="upload-box" data-upload="trailerLicenseFront">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传行驶证正页
+          </button>
+          <button type="button" class="upload-box" data-upload="trailerLicenseBack">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传行驶证副页
+          </button>
+        </div>
+        <p class="field-error">请上传挂车行驶证正页/副页</p>
+      </div>
+    </section>
+
+    <!-- 道路运输证 -->
+    <section class="card" id="section-transport">
+      <div class="section-title">
+        <span class="required">*</span>
+        道路运输证（挂车）
+      </div>
+      <div class="upload-group" data-field="transportCert">
+        <div class="upload-row single">
+          <button type="button" class="upload-box" data-upload="transportCert">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            点击上传道路运输证
+          </button>
+        </div>
+        <p class="field-error">请上传道路运输证</p>
+      </div>
+    </section>
+
+    <!-- 人车合影 -->
+    <section class="card" id="section-photo">
+      <div class="section-title">
+        <span class="required">*</span>
+        三 人车合影照片
+      </div>
+      <p class="field-hint">人脸清晰车牌清晰，且人脸与车牌在同一画面中</p>
+      <div class="upload-group" data-field="personVehiclePhoto">
+        <button type="button" class="upload-box small" data-upload="personVehiclePhoto">
+          <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          更多
+        </button>
+        <p class="field-error">请上传人车合影照片</p>
+      </div>
+    </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <label class="agreement" id="agreementWrap">
+      <input type="checkbox" id="agreement" checked />
+      <span class="checkbox"></span>
+      <span>您同意我们收集身份证用于承运资质审核</span>
+    </label>
+    <p class="agreement-error">请勾选同意协议</p>
+    <button type="button" class="submit-btn" id="submitBtn">同意提供上述信息进行审核</button>
+  </footer>
+
+  <input type="file" id="fileInput" accept="image/*" />
+
+  <script>
+    const uploads = {};
+    let activeUploadKey = null;
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !activeUploadKey) return;
+      uploads[activeUploadKey] = file.name;
+      const btn = document.querySelector('[data-upload="' + activeUploadKey + '"]');
+      if (btn) {
+        btn.classList.add('has-file');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" stroke="#ff8533" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>已上传';
+      }
+      e.target.value = '';
+      activeUploadKey = null;
+    });
+
+    document.querySelectorAll('[data-upload]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeUploadKey = btn.dataset.upload;
+        document.getElementById('fileInput').click();
+      });
+    });
+
+    document.querySelectorAll('.toggle').forEach((toggle) => {
+      toggle.addEventListener('click', () => toggle.classList.toggle('on'));
+    });
+
+    document.getElementById('addVehicle').addEventListener('click', () => {
+      alert('新增车辆（原型演示）');
+    });
+
+    const selectOptions = {
+      vehicleType: ['厢式货车', '平板货车', '冷藏车', '其他'],
+      vehicleLength: ['4.2米', '6.8米', '9.6米', '13米', '17.5米'],
+      emissionStd: ['国五', '国六'],
+      sizeType: ['大车型', '小车型'],
+    };
+
+    document.querySelectorAll('.field-row.select').forEach((row) => {
+      const input = row.querySelector('[data-input]');
+      if (!input) return;
+      const key = input.dataset.input;
+      row.addEventListener('click', () => {
+        if (key === 'registerDate') {
+          const val = prompt('请填写车辆注册时间（格式 YYYY-MM-DD）', input.value || '2020-01-01');
+          if (val) input.value = val;
+          return;
+        }
+        const opts = selectOptions[key];
+        if (!opts) return;
+        const label = row.querySelector('.field-label')?.textContent.replace(/\*/g, '').trim() || '';
+        const val = prompt('请选择' + label, input.value || opts[0]);
+        if (val && opts.includes(val)) input.value = val;
+        else if (val !== null && !input.value) input.value = opts[0];
+      });
+    });
+
+    function updateTrailerVisibility() {
+      const isTrailer = document.querySelector('input[name="isTrailer"]:checked')?.value === 'yes';
+      const trailerFields = document.getElementById('trailerFields');
+      const trailerNoRow = document.getElementById('trailerNoRow');
+      if (trailerFields) trailerFields.classList.toggle('hidden', !isTrailer);
+      if (trailerNoRow) trailerNoRow.style.display = isTrailer ? 'flex' : 'none';
+    }
+
+    document.querySelectorAll('input[name="isTrailer"]').forEach((radio) => {
+      radio.addEventListener('change', updateTrailerVisibility);
+    });
+    updateTrailerVisibility();
+
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach((el) => el.classList.remove('error'));
+    }
+
+    function markError(el) {
+      if (el) el.classList.add('error');
+    }
+
+    function validate() {
+      clearErrors();
+      const checks = [
+        {
+          ok: uploads.idFront && uploads.idBack,
+          el: document.querySelector('[data-field="idFront"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="name"]').value.trim(),
+          el: document.querySelector('[data-field="name"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="idNo"]').value.trim(),
+          el: document.querySelector('[data-field="idNo"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="realPhone"]').value.trim(),
+          el: document.querySelector('[data-field="realPhone"]'),
+        },
+        {
+          ok: uploads.licenseFront && uploads.licenseBack,
+          el: document.querySelector('[data-field="license"]'),
+        },
+        {
+          ok: uploads.vehicleLicenseFront && uploads.vehicleLicenseBack,
+          el: document.querySelector('[data-field="vehicleLicense"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="plateNo"]').value.trim(),
+          el: document.querySelector('[data-field="plateNo"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="registerDate"]').value,
+          el: document.querySelector('[data-field="registerDate"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="vehicleType"]').value.trim(),
+          el: document.querySelector('[data-field="vehicleType"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="vehicleLength"]').value.trim(),
+          el: document.querySelector('[data-field="vehicleLength"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="totalMass"]').value.trim(),
+          el: document.querySelector('[data-field="totalMass"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="loadMass"]').value.trim(),
+          el: document.querySelector('[data-field="loadMass"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="curbMass"]').value.trim(),
+          el: document.querySelector('[data-field="curbMass"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="emissionStd"]').value.trim(),
+          el: document.querySelector('[data-field="emissionStd"]'),
+        },
+        {
+          ok: document.querySelector('[data-input="sizeType"]').value.trim(),
+          el: document.querySelector('[data-field="sizeType"]'),
+        },
+        {
+          ok: (() => {
+            const isTrailer = document.querySelector('input[name="isTrailer"]:checked')?.value === 'yes';
+            return !isTrailer || document.querySelector('[data-input="trailerNo"]').value.trim();
+          })(),
+          el: document.querySelector('[data-field="trailerNo"]'),
+        },
+        {
+          ok: (() => {
+            const isTrailer = document.querySelector('input[name="isTrailer"]:checked')?.value === 'yes';
+            return !isTrailer || (uploads.trailerLicenseFront && uploads.trailerLicenseBack);
+          })(),
+          el: document.querySelector('[data-field="trailerLicense"]'),
+        },
+        {
+          ok: (() => {
+            const isTrailer = document.querySelector('input[name="isTrailer"]:checked')?.value === 'yes';
+            return !isTrailer || uploads.transportCert;
+          })(),
+          el: document.querySelector('[data-field="transportCert"]'),
+        },
+        {
+          ok: (() => {
+            const isTrailer = document.querySelector('input[name="isTrailer"]:checked')?.value === 'yes';
+            return !isTrailer || uploads.personVehiclePhoto;
+          })(),
+          el: document.querySelector('[data-field="personVehiclePhoto"]'),
+        },
+        {
+          ok: document.getElementById('agreement').checked,
+          el: document.getElementById('agreementWrap'),
+        },
+      ];
+
+      for (const item of checks) {
+        if (!item.ok) {
+          markError(item.el);
+          item.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return false;
+        }
+      }
+      return true;
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      if (validate()) {
+        alert('提交成功（原型演示）');
+      }
+    });
+  </script>
+</body>
+</html>

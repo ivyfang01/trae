@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CRM首页 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body>
+    <div class="greeting-bar">
+        <div class="greeting-row">
+            <span class="greeting-text">晚上好，方伟萍</span>
+            <button class="switch-btn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                切换
+            </button>
+        </div>
+        <div class="greeting-subtitle">
+            <span>大宗豆粕最高职级</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">常用功能</div>
+        <div class="func-grid">
+            <button class="func-btn" type="button">素材库</button>
+            <button class="func-btn" type="button">新规发布处</button>
+            <button class="func-btn" type="button">查询订单</button>
+            <button class="func-btn" type="button">客户导出</button>
+            <button class="func-btn" type="button">日报</button>
+            <button class="func-btn" type="button">客户拜访</button>
+            <button class="func-btn" type="button">打卡明细</button>
+            <button class="func-btn" type="button">补卡申请</button>
+            <button class="func-btn" type="button">新增未注册</button>
+            <button class="func-btn" type="button" onclick="location.href='11_data_assistant.html'">数据助手</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <span class="section-title">任务日程</span>
+            <span class="link-more">查看更多 &gt;</span>
+        </div>
+        <div class="calendar-strip">
+            <div class="calendar-day"><span class="day-label">五</span><span class="day-number">12</span></div>
+            <div class="calendar-day"><span class="day-label">六</span><span class="day-number">13</span></div>
+            <div class="calendar-day"><span class="day-label">日</span><span class="day-number">14</span></div>
+            <div class="calendar-day"><span class="day-label">一</span><span class="day-number today">15</span></div>
+            <div class="calendar-day"><span class="day-label">二</span><span class="day-number">16</span></div>
+            <div class="calendar-day"><span class="day-label">三</span><span class="day-number">17</span></div>
+            <div class="calendar-day"><span class="day-label">四</span><span class="day-number">18</span></div>
+        </div>
+        <div class="task-card-inner">
+            <div class="task-card-left">
+                <svg class="task-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <div>
+                    <div class="task-name">本周拜访任务</div>
+                    <div class="task-desc">本周无拜访客户</div>
+                </div>
+            </div>
+            <div class="task-add">+</div>
+        </div>
+    </div>
+
+    <div class="main-tabs">
+        <div class="main-tab-list">
+            <div class="main-tab-item active" data-tab="perf">绩效</div>
+            <div class="main-tab-item" data-tab="sales" onclick="location.href='09_sales_overview.html'">销售</div>
+            <div class="main-tab-item" data-tab="customer">客户</div>
+            <div class="main-tab-item" data-tab="team">团队</div>
+        </div>
+    </div>
+    <div class="sub-tabs">
+        <div class="sub-tab-item active">今日</div>
+        <div class="sub-tab-item">本周</div>
+        <div class="sub-tab-item">本月</div>
+        <div class="sub-tab-item">上月</div>
+    </div>
+
+    <div class="card" style="margin-top:0;border-radius:0 0 12px 12px;">
+        <div class="metric-header">
+            <div class="metric-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><polyline points="9 14 11 16 15 12"/></svg>
+                出勤
+            </div>
+            <div class="link-more-group">
+                <span class="link-more">出勤规范</span>
+                <span class="link-more">查看更多 &gt;</span>
+            </div>
+        </div>
+        <div class="metric-row-4">
+            <div>
+                <div class="metric-cell-label">正常出勤(天)</div>
+                <div class="metric-cell-value green">8.53/26</div>
+            </div>
+            <div>
+                <div class="metric-cell-label">未出勤(天) <i class="info-icon">i</i></div>
+                <div class="metric-cell-value green">612 (347+265)</div>
+            </div>
+            <div>
+                <div class="metric-cell-label">异常天数 <i class="info-icon">i</i></div>
+                <div class="metric-cell-value red">488-0=488</div>
+            </div>
+            <div>
+                <div class="metric-cell-label">扣款</div>
+                <div class="metric-cell-value red">-37430</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="metric-header">
+            <div class="metric-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                客户管理
+            </div>
+            <div class="link-more-group">
+                <span class="dropdown-inline">预混料 ▾</span>
+                <span class="link-more">查看更多 &gt;</span>
+            </div>
+        </div>
+        <div class="metric-row-4 metric-row-4-top">
+            <div><div class="metric-cell-label">全部客户数</div><div class="metric-cell-value">26666</div></div>
+            <div><div class="metric-cell-label">养殖档案数</div><div class="metric-cell-value green">5015</div></div>
+            <div><div class="metric-cell-label">机会点客户</div><div class="metric-cell-value">313</div></div>
+            <div><div class="metric-cell-label">成交客户</div><div class="metric-cell-value green">1750</div></div>
+        </div>
+        <hr class="metric-divider">
+        <div class="metric-row-4">
+            <div><div class="metric-cell-label">老客户 <i class="info-icon">i</i></div><div class="metric-cell-value">—</div></div>
+            <div><div class="metric-cell-label">本月成交老客户(个)</div><div class="metric-cell-value">—</div></div>
+            <div><div class="metric-cell-label">拜访复购率</div><div class="metric-cell-value">—</div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>首页</span>
+        </div>
+        <div class="nav-item" onclick="location.href='02_customer_list.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>客户</span>
+        </div>
+        <div class="nav-item">
+            <span class="clock-icon-box">+</span>
+            <span>打卡</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>任务</span>
+        </div>
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>消息</span>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.sub-tab-item').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.sub-tab-item').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            });
+        });
+        document.querySelectorAll('.main-tab-item').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.main-tab-item').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

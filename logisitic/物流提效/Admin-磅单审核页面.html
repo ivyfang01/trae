@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>查看磅单 · 审核</title>
+  <style>
+    /* 严格对齐「查看磅单」已有样式：灰底白卡、蓝竖条标题、灰底 label 单元格表格 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      padding: 24px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #fff;
+      min-height: calc(100vh - 48px);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .page-hd h1 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-right: 12px;
+    }
+    .tag {
+      display: inline-block;
+      height: 22px;
+      line-height: 20px;
+      padding: 0 8px;
+      font-size: 12px;
+      border-radius: 2px;
+      margin-right: 8px;
+      border: 1px solid transparent;
+    }
+    .tag-red {
+      color: #cf1322;
+      background: #fff1f0;
+      border-color: #ffa39e;
+    }
+    .tag-blue {
+      color: #096dd9;
+      background: #e6f7ff;
+      border-color: #91d5ff;
+    }
+    .hd-close {
+      margin-left: auto;
+      font-size: 18px;
+      color: rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .page-bd { padding: 16px 24px 24px; }
+    .block {
+      margin-bottom: 20px;
+    }
+    .block-title {
+      position: relative;
+      padding-left: 11px;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .block-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 3px;
+      width: 3px;
+      height: 16px;
+      background: #1890ff;
+      border-radius: 1px;
+    }
+    /* 描述列表表格：label 灰底 + 细边框 */
+    .desc-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      border: 1px solid #e8e8e8;
+    }
+    .desc-table th,
+    .desc-table td {
+      border: 1px solid #e8e8e8;
+      padding: 10px 12px;
+      font-size: 14px;
+      vertical-align: middle;
+      word-break: break-all;
+    }
+    .desc-table th {
+      width: 120px;
+      background: #fafafa;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 400;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .desc-table td {
+      background: #fff;
+      color: rgba(0, 0, 0, 0.85);
+      text-align: left;
+    }
+    .desc-table th.w160 { width: 140px; }
+    .link {
+      color: #1890ff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link:hover { text-decoration: underline; }
+    .green { color: #52c41a; }
+    .red { color: #ff4d4f; }
+
+    /* 装卸货：左侧标签列 + 图 + 三列数据 */
+    .io-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e8e8e8;
+      margin-bottom: 0;
+    }
+    .io-table > tbody > tr > th,
+    .io-table > tbody > tr > td {
+      border: 1px solid #e8e8e8;
+      vertical-align: top;
+      padding: 12px;
+    }
+    .io-table > tbody > tr > th {
+      width: 88px;
+      background: #fafafa;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .io-inner {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .thumb {
+      width: 120px;
+      height: 120px;
+      flex-shrink: 0;
+      border: 1px solid #e8e8e8;
+      background: #f5f5f5;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .thumb-img {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #d9d9d9, #bfbfbf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(0, 0, 0, 0.35);
+      font-size: 12px;
+    }
+    .thumb-mask {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 28px;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .io-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px 24px;
+      min-width: 0;
+    }
+    .io-field .k {
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .io-field .v {
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 14px;
+    }
+    .config-box {
+      border: 1px solid #e8e8e8;
+      background: #fafafa;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 1.8;
+    }
+    /* 操作记录标准表 */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e8e8e8;
+    }
+    .data-table th,
+    .data-table td {
+      border: 1px solid #e8e8e8;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #fafafa;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+    }
+    .data-table td {
+      background: #fff;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    .page-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 24px;
+      border-top: 1px solid #e8e8e8;
+      background: #fff;
+    }
+    .btn {
+      height: 32px;
+      padding: 0 15px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      border-radius: 2px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .new-tip {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #ff4d4f;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>查看磅单</h1>
+      <span class="tag tag-red">提货单发车</span>
+      <span class="tag tag-blue">物流单号：LBBWLSP2026072399</span>
+      <span class="hd-close" title="关闭">×</span>
+    </div>
+
+    <div class="page-bd">
+      <!-- 司机信息 -->
+      <div class="block">
+        <div class="block-title">司机信息</div>
+        <table class="desc-table">
+          <tr>
+            <th>运输承运商</th>
+            <td colspan="3">河南某某物流有限公司</td>
+          </tr>
+          <tr>
+            <th>司机姓名</th>
+            <td>丁永记</td>
+            <th class="w160">司机手机号</th>
+            <td>13525725672</td>
+          </tr>
+          <tr>
+            <th>车牌号</th>
+            <td colspan="3">豫CL1291</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 装卸货信息 -->
+      <div class="block">
+        <div class="block-title">装卸货信息</div>
+        <table class="io-table">
+          <tr>
+            <th>装货信息</th>
+            <td>
+              <div class="io-inner">
+                <div class="thumb">
+                  <div class="thumb-img">装货磅单</div>
+                  <div class="thumb-mask">点击预览</div>
+                </div>
+                <div class="io-grid">
+                  <div class="io-field"><div class="k">毛重</div><div class="v">10 吨</div></div>
+                  <div class="io-field"><div class="k">皮重</div><div class="v">0.02 吨</div></div>
+                  <div class="io-field"><div class="k">净重</div><div class="v">9.98 吨</div></div>
+                  <div class="io-field"><div class="k">包装方式</div><div class="v">50kg</div></div>
+                  <div class="io-field"><div class="k">袋数</div><div class="v">200 袋</div></div>
+                  <div class="io-field"><div class="k">备注</div><div class="v">—</div></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>卸货信息</th>
+            <td>
+              <div class="io-inner">
+                <div class="thumb">
+                  <div class="thumb-img">卸货磅单</div>
+                  <div class="thumb-mask">点击预览</div>
+                </div>
+                <div class="io-grid">
+                  <div class="io-field"><div class="k">毛重</div><div class="v">10 吨</div></div>
+                  <div class="io-field"><div class="k">皮重</div><div class="v">0.17 吨</div></div>
+                  <div class="io-field"><div class="k">净重</div><div class="v">9.83 吨</div></div>
+                  <div class="io-field"><div class="k">包装方式</div><div class="v">50kg</div></div>
+                  <div class="io-field"><div class="k">袋数</div><div class="v">197 袋</div></div>
+                  <div class="io-field"><div class="k">备注</div><div class="v">—</div></div>
+                  <div class="io-field" style="grid-column:1/-1"><div class="v" style="color:#ff4d4f;font-size:12px">业务员确认扣减0.15吨</div></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 业务员确认磅单 · 放在车辆路径上面 -->
+      <div class="block">
+        <div class="block-title">业务员确认收货</div>
+        <table class="desc-table">
+          <tr>
+            <th>确认结果</th>
+            <td>确认收货无磅差</td>
+            <th class="w160">装卸磅差</th>
+            <td>装卸货吨位数相同，无磅差</td>
+          </tr>
+          <tr>
+            <th>确认人</th>
+            <td>张三</td>
+            <th class="w160">确认时间</th>
+            <td>2026-07-24 16:05:18</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 业务员确认磅单 · 放在车辆路径上面 -->
+      <div class="block">
+        <div class="block-title">业务员确认收货</div>
+        <table class="desc-table">
+          <tr>
+            <th>确认结果</th>
+            <td>有磅差需扣除</td>
+            <th class="w160">装卸磅差</th>
+            <td>0.15吨（2包）</td>
+          </tr>
+          <tr>
+            <th>扣除吨数</th>
+            <td>3吨</td>
+          </tr>
+          <tr>
+            <th>确认人</th>
+            <td>张三</td>
+            <th class="w160">确认时间</th>
+            <td>2026-07-24 16:05:18</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 业务员确认磅单 · 放在车辆路径上面 -->
+      <div class="block">
+        <div class="block-title">业务员确认收货</div>
+        <table class="desc-table">
+          <tr>
+            <th>确认结果</th>
+            <td>未确认</td>
+            <th class="w160">装卸磅差</th>
+            <td>0.15吨（2包）</td>
+          </tr>
+          <tr>
+            <th>扣除吨数</th>
+            <td>-</td>
+          </tr>
+          <tr>
+            <th>确认人</th>
+            <td></td>
+            <th class="w160">确认时间</th>
+            <td>-</td>
+          </tr>
+        </table>
+      </div>      
+      
+      <!-- 车辆路径 -->
+      <div class="block">
+        <div class="block-title">车辆路径</div>
+        <table class="desc-table">
+          <tr>
+            <th>起点</th>
+            <td>沁阳市 · 文帝名邸-丽景苑8号大门附近</td>
+          </tr>
+          <tr>
+            <th>终点</th>
+            <td>沁阳市 · 某某饲料厂卸货点</td>
+          </tr>
+          <tr>
+            <th>已关联提货单</th>
+            <td>TH20260724001</td>
+          </tr>
+          <tr>
+            <th>公里数计算</th>
+            <td>起点-终点 路径：75.11 KM</td>
+          </tr>
+          <tr>
+            <th>查看车辆轨迹</th>
+            <td><a class="link" href="javascript:;">点击查看</a></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 运费 -->
+      <div class="block">
+        <div class="block-title">运费</div>
+        <table class="desc-table">
+          <tr>
+            <th>关联运费配置</th>
+            <td colspan="3">
+              <div class="config-box">
+                付费方：平台　·　单价：30 元/吨　·　基础运费参考：300 元<br/>
+                计费说明：按吨计算，含装卸费；建议按净重结算
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>运费计算方式</th>
+            <td>按吨计算</td>
+            <th class="w160">应付司机运费</th>
+            <td>30 元/吨</td>
+          </tr>
+          <tr>
+            <th>计费依据</th>
+            <td>依据卸货重量结算</td>
+            <th class="w160">运费合计</th>
+            <td>294.90 元</td>
+          </tr>
+          <tr>
+            <th>超过司机基准价</th>
+            <td colspan="3" class="green">-97.83%</td>
+          </tr>
+          <tr>
+            <th>备注</th>
+            <td colspan="3">业务员已确认扣吨 0.15</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 操作记录 -->
+      <div class="block">
+        <div class="block-title">操作记录</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:64px">序号</th>
+              <th>阶段</th>
+              <th>操作设备</th>
+              <th>操作人</th>
+              <th>操作时间</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>派车</td>
+              <td>管理后台</td>
+              <td>物流运营</td>
+              <td>2026-07-23 09:01:12</td>
+              <td>派单成功</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>接单</td>
+              <td>司机App</td>
+              <td>丁永记</td>
+              <td>2026-07-23 09:20:05</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>上传发货磅单</td>
+              <td>司机App</td>
+              <td>丁永记</td>
+              <td>2026-07-23 19:40:18</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>上传收货磅单</td>
+              <td>司机App</td>
+              <td>丁永记</td>
+              <td>2026-07-24 17:30:44</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>业务员确认收货</td>
+              <td>钉钉</td>
+              <td>张三</td>
+              <td>2026-07-24 16:05:18</td>
+              <td>业务员已确认：有磅差需扣除0.15 吨</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="page-ft">
+      <button type="button" class="btn">取消</button>
+      <button type="button" class="btn">保存</button>
+      <button type="button" class="btn btn-primary">提交审核</button>
+    </div>
+  </div>
+</body>
+</html>

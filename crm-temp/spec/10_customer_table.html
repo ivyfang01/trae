@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>客户明细 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="nav-title">客户明细</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="search-bar">
+        <div class="search-input-wrap">
+            <input type="text" placeholder="请输入客户名称/手机号">
+        </div>
+        <button class="search-solid-btn" type="button">搜索</button>
+        <button class="search-solid-btn" type="button">导出</button>
+    </div>
+
+    <div class="filter-row-inline">
+        <div class="filter-select-box">请选择机会点客 <span>›</span></div>
+        <div class="filter-select-box">请选新老客 <span>›</span></div>
+        <button class="btn-more-outline" type="button">更多</button>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>客户名称</th>
+                <th>成交吨数</th>
+                <th>本月成交吨数</th>
+                <th>最近成交</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="name-link" onclick="location.href='05_customer_profile.html'">宁夏汇牛畜牧有限公司</span></td>
+                <td>0</td>
+                <td>0</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td><span class="name-link">周俊雷</span></td>
+                <td>0</td>
+                <td>0</td>
+                <td>—</td>
+            </tr>
+            <tr>
+                <td><span class="name-link">张爱国</span></td>
+                <td>120</td>
+                <td>30</td>
+                <td>2026-03-01</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

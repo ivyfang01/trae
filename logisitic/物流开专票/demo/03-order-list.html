@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>物流订单</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone no-footer">
+    <div class="nav">
+      <div class="nav-title">物流订单</div>
+    </div>
+
+    <div class="tabs">
+      <a class="active" href="javascript:;">全部</a>
+      <a href="javascript:;">待付款</a>
+      <a href="javascript:;">进行中</a>
+      <a href="javascript:;">已完成</a>
+    </div>
+
+    <!-- 待付款 -->
+    <div class="list-card">
+      <div class="list-head">
+        <span class="no">WL20260720001</span>
+        <span class="status">待付款</span>
+      </div>
+      <div class="list-title">豆粕 42% · 33 吨</div>
+      <div class="route">
+        <span class="dot"></span>
+        <span>南通通州 · 某某饲料厂</span>
+      </div>
+      <div class="route">
+        <span class="dot end"></span>
+        <span>合肥肥东 · 某某养殖场</span>
+      </div>
+      <div class="list-meta" style="margin-top:8px">配送日期：<span>2026-07-22</span></div>
+      <div class="list-meta">运费：<span style="color:var(--brand);font-weight:700">¥2,640.00</span></div>
+      <div class="list-actions">
+        <a class="btn btn-ghost" href="javascript:;">取消订单</a>
+        <a class="btn btn-blue" href="04-order-detail.html">查看详情</a>
+        <a class="btn btn-orange" href="02-pay.html">付款</a>
+      </div>
+    </div>
+
+    <!-- 运输中 -->
+    <div class="list-card">
+      <div class="list-head">
+        <span class="no">WL20260718008</span>
+        <span class="status">运输中</span>
+      </div>
+      <div class="list-title">
+        <span class="tag">专票</span>
+        玉米 15% · 40 吨
+      </div>
+      <div class="route">
+        <span class="dot"></span>
+        <span>徐州铜山 · 粮库 A</span>
+      </div>
+      <div class="route">
+        <span class="dot end"></span>
+        <span>宿州埇桥 · 养殖场 B</span>
+      </div>
+      <div class="list-meta" style="margin-top:8px">配送日期：<span>2026-07-19</span></div>
+      <div class="list-meta">运费：<span>¥3,200.00</span></div>
+      <div class="list-actions">
+        <a class="btn btn-blue" href="javascript:;">查看轨迹</a>
+        <a class="btn btn-blue" href="04-order-detail.html">查看详情</a>
+      </div>
+    </div>
+
+    <!-- 已完成 -->
+    <div class="list-card" style="margin-bottom:24px">
+      <div class="list-head">
+        <span class="no">WL20260710003</span>
+        <span class="status done">已完成</span>
+      </div>
+      <div class="list-title">麸皮 · 28 吨</div>
+      <div class="route">
+        <span class="dot"></span>
+        <span>连云港 · 港口仓</span>
+      </div>
+      <div class="route">
+        <span class="dot end"></span>
+        <span>淮安 · 饲料厂 C</span>
+      </div>
+      <div class="list-meta" style="margin-top:8px">配送日期：<span>2026-07-11</span></div>
+      <div class="list-meta">运费：<span>¥2,100.00</span></div>
+      <div class="list-actions">
+        <a class="btn btn-blue" href="javascript:;">查看轨迹</a>
+        <a class="btn btn-blue" href="javascript:;">查看发票</a>
+        <a class="btn btn-blue" href="04-order-detail.html">查看详情</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>派单列表</title>
+  <style>
+    :root {
+      --blue: #2f7cf6;
+      --blue-dark: #1a6eef;
+      --green: #22c55e;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --muted: #bfbfbf;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(56px + var(--safe-bottom));
+    }
+
+    /* Header */
+    .header {
+      background: #fff;
+      padding: 10px 12px 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+    }
+
+    .header-top .icon-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .header-action {
+      font-size: 13px;
+      color: var(--blue);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 4px 6px;
+      font-weight: 500;
+    }
+
+    .station {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      min-width: 0;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .station .swap {
+      width: 16px;
+      height: 16px;
+      color: #666;
+    }
+
+    /* Tabs */
+    .tabs-wrap {
+      background: #fff;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+
+    .tabs {
+      display: flex;
+      padding: 0 8px;
+      min-width: max-content;
+    }
+
+    .tabs a {
+      padding: 12px 10px 10px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tabs a.active {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 3px;
+      background: var(--blue);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* List */
+    .list {
+      padding: 10px 12px 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px 12px 10px;
+      margin-bottom: 10px;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .row .label {
+      width: 78px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .row .value .link {
+      color: var(--blue);
+      margin-left: 6px;
+      text-decoration: none;
+    }
+
+    .addr {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .addr-tag {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .addr-tag.load { background: var(--blue); }
+    .addr-tag.unload { background: var(--green); }
+
+    .addr-body {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .addr-text {
+      flex: 1;
+      color: var(--text);
+      line-height: 1.5;
+      word-break: break-all;
+    }
+
+    .addr-copy {
+      flex-shrink: 0;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 13px;
+      padding-top: 1px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions-right {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      background: #fff;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    /* Bottom nav */
+    .tabbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: calc(56px + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: #fff;
+      border-top: 1px solid #eee;
+      display: flex;
+    }
+
+    .tabbar a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #999;
+      font-size: 11px;
+      gap: 2px;
+    }
+
+    .tabbar a.active { color: var(--blue); }
+
+    .tabbar svg {
+      width: 22px;
+      height: 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="header">
+      <div class="header-top">
+        <a class="icon-btn" href="javascript:;" aria-label="菜单">☰</a>
+        <div class="station">
+          外部订单
+          <!-- <svg class="swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> -->
+            <path d="M7 7h11l-2-2M17 17H6l2 2" />
+          </svg>
+        </div>
+        <div class="header-right">
+          <a class="header-action" href="01-create-order.html">辅助下单</a>
+          <a class="icon-btn" href="javascript:;" aria-label="搜索">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <a href="javascript:;">豆粕</a>
+        <a class="active" href="javascript:;">待派单(80)</a>
+        <a href="javascript:;">待接单(15)</a>
+        <a href="javascript:;">已接单(44)</a>
+        <a href="javascript:;">待结算(56)</a>
+      </div>
+    </div>
+
+    <div class="list">
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="row"><span class="label">物流订单号</span><span class="value">--</span></div>
+        <div class="row">
+          <span class="label">运输订单号</span>
+          <span class="value">YS2026071429<a class="link" href="javascript:;">复制</a></span>
+        </div>
+        <div class="row"><span class="label">货物</span><span class="value">豆粕49kg80% 20吨</span></div>
+        <div class="row">
+          <span class="label">客户</span>
+          <span class="value">邱鹏鹏<a class="link" href="javascript:;">联系客户</a></span>
+        </div>
+        <div class="row"><span class="label">支付状态</span><span class="value" style="color:var(--blue);font-weight:600">待付款</span></div>
+
+        <div class="addr">
+          <span class="addr-tag load">装</span>
+          <div class="addr-body">
+            <span class="addr-text">河北省-秦皇岛市-北戴河区-上海浦东下盐路</span>
+            <a class="addr-copy" href="javascript:;">复制</a>
+          </div>
+        </div>
+        <div class="addr">
+          <span class="addr-tag unload">卸</span>
+          <div class="addr-body">
+            <span class="addr-text">上海市-上海市-浦东新区-航鹤路2268号2268号</span>
+            <a class="addr-copy" href="javascript:;">复制</a>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="javascript:;">查看详情</a>
+          <div class="actions-right">
+            <a class="btn" href="javascript:;">分享支付链接</a>
+            <a class="btn btn-primary" href="javascript:;">找车派单</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2：已付款 -->
+      <div class="card">
+        <div class="row"><span class="label">物流订单号</span><span class="value">--</span></div>
+        <div class="row">
+          <span class="label">运输订单号</span>
+          <span class="value">YS2026071428<a class="link" href="javascript:;">复制</a></span>
+        </div>
+        <div class="row"><span class="label">货物</span><span class="value">豆粕49kg80% 20吨</span></div>
+        <div class="row">
+          <span class="label">客户</span>
+          <span class="value">邱鹏鹏<a class="link" href="javascript:;">联系客户</a></span>
+        </div>
+        <div class="row"><span class="label">支付状态</span><span class="value" style="color:#22c55e;font-weight:600">已付款</span></div>
+
+        <div class="addr">
+          <span class="addr-tag load">装</span>
+          <div class="addr-body">
+            <span class="addr-text">河北省-秦皇岛市-北戴河区-上海浦东下盐路</span>
+            <a class="addr-copy" href="javascript:;">复制</a>
+          </div>
+        </div>
+        <div class="addr">
+          <span class="addr-tag unload">卸</span>
+          <div class="addr-body">
+            <span class="addr-text">上海市-上海市-浦东新区-航鹤路2268号2268号</span>
+            <a class="addr-copy" href="javascript:;">复制</a>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="javascript:;">查看详情</a>
+          <div class="actions-right">
+            <a class="btn btn-primary" href="javascript:;">找车派单</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabbar">
+      <a class="active" href="javascript:;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2l1-4h10l2 4h2v6h-2a2 2 0 01-4 0H9a2 2 0 01-4 0H3v-6zm14.5-2l-1-2H8.5l-1 2h10z"/></svg>
+        物流
+      </a>
+      <a href="javascript:;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+        补货
+      </a>
+      <a href="javascript:;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+        收货
+      </a>
+      <a href="javascript:;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13h2l1-3h9l2 3h2v5h-2a2 2 0 01-4 0H9a2 2 0 01-4 0H3v-5z"/><path d="M16 7l2-2m0 0l2 2m-2-2v5"/></svg>
+        提货
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

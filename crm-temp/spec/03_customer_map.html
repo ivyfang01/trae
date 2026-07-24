@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>地图模式 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+    <style>body { padding-bottom: 320px; }</style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" onclick="history.back()"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="nav-title">粮巴巴</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="search-bar">
+        <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="搜索客户名称/客户手机号/微信昵称">
+        </div>
+        <button class="search-text-btn" type="button">搜索</button>
+        <button class="search-text-btn" type="button">导出</button>
+    </div>
+    <div class="filter-bar">
+        <div class="filter-item">距离从近到远 ▾</div>
+        <div class="filter-item">注册类型 ▾</div>
+        <div class="filter-item">机会点客户 ▾</div>
+        <div class="filter-item">更多筛选 ▾</div>
+    </div>
+    <div class="distance-bar">
+        <div class="distance-tag active">不限</div>
+        <div class="distance-tag">500米内</div>
+        <div class="distance-tag">1千米内</div>
+        <div class="distance-tag">3千米内</div>
+    </div>
+
+    <div class="map-page" style="min-height:calc(100vh - 200px);">
+        <div class="map-bg"></div>
+        <div class="map-side-tabs">
+            <div class="map-side-tab">我的客户</div>
+            <div class="map-side-tab">公海客户</div>
+            <div class="map-side-tab active">团队客户</div>
+        </div>
+        <div class="map-float-right">
+            <div class="map-float-btn" onclick="location.href='02_customer_list.html'">↻ 客户列表</div>
+            <div class="map-float-btn">拜访记录</div>
+        </div>
+        <div class="map-controls">
+            <div class="map-ctrl-btn">◎</div>
+            <div class="map-ctrl-btn">+</div>
+            <div class="map-ctrl-btn">−</div>
+        </div>
+    </div>
+
+    <div class="map-bottom-card">
+        <div class="customer-header">
+            <div class="customer-name-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="customer-name">方测</span>
+            </div>
+            <span class="customer-assign">业务归属：方伟萍</span>
+        </div>
+        <div class="tags-row">
+            <span class="tag tag-orange">本月未拜访</span>
+            <span class="tag tag-orange">未注册客户</span>
+        </div>
+        <div class="field-grid-2">
+            <div class="field-item"><span class="field-label">客户类型：</span><span class="field-value"></span></div>
+            <div class="field-item"><span class="field-label">养殖规模：</span><span class="field-value">0</span></div>
+            <div class="field-item"><span class="field-label">鸡只品种：</span><span class="field-value"></span></div>
+            <div class="field-item"><span class="field-label">阶段：</span><span class="field-value"></span></div>
+            <div class="field-item"><span class="field-label">未提吨数：</span><span class="field-value">0吨</span></div>
+            <div class="field-item"><span class="field-label">偏好：</span><span class="field-value"></span></div>
+            <div class="field-item"><span class="field-label">最后下单：</span><span class="field-value"></span></div>
+            <div class="field-item"><span class="field-label">最后提货：</span><span class="field-value"></span></div>
+        </div>
+        <div class="opportunity-row"><span class="field-label">机会点：</span><span class="link-text">添加机会点</span></div>
+        <div class="links-row">
+            <span class="link-text">查看门头照片</span>
+            <span class="link-text">查看拜访记录</span>
+        </div>
+        <div class="actions-row-a">
+            <div class="action-btn-a action-blue"><span>企微</span></div>
+            <div class="action-divider"></div>
+            <div class="action-btn-a action-green"><span>电话</span></div>
+            <div class="action-divider"></div>
+            <div class="action-btn-a action-orange"><span>导航</span></div>
+            <div class="action-divider"></div>
+            <div class="action-btn-a action-blue"><span>写跟进</span></div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.map-side-tab').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.map-side-tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>客户档案 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" onclick="history.back()"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="nav-title">客户档案</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="profile-tabs">
+        <div class="profile-tab active">机会点</div>
+        <div class="profile-tab">客户信息</div>
+        <div class="profile-tab">养殖信息</div>
+        <div class="profile-tab">交易配置</div>
+        <div class="profile-tab">地址管理</div>
+    </div>
+
+    <div class="card">
+        <div class="field-grid-2">
+            <div class="field-item"><span class="field-label">客户名称：</span><span class="field-value">杨昕</span></div>
+            <div class="field-item"><span class="field-label">客户等级：</span><span class="field-value">C2</span></div>
+            <div class="field-item"><span class="field-label">养殖编号：</span><span class="field-value">1栋</span></div>
+            <div class="field-item"><span class="field-label">养殖规模：</span><span class="field-value">20000只</span></div>
+            <div class="field-item"><span class="field-label">养殖类型：</span><span class="field-value">鸡</span></div>
+            <div class="field-item"><span class="field-label">预混料品牌：</span><span class="field-value">海大</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="field-list">
+            <div class="field-line">预计成交日期：<b>2025-12-31</b></div>
+            <div class="field-line">预计销售吨位数：<b>2吨</b></div>
+            <div class="field-line">机会点：</div>
+            <span class="opp-tag">鸡只有病，需要技术支持</span>
+            <div class="field-line" style="margin-top:12px;">机会点说明：</div>
+            <div class="field-textarea-display">
+                <span class="opp-tag" style="margin-top:0;">鸡只有病，需要技术支持</span><br>无
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="field-list">
+            <div class="field-line">创建时间：<b>2025-10-01 10:30:00</b></div>
+            <div class="field-line">更新时间：<b>2025-12-15 14:20:00</b></div>
+            <div class="field-line">状态：<b class="status-green">审核通过</b></div>
+        </div>
+    </div>
+
+    <button class="btn-full-primary" type="button">编辑</button>
+
+    <script>
+        document.querySelectorAll('.profile-tab').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

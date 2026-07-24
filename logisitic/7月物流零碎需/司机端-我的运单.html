@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>我的运单</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .notice {
+      background: #fff8e6;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #666;
+      border-bottom: 1px solid #ffe7ba;
+    }
+
+    .notice .phone {
+      color: #ff8533;
+      font-weight: 600;
+    }
+
+    .notice .highlight {
+      color: #ff8533;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      flex-shrink: 0;
+      height: 30px;
+      padding: 0 14px;
+      border: 1px solid #ff8533;
+      border-radius: 15px;
+      background: #fff;
+      color: #ff8533;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: #ff8533;
+      color: #fff;
+    }
+
+    .page {
+      padding: 10px 12px 16px;
+    }
+
+    .order-card {
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 72px;
+      height: 72px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .order-badge span {
+      position: absolute;
+      top: 14px;
+      right: -18px;
+      width: 100px;
+      text-align: center;
+      background: #ff8533;
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 0;
+      transform: rotate(45deg);
+    }
+
+    .order-head {
+      padding: 12px 14px 10px;
+      font-size: 13px;
+      color: #666;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .card-body {
+      display: flex;
+      gap: 0;
+    }
+
+    .route-side {
+      flex: 1.1;
+      min-width: 0;
+      padding: 10px 8px 10px 10px;
+      background: #fff9f5;
+    }
+
+    .route-item {
+      display: flex;
+      gap: 8px;
+      position: relative;
+    }
+
+    .route-item + .route-item {
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .route-item + .route-item::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: -10px;
+      width: 0;
+      height: 10px;
+      border-left: 1px dashed #ffb380;
+    }
+
+    .route-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ff8533;
+      color: #fff;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .route-text {
+      flex: 1;
+      min-width: 0;
+      background: #fff3eb;
+      border-radius: 4px;
+      padding: 8px;
+    }
+
+    .route-city {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .route-addr {
+      font-size: 11px;
+      color: #999;
+      line-height: 1.45;
+      word-break: break-all;
+    }
+
+    .info-side {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 10px 10px 6px;
+      border-left: 1px solid #f5f5f5;
+    }
+
+    .info-row {
+      margin-bottom: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .info-row:last-of-type { margin-bottom: 0; }
+
+    .info-label {
+      color: #999;
+      margin-bottom: 2px;
+    }
+
+    .info-value {
+      color: #333;
+      word-break: break-all;
+    }
+
+    .freight-box {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #f0f0f0;
+    }
+
+    .freight-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .freight-amount {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .freight-amount small {
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .freight-tip {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #bbb;
+      line-height: 1.4;
+    }
+
+    .manager-phone {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #bbb;
+      line-height: 1.4;
+    }
+
+    .manager-phone a {
+      color: #1677ff;
+      text-decoration: none;
+    }
+
+    .tabbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      display: flex;
+      height: calc(50px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: #999;
+      font-size: 11px;
+    }
+
+    .tab-item.active { color: #ff8533; }
+
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">我的运单</header>
+
+  <div class="notice">
+    平台电话：<span class="phone">075588943217</span><br />
+    <span class="highlight">【重要提示】</span>请在装货位置点击"开始装货"，在卸货位置点击"开始卸货"，请全程打开 APP 保持 GPS 记录，因运输轨迹作为运费结算依据。
+  </div>
+
+  <div class="tabs">
+    <button type="button" class="tab">全部</button>
+    <button type="button" class="tab">待接单</button>
+    <button type="button" class="tab">已接单</button>
+    <button type="button" class="tab active">待结算</button>
+    <button type="button" class="tab">已完成</button>
+    <button type="button" class="tab">已关闭</button>
+  </div>
+
+  <main class="page">
+    <article class="order-card">
+      <div class="order-badge"><span>待结算</span></div>
+      <div class="order-head">物流订单号：LBBWLCJ202607075</div>
+
+      <div class="card-body">
+        <div class="route-side">
+          <div class="route-item">
+            <div class="route-icon">装</div>
+            <div class="route-text">
+              <div class="route-city">上海市</div>
+              <div class="route-addr">航头镇上海源耀农业股份有限公司</div>
+            </div>
+          </div>
+          <div class="route-item">
+            <div class="route-icon">卸</div>
+            <div class="route-text">
+              <div class="route-city">浦东新区</div>
+              <div class="route-addr">东昌路531-2号附近上海市浦东新区陆家嘴街道东昌路531-2号</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-side">
+          <div class="info-row">
+            <div class="info-label">取货时间</div>
+            <div class="info-value">2026/07/07</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">客户信息</div>
+            <div class="info-value">--</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">货物信息</div>
+            <div class="info-value">一等玉米(自动化)20kg/包0.01吨</div>
+          </div>
+          <div class="freight-box">
+            <div class="freight-label">预计结算运费</div>
+            <div class="freight-amount">0.02 <small>元</small></div>
+
+            <div class="freight-label">物流经理：<a href="tel:1388888">1388888</a></div>
+            <div class="freight-tip">明细请查看您的收款银行账户</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="order-card">
+      <div class="order-badge"><span>待结算</span></div>
+      <div class="order-head">物流订单号：LBBWLCJ2026021066</div>
+
+      <div class="card-body">
+        <div class="route-side">
+          <div class="route-item">
+            <div class="route-icon">装</div>
+            <div class="route-text">
+              <div class="route-city">上海市</div>
+              <div class="route-addr">航头镇上海源耀农业股份有限公司</div>
+            </div>
+          </div>
+          <div class="route-item">
+            <div class="route-icon">卸</div>
+            <div class="route-text">
+              <div class="route-city">浦东新区</div>
+              <div class="route-addr">东昌路531-2号附近上海市浦东新区陆家嘴街道东昌路531-2号</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-side">
+          <div class="info-row">
+            <div class="info-label">取货时间</div>
+            <div class="info-value">2026/02/10</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">客户信息</div>
+            <div class="info-value">--</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">货物信息</div>
+            <div class="info-value">豆粕 50kg 43% 1吨</div>
+          </div>
+          <div class="freight-box">
+            <div class="freight-label">预计结算运费</div>
+            <div class="freight-amount">0.02 <small>元</small></div>
+            <div class="freight-tip">明细请查看您的收款银行账户</div>
+            <div class="manager-phone">物流经理联系电话：<a href="tel:1388888">1388888</a></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <nav class="tabbar">
+    <a class="tab-item active" href="司机端-我的运单.html">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg>
+      我的运单
+    </a>
+    <a class="tab-item" href="司机端-主页-位置异常弹窗.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+      主页
+    </a>
+    <a class="tab-item" href="javascript:void(0)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      我的
+    </a>
+  </nav>
+
+  <script>
+    document.querySelectorAll('.tabs .tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tabs .tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>创建任务</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Modal Container */
+        .modal-container {
+            background: #ffffff;
+            margin: 20px 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* Header */
+        .modal-header {
+            padding: 20px 16px 16px;
+            text-align: center;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1d2129;
+        }
+
+        /* Body */
+        .modal-body {
+            flex: 1;
+            padding: 20px 16px;
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1d2129;
+        }
+
+        .arrow-right {
+            color: #86909c;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .upload-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: #4e5969;
+        }
+
+        .download-link {
+            font-size: 14px;
+            color: #1677ff;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Date Rows */
+        .date-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .date-label {
+            font-size: 15px;
+            color: #1d2129;
+        }
+
+        .date-value {
+            font-size: 14px;
+            color: #1d2129;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .date-value.disabled {
+            color: #c0c4cc;
+            cursor: not-allowed;
+        }
+
+        .date-value .arrow {
+            font-size: 14px;
+            color: #86909c;
+        }
+
+        /* Footer */
+        .modal-footer {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            border-top: 1px solid #f5f5f5;
+            background: #ffffff;
+        }
+
+        .btn {
+            width: 120px;
+            padding: 10px 0;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #ffffff;
+            border: 1px solid #d0d3d6;
+            color: #1d2129;
+        }
+
+        .btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-confirm {
+            background: #ffffff;
+            border: 1px solid #d0d3d6;
+            color: #1d2129;
+        }
+
+        .btn-confirm:hover {
+            border-color: #1677ff;
+            color: #1677ff;
+        }
+
+        /* Prototype Note */
+        .prototype-note {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 1px solid #1677ff;
+            color: #1677ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 100;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- <div class="prototype-note"> 创建任务原型图</div> -->
+
+    <div class="modal-container">
+        <!-- Header -->
+        <div class="modal-header">
+            <h3 class="modal-title">创建任务</h3>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+            <!-- Customer List Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <span class="section-title">客户名单</span>
+                    <span class="arrow-right">›</span>
+                </div>
+                <div class="upload-area">
+                    <span class="upload-text">+上传客户名单</span>
+                    <span class="download-link" onclick="alert('下载样表')">样表下载</span>
+                </div>
+            </div>
+
+            <!-- Completion Time -->
+            <div class="date-row">
+                <span class="date-label">完成时间</span>
+                <span class="date-value" onclick="alert('选择完成时间')">
+                    今天
+                    <span class="arrow">›</span>
+                </span>
+            </div>
+
+            <!-- Start Time -->
+            <div class="date-row">
+                <span class="date-label">开始时间</span>
+                <span class="date-value disabled">
+                    今天
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <button class="btn btn-cancel" onclick="alert('取消创建')">取消</button>
+            <button class="btn btn-confirm" onclick="alert('确定创建任务')">确定</button>
+        </div>
+    </div>
+
+</body>
+</html>
+

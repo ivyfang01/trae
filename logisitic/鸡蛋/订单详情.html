@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>订单详情</title>
+  <style>
+    :root {
+      --orange: #ff6b00;
+      --orange-grad: linear-gradient(90deg, #ff6b00 0%, #ff9a3c 100%);
+      --blue: #2f7cf6;
+      --red: #ff4d4f;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #999999;
+      --line: #eeeeee;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      padding-bottom: calc(16px + var(--safe-bottom));
+    }
+
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .nav-back {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 44px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 22px;
+    }
+
+    .status-banner {
+      background: var(--orange-grad);
+      color: #fff;
+      padding: 18px 16px 22px;
+    }
+
+    .status-banner h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .status-banner p {
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
+    .card {
+      background: var(--card);
+      margin-bottom: 8px;
+      padding: 14px 16px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: #666;
+      background: #f5f5f5;
+      border-radius: 2px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 7px 0;
+      gap: 12px;
+    }
+
+    .row .label {
+      color: var(--label);
+      flex-shrink: 0;
+    }
+
+    .row .value {
+      color: var(--text);
+      text-align: right;
+      word-break: break-all;
+    }
+
+    .row .value .copy {
+      color: var(--red);
+      margin-left: 8px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .voucher-row {
+      align-items: flex-start;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .voucher-value {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .voucher-empty {
+      font-size: 13px;
+      color: var(--label);
+    }
+
+    .voucher-row.is-uploaded .voucher-empty {
+      display: none;
+    }
+
+    .voucher-row:not(.is-uploaded) .voucher-preview {
+      display: none;
+    }
+
+    .voucher-preview {
+      display: block;
+    }
+
+    .voucher-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, #ffd9b3 0%, #ff9a3c 100%);
+      border: 1px solid #ffc48a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(255, 107, 0, 0.15);
+    }
+
+    .voucher-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .voucher-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 2px;
+      justify-content: flex-end;
+    }
+
+    .voucher-row.is-uploaded #btnUploadVoucher {
+      display: none;
+    }
+
+    .voucher-row:not(.is-uploaded) #btnViewVoucher,
+    .voucher-row:not(.is-uploaded) #btnReupload {
+      display: none;
+    }
+
+    .link-btn {
+      color: var(--orange);
+      text-decoration: none;
+      font-size: 13px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+    }
+
+    .footer-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      padding: 10px 16px calc(10px + var(--safe-bottom));
+      border-top: 1px solid var(--line);
+      display: none;
+      gap: 10px;
+    }
+
+    .phone.has-footer {
+      padding-bottom: calc(72px + var(--safe-bottom));
+    }
+
+    .phone.has-footer .footer-bar {
+      display: flex;
+    }
+
+    .footer-bar .btn {
+      flex: 1;
+      height: 44px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid var(--orange);
+      background: #fff;
+      color: var(--orange);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .footer-bar .btn-primary {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .mask {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 20;
+      align-items: flex-end;
+    }
+
+    .mask.show { display: flex; }
+
+    .sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+      padding: 16px 16px calc(16px + var(--safe-bottom));
+    }
+
+    .sheet h3 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .upload-box {
+      border: 1px dashed #ddd;
+      border-radius: 8px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: #fafafa;
+    }
+
+    .upload-rules {
+      margin: -8px 0 16px;
+      padding: 10px 12px;
+      background: #f7f8fa;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .upload-rules li {
+      list-style: none;
+      position: relative;
+      padding-left: 10px;
+    }
+
+    .upload-rules li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      color: #999;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .sheet-actions button {
+      flex: 1;
+      height: 44px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .sheet-actions .cancel {
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #666;
+    }
+
+    .sheet-actions .confirm {
+      border: none;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="phone has-footer" id="page">
+    <div class="nav">
+      <a class="nav-back" href="鸡蛋订单列表.html">‹</a>
+      <div class="nav-title">订单详情</div>
+    </div>
+
+    <div class="status-banner">
+      <h1>待出库</h1>
+      <p>待物流分拣，匹配库存出库</p>
+    </div>
+
+    <!-- 商品与价格 -->
+    <div class="card">
+      <div class="product-name">粉蛋 360枚 箱 44</div>
+      <div class="tags">
+        <span class="tag">箱</span>
+        <span class="tag">360枚</span>
+        <span class="tag">当日发</span>
+      </div>
+      <div class="row"><span class="label">购买数量</span><span class="value">3件</span></div>
+      <div class="row"><span class="label">单价</span><span class="value">5元/件</span></div>
+      <div class="row"><span class="label">上车总价</span><span class="value">15.00元</span></div>
+      <div class="row"><span class="label">已支付金额</span><span class="value">15.75元</span></div>
+      <div class="row"><span class="label">运费总价</span><span class="value">0.75元</span></div>
+      <div class="row"><span class="label">订单总价</span><span class="value">15.75元</span></div>
+      <div class="row voucher-row is-uploaded" id="voucherRow">
+        <span class="label">运费凭证</span>
+        <div class="voucher-value">
+          <span class="voucher-empty">未上传</span>
+          <div class="voucher-preview">
+            <a class="voucher-thumb" href="javascript:;" id="voucherThumb" title="查看运费凭证">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ffd9b3'/%3E%3Cstop offset='1' stop-color='%23ff9a3c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='144' height='144' fill='url(%23g)'/%3E%3Ctext x='72' y='68' text-anchor='middle' fill='%23fff' font-size='14' font-family='sans-serif'%3E运费凭证%3C/text%3E%3Ctext x='72' y='90' text-anchor='middle' fill='%23fff' font-size='11' font-family='sans-serif' opacity='0.9'%3E示例图%3C/text%3E%3C/svg%3E" alt="运费凭证" />
+            </a>
+          </div>
+          <div class="voucher-actions">
+            <button type="button" class="link-btn" id="btnUploadVoucher">上传凭证</button>
+            <!-- <button type="button" class="link-btn" id="btnViewVoucher">查看</button> -->
+            <button type="button" class="link-btn" id="btnReupload">重新上传</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 物流配送 -->
+    <div class="card">
+      <div class="row"><span class="label">提货方式</span><span class="value">平台配送</span></div>
+      <div class="row"><span class="label">提货日期</span><span class="value">2025年12月09日</span></div>
+      <div class="row"><span class="label">收货地址</span><span class="value">重庆市涪陵区马鞍街道鹤凤大道38号</span></div>
+      <div class="row"><span class="label">联系人</span><span class="value">桑姣婧</span></div>
+      <div class="row"><span class="label">用户类型</span><span class="value">个人</span></div>
+      <div class="row"><span class="label">联系方式</span><span class="value">188****7101</span></div>
+      <div class="row"><span class="label">司机姓名</span><span class="value">赵杨杰</span></div>
+      <div class="row"><span class="label">司机手机号</span><span class="value">13621671346</span></div>
+      <div class="row"><span class="label">车牌号</span><span class="value">豫NE2334</span></div>
+    </div>
+
+    <!-- 订单元信息 -->
+    <div class="card">
+      <div class="row">
+        <span class="label">订单编号</span>
+        <span class="value">JD20251209JWTESTY69701<a class="copy" href="javascript:;" id="btnCopy">复制</a></span>
+      </div>
+      <div class="row"><span class="label">下单时间</span><span class="value">2025-12-09 19:32:14</span></div>
+      <div class="row"><span class="label">物流确认时间</span><span class="value">2025-12-09 19:42:38</span></div>
+      <div class="row"><span class="label">支付时间</span><span class="value">2025-12-09 19:54:46</span></div>
+      <div class="row"><span class="label">发票信息</span><span class="value">不开票</span></div>
+    </div>
+
+    <div class="footer-bar">
+      <button type="button" class="btn" id="btnFooterUpload">重新上传运费凭证</button>
+      <button type="button" class="btn btn-primary">转发</button>
+    </div>
+
+    <div class="mask" id="uploadMask">
+      <div class="sheet">
+        <h3>上传运费凭证</h3>
+        <div class="upload-box">
+          <span class="plus">＋</span>
+          <span>点击上传图片 / 拍照</span>
+        </div>
+        <ul class="upload-rules">
+          <li>支持 JPG / JPEG / PNG，单张不超过 5MB</li>
+          <li>每个订单仅 1 张，重新上传将覆盖原凭证</li>
+          <li>请保证金额、单号等信息清晰可辨</li>
+        </ul>
+        <div class="sheet-actions">
+          <button type="button" class="cancel" id="btnCancel">取消</button>
+          <button type="button" class="confirm" id="btnConfirm">确认上传</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">上传成功</div>
+  </div>
+
+  <script>
+    (function () {
+      var mask = document.getElementById("uploadMask");
+      var toast = document.getElementById("toast");
+      var row = document.getElementById("voucherRow");
+      var btnUpload = document.getElementById("btnUploadVoucher");
+      var btnView = document.getElementById("btnViewVoucher");
+      var btnReupload = document.getElementById("btnReupload");
+      var btnFooter = document.getElementById("btnFooterUpload");
+
+      function showToast(msg) {
+        toast.textContent = msg || "上传成功";
+        toast.classList.add("show");
+        setTimeout(function () {
+          toast.classList.remove("show");
+        }, 1500);
+      }
+
+      function openUpload() {
+        mask.classList.add("show");
+      }
+
+      function setUploaded() {
+        row.classList.add("is-uploaded");
+        btnFooter.textContent = "重新上传运费凭证";
+      }
+
+      function setEmpty() {
+        row.classList.remove("is-uploaded");
+        btnFooter.textContent = "上传运费凭证";
+      }
+
+      btnFooter.addEventListener("click", openUpload);
+      btnUpload.addEventListener("click", openUpload);
+      btnReupload.addEventListener("click", openUpload);
+      btnView.addEventListener("click", function () {
+        showToast("查看运费凭证");
+      });
+      document.getElementById("voucherThumb").addEventListener("click", function () {
+        showToast("查看运费凭证");
+      });
+
+      document.getElementById("btnCancel").addEventListener("click", function () {
+        mask.classList.remove("show");
+      });
+
+      document.getElementById("btnConfirm").addEventListener("click", function () {
+        mask.classList.remove("show");
+        setUploaded();
+        showToast("运费凭证上传成功");
+      });
+
+      mask.addEventListener("click", function (e) {
+        if (e.target === mask) mask.classList.remove("show");
+      });
+
+      document.getElementById("btnCopy").addEventListener("click", function () {
+        showToast("已复制");
+      });
+
+      // 演示：默认展示已上传样式；去掉 is-uploaded 即为未上传
+      setUploaded();
+    })();
+  </script>
+</body>
+</html>

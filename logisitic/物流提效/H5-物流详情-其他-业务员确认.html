@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>物流详情 · 其他 · 钉钉端</title>
+  <style>
+    /* 严格按参考图：顶栏 Tab + 白卡片 + 蓝竖条标题 + 虚线分隔；字段对齐 PC「查看物流单详情」 */
+    :root {
+      --blue: #1677ff;
+      --text: #333;
+      --muted: #999;
+      --line: #eee;
+      --dash: #e8e8e8;
+      --bg: #f5f5f5;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #e8e8e8;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(16px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute;
+      left: 0;
+      height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 22px;
+    }
+    .tabs {
+      display: flex;
+      background: #fff;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid var(--line);
+      padding: 0 4px;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs a {
+      flex-shrink: 0;
+      padding: 12px 10px;
+      color: #666;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+      position: relative;
+    }
+    .tabs a.active {
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 2px;
+      background: var(--blue);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .list { padding: 10px 12px 16px; }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px 14px 8px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      position: relative;
+      padding-left: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 12px;
+    }
+    .card-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 3px;
+      width: 3px;
+      height: 14px;
+      background: var(--blue);
+      border-radius: 1px;
+    }
+    .photo-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0;
+    }
+    .photo-row .label {
+      width: 72px;
+      flex-shrink: 0;
+      color: var(--muted);
+      line-height: 22px;
+      padding-top: 4px;
+    }
+    .thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      background: linear-gradient(145deg, #c8c8c8, #a8a8a8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.7);
+      font-size: 11px;
+      overflow: hidden;
+    }
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--dash);
+      margin: 4px 0;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+    .row .label {
+      width: 96px;
+      flex-shrink: 0;
+      color: var(--muted);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .record {
+      padding: 4px 0 8px;
+    }
+    .record + .record {
+      border-top: 1px dashed var(--dash);
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+    .empty-tip {
+      padding: 24px 0;
+      text-align: center;
+      color: #bbb;
+      font-size: 13px;
+    }
+    .demo-switch {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #555;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .demo-switch a {
+      color: var(--blue);
+      margin-right: 12px;
+      text-decoration: none;
+    }
+    .demo-switch .row-links { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="phone" id="page">
+    <div class="nav">
+      <a class="nav-back" href="javascript:;">‹</a>
+      <div class="nav-title">物流详情</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <a href="javascript:;" data-panel="driver">司机信息</a>
+      <a href="javascript:;" data-panel="customer">客户信息</a>
+      <a class="active" href="javascript:;" data-panel="other">其他</a>
+      <a href="javascript:;" data-panel="ops">操作记录</a>
+      <a href="javascript:;" data-panel="exception">物流异常处理记录</a>
+    </div>
+
+    <!-- 司机信息（占位） -->
+    <div class="panel" id="panel-driver">
+      <div class="list">
+        <div class="card">
+          <div class="card-title">司机信息</div>
+          <div class="row"><span class="label">运输承运商</span><span class="value">河南某某物流有限公司</span></div>
+          <div class="row"><span class="label">姓名</span><span class="value">丁永记</span></div>
+          <div class="row"><span class="label">手机</span><span class="value">13525725672</span></div>
+          <div class="row"><span class="label">车号</span><span class="value">豫CL1291</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 客户信息（占位） -->
+    <div class="panel" id="panel-customer">
+      <div class="list">
+        <div class="card">
+          <div class="card-title">客户信息</div>
+          <div class="row"><span class="label">客户名称</span><span class="value">海口某某养殖有限公司</span></div>
+          <div class="row"><span class="label">联系人</span><span class="value">赵客户</span></div>
+          <div class="row"><span class="label">电话</span><span class="value">137****8888</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 其他：装/卸货照片 + 业务员确认收货（字段对齐 PC） -->
+    <div class="panel active" id="panel-other">
+      <div class="list">
+        <div class="card">
+          <div class="card-title">其他</div>
+          <div class="photo-row">
+            <span class="label">装货照片</span>
+            <div class="thumb">装货</div>
+          </div>
+          <div class="photo-row">
+            <span class="label">卸货照片</span>
+            <div class="thumb">卸货</div>
+          </div>
+
+          <hr class="divider" />
+
+          <div class="card-title" style="margin-top:8px">业务员确认收货</div>
+
+          <!-- 态1：确认收货无磅差 -->
+          <div id="confirm-nodiff" style="display:none">
+            <div class="row"><span class="label">确认结果</span><span class="value">确认收货无磅差</span></div>
+            <div class="row"><span class="label">装卸磅差</span><span class="value">装卸货吨位数相同，无磅差</span></div>
+            <div class="row"><span class="label">确认人</span><span class="value">张三</span></div>
+            <div class="row"><span class="label">确认时间</span><span class="value">2026-07-24 16:05:18</span></div>
+          </div>
+
+          <!-- 态2：有磅差需扣除（默认展示，对齐 PC） -->
+          <div id="confirm-deduct">
+            <div class="row"><span class="label">确认结果</span><span class="value">有磅差需扣除</span></div>
+            <div class="row"><span class="label">装卸磅差</span><span class="value">0.15吨（2包）</span></div>
+            <div class="row"><span class="label">扣除吨数</span><span class="value">3吨</span></div>
+            <div class="row"><span class="label">确认业务员</span><span class="value">张三</span></div>
+            <div class="row"><span class="label">确认时间</span><span class="value">2026-07-24 16:05:18</span></div>
+          </div>
+
+          <!-- 态3：未确认 -->
+          <div id="confirm-pending" style="display:none">
+            <div class="row"><span class="label">确认结果</span><span class="value">未确认</span></div>
+            <div class="row"><span class="label">装卸磅差</span><span class="value">0.15吨（2包）</span></div>
+            <div class="row"><span class="label">扣除吨数</span><span class="value">—</span></div>
+            <div class="row"><span class="label">确认业务员</span><span class="value">-</span></div>
+            <div class="row"><span class="label">确认时间</span><span class="value">-</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作记录：对齐 PC 表格字段与示例数据 -->
+    <div class="panel" id="panel-ops">
+      <div class="list">
+        <div class="card">
+          <div class="card-title">操作记录</div>
+
+          <div class="record">
+            <div class="row"><span class="label">序号</span><span class="value">1</span></div>
+            <div class="row"><span class="label">阶段</span><span class="value">派车</span></div>
+            <div class="row"><span class="label">操作设备</span><span class="value">管理后台</span></div>
+            <div class="row"><span class="label">操作人</span><span class="value">物流运营</span></div>
+            <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:01:12</span></div>
+            <div class="row"><span class="label">备注</span><span class="value">派单成功</span></div>
+          </div>
+          <div class="record">
+            <div class="row"><span class="label">序号</span><span class="value">2</span></div>
+            <div class="row"><span class="label">阶段</span><span class="value">接单</span></div>
+            <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+            <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+            <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 09:20:05</span></div>
+            <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+          </div>
+          <div class="record">
+            <div class="row"><span class="label">序号</span><span class="value">3</span></div>
+            <div class="row"><span class="label">阶段</span><span class="value">上传发货磅单</span></div>
+            <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+            <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+            <div class="row"><span class="label">操作时间</span><span class="value">2026-07-23 19:40:18</span></div>
+            <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+          </div>
+          <div class="record">
+            <div class="row"><span class="label">序号</span><span class="value">4</span></div>
+            <div class="row"><span class="label">阶段</span><span class="value">上传收货磅单</span></div>
+            <div class="row"><span class="label">操作设备</span><span class="value">司机App</span></div>
+            <div class="row"><span class="label">操作人</span><span class="value">丁永记</span></div>
+            <div class="row"><span class="label">操作时间</span><span class="value">2026-07-24 17:30:44</span></div>
+            <div class="row"><span class="label">备注</span><span class="value">—</span></div>
+          </div>
+          <!-- 已确认时展示；未确认时隐藏 -->
+          <div class="record" id="ops-confirm-row">
+            <div class="row"><span class="label">序号</span><span class="value">5</span></div>
+            <div class="row"><span class="label">阶段</span><span class="value">业务员确认收货</span></div>
+            <div class="row"><span class="label">操作设备</span><span class="value">钉钉</span></div>
+            <div class="row"><span class="label">操作人</span><span class="value">张三</span></div>
+            <div class="row"><span class="label">操作时间</span><span class="value">2026-07-24 16:05:18</span></div>
+            <div class="row"><span class="label">备注</span><span class="value" id="ops-confirm-remark">业务员已确认：有磅差需扣除0.15 吨</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 物流异常处理记录 -->
+    <div class="panel" id="panel-exception">
+      <div class="list">
+        <div class="card">
+          <div class="card-title">物流异常处理记录</div>
+          <div class="empty-tip">暂无操作记录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-switch">
+    <div style="margin-bottom:8px;font-weight:600;color:#222">业务员确认收货 · 对齐 PC 三态</div>
+    <div class="row-links">
+      <a href="javascript:;" data-state="nodiff">确认收货无磅差</a>
+      <a href="javascript:;" data-state="deduct">有磅差需扣除</a>
+      <a href="javascript:;" data-state="pending">未确认</a>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll("#tabs a");
+      var panels = {
+        driver: document.getElementById("panel-driver"),
+        customer: document.getElementById("panel-customer"),
+        other: document.getElementById("panel-other"),
+        ops: document.getElementById("panel-ops"),
+        exception: document.getElementById("panel-exception")
+      };
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          var key = tab.getAttribute("data-panel");
+          tabs.forEach(function (t) { t.classList.remove("active"); });
+          tab.classList.add("active");
+          Object.keys(panels).forEach(function (k) {
+            panels[k].classList.toggle("active", k === key);
+          });
+        });
+      });
+
+      var blocks = {
+        nodiff: document.getElementById("confirm-nodiff"),
+        deduct: document.getElementById("confirm-deduct"),
+        pending: document.getElementById("confirm-pending")
+      };
+      var opsRow = document.getElementById("ops-confirm-row");
+      var opsRemark = document.getElementById("ops-confirm-remark");
+
+      function setState(state) {
+        Object.keys(blocks).forEach(function (k) {
+          blocks[k].style.display = k === state ? "block" : "none";
+        });
+        if (state === "pending") {
+          opsRow.style.display = "none";
+        } else {
+          opsRow.style.display = "block";
+          opsRemark.textContent = state === "nodiff"
+            ? "业务员已确认：确认收货无磅差"
+            : "业务员已确认：有磅差需扣除0.15 吨";
+        }
+      }
+
+      document.querySelectorAll(".demo-switch a[data-state]").forEach(function (a) {
+        a.addEventListener("click", function () {
+          setState(a.getAttribute("data-state"));
+        });
+      });
+
+      setState("deduct");
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>考勤异常通知卡片</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --danger: #ff4d4f;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .nav-back {
+      position: absolute;
+      left: 0;
+      height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+
+    .list {
+      padding: 0 12px 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    .row .label {
+      width: 112px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .row .value.emphasize {
+      color: var(--warn);
+      font-weight: 600;
+      line-height: 1.55;
+    }
+
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    .spec h2 {
+      font-size: 14px;
+      color: #222;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <a class="nav-back" href="javascript:;" aria-label="返回">‹</a>
+      <div class="nav-title">工作通知</div>
+    </div>
+
+    <div class="ding-context">鸡窝考勤 · 今日 09:31</div>
+
+    <div class="list">
+      <div class="card" id="attend-card">
+        <div class="card-head">
+          <div class="card-title">考勤异常提醒</div>
+        </div>
+
+        <div class="row">
+          <span class="label">员工名字</span>
+          <span class="value">张三</span>
+        </div>
+        <div class="row">
+          <span class="label">日期</span>
+          <span class="value">2026-07-20（周一）</span>
+        </div>
+        <div class="row">
+          <span class="label">提醒</span>
+          <span class="value emphasize">在 9:30 前未提交有效拜访记录</span>
+        </div>
+        <div class="row">
+          <span class="label">本月正常考勤天数</span>
+          <span class="value">12 天</span>
+        </div>
+        <div class="row">
+          <span class="label">异常考勤天数</span>
+          <span class="value">3 天</span>
+        </div>
+        <div class="row">
+          <span class="label">正常出勤率</span>
+          <span class="value">80.0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h2>纯通知卡片 · 无操作</h2>
+    <div>· 展示：员工名字、日期、提醒、本月正常考勤天数、异常考勤天数、正常出勤率</div>
+    <div>· 无底部按钮、无行内链接</div>
+  </div>
+</body>
+</html>

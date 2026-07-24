@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数据助理 - 粮巴巴 CRM</title>
+    <link rel="stylesheet" href="../crm/spec/crm-common.css">
+    <style>
+        body.da-page {
+            padding-bottom: 72px;
+            background: var(--bg-page);
+        }
+
+        .da-no-more {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-placeholder);
+            padding: 8px 0 4px;
+        }
+
+        .da-chat-area {
+            padding: 0 16px 12px;
+        }
+
+        .da-chat-area--user {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .da-sender {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .da-chat-area--user .da-sender {
+            text-align: right;
+            width: 100%;
+        }
+
+        .da-chat-area--user .da-bubble {
+            max-width: 85%;
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .da-bubble {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text);
+            line-height: 1.5;
+            box-shadow: var(--shadow-card);
+        }
+
+        .da-export-image {
+            display: block;
+            width: 50%;
+            max-width: 50%;
+            margin-top: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        /* 客户基础信息卡片 */
+        .da-bubble--card {
+            padding: 12px;
+        }
+
+        .da-customer-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .da-customer-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .da-customer-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .da-customer-tag {
+            flex-shrink: 0;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #e8f3ff;
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        .da-data-section {
+            margin-bottom: 12px;
+        }
+
+        .da-data-section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .da-data-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .da-data-section-title::before {
+            content: '';
+            width: 3px;
+            height: 12px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .da-data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .da-data-item {
+            background: #f7f8fa;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .da-data-item--full {
+            grid-column: 1 / -1;
+        }
+
+        .da-data-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .da-data-value {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .da-data-value--warn {
+            color: #ff7d00;
+        }
+
+        .da-data-value--ok {
+            color: #00b42a;
+        }
+
+        .da-trade-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: #f7f8fa;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .da-trade-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .da-trade-cate {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .da-trade-level {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .da-trade-level--loyal {
+            background: #e8ffea;
+            color: #00b42a;
+        }
+
+        .da-trade-level--normal {
+            background: #fff7e8;
+            color: #ff7d00;
+        }
+
+        .da-trade-level--none {
+            background: #f2f3f5;
+            color: var(--text-muted);
+        }
+
+        .da-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .da-card-btn {
+            flex: 1;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+        }
+
+        .da-card-btn--ghost {
+            background: #f2f3f5;
+            color: var(--text);
+        }
+
+        .da-card-btn--primary {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        /* 机会点卡片 */
+        .da-opp-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .da-opp-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+        }
+
+        .da-opp-item.selected {
+            border-color: var(--blue);
+            background: #f0f7ff;
+        }
+
+        .da-opp-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .da-opp-check {
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid #c9cdd4;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .da-opp-item.selected .da-opp-check {
+            border-color: var(--blue);
+            background: var(--blue);
+        }
+
+        .da-opp-item.selected .da-opp-check::after {
+            content: '';
+            width: 5px;
+            height: 9px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-top: -2px;
+        }
+
+        .da-opp-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .da-opp-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .da-opp-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .da-opp-priority {
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .da-opp-priority--p0 {
+            background: #ffece8;
+            color: #f53f3f;
+        }
+
+        .da-opp-priority--p1 {
+            background: #fff7e8;
+            color: #ff7d00;
+        }
+
+        .da-opp-priority--p2 {
+            background: #e8f3ff;
+            color: var(--blue);
+        }
+
+        .da-opp-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .da-opp-evidence {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+
+        .da-opp-products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .da-opp-product-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #f2f3f5;
+            color: #4e5969;
+        }
+
+        .da-opp-summary {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            background: #f7f8fa;
+            border-radius: 8px;
+        }
+
+        /* 商品推荐卡片 */
+        .da-sku-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .da-sku-tab {
+            flex: 1;
+            height: 32px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .da-sku-tab.active {
+            border-color: var(--blue);
+            background: #f0f7ff;
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .da-sku-panel {
+            display: none;
+        }
+
+        .da-sku-panel.active {
+            display: block;
+        }
+
+        .da-sku-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .da-sku-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .da-sku-card--main {
+            border-color: #bedaff;
+            background: #f7fbff;
+        }
+
+        .da-sku-head {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .da-sku-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #e8f3ff 0%, #f2f3f5 100%);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .da-sku-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .da-sku-name-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .da-sku-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.35;
+        }
+
+        .da-sku-badge {
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: #ffece8;
+            color: #f53f3f;
+            flex-shrink: 0;
+        }
+
+        .da-sku-badge--alt {
+            background: #e8f3ff;
+            color: var(--blue);
+        }
+
+        .da-sku-opp-link {
+            font-size: 11px;
+            color: var(--blue);
+            margin-bottom: 4px;
+        }
+
+        .da-sku-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f53f3f;
+        }
+
+        .da-sku-price small {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .da-sku-row {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-top: 6px;
+        }
+
+        .da-sku-row strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .da-sku-promo {
+            margin-top: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: #fff7e8;
+            font-size: 11px;
+            color: #ff7d00;
+        }
+
+        .da-sku-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .da-sku-btn {
+            flex: 1;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 12px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .da-plan-total {
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #f7f8fa;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .da-plan-total strong {
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        /* 步骤进度条 */
+        .da-step-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 16px 12px;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .da-step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .da-step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 11px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #e5e6eb;
+            z-index: 0;
+        }
+
+        .da-step-item.done:not(:last-child)::after {
+            background: var(--blue);
+        }
+
+        .da-step-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #e5e6eb;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .da-step-item.done .da-step-dot,
+        .da-step-item.active .da-step-dot {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .da-step-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .da-step-item.done .da-step-label,
+        .da-step-item.active .da-step-label {
+            color: var(--blue);
+            font-weight: 500;
+        }
+
+        .da-step-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--blue);
+            background: #e8f3ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* Step4 话术卡片 */
+        .da-script-tone {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .da-script-tone-btn {
+            flex: 1;
+            height: 30px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .da-script-tone-btn.active {
+            border-color: var(--blue);
+            background: #f0f7ff;
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .da-script-block {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .da-script-block:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .da-script-block-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: #f7f8fa;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .da-script-block-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .da-script-block-copy {
+            font-size: 11px;
+            color: var(--blue);
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .da-script-block-body {
+            padding: 10px 12px 12px;
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.65;
+            border-top: 1px solid var(--border);
+        }
+
+        .da-script-block.collapsed .da-script-block-body {
+            display: none;
+        }
+
+        .da-script-block-head .da-script-chevron {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-right: 6px;
+            transition: transform .15s;
+        }
+
+        .da-script-block.collapsed .da-script-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .da-script-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding: 6px 8px;
+            background: #f7f8fa;
+            border-radius: 6px;
+        }
+
+        .da-feedback-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .da-feedback-btn {
+            flex: 1;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 12px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .da-feedback-btn--ok {
+            border-color: #00b42a;
+            color: #00b42a;
+            background: #e8ffea;
+        }
+
+        /* 横向快捷入口 → 使用 crm-common.css .quick-entry-* / .icon-circle */
+
+        /* 猜你想问主卡片 */
+        .da-guess-card {
+            margin: 0 12px 16px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .da-guess-side {
+            width: 72px;
+            flex-shrink: 0;
+            background: linear-gradient(180deg, #e8f3ff 0%, #f7fbff 60%, #fff 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px;
+        }
+
+        .da-guess-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: auto;
+        }
+
+        .da-guess-vertical {
+            writing-mode: vertical-rl;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 4px;
+            margin-top: 16px;
+        }
+
+        .da-guess-main {
+            flex: 1;
+            padding: 10px 16px 12px;
+            min-width: 0;
+        }
+
+        .da-guess-tabs {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 4px;
+        }
+
+        .da-guess-tabs::-webkit-scrollbar { display: none; }
+
+        .da-guess-tab {
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            cursor: pointer;
+            padding-bottom: 8px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .da-guess-tab.active {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .da-guess-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .da-question-list {
+            list-style: none;
+        }
+
+        .da-question-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 4px 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .da-question-item:last-child { border-bottom: none; }
+
+        .da-question-item svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-placeholder);
+            flex-shrink: 0;
+        }
+
+        /* 底部输入区 */
+        .da-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--bg-page);
+            padding: 8px 12px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .da-input-wrap {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 10px 14px;
+            box-shadow: var(--shadow-card);
+            gap: 8px;
+        }
+
+        .da-input-wrap input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: var(--text);
+            background: transparent;
+        }
+
+        .da-input-wrap input::placeholder { color: var(--text-placeholder); }
+
+        .da-input-icons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .da-input-icons svg {
+            width: 22px;
+            height: 22px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .da-input-plus {
+            width: 24px;
+            height: 24px;
+            border: 1.5px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="da-page">
+
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" onclick="location.href='../crm/spec/01_crm_homepage.html'"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <span class="nav-title">动保销售助手</span>
+        <div class="nav-more" style="gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#1d2129"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+    </div>
+
+    <div class="da-no-more">没有更多</div>
+
+    <div class="da-step-bar">
+        <div class="da-step-item done">
+            <span class="da-step-dot">1</span>
+            <span class="da-step-label">数据确认</span>
+        </div>
+        <div class="da-step-item done">
+            <span class="da-step-dot">2</span>
+            <span class="da-step-label">机会点</span>
+        </div>
+        <div class="da-step-item done">
+            <span class="da-step-dot">3</span>
+            <span class="da-step-label">商品推荐</span>
+        </div>
+        <div class="da-step-item active">
+            <span class="da-step-dot">4</span>
+            <span class="da-step-label">转化话术</span>
+        </div>
+    </div>
+
+    <div class="da-chat-area">
+        <div class="da-sender">销售助理</div>
+        <div class="da-bubble da-bubble--card">
+            <span class="da-step-tag">Step 1 · 数据确认</span>
+            <p style="margin-bottom:12px;font-size:15px;">这个客户的基础信息如下，请确认是否正确：</p>
+
+            <div class="da-customer-head">
+                <div>
+                    <div class="da-customer-name">阜阳市顺煜农业科技有限公司</div>
+                    <div class="da-customer-meta">归属：王园康 · 阜阳站 · 鸡窝预混料</div>
+                </div>
+                <span class="da-customer-tag">产蛋期</span>
+            </div>
+
+            <div class="da-data-section">
+                <div class="da-data-section-title">养殖数据</div>
+                <div class="da-data-grid">
+                    <div class="da-data-item">
+                        <div class="da-data-label">鸡只品种</div>
+                        <div class="da-data-value">海兰褐蛋鸡</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">养殖规模</div>
+                        <div class="da-data-value">3.2 万羽</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">日龄 / 天数</div>
+                        <div class="da-data-value">286 天</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">价格偏好</div>
+                        <div class="da-data-value">高质量</div>
+                    </div>
+                    <div class="da-data-item da-data-item--full">
+                        <div class="da-data-label">生产指标</div>
+                        <div class="da-data-value da-data-value--warn">产蛋率 88%（低于标准 92%）· 料蛋比 2.18</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="da-data-section">
+                <div class="da-data-section-title">交易数据</div>
+                <div class="da-trade-row">
+                    <span class="da-trade-cate">预混料</span>
+                    <span class="da-trade-level da-trade-level--loyal">忠诚客户</span>
+                </div>
+                <div class="da-trade-row">
+                    <span class="da-trade-cate">玉米</span>
+                    <span class="da-trade-level da-trade-level--loyal">忠诚客户</span>
+                </div>
+                <div class="da-trade-row">
+                    <span class="da-trade-cate">豆粕</span>
+                    <span class="da-trade-level da-trade-level--normal">一般</span>
+                </div>
+                <div class="da-trade-row">
+                    <span class="da-trade-cate">动保</span>
+                    <span class="da-trade-level da-trade-level--none">无交易</span>
+                </div>
+            </div>
+
+            <div class="da-data-section">
+                <div class="da-data-section-title">环境与客情</div>
+                <div class="da-data-grid">
+                    <div class="da-data-item">
+                        <div class="da-data-label">季节 / 天气</div>
+                        <div class="da-data-value">夏季 · 高温</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">原料情况</div>
+                        <div class="da-data-value da-data-value--warn">新玉米切换</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">客情</div>
+                        <div class="da-data-value da-data-value--ok">良好</div>
+                    </div>
+                    <div class="da-data-item">
+                        <div class="da-data-label">动保机会点</div>
+                        <div class="da-data-value">有 · 暑热应激</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="da-card-actions">
+                <button type="button" class="da-card-btn da-card-btn--ghost">数据有误</button>
+                <button type="button" class="da-card-btn da-card-btn--primary">确认，分析机会点</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="da-chat-area da-chat-area--user">
+        <div class="da-sender">我</div>
+        <div class="da-bubble">确认</div>
+    </div>
+
+    <div class="da-chat-area">
+        <div class="da-sender">销售助理</div>
+        <div class="da-bubble da-bubble--card">
+            <span class="da-step-tag">Step 2 · 机会点分析</span>
+            <p style="margin-bottom:10px;font-size:15px;">根据客户数据，为您推测以下 <strong>5</strong> 个机会点，请勾选有效项：</p>
+            <div class="da-opp-summary">已选 <span id="oppSelectedCount">4</span> / 5 · 基于产蛋期、夏季高温、新玉米切换、动保无交易等维度分析</div>
+
+            <div class="da-opp-list" id="oppList">
+                <div class="da-opp-item selected" data-opp="1">
+                    <div class="da-opp-head">
+                        <div class="da-opp-check"></div>
+                        <div class="da-opp-main">
+                            <div class="da-opp-title-row">
+                                <span class="da-opp-title">夏季热应激 · 降死淘增采食</span>
+                                <span class="da-opp-priority da-opp-priority--p0">紧急</span>
+                            </div>
+                            <div class="da-opp-type">季节 / 天气</div>
+                            <div class="da-opp-evidence">当前夏季高温，客户 3.2 万羽产蛋鸡，历史同期采食下降、死淘上升风险高。</div>
+                            <div class="da-opp-products">
+                                <span class="da-opp-product-tag">暑立消</span>
+                                <span class="da-opp-product-tag">藿香正气液</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="da-opp-item selected" data-opp="2">
+                    <div class="da-opp-head">
+                        <div class="da-opp-check"></div>
+                        <div class="da-opp-main">
+                            <div class="da-opp-title-row">
+                                <span class="da-opp-title">新玉米切换 · 预防过料拉稀</span>
+                                <span class="da-opp-priority da-opp-priority--p1">窗口期</span>
+                            </div>
+                            <div class="da-opp-type">原料原因</div>
+                            <div class="da-opp-evidence">客户近期采购玉米，处于新玉米上市切换期，抗性淀粉易引发肠道问题。</div>
+                            <div class="da-opp-products">
+                                <span class="da-opp-product-tag">新玉米复合酶</span>
+                                <span class="da-opp-product-tag">复合益生菌 Pro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="da-opp-item selected" data-opp="3">
+                    <div class="da-opp-head">
+                        <div class="da-opp-check"></div>
+                        <div class="da-opp-main">
+                            <div class="da-opp-title-row">
+                                <span class="da-opp-title">产蛋率偏低 · 提蛋品延高峰</span>
+                                <span class="da-opp-priority da-opp-priority--p1">窗口期</span>
+                            </div>
+                            <div class="da-opp-type">养殖阶段 / 指标异常</div>
+                            <div class="da-opp-evidence">286 日龄产蛋期，产蛋率 88% 低于标准 92%，料蛋比 2.18 偏高，存在输卵管保健需求。</div>
+                            <div class="da-opp-products">
+                                <span class="da-opp-product-tag">蛋优多 Pro</span>
+                                <span class="da-opp-product-tag">卵炎消消乐</span>
+                                <span class="da-opp-product-tag">25羟基D3鱼肝油</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="da-opp-item selected" data-opp="4">
+                    <div class="da-opp-head">
+                        <div class="da-opp-check"></div>
+                        <div class="da-opp-main">
+                            <div class="da-opp-title-row">
+                                <span class="da-opp-title">动保空白 · 首次开发</span>
+                                <span class="da-opp-priority da-opp-priority--p1">窗口期</span>
+                            </div>
+                            <div class="da-opp-type">交易数据</div>
+                            <div class="da-opp-evidence">预混料、玉米为忠诚客户，但动保品类无交易记录，客情良好，适合从刚需品切入。</div>
+                            <div class="da-opp-products">
+                                <span class="da-opp-product-tag">水溶霉立净 Pro</span>
+                                <span class="da-opp-product-tag">21活力金维他 Pro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="da-opp-item" data-opp="5">
+                    <div class="da-opp-head">
+                        <div class="da-opp-check"></div>
+                        <div class="da-opp-main">
+                            <div class="da-opp-title-row">
+                                <span class="da-opp-title">内脏修复 · 降综合成本</span>
+                                <span class="da-opp-priority da-opp-priority--p2">保健</span>
+                            </div>
+                            <div class="da-opp-type">生产指标</div>
+                            <div class="da-opp-evidence">料蛋比偏高，可推荐全程养肠护肠方案，替代部分脱霉+保健药投入。</div>
+                            <div class="da-opp-products">
+                                <span class="da-opp-product-tag">益舒康</span>
+                                <span class="da-opp-product-tag">金蛋满仓</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="da-card-actions">
+                <button type="button" class="da-card-btn da-card-btn--ghost">重新分析</button>
+                <button type="button" class="da-card-btn da-card-btn--primary" id="btnConfirmOpp">确认机会点，推荐商品</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="da-chat-area da-chat-area--user" id="userConfirmSku">
+        <div class="da-sender">我</div>
+        <div class="da-bubble">确认机会点，推荐商品</div>
+    </div>
+
+    <div class="da-chat-area" id="skuRecommendArea">
+        <div class="da-sender">销售助理</div>
+        <div class="da-bubble da-bubble--card">
+            <span class="da-step-tag">Step 3 · 商品推荐</span>
+            <p style="margin-bottom:10px;font-size:15px;">针对已确认的 <strong>4</strong> 个机会点，为您推荐以下方案：</p>
+
+            <div class="da-sku-tabs">
+                <button type="button" class="da-sku-tab active" data-panel="main">主推方案</button>
+                <button type="button" class="da-sku-tab" data-panel="alt">备选 SKU</button>
+            </div>
+
+            <div class="da-sku-panel active" id="skuPanelMain">
+                <div class="da-sku-card da-sku-card--main">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">🌡️</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">暑立消（热应激专用）</span>
+                                <span class="da-sku-badge">主推 · P0</span>
+                            </div>
+                            <div class="da-sku-opp-link">关联：夏季热应激</div>
+                            <div class="da-sku-price">¥168 <small>/ 箱 · 折合 ¥0.005/羽/天</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>夏季高温下 3.2 万羽产蛋鸡采食下降、死淘风险高，暑立消可快速缓解热应激，提升采食量。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>饮水 1g/200L，连用 5-7 天；或拌料 500g/吨。</div>
+                    <div class="da-sku-row"><strong>优势对比：</strong>vs 普通多维，含电解质+抗应激因子，起效更快；客户动保空白，首单切入门槛低。</div>
+                    <div class="da-sku-promo">🎁 买 10 箱送 2 箱 · 折算单价 ¥140/箱</div>
+                    <div class="da-sku-actions">
+                        <button type="button" class="da-sku-btn">换一款</button>
+                        <button type="button" class="da-sku-btn">加入方案</button>
+                    </div>
+                </div>
+
+                <div class="da-sku-card da-sku-card--main">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">🌽</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">新玉米复合酶</span>
+                                <span class="da-sku-badge">主推 · P1</span>
+                            </div>
+                            <div class="da-sku-opp-link">关联：新玉米切换</div>
+                            <div class="da-sku-price">¥220 <small>/ 袋 · 500g</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>客户近期采购玉米，新玉米抗性淀粉高，易过料拉稀；复合酶可降解抗营养因子，保护肠道。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>拌料 200-300g/吨，新玉米切换期连用 15-20 天。</div>
+                    <div class="da-sku-row"><strong>优势对比：</strong>专用新玉米配方，比通用酶制剂针对性强；可与预混料忠诚客户形成饲料+动保组合。</div>
+                </div>
+
+                <div class="da-sku-card da-sku-card--main">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">🥚</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">蛋优多 Pro + 卵炎消消乐</span>
+                                <span class="da-sku-badge">组合 · P1</span>
+                            </div>
+                            <div class="da-sku-opp-link">关联：产蛋率偏低</div>
+                            <div class="da-sku-price">¥386 <small>/ 套 · 各 1 件</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>286 日龄产蛋率 88% 低于标准 92%，料蛋比 2.18 偏高；蛋优多提产蛋，卵炎消护输卵管，组合见效更快。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>蛋优多 Pro 拌料 1kg/吨；卵炎消消乐 饮水 1g/300L，各连用 10-15 天。</div>
+                    <div class="da-sku-row"><strong>优势对比：</strong>vs 单用维生素，针对产蛋期指标异常有完整方案；高质量偏好客户匹配 Pro 系列。</div>
+                    <div class="da-sku-promo">🎁 组合购满 ¥500 减 ¥50</div>
+                </div>
+
+                <div class="da-sku-card">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">💧</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">水溶霉立净 Pro</span>
+                                <span class="da-sku-badge da-sku-badge--alt">首单切入</span>
+                            </div>
+                            <div class="da-sku-opp-link">关联：动保空白 · 首次开发</div>
+                            <div class="da-sku-price">¥128 <small>/ 瓶 · 500ml</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>动保品类无交易，客情良好；脱霉是刚需高频品，水溶使用方便，适合作为动保首单破冰。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>饮水 1ml/100L，长期添加或霉变高发期加量。</div>
+                    <div class="da-sku-row"><strong>优势对比：</strong>vs 粉剂脱霉剂，水溶 Pro 吸收更好、操作更省工；SK 同品替换话术可直接使用。</div>
+                </div>
+
+                <div class="da-plan-total">
+                    方案合计约 <strong>¥902</strong>（含活动折算）· 覆盖 4 个机会点 · 预估 3.2 万羽月用量
+                </div>
+            </div>
+
+            <div class="da-sku-panel" id="skuPanelAlt">
+                <div class="da-sku-card">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">🍃</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">藿香正气液</span>
+                                <span class="da-sku-badge da-sku-badge--alt">备选</span>
+                            </div>
+                            <div class="da-sku-opp-link">替代：暑立消 · 夏季热应激</div>
+                            <div class="da-sku-price">¥98 <small>/ 箱</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>中兽药方案，价格更低，适合对成本敏感的客户；解暑化湿，夏季常备。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>饮水 1ml/2L，连用 3-5 天。</div>
+                </div>
+
+                <div class="da-sku-card">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">🦠</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">复合益生菌 Pro</span>
+                                <span class="da-sku-badge da-sku-badge--alt">备选</span>
+                            </div>
+                            <div class="da-sku-opp-link">替代：新玉米复合酶 · 肠道保健</div>
+                            <div class="da-sku-price">¥180 <small>/ 袋</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>若客户更倾向益生菌调肠道，可替代或搭配复合酶使用。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>拌料或饮水，500g/吨，连用 7-10 天。</div>
+                </div>
+
+                <div class="da-sku-card">
+                    <div class="da-sku-head">
+                        <div class="da-sku-img">☀️</div>
+                        <div class="da-sku-info">
+                            <div class="da-sku-name-row">
+                                <span class="da-sku-name">25羟基D3鱼肝油</span>
+                                <span class="da-sku-badge da-sku-badge--alt">备选</span>
+                            </div>
+                            <div class="da-sku-opp-link">替代：蛋优多 Pro · 产蛋保健</div>
+                            <div class="da-sku-price">¥156 <small>/ 瓶</small></div>
+                        </div>
+                    </div>
+                    <div class="da-sku-row"><strong>推荐原因：</strong>侧重钙磷吸收与蛋壳质量，适合客户反馈软壳蛋、薄壳蛋时使用。</div>
+                    <div class="da-sku-row"><strong>用法用量：</strong>拌料 500ml/吨，连用 10-15 天。</div>
+                </div>
+            </div>
+
+            <div class="da-card-actions">
+                <button type="button" class="da-card-btn da-card-btn--ghost">调整方案</button>
+                <button type="button" class="da-card-btn da-card-btn--primary" id="btnConfirmSku">确认，生成话术</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="da-chat-area da-chat-area--user" id="userConfirmScript">
+        <div class="da-sender">我</div>
+        <div class="da-bubble">确认，生成话术</div>
+    </div>
+
+    <div class="da-chat-area" id="scriptArea">
+        <div class="da-sender">销售助理</div>
+        <div class="da-bubble da-bubble--card">
+            <span class="da-step-tag">Step 4 · 转化话术</span>
+            <p style="margin-bottom:10px;font-size:15px;">已基于确认方案生成面销话术，可直接复制使用：</p>
+            <div class="da-script-meta">客户：阜阳市顺煜农业 · 方案：暑立消 + 新玉米复合酶 + 蛋优多 Pro 组合 + 水溶霉立净 Pro · SK-2026</div>
+
+            <div class="da-script-tone">
+                <button type="button" class="da-script-tone-btn" data-tone="phone">电话短版</button>
+                <button type="button" class="da-script-tone-btn active" data-tone="face">面销完整版</button>
+                <button type="button" class="da-script-tone-btn" data-tone="wechat">微信文字版</button>
+            </div>
+
+            <div class="da-script-blocks" id="scriptBlocks">
+                <div class="da-script-block">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">1. 开场 / 痛点共鸣</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block1">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block1">王总，最近阜阳这边持续高温，您这边 3.2 万羽海兰褐产蛋鸡 286 天了，我注意到产蛋率 88% 比标准低了 4 个点，料蛋比也到 2.18 了。再加上您刚切换新玉米，这个节点最容易出现过料、拉稀，死淘一上去损失就大了。咱们预混料合作一直很好，动保这块我帮您把方案理一理。</div>
+                </div>
+
+                <div class="da-script-block">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">2. 问题诊断</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block2">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block2">简单说三点：一是热应激导致采食下降、内脏负担加重；二是新玉米抗性淀粉高，肠道消化跟不上；三是产蛋后期输卵管和代谢压力叠加，产蛋率和蛋品都容易往下走。这三个问题不一起处理，单补营养效果有限。</div>
+                </div>
+
+                <div class="da-script-block">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">3. 产品方案</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block3">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block3">给您配一套组合：<br><br>
+                    <strong>① 暑立消</strong> — 先抗热应激，饮水 1g/200L，连用 5-7 天，把采食和死淘稳住；<br>
+                    <strong>② 新玉米复合酶</strong> — 拌料 200-300g/吨，切换期连用 15-20 天，防过料拉稀；<br>
+                    <strong>③ 蛋优多 Pro + 卵炎消消乐</strong> — 一个提产蛋一个护输卵管，各连用 10-15 天；<br>
+                    <strong>④ 水溶霉立净 Pro</strong> — 动保首单从脱霉切入，饮水长期添加，操作方便。</div>
+                </div>
+
+                <div class="da-script-block">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">4. 优势阐述</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block4">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block4">您偏好高质量产品，Pro 系列含量和工艺都更合适。暑立消比普通多维多了电解质和抗应激因子，起效快；复合酶是新玉米专用配方，不是通用酶能比的；水溶霉立净 Pro 比粉剂吸收好、省人工，很多老客户都是从这一款开始用动保的。咱们预混料+动保一条线服务，追溯、到货都有保障。</div>
+                </div>
+
+                <div class="da-script-block">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">5. 活动逼单</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block5">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block5">现在暑立消买 10 箱送 2 箱，折算下来 140 一箱，3.2 万羽每天不到 2 分钱；蛋优多+卵炎消组合满 500 减 50。整套方案下来约 900 块，按您现在的产蛋损失算，提 1 个点产蛋率就回本了。这个月活动到月底，我帮您先各备一轮试用？</div>
+                </div>
+
+                <div class="da-script-block collapsed">
+                    <div class="da-script-block-head">
+                        <span><span class="da-script-chevron">▼</span><span class="da-script-block-title">6. 异议处理（可选）</span></span>
+                        <button type="button" class="da-script-block-copy" data-copy="block6">复制</button>
+                    </div>
+                    <div class="da-script-block-body" id="block6"><strong>「先拿一件试试」</strong> → 可以先从暑立消 2 箱 + 水溶霉立净 2 瓶切入，热应激和脱霉是刚需，见效 3-5 天您就能看到采食变化。<br><br>
+                    <strong>「价格能不能再低」</strong> → 我帮您按买赠算过，折算单价已经比单买低 15% 了，再搭预混料一起下单还能走组合政策。<br><br>
+                    <strong>「效果能保证吗」</strong> → 咱们工厂直供、国标正品，同区域有类似规模客户用后产蛋率 7 天回升 2-3 个点，我可以把案例发您微信。</div>
+                </div>
+            </div>
+
+            <div class="da-card-actions">
+                <button type="button" class="da-card-btn da-card-btn--ghost" id="btnCopyAllScript">复制全文</button>
+                <button type="button" class="da-card-btn da-card-btn--primary">分享至微信</button>
+            </div>
+
+            <div class="da-feedback-row">
+                <button type="button" class="da-feedback-btn da-feedback-btn--ok">✓ 已使用</button>
+                <button type="button" class="da-feedback-btn">成交</button>
+                <button type="button" class="da-feedback-btn">未成交</button>
+                <button type="button" class="da-feedback-btn">待跟进</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="da-bottom">
+        <div class="da-input-wrap">
+            <input type="text" placeholder="请用一句话描述您的问题" id="questionInput">
+            <div class="da-input-icons">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                <span class="da-input-plus">+</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.getElementById('oppList').addEventListener('click', e => {
+            const item = e.target.closest('.da-opp-item');
+            if (!item) return;
+            item.classList.toggle('selected');
+            const count = document.querySelectorAll('.da-opp-item.selected').length;
+            document.getElementById('oppSelectedCount').textContent = count;
+        });
+
+        document.getElementById('btnConfirmOpp').addEventListener('click', () => {
+            document.getElementById('userConfirmSku').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        document.getElementById('btnConfirmSku').addEventListener('click', () => {
+            document.getElementById('userConfirmScript').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('scriptArea').scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
+
+        document.querySelectorAll('.da-sku-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.da-sku-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.da-sku-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                const panel = tab.dataset.panel === 'alt' ? 'skuPanelAlt' : 'skuPanelMain';
+                document.getElementById(panel).classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.da-script-block-head').forEach(head => {
+            head.addEventListener('click', e => {
+                if (e.target.closest('.da-script-block-copy')) return;
+                head.closest('.da-script-block').classList.toggle('collapsed');
+            });
+        });
+
+        document.querySelectorAll('.da-script-block-copy').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const el = document.getElementById(btn.dataset.copy);
+                if (el) navigator.clipboard.writeText(el.innerText.replace(/\n\n/g, '\n'));
+            });
+        });
+
+        document.getElementById('btnCopyAllScript').addEventListener('click', () => {
+            const texts = ['block1','block2','block3','block4','block5','block6']
+                .map(id => document.getElementById(id)?.innerText || '')
+                .filter(Boolean);
+            navigator.clipboard.writeText(texts.join('\n\n'));
+        });
+
+        document.querySelectorAll('.da-script-tone-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.da-script-tone-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

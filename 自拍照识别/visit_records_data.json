@@ -1,0 +1,1516 @@
+{
+  "headers": [
+    "模版名称",
+    "拜访id",
+    "业务员名称",
+    "业务员部门",
+    "拜访客户姓名",
+    "自拍照片url",
+    "自拍照片识别结果"
+  ],
+  "records": [
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1082-20260701167",
+      "业务员名称": "王园康",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "阜阳市顺煜农业科技有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/cca0c0e1610c45118266c3995e7e9d42.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "890-20260701166",
+      "业务员名称": "黄铭越",
+      "业务员部门": "川渝区域",
+      "拜访客户姓名": "重庆绿派蛋鸡养殖有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ec2fc7b82f374a8fb8244b8d07f95ec0.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1096-20260701165",
+      "业务员名称": "王亚超",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "肖东辉",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/9fa187182898486eba4c28317bb64c27.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1286-20260701164",
+      "业务员名称": "李路阳",
+      "业务员部门": "河南区域",
+      "拜访客户姓名": "安福爱",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/df14fdccfc7a4ca88e303d2121d91e40.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "1086-20260701163",
+      "业务员名称": "黄朋朋",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "张金榜",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1305ca9807da489e949a1de06eee9158.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "423-20260701162",
+      "业务员名称": "王瑞强",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "李小曼",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/116fb773fcbe4476ba8f017a8b16712b.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1027-20260701161",
+      "业务员名称": "郭兵洋",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "张雪霞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/868fc6a951e6492284b42b319e3eb075.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/69ca1e9aa1ce41f7889503ed44bf2603.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "990-20260701160",
+      "业务员名称": "李财",
+      "业务员部门": "川渝区域",
+      "拜访客户姓名": "九佑（重庆）生物科技有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a50610b2ee564b3180e843bb251dbe30.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "447-20260701159",
+      "业务员名称": "耿立庆",
+      "业务员部门": "山东区域",
+      "拜访客户姓名": "孙玉才",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/cf89921563d041838bb748fb66bc05a4.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "593-20260701158",
+      "业务员名称": "袁亮",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "盛栓",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/e60b8000f61946b9b89fda74d9798485.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1203-20260701157",
+      "业务员名称": "徐文翔",
+      "业务员部门": "老河口站",
+      "拜访客户姓名": "王強",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/315b8ed232044e82b6c10f26bb46ef42.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "925-20260701156",
+      "业务员名称": "牛晓东",
+      "业务员部门": "河北区域",
+      "拜访客户姓名": "辛集市兴达饲料有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/20a8b46d83f948cb95c2945ae0340704.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "930-20260701155",
+      "业务员名称": "许刚千",
+      "业务员部门": "天门站",
+      "拜访客户姓名": "安陆市悦然农牧发展有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7287bc9a839e46efaf2b46b584bf35f8.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "925-20260701154",
+      "业务员名称": "牛晓东",
+      "业务员部门": "河北区域",
+      "拜访客户姓名": "吕占月",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8d9f013c29b84c898739980dafbb3e04.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1314-20260701153",
+      "业务员名称": "李昆",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "马总",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/e1037543e9484b9bb1f0c8c4dbd88114.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "853-20260701152",
+      "业务员名称": "吕邵伟",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "陈冲",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f353b64f80c34853ac286f1bbea2e605.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1283-20260701151",
+      "业务员名称": "陈祥宇",
+      "业务员部门": "确山站",
+      "拜访客户姓名": "王立正",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6efea675acdf4b168f0448a254c17306.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1233-20260701150",
+      "业务员名称": "廖俊",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "高州市联辉农牧有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/130da338e0534fbbaee8ee7ae391c683.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1139-20260701149",
+      "业务员名称": "宋尚松",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "韩连花",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2011f3d2cd40441da3502799b31f4ff1.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "464-20260701148",
+      "业务员名称": "刘春松",
+      "业务员部门": "河北区域",
+      "拜访客户姓名": "张占海",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a1f98c6569bf4f3cb27d9e99cdf3a215.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1203-20260701147",
+      "业务员名称": "徐文翔",
+      "业务员部门": "老河口站",
+      "拜访客户姓名": "周军辉",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/09509b0756964b5383d850aab7aded1b.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "689-20260701146",
+      "业务员名称": "李通",
+      "业务员部门": "山东区域",
+      "拜访客户姓名": "山东千翼农牧科技有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2384286cc1a64ae8ac3eea9677be00ac.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1248-20260701145",
+      "业务员名称": "阙宗林",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "广西北流市金星养殖场",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/70e3fdfb3c6c49b88640d472bfd522ab.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "671-20260701144",
+      "业务员名称": "王治港",
+      "业务员部门": "濮阳站",
+      "拜访客户姓名": "董亚军",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a949ae692eaf43759b159baca7de9666.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1031-20260701143",
+      "业务员名称": "杨凯歌",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "杨长水",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a5a9d56d5eca4636bb4a8f910418d570.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "436-20260701142",
+      "业务员名称": "李振宇",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "山东成武吉乐原禽业育种有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/3287837ae0c64348b1367401c3bb96b2.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1294-20260701141",
+      "业务员名称": "刘克强",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "张随林",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/25b5fc6d21a84313a76d8ce628140557.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1291-20260701140",
+      "业务员名称": "薛鹏飞",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "李大强",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/fa92d321140c4f57a0cc5add13d025b1.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1278-20260701139",
+      "业务员名称": "李博",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "王文斌",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/9b377adb69844abc9d5ce4729f6385ef.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1156-20260701138",
+      "业务员名称": "赵泽国",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "王付娇",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8628295927b54b798e676772a2b22ddd.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "497-20260701137",
+      "业务员名称": "熊雄",
+      "业务员部门": "华中区域",
+      "拜访客户姓名": "荆门市钧恒饲料有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1f7d3e66e7e04e4f91a8533c6210cb30.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1305-20260701136",
+      "业务员名称": "王振振",
+      "业务员部门": "颍上站",
+      "拜访客户姓名": "张廷雨",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8195f7db3712404b870058222e402553.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1231-20260701135",
+      "业务员名称": "冯永健",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "柳州柳城寨隆农村合作社养殖",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4b0f4e5ee605468a94e0c27a79a06e13.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "980-20260701134",
+      "业务员名称": "李云鹤",
+      "业务员部门": "黑吉区域",
+      "拜访客户姓名": "李亚军",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f702338a7d884cc494bf9beae38f9812.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1254-20260701133",
+      "业务员名称": "余勇韬",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "赖燕钱",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/61f0ca90f13a426f98fe1efa77e5820d.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1125-20260701132",
+      "业务员名称": "李三洋",
+      "业务员部门": "周口商水站",
+      "拜访客户姓名": "程光阴",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/41c467e6a34e45678b3d0a98e6b3b531.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "303-20260701131",
+      "业务员名称": "张俊辉",
+      "业务员部门": "确山站",
+      "拜访客户姓名": "张刚",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c595e5492321480ca65b358a93eb8408.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "486-20260701130",
+      "业务员名称": "廖永顺",
+      "业务员部门": "固始站",
+      "拜访客户姓名": "临泉县胜辉养殖有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6cb6165b13ab4047a2759053abc2b244.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "742-20260701129",
+      "业务员名称": "王岩",
+      "业务员部门": "黑吉区域",
+      "拜访客户姓名": "郭景亮",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4c82ed1c88d140f7bfb0442f0a1a53e2.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1294-20260701128",
+      "业务员名称": "刘克强",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "吴彦臣",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d36524b9c1914fc2b02f50d593954425.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗玉米拜访记录",
+      "拜访id": "699-20260701127",
+      "业务员名称": "聂强强",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "伟伟",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/013d5254be3f428e9ab55da970262ec0.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "931-20260701126",
+      "业务员名称": "白洋",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "王豪",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/17329d7bc96b40c2a7bb3d4878118a19.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "890-20260701125",
+      "业务员名称": "黄铭越",
+      "业务员部门": "川渝区域",
+      "拜访客户姓名": "凌钦华",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/864827b10e2740ef91a452500d0f5aee.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1264-20260701124",
+      "业务员名称": "冯扛",
+      "业务员部门": "周口商水站",
+      "拜访客户姓名": "包大哥",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/83c6397cc59f46b3b8d012eac11b9c2f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1228-20260701123",
+      "业务员名称": "孙岩",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "北部湾桂农（广西）农业有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/bf650b5149c246d1aa59013018b0f846.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1277-20260701122",
+      "业务员名称": "李迪",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "余继峰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4cfbe1a0b5914f51850faa75c3c6bbfb.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "742-20260701121",
+      "业务员名称": "王岩",
+      "业务员部门": "黑吉区域",
+      "拜访客户姓名": "徐洪亮",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/20664f3f879c4606ab3f01017e26072a.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "362-20260701120",
+      "业务员名称": "项玲",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "王录青",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d0a508051c4c4d67a32498b2c1164e06.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1322-20260701119",
+      "业务员名称": "索雯",
+      "业务员部门": "新乡站",
+      "拜访客户姓名": "郑振海",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ec211b0e435f44b388232b0cd51f1a75.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "971-20260701118",
+      "业务员名称": "郭成志",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "荣云峰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f3e61c5d4085450d8615c3993fdd8c03.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "286-20260701117",
+      "业务员名称": "孙杨",
+      "业务员部门": "苏皖区域",
+      "拜访客户姓名": "董淑强",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/5bb0a2d2cfe445cabd16ef924931c357.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1156-20260701116",
+      "业务员名称": "赵泽国",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "王乐强",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a0cec8068cf74e588619ae9119cfeee7.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1220-20260701115",
+      "业务员名称": "李杨",
+      "业务员部门": "安阳站",
+      "拜访客户姓名": "韩社彬",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ea1360fea7e34684b8ce7231e7538799.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1297-20260701114",
+      "业务员名称": "段雨辰",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "11",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/18c64c86c59d4db78d58ced4a09e89f1.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "陪访",
+      "拜访id": "769-20260701113",
+      "业务员名称": "王玉东",
+      "业务员部门": "预混料产品部",
+      "拜访客户姓名": "常宪光",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d2c5183f860a4907b3d6a327a8a8c8ff.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1317-20260701112",
+      "业务员名称": "邵冰",
+      "业务员部门": "黑吉区域",
+      "拜访客户姓名": "李文",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b30af4163e8349fa9fb2a3ef0cbe4636.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "890-20260701111",
+      "业务员名称": "黄铭越",
+      "业务员部门": "川渝区域",
+      "拜访客户姓名": "胡利",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b5b8774af1f0457188949ba96a10a677.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "873-20260701110",
+      "业务员名称": "高阔",
+      "业务员部门": "河北区域",
+      "拜访客户姓名": "赵庆阳",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6c8de8df455949e1882ebb86536a8e6c.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1295-20260701109",
+      "业务员名称": "刘少博",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "孙绍恒",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2788ce80922e49668690292bd0bf14a9.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1283-20260701108",
+      "业务员名称": "陈祥宇",
+      "业务员部门": "确山站",
+      "拜访客户姓名": "郭威",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4e2d917c6f6e410b8f3bd8bf5420e288.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "418-20260701107",
+      "业务员名称": "李坤",
+      "业务员部门": "皖北区域",
+      "拜访客户姓名": "喜翔潜山总部",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/fddce8c4009d431f966f9e0afdfddafc.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1308-20260701106",
+      "业务员名称": "张涛2",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "赵丽",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d53e9b96f0ba4b3fa1c2b28d6b669b57.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "657-20260701105",
+      "业务员名称": "张清雨",
+      "业务员部门": "商丘夏邑站",
+      "拜访客户姓名": "戚亚飞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c1946f8fd87b44a892d2313683a76aa4.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "930-20260701104",
+      "业务员名称": "许刚千",
+      "业务员部门": "天门站",
+      "拜访客户姓名": "褚敏杰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/e69864c13cc94e5a9509a47a9347305f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1240-20260701103",
+      "业务员名称": "张俊",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "军哥",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b9ab07e626a24fbaa5fb885b96dc3c3b.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "863-20260701102",
+      "业务员名称": "赵亚辉",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "马小萍",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/45ecbba259004b5da1511516790ceaff.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1096-20260701101",
+      "业务员名称": "王亚超",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "张钧富",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/3eb67e1f4d2142a7ad6978770d22e663.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1289-20260701100",
+      "业务员名称": "闻少鸽",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "汝州市米庙镇尚楼村",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2c166c80fdf44597922ab10b4d326d74.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1294-20260701099",
+      "业务员名称": "刘克强",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "吴彦军",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f61e3e74b009464096dbabbf2054f027.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1273-20260701098",
+      "业务员名称": "孟庆鹤",
+      "业务员部门": "鄄城站",
+      "拜访客户姓名": "李宁",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/959aa5622d5748bf8ad3ed873c4517d9.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1139-20260701097",
+      "业务员名称": "宋尚松",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "李青标",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a1053f7b34394b7e923fc3104740999f.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "726-20260701096",
+      "业务员名称": "赵昂",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "西平县一品牧业有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ee87bcc9e00b4a49bb4b124e170e484d.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "606-20260701095",
+      "业务员名称": "李明明",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "李现利",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/0a5189b67a2d4ec79f51202a9271ec9d.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1322-20260701094",
+      "业务员名称": "索雯",
+      "业务员部门": "新乡站",
+      "拜访客户姓名": "张小普",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/febf5ec822cb42b98502ab79544f6546.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "574-20260701093",
+      "业务员名称": "朱震",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "张永生",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f876ea394e884772a55f5a71e82e21f9.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1185-20260701092",
+      "业务员名称": "丹清",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "刘领领",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/011e0ac7e05343089b499c7b5ea0da0b.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "497-20260701091",
+      "业务员名称": "熊雄",
+      "业务员部门": "华中区域",
+      "拜访客户姓名": "刘忠君",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c5501b36428145e1af5da1979f9a200a.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "931-20260701090",
+      "业务员名称": "白洋",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "魏红振",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/9939f42dfc814ffa8ec19162ad4afc4f.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1277-20260701089",
+      "业务员名称": "李迪",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "张强",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/53bdd5f285ee492d8cbcfbf9dd09f8c7.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1287-20260701088",
+      "业务员名称": "王汝魁",
+      "业务员部门": "鄄城站",
+      "拜访客户姓名": "崔付涛",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c8fbde5904994160bacde23a9ea9c9a1.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1220-20260701087",
+      "业务员名称": "李杨",
+      "业务员部门": "安阳站",
+      "拜访客户姓名": "晓敏",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d71404faa06046378a96bfc1ec3f1fbd.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "570-20260701086",
+      "业务员名称": "赵明辉",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "郭平霞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/dbbc3d8ae9ae4ee2998e119ec2e0790e.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1282-20260701085",
+      "业务员名称": "李龙龙",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "董明飞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/216af451648f403ab8a7291c15e249cc.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "1141-20260701084",
+      "业务员名称": "吴克信",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "楚秋香",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a06aaf86e61d406bb8799dc138915a43.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "980-20260701083",
+      "业务员名称": "李云鹤",
+      "业务员部门": "黑吉区域",
+      "拜访客户姓名": "张向波",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f2b0ad4777744c14a8bcf46913af0201.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1228-20260701082",
+      "业务员名称": "孙岩",
+      "业务员部门": "华南区域",
+      "拜访客户姓名": "吴锦山",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/85c90e915a594ca8a1ed71d5f501fe3b.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1189-20260701081",
+      "业务员名称": "冯志富",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "王彬彬",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a77e966f632047cb88cfc19acd01a79e.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "873-20260701080",
+      "业务员名称": "高阔",
+      "业务员部门": "河北区域",
+      "拜访客户姓名": "秦皇岛超阳饲料有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/9493181b475d498990d48955969a88e7.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1295-20260701079",
+      "业务员名称": "刘少博",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "王朝帅",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f3ef697cbc6142f083b48352a6ae17ce.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗玉米拜访记录",
+      "拜访id": "699-20260701078",
+      "业务员名称": "聂强强",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "褚永旺",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c9af9813d37f47558a234bee343f0d41.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1305-20260701077",
+      "业务员名称": "王振振",
+      "业务员部门": "颍上站",
+      "拜访客户姓名": "崔明",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2084ec2af7304ea1bc57f66e2ad4e9de.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1185-20260701076",
+      "业务员名称": "丹清",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "张永霞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/008aabae217d4615824084f219a9f426.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1203-20260701075",
+      "业务员名称": "徐文翔",
+      "业务员部门": "老河口站",
+      "拜访客户姓名": "陈小梅",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/fa5b345fee19426f849346fe2d9a1a6f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "635-20260701074",
+      "业务员名称": "燕站强",
+      "业务员部门": "新乡站",
+      "拜访客户姓名": "张红亮",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/eb287ec105fa45588454efefb37e1d49.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "963-20260701073",
+      "业务员名称": "王映武",
+      "业务员部门": "天门站",
+      "拜访客户姓名": "天高云淡",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/09bbe84616f041d48d0469e1d1ec7794.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1139-20260701072",
+      "业务员名称": "宋尚松",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "宋保卫",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f97d59fbf0904b529da574eb3c79438e.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1314-20260701071",
+      "业务员名称": "李昆",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "冉庆海",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/0ba6d1bc78504bf496dd1f1fc2bf1eb9.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "423-20260701070",
+      "业务员名称": "王瑞强",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "祝敬娟",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b37fe77e51f34b91bce27b1f3c19c042.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "388-20260701069",
+      "业务员名称": "张子翔",
+      "业务员部门": "苏皖区域",
+      "拜访客户姓名": "王劲松",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6631c8eac8544b258f2791a15d89ecd3.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "593-20260701068",
+      "业务员名称": "袁亮",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "潘春党",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ccc787de9bc840f995ef2c55caadcc9b.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "1090-20260701067",
+      "业务员名称": "狄灰灰",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "周敬超",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/756068ac20c74819bcb038bdb69ffe87.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1249-20260701066",
+      "业务员名称": "许亮",
+      "业务员部门": "濮阳站",
+      "拜访客户姓名": "周金亮",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/29a75c3dafbb49b4aeff63f4bede4d7f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "570-20260701065",
+      "业务员名称": "赵明辉",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "刘帅宏",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4955e70faff147618d7e68786565c5fa.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "669-20260701064",
+      "业务员名称": "薄明彬",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "王文海",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a6115ee394a1474b97c372cb5d4a1b6d.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1273-20260701063",
+      "业务员名称": "孟庆鹤",
+      "业务员部门": "鄄城站",
+      "拜访客户姓名": "贾佑超",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b1e4d1cc46284cf09c6dab33c6d6e76a.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/75e1aad9337f418190840d35b2762161.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/cf44560ea2b341c9a3406641128bd634.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/2fb8bd2d31c84b4880b0ef5abcc46879.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6e665863a8a044ebb9dabf77227c6272.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/5cd93e76401f403a9be52f95e1ca4b24.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4db93999a0bf4981a1c6c65cfa266c6f.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/48eae5406ac348a9aa0cfcdb8596158a.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/0829d99c04b8443a8dc49cc7029a6448.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a29e931643b64044b5ee90680dd1f5dd.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "726-20260701062",
+      "业务员名称": "赵昂",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "周铁栓",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7d2c1e4ddb274c218754ac0672efd74b.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1303-20260701061",
+      "业务员名称": "井开进",
+      "业务员部门": "霍邱站",
+      "拜访客户姓名": "裕来牧业",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/65690ccbb714434188e842bc0b313f7f.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1196-20260701060",
+      "业务员名称": "李庭辉",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "王丰举",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/cdd0a25c494343a39c3a86dc62e36040.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1295-20260701059",
+      "业务员名称": "刘少博",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "赵帅锋",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/87193845d22243d19d243e30ef78050b.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1082-20260701058",
+      "业务员名称": "王园康",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "雪强禽业",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/27259242941c4209bb8edff70edad3e7.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1189-20260701057",
+      "业务员名称": "冯志富",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "王海峰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b38d94b4cd9649a7b485a0526e007965.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1277-20260701056",
+      "业务员名称": "李迪",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "高彦章",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/839ba31f534c4f22b54ef8d3ae6b4215.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗玉米拜访记录",
+      "拜访id": "699-20260701055",
+      "业务员名称": "聂强强",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "李翔",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1d71f4ad96024d379e8d2acbded88894.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1287-20260701054",
+      "业务员名称": "王汝魁",
+      "业务员部门": "鄄城站",
+      "拜访客户姓名": "李霞光",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8bed753d6deb40b5980377f5e6a1ce26.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1211-20260701053",
+      "业务员名称": "陆冯兵",
+      "业务员部门": "霍邱站",
+      "拜访客户姓名": "孙洋",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1748b8c5a6b743f4810e65480a1e93ef.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1283-20260701052",
+      "业务员名称": "陈祥宇",
+      "业务员部门": "确山站",
+      "拜访客户姓名": "艳超",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7388a6eed9f2451f94974fa167da6f67.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "593-20260701051",
+      "业务员名称": "袁亮",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "靖公银",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/3530c546967e432b8df52c02bd479df2.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "715-20260701050",
+      "业务员名称": "刘攀",
+      "业务员部门": "周口商水站",
+      "拜访客户姓名": "刘初中",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1c9df71223d444f1bb421c99ef42a396.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d4f9515b1b4f44e2a18b4fd194dbc524.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/f090613ef79f4fab9a8a0e389f69c893.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "931-20260701049",
+      "业务员名称": "白洋",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "李小宽",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/30738b37a0e646fd94b16d857c8a0131.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "671-20260701048",
+      "业务员名称": "王治港",
+      "业务员部门": "濮阳站",
+      "拜访客户姓名": "谷中国",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/0794ef7d43d74c30b9c1a39fd8d78e88.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1256-20260701047",
+      "业务员名称": "杨林朋",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "海燕",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/3f614f1aed754bfda3f5f5bae8ae89fb.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1226-20260701046",
+      "业务员名称": "李建军",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "刘顶才",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7ee71cb454994f06a542b0c63f26d9f3.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1124-20260701044",
+      "业务员名称": "董彩红",
+      "业务员部门": "商丘夏邑站",
+      "拜访客户姓名": "时楼关黄庄蛋鸡养殖",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/e15f1ca22edc4ee5b927e2b72dfdcfc6.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1308-20260701045",
+      "业务员名称": "张涛2",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "姚燕",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/097ff20850264c1db252499267e94a45.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1220-20260701043",
+      "业务员名称": "李杨",
+      "业务员部门": "安阳站",
+      "拜访客户姓名": "刘粉霞",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ae355e13b17242edad2ce98117f2943f.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1031-20260701042",
+      "业务员名称": "杨凯歌",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "郑修",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/e1b99bacd6c24d4b8becd0e52334c40a.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1185-20260701041",
+      "业务员名称": "丹清",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "王长春",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c265a8c6931d4746a91289b75125a754.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1299-20260701040",
+      "业务员名称": "姚捷",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "酒小佩",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/17e714c8b0fe43bb8ac475c9ed3f0891.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1264-20260701039",
+      "业务员名称": "冯扛",
+      "业务员部门": "周口商水站",
+      "拜访客户姓名": "陈春喜",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ed142957d04941369b35830c54ccad01.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1297-20260701038",
+      "业务员名称": "段雨辰",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "吴中记",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/37b37c300ca7467f9bb823b37e1c396c.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1294-20260701037",
+      "业务员名称": "刘克强",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "白福荣",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8fbe8dbbfb394091b53716e1798a6fa3.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "486-20260701036",
+      "业务员名称": "廖永顺",
+      "业务员部门": "固始站",
+      "拜访客户姓名": "许家侠",
+      "自拍照片url": "",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1274-20260701035",
+      "业务员名称": "李宏飞",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "辛光周",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/bb8490fffc9c4dbab67a22183969bdb2.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1290-20260701034",
+      "业务员名称": "吴威威",
+      "业务员部门": "濮阳站",
+      "拜访客户姓名": "孟清泽",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/011e1bbd44be4976a4517c538fe52e5a.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1202-20260701033",
+      "业务员名称": "邓麒良",
+      "业务员部门": "确山站",
+      "拜访客户姓名": "确山县禾诚农业科技有限公司",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/5d97f146b304422689055f22e78474bd.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "772-20260701032",
+      "业务员名称": "许冠杰",
+      "业务员部门": "商丘夏邑站",
+      "拜访客户姓名": "张文建",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/42665d254b7347ddbc94c6d6fb9f8b26.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "大宗豆粕拜访记录",
+      "拜访id": "1127-20260701031",
+      "业务员名称": "武治国",
+      "业务员部门": "羊窝项目组",
+      "拜访客户姓名": "李宝民",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/4811d0e872c64297ba07f7901cfc8b93.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1291-20260701030",
+      "业务员名称": "薛鹏飞",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "宋洋洋",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c10d949e6de2443087b88c9022a345d2.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1186-20260701029",
+      "业务员名称": "吕红宾",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "谢江峰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/0419bc9af673451b8320a787077a0363.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/8f7e0d06628a4a379e6bec8410a8ee3f.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "1141-20260701028",
+      "业务员名称": "吴克信",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "林红超",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/661a5234714f4ee4b175d537ec41c07b.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "570-20260701027",
+      "业务员名称": "赵明辉",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "徐明道",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c762092763704323a3639d59bcfef9d1.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1031-20260701026",
+      "业务员名称": "杨凯歌",
+      "业务员部门": "漯河站",
+      "拜访客户姓名": "杨二涛",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7cd2f33f9df247909ec7324909788e4b.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1240-20260701025",
+      "业务员名称": "张俊",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "王果",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/5b8ffac44d8a44c5875217c1efffa487.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "930-20260701024",
+      "业务员名称": "许刚千",
+      "业务员部门": "天门站",
+      "拜访客户姓名": "褚平安",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/ebc84bef3e6a400f815d6e5dbc2de8b1.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "597-20260701023",
+      "业务员名称": "吴生根",
+      "业务员部门": "固始站",
+      "拜访客户姓名": "胡丽萍",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6ef51db124e04f88a9a9fa87187dcf25.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "574-20260701022",
+      "业务员名称": "朱震",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "乔栋",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/82c6ac52bca844948e1d5b4b0c6aa413.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "971-20260701021",
+      "业务员名称": "郭成志",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "李强",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a5feb2b2996048fb8724124f6d0b34ea.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "672-20260701020",
+      "业务员名称": "谢冉",
+      "业务员部门": "邓州站",
+      "拜访客户姓名": "刘嵩山",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/b439c5b7f414494db285b2ef4c4a8e91.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡蛋拜访记录",
+      "拜访id": "1156-20260701019",
+      "业务员名称": "赵泽国",
+      "业务员部门": "商丘宁陵站",
+      "拜访客户姓名": "罗伟峰",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/794ec1ab532e4d80a7c0e3c4185ef540.jpg",
+      "自拍照片识别结果": ""
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1149-20260701018",
+      "业务员名称": "李心宽",
+      "业务员部门": "老河口站",
+      "拜访客户姓名": "张守刚",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/164fc509d5e24d53a17e7e0c8b7bf084.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1278-20260701017",
+      "业务员名称": "李博",
+      "业务员部门": "唐河站",
+      "拜访客户姓名": "刘彦俊",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c2b9432ab06b4487b8853dc54217d713.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "963-20260701016",
+      "业务员名称": "王映武",
+      "业务员部门": "天门站",
+      "拜访客户姓名": "杜月发",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/583c8667a039462e87f2986ce941f80d.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "872-20260701015",
+      "业务员名称": "申元广",
+      "业务员部门": "安阳站",
+      "拜访客户姓名": "阿瞒大人丶",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7b8aa422b6f94c9bbde65218945a80c7.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1274-20260701014",
+      "业务员名称": "李宏飞",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "李拯谊",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/3d8d5d4f96a04976b5e19b9f7cceb05a.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝豆粕拜访记录",
+      "拜访id": "432-20260701013",
+      "业务员名称": "詹欣阳",
+      "业务员部门": "固始站",
+      "拜访客户姓名": "陈明军",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/71c5bbc2eb104421a974fd6b2d520e9f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1186-20260701012",
+      "业务员名称": "吕红宾",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "张八桥养殖场",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/5ab951b6f7c54d8188033c9120d9ae26.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1203-20260701011",
+      "业务员名称": "徐文翔",
+      "业务员部门": "老河口站",
+      "拜访客户姓名": "胡明",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/fdb784604d534393b8c07c98ccd1b0ba.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1314-20260701010",
+      "业务员名称": "李昆",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "李昆",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/a78644e6853e40eebffcaf198e073d1f.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "863-20260701009",
+      "业务员名称": "赵亚辉",
+      "业务员部门": "许昌站",
+      "拜访客户姓名": "刘永胜",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/96fe1756d9a24a6897b3a43788fce76c.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "853-20260701008",
+      "业务员名称": "吕邵伟",
+      "业务员部门": "阜阳站",
+      "拜访客户姓名": "董总",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/6cfb37eeec7647589ae955f8eda86f33.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1096-20260701007",
+      "业务员名称": "王亚超",
+      "业务员部门": "巨野站",
+      "拜访客户姓名": "陈志亭",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/19a23f95e6714c13a59d3f5e03920ce5.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1289-20260701006",
+      "业务员名称": "闻少鸽",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "景东洋",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c8bb34732dd442aca6f179980c00e668.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "606-20260701005",
+      "业务员名称": "李明明",
+      "业务员部门": "偃师站",
+      "拜访客户姓名": "王东东",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/c4dcc6cd9eeb4b6f8335627e5d6f7f48.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1249-20260701004",
+      "业务员名称": "许亮",
+      "业务员部门": "濮阳站",
+      "拜访客户姓名": "李亚可",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/94c7a4ff757e4750a5bc2618290d7186.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "1186-20260701003",
+      "业务员名称": "吕红宾",
+      "业务员部门": "平顶山站",
+      "拜访客户姓名": "金祥牧业",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/7623ab4fe86f4a4db905f60030f02875.jpg,https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/1f1a3ce8762c4df394205dd91faa7cc7.jpg",
+      "自拍照片识别结果": "未穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "605-20260701002",
+      "业务员名称": "尹世鹏",
+      "业务员部门": "伊川站",
+      "拜访客户姓名": "李涵涵",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/32f385557bff458a98376da7f77d0f24.jpg",
+      "自拍照片识别结果": "已穿工服"
+    },
+    {
+      "模版名称": "鸡窝预混料拜访",
+      "拜访id": "633-20260701001",
+      "业务员名称": "袁晓栋",
+      "业务员部门": "安阳站",
+      "拜访客户姓名": "杨义国",
+      "自拍照片url": "https://imstatics.liangbaba.com/im/fileStorage/lbb_mark/20260701/img/d8e2a1879cbb4c299163aed3c2be0021.jpg",
+      "自拍照片识别结果": "未穿工服"
+    }
+  ]
+}

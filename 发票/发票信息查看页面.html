@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>发票信息查看页面</title>
+  <style>
+    :root {
+      --color-bg: #f5f5f5;
+      --color-card: #ffffff;
+      --color-primary: #ff8533;
+      --color-primary-light: #fff0e6;
+      --color-text: #333333;
+      --color-text-secondary: #666666;
+      --color-text-muted: #999999;
+      --color-border: #eeeeee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 0;
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text);
+    }
+
+    .nav-back { left: 0; }
+    .nav-home { right: 0; }
+
+    .nav-back::before {
+      content: "";
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid var(--color-text);
+      border-bottom: 2px solid var(--color-text);
+      transform: rotate(45deg);
+      margin-left: 4px;
+    }
+
+    .nav-home svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--color-primary-light);
+      font-size: 12px;
+      color: var(--color-primary);
+      line-height: 1.4;
+    }
+
+    .notice-icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-style: italic;
+    }
+
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .tab {
+      flex: 1;
+      height: 44px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--color-text);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 24px;
+      height: 2px;
+      background: var(--color-primary);
+      transform: translateX(-50%);
+      border-radius: 1px;
+    }
+
+    .page {
+      padding: 12px;
+    }
+
+    .card {
+      background: var(--color-card);
+      border-radius: 10px;
+      padding: 4px 16px 8px;
+    }
+
+    .block {
+      padding: 16px 0 8px;
+    }
+
+    .block + .block {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .block-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .info-label {
+      flex-shrink: 0;
+      width: 100px;
+      color: var(--color-text-muted);
+    }
+
+    .info-value {
+      flex: 1;
+      min-width: 0;
+      color: var(--color-text);
+      word-break: break-all;
+      text-align: right;
+    }
+
+    /* 多邮箱：默认一行；单个邮箱过长会整段换行，不从邮箱中间截断 */
+    .info-value.emails {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: flex-start;
+      gap: 4px 0;
+      word-break: normal;
+    }
+
+    .info-value.emails .email-item {
+      display: inline-block;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .info-value.emails .email-item:not(:last-child)::after {
+      content: "；";
+    }
+
+    .info-value.emails.is-multiline {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .info-value.emails.is-multiline .email-item:not(:last-child)::after {
+      content: none;
+    }
+
+    .type-text {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      padding-bottom: 8px;
+    }
+
+    .footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: transparent;
+    }
+
+    .btn-edit {
+      display: block;
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 23px;
+      background: linear-gradient(90deg, #ff8533 0%, #ff9a55 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      line-height: 46px;
+      text-decoration: none;
+    }
+
+    .btn-edit:active { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <button class="nav-btn nav-back" type="button" aria-label="返回"></button>
+    发票中心
+    <button class="nav-btn nav-home" type="button" aria-label="首页">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    </button>
+  </header>
+
+  <div class="notice">
+    <span class="notice-icon">i</span>
+    <span>您的个人或企业信息将用于商家开票使用</span>
+  </div>
+
+  <nav class="tabs">
+    <button type="button" class="tab">货款发票列表</button>
+    <button type="button" class="tab">运费发票列表</button>
+    <button type="button" class="tab active">开票信息</button>
+  </nav>
+
+  <main class="page">
+    <article class="card">
+      <section class="block">
+        <h2 class="block-title">企业开票信息</h2>
+        <div class="info-row">
+          <span class="info-label">企业名称</span>
+          <span class="info-value">济南璟元商贸有限公司</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">纳税人识别号</span>
+          <span class="info-value">91370105MAETJB3G2H</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">注册地址</span>
+          <span class="info-value">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">注册电话</span>
+          <span class="info-value">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">开户银行</span>
+          <span class="info-value">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">银行账户</span>
+          <span class="info-value">—</span>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="block-title">发票类型</h2>
+        <p class="type-text">增值税普通发票</p>
+      </section>
+
+      <section class="block">
+        <h2 class="block-title">收票信息</h2>
+        <div class="info-row">
+          <span class="info-label">收件邮箱</span>
+          <span class="info-value emails" id="emailList">
+            <span class="email-item">fangweiping@yuanyao.com</span>
+            <span class="email-item">invoice@liangbaba.com</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">收票人姓名</span>
+          <span class="info-value">方伟萍</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">收票人手机</span>
+          <span class="info-value">18019249877</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">所在地区</span>
+          <span class="info-value">北京市/北京市/东城区</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">详细地址</span>
+          <span class="info-value">测试地址</span>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <a class="btn-edit" href="开票信息.html">编辑</a>
+  </footer>
+
+  <script>
+    function updateEmailLayout() {
+      const list = document.getElementById('emailList');
+      if (!list) return;
+      const items = [...list.querySelectorAll('.email-item')];
+      if (items.length <= 1) {
+        list.classList.remove('is-multiline');
+        return;
+      }
+
+      // 先按一行+分号测量
+      list.classList.remove('is-multiline');
+      const tops = new Set(items.map((el) => el.offsetTop));
+      // 任意邮箱换行（offsetTop 不一致），则改为分行展示
+      if (tops.size > 1) {
+        list.classList.add('is-multiline');
+      }
+    }
+
+    updateEmailLayout();
+    window.addEventListener('resize', updateEmailLayout);
+  </script>
+</body>
+</html>

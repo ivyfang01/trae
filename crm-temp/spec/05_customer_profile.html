@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>客户主页 - 规范原型</title>
+    <link rel="stylesheet" href="crm-common.css">
+</head>
+<body class="has-action-bar">
+    <div class="nav-bar">
+        <div class="nav-left">
+            <svg class="nav-back" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" onclick="history.back()"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg class="nav-close" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="nav-title">粮巴巴</span>
+        <div class="nav-more"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="info-top-bar">
+        <div class="info-top-fields">
+            主体id：19554<br>
+            微信昵称：<br>
+            业务归属：徐帅<br>
+            标签：上海银行签约, 提现限制, 设备多户头, 锡商银行白条, VIP
+        </div>
+        <div class="info-top-actions">
+            <button class="btn-stack-blue" type="button">推送合同</button>
+            <button class="btn-stack-blue" type="button">辅助下单</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="customer-name-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="customer-name">杨昕</span>
+        </div>
+        <div class="product-line">玉米：次终端 月2000吨 / 次70吨</div>
+        <div class="product-line">豆粕：次终端 月0吨 / 次0吨</div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <span class="section-title">机会点</span>
+            <span class="link-more">去添加 &gt;</span>
+        </div>
+        <div class="empty-state">暂未添加机会点</div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <span class="section-title">客户档案信息</span>
+            <span class="link-more" onclick="location.href='07_customer_archive.html'">查看更多 &gt;</span>
+        </div>
+        <div class="field-list">
+            <div class="field-line">年龄：<b>29</b></div>
+            <div class="field-line">性别：<b>女</b></div>
+            <div class="field-line">客户类型：<b>次终端</b></div>
+            <div class="field-line">养殖规模：<b>0</b></div>
+            <div class="field-line">养殖类型：<b>--</b></div>
+            <div class="field-line">主体类型：<b>个人</b></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-header">
+            <span class="section-title">交易信息</span>
+            <span class="link-more" onclick="location.href='06_customer_detail.html'">查看更多 &gt;</span>
+        </div>
+        <div class="field-list">
+            <div class="field-line">执行中的合同数：<b>0</b></div>
+            <div class="field-line">最近到期剩余合同天数：<b>0</b></div>
+        </div>
+    </div>
+
+    <div class="actions-bar-fixed">
+        <button class="action-btn-outline blue" type="button">企业微信</button>
+        <button class="action-btn-outline green" type="button">电话沟通</button>
+        <button class="action-btn-outline orange" type="button">地址导航</button>
+        <button class="action-btn-solid" type="button">写跟进</button>
+    </div>
+</body>
+</html>

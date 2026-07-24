@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作进展报表</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            max-width: 500px;
+        }
+        
+        .right-panel {
+            flex: 1;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-row {
+            margin-bottom: 3px;
+            color: #333;
+        }
+        
+        .client-block {
+            margin-bottom: 15px;
+            margin-left: 10px;
+        }
+        
+        .client-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .view-more-link {
+            color: #1890ff;
+            text-decoration: none;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        
+        .view-more-link:hover {
+            text-decoration: underline;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #fafafa;
+            font-weight: 500;
+        }
+        
+        .connector {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .connector-line {
+            height: 1px;
+            width: 30px;
+            background-color: #1890ff;
+            border: 1px dashed #1890ff;
+        }
+        
+        .connector-arrow {
+            color: #1890ff;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div style="font-weight: 600; font-size: 15px; margin-bottom: 10px;">方伟萍今日工作进展</div>
+            
+            <div class="section">
+                <div class="info-row">进度：30%</div>
+                <div class="info-row">拜访客户数目标：4个</div>
+                <div class="info-row">已拜访客户：张三、李四、王五</div>
+                <div class="info-row">今日拜访城市：上海、南阳</div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">今日拜访数据</div>
+                <div class="info-row">拜访客户数：2个</div>
+                <div class="info-row">本周有效里程：200公里，超过预估里程50%</div>
+                <div class="info-row">本周预估里程：100公里</div>
+                
+                <div class="client-block">
+                    <div class="client-name">客户1：王五</div>
+                    <div class="info-row">品类：豆粕</div>
+                    <div class="info-row">客户当前库存（吨）：5</div>
+                    <div class="info-row">预计下次采购时间：2026-05-13</div>
+                    <div class="info-row">预计下次采购吨数（吨）：2026-06-16</div>
+                    <div class="info-row">拜访总结：</div>
+                    <div class="info-row">动保机会点：</div>
+                    <div class="info-row">最近成交时间：</div>
+                    <div class="info-row">最近成交吨数：</div>
+                    <div class="info-row">动保本月成交金额：</div>
+                </div>
+                
+                <div class="client-block">
+                    <div class="client-name">客户2：赵六</div>
+                    <div class="info-row">品类：豆粕</div>
+                    <div class="info-row">客户当前库存（吨）：5</div>
+                    <div class="info-row">预计下次采购时间：2026-05-13</div>
+                    <div class="info-row">预计下次采购吨数（吨）：2026-06-16</div>
+                    <div class="info-row">拜访总结：</div>
+                    <div class="info-row">动保机会点：</div>
+                    <div class="info-row">最近成交时间：</div>
+                    <div class="info-row">最近成交吨数：</div>
+                    <div class="info-row">动保本月成交金额：</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">今日交易数据</div>
+                <div class="info-row">豆粕成交吨数：70吨</div>
+                <div class="info-row">豆粕成交客户：张三 50吨；李四20吨</div>
+                <div class="info-row">玉米成交吨数：20吨</div>
+                <div class="info-row">玉米成交客户：张三 10吨；李四10吨</div>
+                <div class="info-row">预混料成交吨数：10吨</div>
+                <div class="info-row">预混料成交客户：张三 10吨；李四10吨</div>
+                <div class="info-row">动保成交金额：500元</div>
+                <div class="info-row">动保成交客户：张三200元，李四300元</div>
+                <div class="info-row">成交客户数：4个</div>
+                <div class="info-row">新注册客户：方伟萍</div>
+                <div class="info-row">新客户：方伟萍</div>
+            </div>
+            
+            <!-- <div class="connector">
+                <div class="connector-line"></div>
+                <div class="connector-arrow">→</div>
+            </div> -->
+            
+            <div class="section">
+                <div class="section-title">本月未提合同</div>
+                <div class="info-row">合同数量：10个 <a href="#" class="view-more-link">查看更多</a></div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">本月数据</div>
+                <div class="info-row">服务客户数：3个/20个</div>
+                <div class="info-row">豆粕成交吨数：200吨/1000吨</div>
+                <div class="info-row">玉米成交吨数：200吨/1000吨</div>
+                <div class="info-row">预混料成交吨数：10吨/50吨</div>
+                <div class="info-row">动保成交金额：1000元/10000元</div>
+                <div class="info-row">动保成交客户：A、B、C</div>
+                <div class="info-row">新客户数：1个/10个</div>
+                <div class="info-row">新客户：客户名单</div>
+            </div>
+        </div>
+        
+        <!-- <div class="left-panel">
+            <table>
+                <thead>
+                    <tr>
+                        <th>合同编号</th>
+                        <th>客户名称</th>
+                        <th>最早提货期</th>
+                        <th>最晚提货期</th>
+                        <th>合同吨位</th>
+                        <th>未提吨位</th>
+                        <th>单价</th>
+                        <th>油厂</th>
+                        <th>蛋白</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+
+    </div>
+    <div class="left-panel">
+            <table>
+                <div class="section-title">本月未提合同详情</div>
+                <thead>
+                    <tr>
+                        <th>合同编号</th>
+                        <th>客户名称</th>
+                        <th>最早提货期</th>
+                        <th>最晚提货期</th>
+                        <th>合同吨位</th>
+                        <th>未提吨位</th>
+                        <th>单价</th>
+                        <th>油厂</th>
+                        <th>蛋白</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</body>
+</html>
+

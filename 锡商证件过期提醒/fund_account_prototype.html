@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资金账户功能原型</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+        
+        .prototype-section {
+            display: none;
+        }
+        
+        .prototype-section.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        /* 企微消息样式 */
+        .wechat-message {
+            background: #f7f8fa;
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .wechat-message .title {
+            font-size: 14px;
+            color: #1890ff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .wechat-message .content {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .wechat-message .btn {
+            display: inline-block;
+            background: #1890ff;
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        
+        /* 资料更新页面 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input[type="file"] {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .form-group .btn-upload {
+            display: inline-block;
+            background: #f5f5f5;
+            border: 1px solid #d9d9d9;
+            padding: 10px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .form-group .btn-submit {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        /* 账户详情 */
+        .account-info {
+            background: #fafafa;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .account-info .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .account-info .row:last-child {
+            border-bottom: none;
+        }
+        
+        .account-info .label {
+            color: #666;
+        }
+        
+        .account-info .value {
+            font-weight: 500;
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .tag-danger {
+            background: #fff1f0;
+            color: #ff4d4f;
+        }
+        
+        .tag-warning {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .tag-success {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .tag-info {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        /* 步骤流程 */
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 14px;
+        }
+        
+        .step-number.active {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 资金账户功能原型</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('notify')">企微通知消息</div>
+            <div class="tab" onclick="showTab('update')">资料更新页面</div>
+            <div class="tab" onclick="showTab('account')">账户详情页面</div>
+            <div class="tab" onclick="showTab('logs')">通知日志页面</div>
+            <div class="tab" onclick="showTab('flow')">业务流程图</div>
+        </div>
+        
+        <!-- 企微通知消息 -->
+        <div id="notify" class="prototype-section active">
+            <div class="card">
+                <div class="card-header">📢 冻结通知模板</div>
+                <div class="wechat-message">
+                    <div class="title">【客户资料冻结通知】</div>
+                    <div class="content">
+                        <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>账户冻结<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>冻结时间：</strong>2026-06-01 18:00<br><br>
+                        请尽快联系客户获取最新资料，更新路径：【客户档案】—【银行资质tab】。更新完成，30分钟后账户解冻。
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+ 
+ <!-- 更新资料审核未通过 -->
+        <div id="notify" class="prototype-section active">
+            <div class="card">
+                <div class="card-header">📢 资料审核未通过</div>
+                <div class="wechat-message">
+                    <div class="title">【客户资料审核未通过】</div>
+                    <div class="content">
+                        <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>账户冻结<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>冻结时间：</strong>2026-06-01 18:00<br><br>
+                        资料审核未通过，请重新更新资料。路径：【客户档案】—【银行资质tab】。
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+
+            
+            <!-- 协查通知模板 -->
+            <div class="card">
+                <div class="card-header">📢 协查通知模板</div>
+                <div class="wechat-message">
+                    <div class="title">【客户资料协查通知】</div>
+                    <div class="content">
+                       <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>协查通知<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>最晚更新日期：</strong>2026-05-20<br><br>
+                        请在截止日期前更新客户资料,更新路径：【客户档案】—【银行资质tab】。未及时更新，会造成账户冻结，不能交易。
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+
+
+           <!-- 协查临近提醒模板 -->  
+            <div class="card">
+                <div class="card-header">⚠️ 协查临近提醒模板</div>
+                <div class="wechat-message">
+                    <div class="title">【协查提醒】</div>
+                    <div class="content">
+                        <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>协查通知<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>最晚更新日期：</strong>2026-05-20<br><br>
+                       资料仍然未更新，还剩7天账号将会冻结，请尽快更新资料。<br>
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+        </div>
+
+  <!-- 协查审核驳回模板 -->  
+            <div class="card">
+                <div class="card-header">⚠️ 协查审核驳回模板</div>
+                <div class="wechat-message">
+                    <div class="title">【资料审核未通过】</div>
+                    <div class="content">
+                        <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>协查通知<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>最晚更新日期：</strong>2026-05-20<br><br>
+                       资料审核未通过，请重新更新资料。路径：【客户档案】—【银行资质tab】。<br>
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+        </div>
+ 
+            
+            <div class="card">
+                <div class="card-header">📢 协查通知模板</div>
+                <div class="wechat-message">
+                    <div class="title">【客户资料协查通知】</div>
+                    <div class="content">
+                       <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>协查通知<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>最晚更新日期：</strong>2026-05-20<br><br>
+                        请在截止日期前更新客户资料,更新路径：【客户档案】—【银行资质tab】。未及时更新，会造成账户冻结，不能交易。
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">⚠️ 协查临近提醒模板</div>
+                <div class="wechat-message">
+                    <div class="title">【协查提醒】</div>
+                    <div class="content">
+                        <strong>客户：</strong>张三<br>
+                         <strong>客户手机号：</strong>1801976666<br>
+                          <strong>客户ID：</strong>18999<br>
+                        <strong>类型：</strong>协查通知<br>
+                        <strong>原因：</strong>身份证过期<br>
+                        <strong>最晚更新日期：</strong>2026-05-20<br><br>
+                       资料仍然未更新，还剩7天账号将会冻结，请尽快更新资料。<br>
+                    </div>
+                    <div class="btn" onclick="showTab('update')">查看详情</div>
+                </div>
+            </div>
+        </div>       
+        <!-- 资料更新页面 -->
+        <div id="update" class="prototype-section">
+            <div class="card">
+                <div class="card-header">📝 客户资料更新</div>
+                <div style="background: #fff7e6; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
+                    <strong>通知ID：</strong>NOTIFY20260520001<br>
+                    <strong>客户：</strong>张三<br>
+                    <strong>通知类型：</strong><span class="tag tag-danger">冻结通知</span><br>
+                    <strong>截止时间：</strong>2026-06-01 18:00
+                </div>
+                
+                <div class="form-group">
+                    <label>需补充资料：</label>
+                    <div style="margin-left: 15px;">
+                        <p><input type="checkbox" checked disabled> 身份证正面（已上传）</p>
+                        <p><input type="checkbox"> 身份证反面</p>
+                        <p><input type="checkbox"> 营业执照</p>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>上传身份证反面：</label>
+                    <input type="file" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label>上传营业执照：</label>
+                    <input type="file" accept="image/*">
+                </div>
+                
+                <div class="form-group" style="text-align: right;">
+                    <button class="btn-submit">提交更新</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 账户详情页面 -->
+        <div id="account" class="prototype-section">
+            <div class="card">
+                <div class="card-header">🏦 账户详情</div>
+                <div class="account-info">
+                    <div class="row">
+                        <span class="label">账户ID</span>
+                        <span class="value">ACC20260520001</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">客户名称</span>
+                        <span class="value">张三</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">绑定银行卡</span>
+                        <span class="value">6222****5678</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">所属银行</span>
+                        <span class="value">无锡商业银行</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">账户状态</span>
+                        <span class="value"><span class="tag tag-success">正常</span></span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4 style="font-size: 14px; color: #666; margin-bottom: 10px;">换绑历史</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>换绑时间</th>
+                                <th>原卡号</th>
+                                <th>新卡号</th>
+                                <th>操作来源</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-05-20 10:30</td>
+                                <td>6222****1234</td>
+                                <td>6222****5678</td>
+                                <td>锡商银行</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 通知日志页面 -->
+        <div id="logs" class="prototype-section">
+            <div class="card">
+                <div class="card-header">📋 通知日志列表</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>通知ID</th>
+                            <th>客户名称</th>
+                            <th>客户ID</th>
+                            <th>客户手机号</th>
+                            <th>客户类型</th>
+                            <th>通知类型</th>
+                            <th>发送时间</th>
+                            <th>接收人</th>
+                            <th>原因</th>
+                            <th>最晚更新时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>N001</td>
+                            <td>张三</td>
+                            <td><span class="tag tag-success">18089</span></td>
+                            <td><span class="tag tag-success">180888888888</span></td>
+                            <td><span class="tag tag-success">买家</span></td>
+                            <td><span class="tag tag-danger">冻结通知</span></td>
+                            <td>2026-05-20 10:30</td>
+                            <td>王五</td>
+                           
+                            <td><span class="tag tag-success">身份证过期</span></td>
+                            <td><span class="tag tag-info">2026-05-10</span></td>
+                        </tr>
+                        <tr>
+                            <td>N002</td>
+                            <td>李四</td>
+                            <td><span class="tag tag-success">18089</span></td>
+                            <td><span class="tag tag-success">180888888888</span></td>
+                            <td><span class="tag tag-success">司机</span></td>
+                            <td><span class="tag tag-warning">协查通知</span></td>
+                            <td>2026-05-20 11:00</td>
+                            <td>物流钉钉群</td>
+                            <td><span class="tag tag-info">身份证过期</span></td>
+                            <td><span class="tag tag-info">2026-05-10</span></td>
+                        </tr>
+                        <tr>
+                            <td>N002</td>
+                            <td>李四</td>
+                            <td><span class="tag tag-success">18089</span></td>
+                            <td><span class="tag tag-success">180888888888</span></td>
+                            <td><span class="tag tag-success">卖家</span></td>
+                            <td><span class="tag tag-warning">协查通知</span></td>
+                            <td>2026-05-20 11:00</td>
+                            <td>运营钉钉群</td>
+                            <td><span class="tag tag-info">身份证过期</span></td>
+                            <td><span class="tag tag-info">2026-05-10</span></td>
+                        </tr>
+                        
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 业务流程图 -->
+        <div id="flow" class="prototype-section">
+            <div class="card">
+                <div class="card-header">🔄 客户资料冻结/协查通知流程</div>
+                <div style="padding: 20px; background: #fafafa; border-radius: 8px;">
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number active">1</div>
+                            <div class="step-title">锡商推送通知</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number active">2</div>
+                            <div class="step-title">匹配销售</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number active">3</div>
+                            <div class="step-title">企微通知</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-title">资料更新</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">5</div>
+                            <div class="step-title">通知锡商审核</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: center; font-size: 13px; color: #666;">
+                        <strong>销售匹配规则：</strong>优先豆粕销售 → 为空则玉米销售 → 均为空则通知管理员
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">🔄 银行卡换绑同步流程</div>
+                <div style="padding: 20px; background: #fafafa; border-radius: 8px;">
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number active">1</div>
+                            <div class="step-title">锡商换绑</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number active">2</div>
+                            <div class="step-title">推送换绑信息</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number active">3</div>
+                            <div class="step-title">更新账户</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-title">记录历史</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">5</div>
+                            <div class="step-title">通知客户</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabId) {
+            // 隐藏所有section
+            const sections = document.querySelectorAll('.prototype-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // 移除所有tab的active
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // 显示选中的section
+            document.getElementById(tabId).classList.add('active');
+            
+            // 激活选中的tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>修改客户</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app edit-app">
+    <header class="page-header">
+      <a href="index.html" class="back-btn" aria-label="返回">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </a>
+      <h1 class="page-title">修改客户</h1>
+    </header>
+
+    <form class="edit-form" id="editForm">
+      <div class="form-item form-item-hint">
+        <label class="form-label"><span class="required">*</span>客户名字</label>
+        <div class="form-control">
+          <div class="form-field">
+            <input type="text" class="form-input" name="name" id="name" />
+          </div>
+          <p class="form-hint">请填写客户完整真实的名字</p>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>客户手机号</label>
+        <div class="form-control">
+          <div class="form-field">
+            <input type="tel" class="form-input" name="phone" id="phone" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>交易状态</label>
+        <div class="form-control">
+          <div class="custom-select" data-target="status">
+            <button type="button" class="form-field form-field-picker custom-select-trigger">
+              <span class="form-value" id="statusDisplay">意向客户</span>
+              <svg class="field-icon field-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <input type="hidden" name="status" id="status" value="意向客户" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>养殖类型</label>
+        <div class="form-control">
+          <div class="custom-select" data-target="breedType">
+            <button type="button" class="form-field form-field-picker custom-select-trigger">
+              <span class="form-value" id="breedTypeDisplay">鸡</span>
+              <svg class="field-icon field-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <input type="hidden" name="breedType" id="breedType" value="鸡" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>养殖规模</label>
+        <div class="form-control">
+          <div class="form-field form-field-suffix">
+            <input type="number" class="form-input" name="scale" id="scale" />
+            <span class="form-suffix" id="scaleUnit">只</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="form-item">
+        <label class="form-label"><span class="required">*</span>地址区域</label>
+        <div class="form-control">
+          <div class="custom-select" data-target="region">
+            <button type="button" class="form-field form-field-picker custom-select-trigger">
+              <span class="form-value form-value-placeholder" id="regionDisplay">请选择</span>
+              <svg class="field-icon field-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <input type="hidden" name="region" id="region" value="" />
+          </div>
+        </div>
+      </div> -->
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>客户地址</label>
+        <div class="form-control">
+          <button type="button" class="form-field form-field-location" id="editLocationBtn">
+            <svg class="location-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="location-text form-value-placeholder" id="editLocationText">选择定位地址</span>
+            <svg class="field-icon field-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="index.html" class="btn btn-cancel">取消</a>
+        <button type="submit" class="btn btn-submit">提交</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 自定义下拉选择 -->
+  <div class="picker-overlay" id="pickerOverlay" hidden>
+    <div class="picker-mask" id="pickerMask"></div>
+    <div class="picker-sheet">
+      <ul class="picker-list" id="pickerList"></ul>
+      <button type="button" class="picker-cancel" id="pickerCancel">取消</button>
+    </div>
+  </div>
+
+  <!-- 自定义 Alert / Toast -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="custom-alert" id="customAlert" hidden>
+      <h3 class="alert-title" id="alertTitle">修改提醒</h3>
+      <p class="alert-message" id="alertMessage"></p>
+      <button type="button" class="alert-confirm" id="alertConfirm">确定</button>
+    </div>
+    <div class="toast" id="toast" hidden>
+      <span id="toastMessage"></span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

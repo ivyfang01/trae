@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作日报</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1890ff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .right-panel {
+            width: 600px;
+            flex-shrink: 0;
+        }
+
+        .section {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #1890ff;
+            display: inline-block;
+        }
+
+        .info-item {
+            font-size: 13px;
+            color: #666666;
+            line-height: 1.8;
+            margin-bottom: 4px;
+        }
+
+        .info-item .label {
+            color: #333333;
+            font-weight: 500;
+        }
+
+        .customer-block {
+            background: #fafafa;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .customer-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .customer-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1890ff;
+            margin-bottom: 8px;
+        }
+
+        .view-more {
+            color: #1890ff;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .view-more:hover {
+            text-decoration: underline;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 30%;
+            height: 100%;
+            background: #1890ff;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #fafafa;
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+            font-weight: 500;
+            color: #333333;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+            color: #666666;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+        }
+
+        .arrow-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #1890ff;
+            font-size: 20px;
+        }
+
+        .highlight {
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .right-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>方伟萍今日工作进展</h1>
+        </div>
+        
+        <div class="content">
+            <div class="left-panel">
+                <!-- 今日工作进展 -->
+                <div class="section">
+                    <div class="section-title">今日工作进展</div>
+                    <div class="info-item">
+                        <span class="label">进度：</span>30%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">拜访客户数目标：</span>4个
+                    </div>
+                    <div class="info-item">
+                        <span class="label">已拜访客户：</span>张三、李四、王五
+                    </div>
+                    <div class="info-item">
+                        <span class="label">今日拜访城市：</span>上海、南阳
+                    </div>
+                </div>
+
+                <!-- 今日拜访数据 -->
+                <div class="section">
+                    <div class="section-title">今日拜访数据</div>
+                    <div class="info-item">
+                        <span class="label">拜访客户数：</span>2个
+                    </div>
+                    <div class="info-item">
+                        <span class="label">有效里程：</span>200公里，超预估里程50%
+                    </div>
+                     <div class="info-item">
+                        <span class="label">预估里程：</span>100公里
+                    </div>
+
+                    
+                    <div class="customer-block">
+                        <div class="customer-name">客户1：王五</div>
+                        <div class="info-item"><span class="label">品类：</span>预混料</div>
+                        <div class="info-item"><span class="label">当前库存（吨）：</span>5</div>
+                        <div class="info-item"><span class="label">拜访总结：</span></div>
+                        <div class="info-item"><span class="label">动保机会点：</span></div>
+                        <div class="info-item"><span class="label">养殖档案：</span>已填写</div>
+                        <div class="info-item"><span class="label">预混料机会点：</span>缺钱</div>
+                        <div class="info-item"><span class="label">最近成交时间：</span></div>
+                        <div class="info-item"><span class="label">最近成交吨数：</span></div>
+                        <div class="info-item"><span class="label">动保交易金额：</span></div>
+                    </div>
+
+                    <div class="customer-block">
+                        <div class="customer-name">客户2：赵六</div>
+                        <div class="info-item"><span class="label">品类：</span>豆粕</div>
+                        <div class="info-item"><span class="label">客户当前库存（吨）：</span>5</div>
+                        <div class="info-item"><span class="label">拜访总结：</span></div>
+                        <div class="info-item"><span class="label">动保机会点：</span></div>
+                        <div class="info-item"><span class="label">养殖档案：</span>已填写</div>
+                        <div class="info-item"><span class="label">预混料机会点：</span>缺钱</div>
+                        <div class="info-item"><span class="label">最近成交时间：</span></div>
+                        <div class="info-item"><span class="label">最近成交吨数：</span></div>
+                        <div class="info-item"><span class="label">动保交易额：</span></div>
+                    </div>
+                </div>
+
+                <!-- 今日机会点客户 -->
+                <div class="section">
+                    <div class="section-title">今日预混料机会点客户</div>
+                    <div class="info-item">
+                        <span class="label">客户名单：</span>A/B/C
+                    </div>
+                </div>
+
+                <!-- 今日交易数据 -->
+                <div class="section">
+                    <div class="section-title">今日交易数据</div>
+                    <div class="info-item">
+                        <span class="label">豆粕成交吨数：</span>70吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">豆粕成交客户：</span>张三 50吨；李四20吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">玉米成交吨数：</span>20吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">玉米成交客户：</span>张三 10吨；李四10吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">预混料成交吨数：</span>10吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">预混料成交客户：</span>张三 10吨；李四10吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">动保成交金额：</span>500元
+                    </div>
+                    <div class="info-item">
+                        <span class="label">动保成交客户：</span>张三200元，李四300元
+                    </div>
+                    <div class="info-item">
+                        <span class="label">成交客户数：</span>4个
+                    </div>
+                    <div class="info-item">
+                        <span class="label">新注册客户：</span>方伟萍
+                    </div>
+                    <div class="info-item">
+                        <span class="label">新客户：</span>方伟萍
+                    </div>
+                </div>
+
+                <!-- 差款订单 -->
+                <div class="section">
+                    <div class="section-title">差款订单</div>
+                    <div class="info-item">
+                        <span class="label">差款订单数量：</span>10个
+                        <a href="#" class="view-more">查看更多</a>
+                    </div>
+                </div>
+
+                <!-- 本月数据 -->
+                <div class="section">
+                    <div class="section-title">本月数据</div>
+                    <div class="info-item">
+                        <span class="label">服务客户数：</span>3个/20个
+                    </div>
+                    <div class="info-item">
+                        <span class="label">豆粕成交吨数：</span>200吨/1000吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">玉米成交吨数：</span>200吨/1000吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">预混料成交吨数：</span>10吨/50吨
+                    </div>
+                    <div class="info-item">
+                        <span class="label">动保成交金额：</span>1000元/10000元
+                    </div>
+                    <div class="info-item">
+                        <span class="label">动保成交客户：</span>A、B、C
+                    </div>
+                    <div class="info-item">
+                        <span class="label">新客户数：</span>1个/10个
+                    </div>
+                    <div class="info-item">
+                        <span class="label">新客户：</span>客户名单
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="arrow-indicator">↑</div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>客户ID</th>
+                                <th>客户名称</th>
+                                <th>养殖规模</th>
+                                <th>提货单编号</th>
+                                <th>申请提货日期</th>
+                                <th>上传卸货磅单时间</th>
+                                <th>提货单状态</th>
+                                <th>应收货款</th>
+                                <th>总差款</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</body>
+</html>
+

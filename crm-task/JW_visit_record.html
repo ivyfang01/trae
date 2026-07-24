@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>粮巴巴 - 鸡窝预混料拜访</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            background: #ffffff;
+            padding: 12px 20px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* 导航栏 */
+        .nav-bar {
+            background: #ffffff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1d2129;
+        }
+
+        .nav-left, .nav-right {
+            width: 24px;
+            position: absolute;
+        }
+
+        .nav-left {
+            left: 16px;
+        }
+
+        .nav-right {
+            right: 16px;
+        }
+
+        /* 页面标题 */
+        .page-header {
+            background: #f7f8fa;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e6eb;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #86909c;
+            font-weight: 500;
+        }
+
+        /* 表单 */
+        .form-container {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #1d2129;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .form-label .required {
+            color: #e11d48;
+            font-size: 14px;
+        }
+
+        .form-label .required-text {
+            color: #e11d48;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d3d6;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1d2129;
+            background: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #1677ff;
+        }
+
+        .form-input::placeholder {
+            color: #c0c4cc;
+        }
+
+        .form-input.red-placeholder::placeholder {
+            color: #e11d48;
+        }
+
+        .view-detail {
+            color: #1677ff;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        /* 复选框组 */
+        .checkbox-group {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1677ff;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            color: #1d2129;
+            cursor: pointer;
+        }
+
+        /* 有效期提示 */
+        .validity-text {
+            font-size: 13px;
+            color: #4e5969;
+            margin-top: 8px;
+        }
+
+        /* 单选框组 */
+        .radio-group {
+            display: flex;
+            gap: 24px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #1677ff;
+            cursor: pointer;
+        }
+
+        .radio-item label {
+            font-size: 14px;
+            color: #1d2129;
+            cursor: pointer;
+        }
+
+        /* 文本域 */
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d3d6;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1d2129;
+            background: #ffffff;
+            outline: none;
+            resize: none;
+            min-height: 100px;
+            line-height: 1.6;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            border-color: #1677ff;
+        }
+
+        .form-textarea::placeholder {
+            color: #86909c;
+        }
+
+        /* 底部提交按钮 */
+        .submit-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            padding: 12px 16px;
+            background: #ffffff;
+            border-top: 1px solid #f0f0f0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1677ff;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #4096ff;
+        }
+
+        /* 原型标注 */
+        .prototype-note {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 1px solid #1677ff;
+            color: #1677ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 100;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="prototype-note">📝 鸡窝预混料拜访表单原型</div>
+
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <span>15:09</span>
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="nav-bar" style="position: relative;">
+        <div class="nav-left">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" stroke-linecap="round">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </div>
+        <span class="nav-title">粮巴巴</span>
+        <div class="nav-right">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d2129" stroke-width="2" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <span class="page-subtitle">鸡窝预混料拜访</span>
+    </div>
+
+    <!-- 表单 -->
+    <div class="form-container">
+        <!-- 客户名称 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required">*</span>
+                <span>客户名称</span>
+            </div>
+            <input type="text" class="form-input" value="张爱国">
+            <span class="view-detail" onclick="alert('查看客户详情')">查看详情</span>
+        </div>
+
+        <!-- 客户手机号 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required">*</span>
+                <span>客户手机号</span>
+            </div>
+            <input type="tel" class="form-input" value="158999999">
+        </div>
+
+        <!-- 跟进品类 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required">*</span>
+                <span>跟进品类</span>
+            </div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check1" checked>
+                    <label for="check1">预混料</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check2" checked>
+                    <label for="check2">动保</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">玉米</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预混料机会点有效期 -->
+        <div class="form-group">
+            <div class="validity-text">预混料机会点有效期：2026-05-13</div>
+        </div>
+
+        <!-- 预混料库存 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required">*</span>
+                <span>预混料库存（包）</span>
+            </div>
+            <input type="text" class="form-input" placeholder="请输入预混料库存（包）">
+        </div>
+
+        <!-- 是否动保机会点客户 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required-text">*</span>
+                <span>是否动保机会点客户</span>
+            </div>
+            <div class="radio-group">
+                <div class="radio-item">
+                    <input type="radio" name="isOpportunity" id="radioYes" checked>
+                    <label for="radioYes">是</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" name="isOpportunity" id="radioNo">
+                    <label for="radioNo">否</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 计划销售动保产品 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required-text">*</span>
+                <span>计划销售动保产品</span>
+            </div>
+            <input type="text" class="form-input red-placeholder" placeholder="请输入计划销售产品">
+        </div>
+
+        <!-- 拜访总结 -->
+        <div class="form-group">
+            <div class="form-label">
+                <span class="required">*</span>
+                <span>拜访总结</span>
+            </div>
+            <textarea class="form-textarea" placeholder="合作意向：&#10;鸡只病变：&#10;竞对政策："></textarea>
+        </div>
+    </div>
+
+    <!-- 底部提交按钮 -->
+    <div class="submit-bar">
+        <button class="submit-btn" onclick="submitForm()">提交拜访</button>
+    </div>
+
+    <script>
+        function submitForm() {
+            alert('拜访记录提交成功！');
+        }
+    </script>
+</body>
+</html>
+

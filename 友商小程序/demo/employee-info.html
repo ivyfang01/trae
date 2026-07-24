@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>补充员工信息</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app edit-app">
+    <header class="page-header">
+      <h1 class="page-title">补充员工信息</h1>
+    </header>
+
+    <form class="edit-form" id="employeeForm">
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>业务员手机号</label>
+        <div class="form-control">
+          <div class="form-field">
+            <input type="tel" class="form-input" name="phone" id="empPhone" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label">验证码</label>
+        <div class="form-control">
+          <div class="form-field form-field-code">
+            <input type="text" class="form-input" name="code" id="empCode" />
+            <button type="button" class="send-code-btn" id="sendCodeBtn">发送</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>业务员名字</label>
+        <div class="form-control">
+          <div class="form-field">
+            <input type="text" class="form-input" name="name" id="empName" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-item form-item-hint">
+        <label class="form-label"><span class="required">*</span>预混料品牌</label>
+        <div class="form-control">
+          <div class="custom-select" data-target="empBrand">
+            <button type="button" class="form-field form-field-picker custom-select-trigger">
+              <span class="form-value" id="empBrandDisplay">嘉吉</span>
+              <svg class="field-icon field-icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <input type="hidden" name="brand" id="empBrand" value="嘉吉" />
+          </div>
+          <p class="form-hint">请选择贵司的预混料品牌</p>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label class="form-label"><span class="required">*</span>销售区域</label>
+        <div class="form-control">
+          <div class="form-field">
+            <input type="text" class="form-input" name="region" id="empRegion" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="login.html" class="btn btn-cancel">取消</a>
+        <button type="submit" class="btn btn-submit">提交</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="picker-overlay" id="pickerOverlay" hidden>
+    <div class="picker-mask" id="pickerMask"></div>
+    <div class="picker-sheet">
+      <ul class="picker-list" id="pickerList"></ul>
+      <button type="button" class="picker-cancel" id="pickerCancel">取消</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="toast" id="toast" hidden>
+      <span id="toastMessage"></span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

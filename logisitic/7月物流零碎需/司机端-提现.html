@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>提现</title>
+  <style>
+    :root {
+      --color-bg: #f6f6f6;
+      --color-bank-card: #e20215;
+      --color-accent: #f46015;
+      --color-accent-text: #e9804c;
+      --color-tag-bg: #ffe8e6;
+      --color-link: #4a90e2;
+      --color-text: #333333;
+      --color-text-secondary: #666666;
+      --color-text-muted: #999999;
+      --color-border: #eeeeee;
+      --color-placeholder: #cccccc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: #fff;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .nav-back {
+      position: absolute;
+      left: 12px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav-back::before {
+      content: "";
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-left: 2px solid var(--color-text);
+      border-bottom: 2px solid var(--color-text);
+      transform: rotate(45deg);
+      margin-left: 6px;
+    }
+
+    .page { padding: 12px; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .bank-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .bank-change {
+      color: var(--color-accent-text);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .bank-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--color-bank-card);
+      color: #fff;
+    }
+
+    .bank-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--color-bank-card);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .bank-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .bank-no {
+      font-size: 14px;
+      letter-spacing: 1px;
+      opacity: 0.95;
+    }
+
+    .amount-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .amount-title {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: var(--color-tag-bg);
+      font-size: 13px;
+      color: var(--color-accent-text);
+      font-weight: 500;
+    }
+
+    .withdraw-all {
+      font-size: 13px;
+      color: var(--color-link);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .amount-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .amount-input-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .currency {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--color-placeholder);
+    }
+
+    .amount-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      color: var(--color-text);
+      background: transparent;
+    }
+
+    .amount-input::placeholder {
+      color: var(--color-placeholder);
+      font-size: 16px;
+    }
+
+    .balance-tip {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+
+    .balance-tip .num {
+      color: var(--color-accent-text);
+    }
+
+    .detail-list {
+      margin-top: 14px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      flex-shrink: 0;
+      color: var(--color-text-secondary);
+    }
+
+    .detail-value {
+      text-align: right;
+      color: var(--color-text);
+      word-break: break-all;
+    }
+
+    .fee-strike {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    .detail-sub {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .actual-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: baseline;
+      gap: 4px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--color-text);
+    }
+
+    .actual-row .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-accent-text);
+    }
+
+    .footer {
+      padding: 24px 12px calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 23px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .submit-btn:active { opacity: 0.85; }
+
+    .arrival-tip {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .success-sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      padding: 32px 24px calc(24px + env(safe-area-inset-bottom));
+      text-align: center;
+    }
+
+    .success-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .success-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn,
+    .cancel-btn {
+      flex: 1;
+      height: 46px;
+      border: none;
+      border-radius: 23px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .cancel-btn {
+      background: #f5f5f5;
+      color: var(--color-text-secondary);
+    }
+
+    .cancel-btn:active { opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <button class="nav-back" type="button" aria-label="返回"></button>
+    提现
+  </header>
+
+  <main class="page">
+    <section class="card">
+      <div class="bank-row">
+        <span>到账银行卡：</span>
+        <a class="bank-change" href="javascript:void(0)">更换 &gt;</a>
+      </div>
+      <div class="bank-card">
+        <div class="bank-logo">M</div>
+        <div>
+          <div class="bank-name">招商银行</div>
+          <div class="bank-no">6214 **** **** 0100</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="amount-head">
+        <span class="amount-title">上海银行提现金额</span>
+        <a class="withdraw-all" href="javascript:void(0)" id="withdrawAll">全部提现</a>
+      </div>
+
+      <div class="amount-input-row">
+        <div class="amount-input-wrap">
+          <span class="currency">¥</span>
+          <input
+            class="amount-input"
+            type="number"
+            id="amountInput"
+            placeholder="请输入提现金额"
+            min="0"
+            step="0.01"
+          />
+        </div>
+        <div class="balance-tip">可用余额：<span class="num">141420.52</span>元</div>
+      </div>
+
+      <div class="detail-list">
+        <div class="detail-row">
+          <span class="detail-label">上海银行余额账户：</span>
+          <span class="detail-value">03004352838100700174</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">代收冻结：</span>
+          <span class="detail-value">3元</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">上海银行提现手续费：</span>
+          <span class="detail-value">
+            <span class="fee-strike">5元</span>/笔
+            <span class="detail-sub">平台618活动</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="actual-row">
+        实际到账金额：<span class="num" id="actualAmount">0</span>元
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <button type="button" class="submit-btn" id="submitBtn">申请提现</button>
+    <p class="arrival-tip">预计到账时间 1-2 个工作日</p>
+  </footer>
+
+  <div class="overlay hidden" id="successOverlay">
+    <div class="success-sheet">
+      <h2 class="success-title">提醒</h2>
+      <p class="success-desc">您的上银账号已冻结，不能提现，请更新身份证信息</p>
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" id="cancelBtn">暂不更新</button>
+        <button type="button" class="back-btn" id="backBtn">去更新</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const balance = 141420.52;
+    const amountInput = document.getElementById('amountInput');
+    const actualAmount = document.getElementById('actualAmount');
+    const overlay = document.getElementById('successOverlay');
+
+    function updateActual() {
+      const val = parseFloat(amountInput.value) || 0;
+      actualAmount.textContent = val;
+    }
+
+    amountInput.addEventListener('input', updateActual);
+
+    document.getElementById('withdrawAll').addEventListener('click', () => {
+      amountInput.value = balance;
+      updateActual();
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      overlay.classList.remove('hidden');
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      overlay.classList.add('hidden');
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      overlay.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

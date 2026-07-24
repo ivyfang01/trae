@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>鸡窝预混料拜访</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .mobile-container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+            height: 50px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .label-hint {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .clickable-link {
+            font-size: 12px;
+            color: #1890ff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .clickable-link:hover {
+            color: #096dd9;
+        }
+
+        /* Reference Image Modal */
+        .reference-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .reference-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 320px;
+            width: 90%;
+            position: relative;
+        }
+
+        .reference-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .reference-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .reference-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .reference-close:hover {
+            color: #333;
+        }
+
+        .form-label .required {
+            color: #ff4d4f;
+            margin-right: 4px;
+        }
+
+        .form-label .view-detail {
+            margin-left: auto;
+            color: #1890ff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .form-input::placeholder {
+            color: #bfbfbf;
+        }
+
+        /* Customer Select */
+        .customer-select {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .customer-select .form-input {
+            flex: 1;
+        }
+
+        .select-btn {
+            padding: 8px 16px;
+            border: 1px solid #1890ff;
+            border-radius: 6px;
+            color: #1890ff;
+            font-size: 13px;
+            background: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Phone Input */
+        .phone-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-count {
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Checkbox Group */
+        .checkbox-group {
+            display: flex;
+            gap: 24px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Radio Group */
+        .radio-group {
+            display: flex;
+            gap: 32px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-item label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Textarea */
+        .form-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: none;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        /* Quick Tags */
+        .quick-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-tag {
+            padding: 4px 10px;
+            border: 1px solid #1890ff;
+            border-radius: 4px;
+            color: #1890ff;
+            font-size: 12px;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .quick-tag .close {
+            font-size: 12px;
+            color: #1890ff;
+        }
+
+        .word-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Add Info Button */
+        .add-info-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px dashed #1890ff;
+            border-radius: 6px;
+            color: #1890ff;
+            font-size: 14px;
+            background: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 16px 0;
+        }
+
+        /* Location Select */
+        .location-select {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .location-select .form-input {
+            flex: 1;
+        }
+
+        .location-btn {
+            padding: 8px 16px;
+            border: 1px solid #1890ff;
+            border-radius: 6px;
+            color: #1890ff;
+            font-size: 13px;
+            background: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Photo Upload */
+        .photo-upload {
+            width: 100%;
+            max-width: 100px;
+            margin: 0;
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        .photo-upload-icon {
+            font-size: 20px;
+            color: #bfbfbf;
+            margin-bottom: 4px;
+        }
+
+        .photo-upload-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .photo-upload-count {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .photo-upload-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .photo-preview {
+            width: 120px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100px;
+            background: #fafafa;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .preview-name {
+            font-size: 11px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 70px;
+        }
+
+        .preview-delete {
+            font-size: 11px;
+            color: #ff4d4f;
+            cursor: pointer;
+        }
+
+        /* Select */
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 24px;
+        }
+
+        .submit-btn:hover {
+            background: #096dd9;
+        }
+
+        /* Fixed Footer */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: #fff;
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </div>
+            <h1 class="header-title">鸡窝预混料拜访</h1>
+        </div>
+
+        <div class="content">
+            <!-- 客户名称 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>客户名称</span>
+                    <span class="view-detail">查看详情</span>
+                </div>
+                <div class="customer-select">
+                    <input type="text" class="form-input" value="泰州市红羽禽业有限公司" readonly>
+                    <button class="select-btn">选择客户</button>
+                </div>
+            </div>
+
+            <!-- 客户手机号 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>客户手机号</span>
+                </div>
+                <div class="phone-input-wrapper">
+                    <input type="text" class="form-input" value="13961019189" readonly>
+                    <span class="phone-count">11/11</span>
+                </div>
+            </div>
+
+            <!-- 跟进品类 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>跟进品类</span>
+                </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="category1" checked>
+                        <label for="category1">预混料</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="category2" checked>
+                        <label for="category2">动保</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="category3">
+                        <label for="category3">玉米</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预混料库存 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>预混料库存(包)</span>
+                </div>
+                <input type="text" class="form-input" placeholder="请输入预混料库存(包)">
+            </div>
+
+            <!-- 是否动保机会点 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>是否动保机会点</span>
+                </div>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="chance1" name="chance">
+                        <label for="chance1">是</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="chance2" name="chance" checked>
+                        <label for="chance2">否</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 拜访总结 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>拜访总结</span>
+                </div>
+                <textarea class="form-textarea" id="summary" placeholder="请输入拜访总结"></textarea>
+                <div class="quick-tags">
+                    <span class="quick-tag">合作意向 <span class="close">×</span></span>
+                    <span class="quick-tag">鸡只病变 <span class="close">×</span></span>
+                    <span class="quick-tag">竞对政策 <span class="close">×</span></span>
+                </div>
+                <div class="word-count">0/1000</div>
+            </div>
+
+            <!-- 添加养殖信息 -->
+            <button class="add-info-btn">
+                <span>+</span>
+                <span>添加养殖信息</span>
+            </button>
+
+            <!-- 跟进方式 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>跟进方式</span>
+                </div>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="way1" name="way" checked>
+                        <label for="way1">实地拜访</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="way2" name="way">
+                        <label for="way2">微信拜访</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="way3" name="way">
+                        <label for="way3">电话拜访</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 签到地点 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>签到地点</span>
+                </div>
+                <div class="location-select">
+                    <input type="text" class="form-input" placeholder="暂未选择收货地址" readonly>
+                    <button class="location-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        选择定位地址
+                    </button>
+                </div>
+            </div>
+
+            <!-- 签到照片 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>签到照片</span>
+                    <span class="clickable-link" onclick="showReferenceImage()">参考图片</span>
+                </div>
+                <div class="photo-upload">
+                    <div class="photo-upload-icon">📷</div>
+                    <div class="photo-upload-text">拍照 / 上传</div>
+                    <div class="photo-upload-count">(0 / 10)</div>
+                </div>
+            </div>
+
+
+            <!-- 自拍照 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span class="required">*</span>
+                    <span>自拍照片</span>
+                    <span class="label-hint">照片需展示工服上的粮巴巴logo</span>
+                    <span class="clickable-link" onclick="showReferenceImage()">参考图片</span>
+                </div>
+                <div class="photo-upload-row">
+                    <div class="photo-upload">
+                        <div class="photo-upload-icon">📷</div>
+                        <div class="photo-upload-text">拍照 / 上传</div>
+                        <div class="photo-upload-count">(0 / 10)</div>
+                    </div>
+                    <div class="photo-preview">
+                        <div class="preview-image">
+                            <img src="https://via.placeholder.com/100x100?text=已上传" alt="已上传图片">
+                        </div>
+                        <div class="preview-info">
+                            <span class="preview-name">未识别到工服</span>
+                            <span class="preview-delete" onclick="deleteImage()">删除</span>
+                        
+                        </div>
+                    <span class="label-hint">未识别到工服上的粮巴巴logo，请穿工服拜访客户，拜访不会无效</span>
+
+                    </div>
+                </div>
+                
+            </div>
+            <span class="label-hint">未识别到工服上的粮巴巴logo，请穿工服拜访客户，拜访有效</span>
+
+            <!-- 陪访人员 -->
+            <div class="form-group">
+                <div class="form-label">
+                    <span>陪访人员</span>
+                </div>
+                <select class="form-select">
+                    <option value="">请选择陪访人员</option>
+                    <option value="1">张三</option>
+                    <option value="2">李四</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Fixed Footer -->
+        <div class="fixed-footer">
+            <button class="submit-btn">提交</button>
+        </div>
+
+    </div>
+
+    <script>
+        // 显示参考图片
+        function showReferenceImage() {
+            // 创建弹窗
+            const overlay = document.createElement('div');
+            overlay.className = 'reference-overlay';
+            overlay.onclick = function() {
+                document.body.removeChild(overlay);
+            };
+            
+            const content = document.createElement('div');
+            content.className = 'reference-content';
+            content.onclick = function(e) {
+                e.stopPropagation();
+            };
+            
+            const title = document.createElement('div');
+            title.className = 'reference-title';
+            title.textContent = '签到照片参考示例';
+            
+            const image = document.createElement('img');
+            image.className = 'reference-image';
+            image.src = 'https://neeko-copilot.bytedance.net/api/text_to_image?prompt=business%20person%20wearing%20company%20uniform%20with%20logo%20visiting%20customer%20farm%20professional&image_size=portrait_4_3';
+            image.alt = '参考图片';
+            
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'reference-close';
+            closeBtn.textContent = '×';
+            closeBtn.onclick = function() {
+                document.body.removeChild(overlay);
+            };
+            
+            content.appendChild(title);
+            content.appendChild(image);
+            content.appendChild(closeBtn);
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
+        }
+
+        // 删除图片
+        function deleteImage() {
+            const preview = document.querySelector('.photo-preview');
+            if (preview) {
+                preview.remove();
+            }
+        }
+
+        // 字数统计
+        const summary = document.getElementById('summary');
+        const wordCount = document.querySelector('.word-count');
+
+        summary.addEventListener('input', function() {
+            wordCount.textContent = `${this.value.length}/1000`;
+        });
+
+        // 快捷标签点击
+        const quickTags = document.querySelectorAll('.quick-tag');
+        quickTags.forEach(tag => {
+            tag.addEventListener('click', function(e) {
+                if (e.target.classList.contains('close')) {
+                    this.remove();
+                } else {
+                    const text = this.textContent.replace('×', '').trim();
+                    if (summary.value) {
+                        summary.value += '\n' + text;
+                    } else {
+                        summary.value = text;
+                    }
+                    summary.dispatchEvent(new Event('input'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 业务员确认磅单</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --danger: #ff4d4f;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nav-title { font-size: 17px; font-weight: 600; }
+
+    .nav-back {
+      position: absolute;
+      left: 0;
+      height: 44px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      color: #333;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+
+    .list { padding: 0 12px 16px; }
+
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .tag {
+      font-size: 12px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .tag.done {
+      color: #52c41a;
+      background: #f6ffed;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .row .label {
+      width: 112px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .row .value.emphasize {
+      color: var(--warn);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .mask {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 20;
+      align-items: flex-end;
+    }
+
+    .mask.show { display: flex; }
+
+    .sheet {
+      width: 100%;
+      background: #fff;
+      border-radius: 12px 12px 0 0;
+      padding: 16px 16px calc(16px + var(--safe-bottom));
+    }
+
+    .sheet h3 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .radio-item {
+      flex: 1;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .radio-item.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #e6f4ff;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--label);
+      margin-bottom: 6px;
+    }
+
+    .field .input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      padding: 0 12px;
+      height: 40px;
+    }
+
+    .field input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .field .unit {
+      color: var(--label);
+      font-size: 13px;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .sheet-actions .btn { height: 44px; font-size: 15px; }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; }
+
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    .spec h2 {
+      font-size: 14px;
+      color: #222;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" id="page">
+    <div class="nav">
+      <a class="nav-back" href="javascript:;">‹</a>
+      <div class="nav-title">工作通知</div>
+    </div>
+
+    <div class="ding-context">物流提效 · 今日 16:42</div>
+
+    <div class="list">
+      <!-- 待确认 -->
+      <div class="card" id="confirmCard">
+        <div class="card-head">
+          <div class="card-title">订单收货确认</div>
+          <!-- <span class="tag" id="statusTag">待确认</span> -->
+        </div>
+
+        <div class="row">
+          <span class="label">客户名称</span>
+          <span class="value">沁阳某某饲料有限公司</span>
+        </div>
+        <div class="row">
+          <span class="label">提货单号</span>
+          <span class="value">TH20260724001</span>
+        </div>
+        <div class="row">
+          <span class="label">物流单号</span>
+          <span class="value">LBDWLSP2023072345</span>
+        </div>
+        <div class="row">
+          <span class="label">品类</span>
+          <span class="value">豆粕</span>
+        </div>
+        <div class="row">
+          <span class="label">司机姓名</span>
+          <span class="value">张三</span>
+        </div>
+        <div class="row">
+          <span class="label">车牌号</span>
+          <span class="value">豫A12345</span>
+        </div>
+        <div class="row">
+          <span class="label">装货净重</span>
+          <span class="value">10.00 吨（200 包）</span>
+        </div>
+        <div class="row">
+          <span class="label">卸货净重</span>
+          <span class="value">9.85 吨（197 包）</span>
+        </div>
+        <div class="row">
+          <span class="label">装卸货磅差</span>
+          <span class="value emphasize">0.15 吨（3 包）</span>
+        </div>
+        <div class="row">
+          <span class="label">确认结果</span>
+          <span class="value emphasize">有磅差，扣除 0.15 吨</span>
+        </div>
+        <div class="row">
+          <span class="label">确认人</span>
+          <span class="value">李四</span>
+        </div>
+        <div class="row">
+          <span class="label">确认时间</span>
+          <span class="value">2026-07-24 10:00:00</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="spec">
+    <h2>确认后展示卡片 · 参考考勤卡片样式</h2>
+    <div>· 结构：标题区 + 左 label 右 value 信息行（无底部操作按钮）</div>
+    <div>· 在待确认字段基础上增加：确认结果、确认人、确认时间</div>
+  </div>
+</body>
+</html>
