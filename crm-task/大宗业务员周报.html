@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大宗业务员周报 · 区域对比</title>
+  <style>
+    /* Admin 区域周报：默认总览对比，模块可折叠下钻 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      padding: 24px;
+    }
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      min-height: calc(100vh - 48px);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 14px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .page-hd h1 { font-size: 16px; font-weight: 600; margin-right: 8px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-left: auto; }
+    .filters label { color: rgba(0,0,0,.45); font-size: 13px; }
+    .filters select, .filters input {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    .filters select:focus, .filters input:focus { border-color: #40a9ff; }
+    .page-bd { padding: 16px 24px 28px; }
+    .tip {
+      font-size: 13px;
+      color: rgba(0,0,0,.45);
+      margin-bottom: 12px;
+    }
+    .tip strong { color: rgba(0,0,0,.65); font-weight: 500; }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 8px;
+    }
+    .summary-table {
+      width: 100%;
+    .summary-table { min-width: 1260px; }
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #f0f0f0;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 13px;
+      vertical-align: middle;
+      background: #fff;
+    }
+    .summary-table th {
+      background: #fafafa;
+      font-weight: 500;
+      color: rgba(0,0,0,.85);
+      line-height: 1.35;
+      white-space: normal;
+      word-break: break-all;
+      padding: 10px 6px;
+    }
+    .summary-table td.num {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+    .summary-table td.name {
+      text-align: left;
+      font-weight: 500;
+      padding-left: 12px;
+      white-space: nowrap;
+    }
+    .summary-table td.name .link {
+      font-weight: 500;
+    }
+    .summary-table td .rank-val {
+      font-weight: 600;
+      color: rgba(0,0,0,.85);
+    }
+    .summary-table col.c-idx { width: 48px; }
+    .summary-table col.c-name { width: 72px; }
+    .summary-table col.c-progress { width: 64px; }
+    .summary-table col.c-visit { width: 72px; }
+    .summary-table col.c-city { width: 100px; }
+    .summary-table col.c-miles { width: 88px; }
+    .summary-table col.c-fee { width: 88px; }
+    .summary-table col.c-serve { width: 72px; }
+    .summary-table col.c-ton { width: 80px; }
+    .summary-table col.c-amt { width: 88px; }
+    .summary-table col.c-contract { width: 64px; }
+
+    .summary-table tr.emp-row { cursor: pointer; }
+    .summary-table tr.emp-row:hover td { background: #f5faff; }
+    .summary-table tr.emp-row.active td { background: #e6f7ff; }
+    .warn { color: #cf1322; }
+    .ok { color: #389e0d; }
+    .muted { color: rgba(0,0,0,.45); }
+    .link {
+      color: #1890ff;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    .link:hover { text-decoration: underline; }
+
+    .detail-panel {
+      display: none;
+      border: 1px solid #91d5ff;
+      border-top: none;
+      background: #fafcff;
+      margin-bottom: 16px;
+      padding: 0 0 8px;
+    }
+    .detail-panel.show { display: block; }
+    .detail-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #e6f7ff;
+      border-bottom: 1px solid #91d5ff;
+    }
+    .detail-hd .title { font-weight: 600; font-size: 14px; }
+    .modules { padding: 8px 12px 4px; }
+
+    .mod {
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      margin-bottom: 8px;
+    }
+    .mod-hd {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      gap: 8px;
+    }
+    .mod-hd:hover { background: #fafafa; }
+    .mod-hd .chev {
+      width: 16px;
+      color: rgba(0,0,0,.45);
+      font-size: 12px;
+      transition: transform .15s;
+    }
+    .mod.open .chev { transform: rotate(90deg); }
+    .mod-hd .name { font-weight: 600; flex: 1; }
+    .mod-hd .brief { color: rgba(0,0,0,.45); font-size: 13px; }
+    .mod-bd {
+      display: none;
+      padding: 4px 16px 14px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .mod.open .mod-bd { display: block; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 24px;
+      margin-top: 8px;
+    }
+    .field {
+      display: flex;
+      align-items: flex-start;
+      min-height: 26px;
+      font-size: 13px;
+    }
+    .field .label {
+      color: rgba(0,0,0,.45);
+      white-space: nowrap;
+      margin-right: 4px;
+      min-width: 120px;
+    }
+    .field .value { color: rgba(0,0,0,.85); word-break: break-all; }
+    .field.full { grid-column: 1 / -1; }
+
+    .client-card {
+      border: 1px solid #f0f0f0;
+      background: #fafafa;
+      border-radius: 2px;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+    .client-card + .client-card { margin-top: 8px; }
+    .client-card .cname {
+      font-weight: 600;
+      color: #1890ff;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .sub-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+    .sub-table th, .sub-table td {
+      border: 1px solid #f0f0f0;
+      padding: 8px;
+      text-align: center;
+    }
+    .sub-table th { background: #fafafa; font-weight: 500; }
+
+    .tag {
+      display: inline-block;
+      height: 20px;
+      line-height: 18px;
+      padding: 0 6px;
+      font-size: 12px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fafafa;
+      color: rgba(0,0,0,.65);
+      margin-right: 4px;
+    }
+    .tag.blue { border-color: #91d5ff; background: #e6f7ff; color: #096dd9; }
+    .tag.red { border-color: #ffa39e; background: #fff1f0; color: #cf1322; }
+    .tag.green { border-color: #b7eb8f; background: #f6ffed; color: #389e0d; }
+
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .filters { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>大宗业务员周报</h1>
+      <div class="filters">
+        <label>区域</label>
+        <select id="regionSelect">
+          <option value="苏皖" selected>苏皖</option>
+          <option value="河北">河北</option>
+          <option value="山东">山东</option>
+        </select>
+        <label>周次</label>
+        <select id="weekSelect">
+          <option value="2026-W30" selected>2026年第30周（07-20 ~ 07-26）</option>
+          <option value="2026-W29">2026年第29周（07-13 ~ 07-19）</option>
+          <option value="2026-W28">2026年第28周（07-06 ~ 07-12）</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="page-bd">
+      <div class="tip">
+        时间：2026/06/01-2026/06/07，按照豆粕交易量排名
+      </div>
+
+      <div class="table-wrap">
+      <table class="summary-table" id="summaryTable">
+        <colgroup>
+          <col class="c-idx" />
+          <col class="c-name" />
+          <col class="c-progress" />
+          <col class="c-visit" />
+          <col class="c-visit" />
+          <col class="c-visit" />
+          <col class="c-city" />
+          <col class="c-miles" />
+          <col class="c-fee" />
+          <col class="c-serve" />
+          <col class="c-ton" />
+          <col class="c-ton" />
+          <col class="c-ton" />
+          <col class="c-amt" />
+          <col class="c-contract" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>业务员</th>
+            <th>任务进度</th>
+            <th>今日拜访客户数</th>
+            <th>本周拜访客户数</th>
+            <th>任务修改次数</th>
+            <th>城市</th>
+            <th>本周有效里程（km）</th>
+            <th>本周使用差旅费（元）</th>
+            <th>本月服务客户数</th>
+            <th>本月豆粕成交吨数</th>
+            <th>本月玉米成交吨数</th>
+            <th>本月预混料成交吨数</th>
+            <th>本月动保成交金额</th>
+            <th>未提合同</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody"></tbody>
+      </table>
+      </div>
+
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-hd">
+          <div class="title" id="detailTitle">—</div>
+          <a class="link" href="javascript:;" id="btnCloseDetail">收起详情</a>
+        </div>
+        <div class="modules" id="modules"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      /* 演示数据：按区域；列表按本月豆粕成交吨数降序 */
+      var DATA = {
+        "苏皖": [
+          {
+            id: "zs",
+            name: "张三",
+            progress: 100,
+            visitTarget: 5,
+            todayVisitCount: 2,
+            weekVisitCount: 5,
+            taskModifyCount: 1,
+            visitedNames: ["甲饲料", "乙养殖", "丙贸易", "丁农场", "戊经销"],
+            cities: ["南京", "合肥"],
+            weekMiles: 186,
+            weekMilesPlan: 150,
+            weekTravelFee: 1280,
+            monthServe: 12,
+            monthSoybeanTon: 680,
+            monthCornTon: 420,
+            monthPremixTon: 36,
+            monthAnimalAmt: 8600,
+            unclaimed: 3,
+            visits: [
+              { name: "甲饲料", category: "豆粕", stock: 12, nextBuyDate: "2026-07-28", nextBuyTon: "50", summary: "本周已下单", animalOpp: "消毒液询价", lastDealDate: "2026-07-20", lastDealTon: "50", animalMonthAmt: "1800" },
+              { name: "乙养殖", category: "玉米", stock: 20, nextBuyDate: "2026-08-02", nextBuyTon: "80", summary: "库存充足观望", animalOpp: "—", lastDealDate: "2026-07-15", lastDealTon: "60", animalMonthAmt: "600" }
+            ],
+            trade: {
+              soybeanTon: 120, soybeanClients: "甲饲料 80吨；戊经销 40吨",
+              cornTon: 60, cornClients: "乙养殖 60吨",
+              premixTon: 8, premixClients: "丙贸易 8吨",
+              animalAmt: 900, animalClients: "甲饲料 600元；丁农场 300元",
+              dealClientCount: 4, newRegister: "戊经销", newCustomer: "戊经销"
+            },
+            month: {
+              serve: "12个/20个", soybean: "680吨/1000吨", corn: "420吨/1000吨", premix: "36吨/50吨",
+              animalAmt: "8600元/10000元", animalClients: "甲、乙、丁", newCount: "2个/10个", newList: "戊经销、己养殖"
+            },
+            contracts: [
+              { no: "HT202606088", customer: "乙养殖", early: "2026-06-20", late: "2026-07-28", ton: 60, left: 15, price: 2400, mill: "北良", protein: "—" },
+              { no: "HT202607021", customer: "甲饲料", early: "2026-07-01", late: "2026-07-31", ton: 100, left: 30, price: 3180, mill: "张家港", protein: "43%" }
+            ]
+          },
+          {
+            id: "fw",
+            name: "方伟萍",
+            progress: 60,
+            visitTarget: 5,
+            todayVisitCount: 1,
+            weekVisitCount: 3,
+            taskModifyCount: 3,
+            visitedNames: ["王五", "赵六", "钱七"],
+            cities: ["徐州", "宿迁"],
+            weekMiles: 210,
+            weekMilesPlan: 140,
+            weekTravelFee: 1560,
+            monthServe: 8,
+            monthSoybeanTon: 520,
+            monthCornTon: 180,
+            monthPremixTon: 12,
+            monthAnimalAmt: 3200,
+            unclaimed: 10,
+            visits: [
+              { name: "王五", category: "豆粕", stock: 5, nextBuyDate: "2026-07-30", nextBuyTon: "30", summary: "库存偏低，有补货意向", animalOpp: "疫苗需求待跟进", lastDealDate: "2026-07-18", lastDealTon: "40", animalMonthAmt: "1200" },
+              { name: "赵六", category: "豆粕", stock: 5, nextBuyDate: "2026-08-05", nextBuyTon: "20", summary: "观望行情", animalOpp: "—", lastDealDate: "—", lastDealTon: "—", animalMonthAmt: "—" },
+              { name: "钱七", category: "预混料", stock: 2, nextBuyDate: "2026-07-29", nextBuyTon: "5", summary: "小批量试单", animalOpp: "驱虫药", lastDealDate: "2026-07-22", lastDealTon: "5", animalMonthAmt: "400" }
+            ],
+            trade: {
+              soybeanTon: 95, soybeanClients: "王五 55吨；钱七 40吨",
+              cornTon: 25, cornClients: "赵六 25吨",
+              premixTon: 5, premixClients: "钱七 5吨",
+              animalAmt: 700, animalClients: "王五 400元；钱七 300元",
+              dealClientCount: 3, newRegister: "—", newCustomer: "—"
+            },
+            month: {
+              serve: "8个/20个", soybean: "520吨/1000吨", corn: "180吨/1000吨", premix: "12吨/50吨",
+              animalAmt: "3200元/10000元", animalClients: "王五、钱七", newCount: "1个/10个", newList: "方伟萍"
+            },
+            contracts: [
+              { no: "HT202607001", customer: "王五", early: "2026-07-01", late: "2026-07-31", ton: 100, left: 40, price: 3200, mill: "南通油厂", protein: "43%" },
+              { no: "HT202607015", customer: "赵六", early: "2026-07-10", late: "2026-08-10", ton: 80, left: 80, price: 3150, mill: "张家港", protein: "43%" }
+            ]
+          },
+          {
+            id: "ls",
+            name: "李四",
+            progress: 40,
+            visitTarget: 5,
+            todayVisitCount: 1,
+            weekVisitCount: 2,
+            taskModifyCount: 2,
+            visitedNames: ["孙八", "周九"],
+            cities: ["无锡"],
+            weekMiles: 96,
+            weekMilesPlan: 120,
+            weekTravelFee: 680,
+            monthServe: 5,
+            monthSoybeanTon: 260,
+            monthCornTon: 90,
+            monthPremixTon: 4,
+            monthAnimalAmt: 980,
+            unclaimed: 6,
+            visits: [
+              { name: "孙八", category: "豆粕", stock: 8, nextBuyDate: "2026-08-01", nextBuyTon: "25", summary: "首次拜访建联", animalOpp: "—", lastDealDate: "—", lastDealTon: "—", animalMonthAmt: "—" },
+              { name: "周九", category: "玉米", stock: 15, nextBuyDate: "2026-07-31", nextBuyTon: "40", summary: "比价中", animalOpp: "—", lastDealDate: "2026-06-30", lastDealTon: "30", animalMonthAmt: "200" }
+            ],
+            trade: {
+              soybeanTon: 40, soybeanClients: "孙八 40吨",
+              cornTon: 20, cornClients: "周九 20吨",
+              premixTon: 0, premixClients: "—",
+              animalAmt: 0, animalClients: "—",
+              dealClientCount: 2, newRegister: "孙八", newCustomer: "孙八"
+            },
+            month: {
+              serve: "5个/20个", soybean: "260吨/1000吨", corn: "90吨/1000吨", premix: "4吨/50吨",
+              animalAmt: "980元/10000元", animalClients: "周九", newCount: "1个/10个", newList: "孙八"
+            },
+            contracts: [
+              { no: "HT202605002", customer: "周九", early: "2026-06-01", late: "2026-07-25", ton: 50, left: 50, price: 3300, mill: "连云港", protein: "46%" }
+            ]
+          },
+          {
+            id: "wq",
+            name: "王强",
+            progress: 20,
+            visitTarget: 5,
+            todayVisitCount: 0,
+            weekVisitCount: 1,
+            taskModifyCount: 0,
+            visitedNames: ["郑十"],
+            cities: ["常州"],
+            weekMiles: 48,
+            weekMilesPlan: 100,
+            weekTravelFee: 320,
+            monthServe: 3,
+            monthSoybeanTon: 95,
+            monthCornTon: 40,
+            monthPremixTon: 1,
+            monthAnimalAmt: 150,
+            unclaimed: 2,
+            visits: [
+              { name: "郑十", category: "豆粕", stock: 3, nextBuyDate: "2026-08-08", nextBuyTon: "15", summary: "意向弱", animalOpp: "—", lastDealDate: "—", lastDealTon: "—", animalMonthAmt: "—" }
+            ],
+            trade: {
+              soybeanTon: 15, soybeanClients: "郑十 15吨",
+              cornTon: 0, cornClients: "—",
+              premixTon: 0, premixClients: "—",
+              animalAmt: 0, animalClients: "—",
+              dealClientCount: 1, newRegister: "—", newCustomer: "—"
+            },
+            month: {
+              serve: "3个/20个", soybean: "95吨/1000吨", corn: "40吨/1000吨", premix: "1吨/50吨",
+              animalAmt: "150元/10000元", animalClients: "—", newCount: "0个/10个", newList: "—"
+            },
+            contracts: [
+              { no: "HT202607030", customer: "郑十", early: "2026-07-15", late: "2026-08-15", ton: 30, left: 30, price: 3220, mill: "泰州", protein: "43%" }
+            ]
+          }
+        ],
+        "河北": [
+          {
+            id: "hm",
+            name: "韩梅",
+            progress: 80,
+            visitTarget: 5,
+            todayVisitCount: 2,
+            weekVisitCount: 4,
+            taskModifyCount: 2,
+            visitedNames: ["石家庄一号", "保定二号", "沧州三号", "唐山四号"],
+            cities: ["石家庄", "保定"],
+            weekMiles: 168,
+            weekMilesPlan: 140,
+            weekTravelFee: 1120,
+            monthServe: 9,
+            monthSoybeanTon: 410,
+            monthCornTon: 260,
+            monthPremixTon: 22,
+            monthAnimalAmt: 4100,
+            unclaimed: 4,
+            visits: [
+              { name: "石家庄一号", category: "豆粕", stock: 10, nextBuyDate: "2026-07-29", nextBuyTon: "45", summary: "续单意向强", animalOpp: "驱虫药", lastDealDate: "2026-07-19", lastDealTon: "45", animalMonthAmt: "900" }
+            ],
+            trade: {
+              soybeanTon: 80, soybeanClients: "石家庄一号 50吨；保定二号 30吨",
+              cornTon: 40, cornClients: "沧州三号 40吨",
+              premixTon: 6, premixClients: "唐山四号 6吨",
+              animalAmt: 500, animalClients: "石家庄一号 500元",
+              dealClientCount: 4, newRegister: "—", newCustomer: "—"
+            },
+            month: {
+              serve: "9个/20个", soybean: "410吨/1000吨", corn: "260吨/1000吨", premix: "22吨/50吨",
+              animalAmt: "4100元/10000元", animalClients: "石家庄一号", newCount: "1个/10个", newList: "唐山四号"
+            },
+            contracts: [
+              { no: "HT202607040", customer: "保定二号", early: "2026-07-05", late: "2026-08-05", ton: 70, left: 20, price: 3100, mill: "京唐港", protein: "43%" }
+            ]
+          },
+          {
+            id: "lg",
+            name: "刘刚",
+            progress: 40,
+            visitTarget: 5,
+            todayVisitCount: 1,
+            weekVisitCount: 2,
+            taskModifyCount: 1,
+            visitedNames: ["邯郸客户A", "邢台客户B"],
+            cities: ["邯郸"],
+            weekMiles: 110,
+            weekMilesPlan: 120,
+            weekTravelFee: 760,
+            monthServe: 4,
+            monthSoybeanTon: 180,
+            monthCornTon: 120,
+            monthPremixTon: 8,
+            monthAnimalAmt: 600,
+            unclaimed: 1,
+            visits: [
+              { name: "邯郸客户A", category: "玉米", stock: 18, nextBuyDate: "2026-08-03", nextBuyTon: "50", summary: "比价中", animalOpp: "—", lastDealDate: "2026-07-01", lastDealTon: "40", animalMonthAmt: "—" }
+            ],
+            trade: {
+              soybeanTon: 30, soybeanClients: "邢台客户B 30吨",
+              cornTon: 25, cornClients: "邯郸客户A 25吨",
+              premixTon: 0, premixClients: "—",
+              animalAmt: 0, animalClients: "—",
+              dealClientCount: 2, newRegister: "—", newCustomer: "—"
+            },
+            month: {
+              serve: "4个/20个", soybean: "180吨/1000吨", corn: "120吨/1000吨", premix: "8吨/50吨",
+              animalAmt: "600元/10000元", animalClients: "—", newCount: "0个/10个", newList: "—"
+            },
+            contracts: []
+          }
+        ],
+        "山东": [
+          {
+            id: "cy",
+            name: "陈雨",
+            progress: 100,
+            visitTarget: 5,
+            todayVisitCount: 3,
+            weekVisitCount: 5,
+            taskModifyCount: 4,
+            visitedNames: ["青岛港贸", "潍坊养殖", "临沂饲料", "烟台贸易", "济宁经销"],
+            cities: ["青岛", "潍坊", "临沂"],
+            weekMiles: 240,
+            weekMilesPlan: 180,
+            weekTravelFee: 1980,
+            monthServe: 15,
+            monthSoybeanTon: 920,
+            monthCornTon: 510,
+            monthPremixTon: 42,
+            monthAnimalAmt: 9200,
+            unclaimed: 5,
+            visits: [
+              { name: "青岛港贸", category: "豆粕", stock: 25, nextBuyDate: "2026-07-27", nextBuyTon: "100", summary: "大单已锁价", animalOpp: "动保套餐", lastDealDate: "2026-07-21", lastDealTon: "100", animalMonthAmt: "2500" }
+            ],
+            trade: {
+              soybeanTon: 180, soybeanClients: "青岛港贸 100吨；济宁经销 80吨",
+              cornTon: 70, cornClients: "潍坊养殖 70吨",
+              premixTon: 12, premixClients: "临沂饲料 12吨",
+              animalAmt: 1200, animalClients: "青岛港贸 800元；烟台贸易 400元",
+              dealClientCount: 5, newRegister: "济宁经销", newCustomer: "济宁经销"
+            },
+            month: {
+              serve: "15个/20个", soybean: "920吨/1000吨", corn: "510吨/1000吨", premix: "42吨/50吨",
+              animalAmt: "9200元/10000元", animalClients: "青岛、烟台、临沂", newCount: "2个/10个", newList: "济宁经销、日照新客"
+            },
+            contracts: [
+              { no: "HT202607050", customer: "青岛港贸", early: "2026-07-01", late: "2026-07-31", ton: 200, left: 60, price: 3080, mill: "日照", protein: "43%" }
+            ]
+          },
+          {
+            id: "zl",
+            name: "赵磊",
+            progress: 0,
+            visitTarget: 5,
+            todayVisitCount: 0,
+            weekVisitCount: 0,
+            taskModifyCount: 0,
+            visitedNames: [],
+            cities: [],
+            weekMiles: 0,
+            weekMilesPlan: 100,
+            weekTravelFee: 0,
+            monthServe: 1,
+            monthSoybeanTon: 35,
+            monthCornTon: 10,
+            monthPremixTon: 0,
+            monthAnimalAmt: 0,
+            unclaimed: 0,
+            visits: [],
+            trade: {
+              soybeanTon: 0, soybeanClients: "—",
+              cornTon: 0, cornClients: "—",
+              premixTon: 0, premixClients: "—",
+              animalAmt: 0, animalClients: "—",
+              dealClientCount: 0, newRegister: "—", newCustomer: "—"
+            },
+            month: {
+              serve: "1个/20个", soybean: "35吨/1000吨", corn: "10吨/1000吨", premix: "0吨/50吨",
+              animalAmt: "0元/10000元", animalClients: "—", newCount: "0个/10个", newList: "—"
+            },
+            contracts: []
+          }
+        ]
+      };
+
+      var activeId = null;
+      var regionSelect = document.getElementById("regionSelect");
+      var summaryBody = document.getElementById("summaryBody");
+      var detailPanel = document.getElementById("detailPanel");
+      var detailTitle = document.getElementById("detailTitle");
+      var modules = document.getElementById("modules");
+
+      function milesOver(emp) {
+        if (!emp.weekMilesPlan) return 0;
+        return Math.round((emp.weekMiles - emp.weekMilesPlan) / emp.weekMilesPlan * 100);
+      }
+
+      function sortedList() {
+        var list = (DATA[regionSelect.value] || []).slice();
+        list.sort(function (a, b) { return b.monthSoybeanTon - a.monthSoybeanTon; });
+        return list;
+      }
+
+      function renderSummary() {
+        var list = sortedList();
+        summaryBody.innerHTML = "";
+        if (!list.length) {
+          summaryBody.innerHTML = '<tr><td colspan="15" class="muted">该区域暂无周报数据</td></tr>';
+          detailPanel.classList.remove("show");
+          activeId = null;
+          return;
+        }
+        list.forEach(function (emp, idx) {
+          var tr = document.createElement("tr");
+          tr.className = "emp-row" + (activeId === emp.id ? " active" : "");
+          tr.setAttribute("data-id", emp.id);
+          tr.innerHTML =
+            "<td class=\"num\">" + (idx + 1) + "</td>" +
+            '<td class="name"><a class="link" href="javascript:;" data-action="detail">' + emp.name + "</a></td>" +
+            "<td class=\"num\">" + emp.progress + "%</td>" +
+            "<td class=\"num\">" + emp.todayVisitCount + "</td>" +
+            "<td class=\"num\">" + emp.weekVisitCount + "</td>" +
+            "<td class=\"num\">" + emp.taskModifyCount + "</td>" +
+            "<td>" + (emp.cities.length ? emp.cities.join("、") : "—") + "</td>" +
+            "<td class=\"num\">" + emp.weekMiles + "</td>" +
+            "<td class=\"num\">" + emp.weekTravelFee.toLocaleString() + "</td>" +
+            "<td class=\"num\">" + emp.monthServe + "</td>" +
+            "<td class=\"num\"><span class=\"rank-val\">" + emp.monthSoybeanTon + "</span></td>" +
+            "<td class=\"num\">" + emp.monthCornTon + "</td>" +
+            "<td class=\"num\">" + emp.monthPremixTon + "</td>" +
+            "<td class=\"num\">" + emp.monthAnimalAmt.toLocaleString() + "</td>" +
+            "<td class=\"num\">" + (emp.unclaimed
+              ? '<a class="link" href="javascript:;" data-action="contract">' + emp.unclaimed + "</a>"
+              : "0") + "</td>";
+          summaryBody.appendChild(tr);
+        });
+        if (activeId && !list.some(function (e) { return e.id === activeId; })) {
+          activeId = null;
+          detailPanel.classList.remove("show");
+        } else if (activeId) {
+          var emp = list.filter(function (e) { return e.id === activeId; })[0];
+          renderDetail(emp);
+        }
+      }
+
+      function field(label, value, full) {
+        return '<div class="field' + (full ? " full" : "") + '"><span class="label">' + label + '：</span><span class="value">' + (value == null || value === "" ? "—" : value) + "</span></div>";
+      }
+
+      function renderDetail(emp, openMod) {
+        detailTitle.textContent = emp.name + " · 周报详情";
+        var over = milesOver(emp);
+        var overText = over > 0 ? ("超过预估里程 " + over + "%") : (over < 0 ? ("低于预估 " + Math.abs(over) + "%") : "与预估持平");
+
+        var visitClientsHtml = emp.visits.length
+          ? emp.visits.map(function (c, i) {
+              return '<div class="client-card">' +
+                '<div class="cname">客户' + (i + 1) + "：" + c.name + "</div>" +
+                '<div class="grid-2">' +
+                field("品类", c.category) +
+                field("客户当前库存（吨）", c.stock) +
+                field("预计下次采购时间", c.nextBuyDate) +
+                field("预计下次采购吨数（吨）", c.nextBuyTon) +
+                field("拜访总结", c.summary, true) +
+                field("动保机会点", c.animalOpp, true) +
+                field("最近成交时间", c.lastDealDate) +
+                field("最近成交吨数", c.lastDealTon) +
+                field("动保本月成交金额", c.animalMonthAmt) +
+                "</div></div>";
+            }).join("")
+          : '<div class="muted" style="padding:8px 0">本周暂无拜访客户明细</div>';
+
+        var contractRows = emp.contracts.length
+          ? emp.contracts.map(function (r) {
+              return "<tr><td>" + r.no + "</td><td>" + r.customer + "</td><td>" + r.early + "</td><td>" + r.late +
+                "</td><td>" + r.ton + "</td><td>" + r.left + "</td><td>" + r.price + "</td><td>" + r.mill + "</td><td>" + r.protein + "</td></tr>";
+            }).join("")
+          : '<tr><td colspan="9" class="muted">暂无未提合同</td></tr>';
+
+        var openTask = !openMod || openMod === "task";
+        modules.innerHTML =
+          mod("task", "任务完成度", "今日拜访 " + emp.todayVisitCount + " · 本周拜访 " + emp.weekVisitCount + " · 修改 " + emp.taskModifyCount + " 次 · 进度 " + emp.progress + "%",
+            '<div class="grid-2">' +
+            field("拜访客户数目标", emp.visitTarget + "个") +
+            field("今日拜访客户数", emp.todayVisitCount + "个") +
+            field("本周拜访客户数", emp.weekVisitCount + "个") +
+            field("任务修改次数", emp.taskModifyCount + "次") +
+            field("已拜访客户", emp.visitedNames.length ? emp.visitedNames.join("、") : "—") +
+            field("城市", emp.cities.length ? emp.cities.join("、") : "—", true) +
+            "</div>", openTask && openMod !== "contract") +
+
+          mod("visit", "本周拜访数据", "拜访 " + emp.weekVisitCount + " 个 · 有效里程 " + emp.weekMiles + " km · 差旅费 " + emp.weekTravelFee + " 元",
+            '<div class="grid-2">' +
+            field("今日拜访客户数", emp.todayVisitCount + "个") +
+            field("本周拜访客户数", emp.weekVisitCount + "个") +
+            field("本周使用差旅费", emp.weekTravelFee + "元") +
+            field("本周预估里程", emp.weekMilesPlan + "公里") +
+            field("本周有效里程", emp.weekMiles + "公里，" + overText, true) +
+            '</div><div style="margin-top:10px;font-weight:600;font-size:13px">拜访客户明细</div>' + visitClientsHtml, openMod === "visit") +
+
+          mod("trade", "本周交易数据", "成交客户 " + emp.trade.dealClientCount + " 个",
+            '<div class="grid-2">' +
+            field("豆粕成交吨数", emp.trade.soybeanTon + "吨") +
+            field("豆粕成交客户", emp.trade.soybeanClients) +
+            field("玉米成交吨数", emp.trade.cornTon + "吨") +
+            field("玉米成交客户", emp.trade.cornClients) +
+            field("预混料成交吨数", emp.trade.premixTon + "吨") +
+            field("预混料成交客户", emp.trade.premixClients) +
+            field("动保成交金额", emp.trade.animalAmt + "元") +
+            field("动保成交客户", emp.trade.animalClients) +
+            field("成交客户数", emp.trade.dealClientCount + "个") +
+            field("新注册客户", emp.trade.newRegister) +
+            field("新客户", emp.trade.newCustomer) +
+            "</div>", openMod === "trade") +
+
+          mod("month", "本月数据", "服务客户 " + emp.monthServe + " · 豆粕 " + emp.monthSoybeanTon + "吨",
+            '<div class="grid-2">' +
+            field("本月服务客户数", emp.monthServe + "个") +
+            field("本月豆粕成交吨数", emp.monthSoybeanTon + "吨") +
+            field("本月玉米成交吨数", emp.monthCornTon + "吨") +
+            field("本月预混料成交吨数", emp.monthPremixTon + "吨") +
+            field("本月动保成交金额", emp.monthAnimalAmt + "元") +
+            field("动保成交客户", emp.month.animalClients) +
+            field("新客户数", emp.month.newCount) +
+            field("新客户", emp.month.newList, true) +
+            "</div>", openMod === "month") +
+
+          mod("contract", "本月未提合同", "合同数量 " + emp.unclaimed + " 个",
+            '<div style="font-weight:600;font-size:13px">本月未提合同详情</div>' +
+            '<table class="sub-table"><thead><tr>' +
+            "<th>合同编号</th><th>客户名称</th><th>最早提货期</th><th>最晚提货期</th><th>合同吨位</th><th>未提吨位</th><th>单价</th><th>油厂</th><th>蛋白</th>" +
+            "</tr></thead><tbody>" + contractRows + "</tbody></table>", openMod === "contract");
+
+        detailPanel.classList.add("show");
+        bindModToggle();
+      }
+
+      function mod(key, name, brief, bodyHtml, open) {
+        return '<div class="mod' + (open ? " open" : "") + '" data-mod="' + key + '">' +
+          '<div class="mod-hd"><span class="chev">▶</span><span class="name">' + name + '</span><span class="brief">' + brief + "</span></div>" +
+          '<div class="mod-bd">' + bodyHtml + "</div></div>";
+      }
+
+      function bindModToggle() {
+        modules.querySelectorAll(".mod-hd").forEach(function (hd) {
+          hd.addEventListener("click", function () {
+            hd.parentElement.classList.toggle("open");
+          });
+        });
+      }
+
+      function openEmp(id, openMod) {
+        var list = sortedList();
+        var emp = list.filter(function (e) { return e.id === id; })[0];
+        if (!emp) return;
+        if (activeId === id && !openMod) {
+          activeId = null;
+          detailPanel.classList.remove("show");
+          renderSummary();
+          return;
+        }
+        activeId = id;
+        renderSummary();
+        renderDetail(emp, openMod || "task");
+        detailPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      summaryBody.addEventListener("click", function (e) {
+        var tr = e.target.closest("tr.emp-row");
+        if (!tr) return;
+        var id = tr.getAttribute("data-id");
+        if (e.target.closest("[data-action='contract']")) {
+          e.preventDefault();
+          e.stopPropagation();
+          openEmp(id, "contract");
+          return;
+        }
+        if (e.target.closest("[data-action='detail']")) {
+          e.preventDefault();
+          e.stopPropagation();
+          openEmp(id, "task");
+          return;
+        }
+        openEmp(id);
+      });
+
+      document.getElementById("btnCloseDetail").addEventListener("click", function () {
+        activeId = null;
+        detailPanel.classList.remove("show");
+        renderSummary();
+      });
+
+      regionSelect.addEventListener("change", function () {
+        activeId = null;
+        detailPanel.classList.remove("show");
+        renderSummary();
+      });
+
+      renderSummary();
+    })();
+  </script>
+</body>
+</html>
