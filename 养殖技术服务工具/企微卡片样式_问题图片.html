@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>养殖服务报告 · 企微卡片样式</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c5ccd6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px 40px;
+    }
+    .device {
+      width: 390px;
+      max-width: 100%;
+      background: #ededed;
+      border-radius: 20px;
+      padding: 20px 16px 28px;
+      box-shadow: 0 16px 48px rgba(0,0,0,.18);
+    }
+    .page-tip {
+      font-size: 12px; color: #8b95a5; text-align: center; margin-bottom: 14px;
+    }
+
+    /* —— 企微卡片 —— */
+    .wx-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .wx-card .bar {
+      height: 4px;
+      background: linear-gradient(90deg, #07c160, #10ad6a);
+    }
+    .wx-card .body { padding: 14px 14px 12px; }
+    .wx-card .title {
+      font-size: 16px; font-weight: 600; color: #1a1a1a;
+      margin-bottom: 10px; line-height: 1.4;
+    }
+    .wx-card .line {
+      font-size: 13px; color: #666; margin-bottom: 5px; line-height: 1.5;
+    }
+    .wx-card .line.warn {
+      color: #c45c3e; font-weight: 500; margin-top: 4px;
+    }
+    .wx-card .line.plan {
+      color: #666; margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 问题图片 */
+    .wx-card .photo-sec {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .wx-card .photo-label {
+      font-size: 12px; color: #999; margin-bottom: 8px;
+    }
+    .wx-card .photo-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .wx-card .photo {
+      width: 72px; height: 72px; border-radius: 6px; overflow: hidden;
+      background: linear-gradient(135deg, #dbe7f8, #c5d6ef);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #3a5a8c; position: relative;
+      border: 1px solid #e8ecf1;
+    }
+    .wx-card .photo img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .wx-card .ft {
+      border-top: 1px solid #f0f0f0;
+      padding: 10px 14px;
+      font-size: 13px; color: #576b95;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .wx-card .ft .arrow { color: #c0c4cc; font-size: 14px; }
+
+    /* 变体示意 */
+    .variants {
+      margin-top: 28px;
+    }
+    .variants h3 {
+      font-size: 13px; color: #5c6b7a; margin-bottom: 12px; font-weight: 600;
+      text-align: center;
+    }
+    .wx-card + .wx-card { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <p class="page-tip">企微群卡片样式 · 含问题图片</p>
+
+    <!-- 主卡片：有问题图 -->
+    <div class="wx-card">
+      <div class="bar"></div>
+      <div class="body">
+        <div class="title">养殖服务报告 · 张三养殖场</div>
+        <div class="line">服务日期：2026-08-04</div>
+        <div class="line">技术老师：王玉东</div>
+        <div class="line warn">异常问题 2 条 · 未解决 2 条</div>
+        <div class="line plan">处理方案：测光仪测试并调整补光；喷雾增湿；添加卵炎消消乐</div>
+        <div class="photo-sec">
+          <div class="photo-label">问题图片</div>
+          <div class="photo-row">
+            <div class="photo">问题图1</div>
+            <div class="photo">问题图2</div>
+            <div class="photo">问题图3</div>
+          </div>
+        </div>
+      </div>
+      <div class="ft">
+        <span>查看详情</span>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+
+    <div class="variants">
+      <h3>变体 · 无异常</h3>
+
+      <!-- 无异常 -->
+      <div class="wx-card">
+        <div class="bar"></div>
+        <div class="body">
+          <div class="title">养殖服务报告 · 周卫兵养殖场</div>
+          <div class="line">服务日期：2026-08-10</div>
+          <div class="line">技术老师：王玉东</div>
+          <div class="line" style="color:#1f9d6a;font-weight:500;margin-top:4px">本次巡检无异常</div>
+        </div>
+        <div class="ft">
+          <span>查看详情</span>
+          <span class="arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="variants">
+      <h3>业务员拜访客户记录</h3>
+
+      <div class="wx-card">
+        <div class="bar" style="background:linear-gradient(90deg,#4a90e2,#3a7bd5)"></div>
+        <div class="body">
+          <div class="title">粮巴巴业务经理拜访</div>
+          <div class="line">拜访日期：2026-08-20</div>
+          <div class="line">业务经理：李明</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

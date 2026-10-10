@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>巡场报告详情</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --card: #fff;
+      --text: #1a2332;
+      --muted: #8b95a5;
+      --label: #5c6b7a;
+      --line: #e8ecf1;
+      --blue: #2b6de5;
+      --blue-deep: #1e54b8;
+      --blue-soft: #e8f0ff;
+      --danger: #c45c3e;
+      --danger-soft: #fdf0eb;
+      --ok: #1f9d6a;
+      --ok-soft: #e6f7f0;
+      --warn: #d48806;
+      --shadow: 0 2px 10px rgba(26, 35, 50, 0.06);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c5ccd6;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px 32px;
+    }
+    .device {
+      width: 390px;
+      max-width: 100%;
+      min-height: 780px;
+      background: var(--bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,.18);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .topbar {
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-deep) 100%);
+      color: #fff;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .topbar .back {
+      width: 28px; height: 28px; border: none; background: transparent;
+      color: #fff; font-size: 22px; cursor: pointer; line-height: 1;
+    }
+    .topbar h1 { font-size: 17px; font-weight: 600; flex: 1; text-align: center; margin-right: 28px; }
+    .content {
+      flex: 1; overflow-y: auto; padding: 12px 12px 88px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 14px; margin-bottom: 10px;
+    }
+    .sec-title {
+      font-size: 15px; font-weight: 600; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sec-title::before {
+      content: ""; width: 3px; height: 14px; background: var(--blue); border-radius: 2px;
+    }
+    .kv {
+      display: flex; font-size: 13px; padding: 8px 0; line-height: 1.5;
+      border-bottom: 1px solid #f3f5f8;
+    }
+    .kv:last-child { border-bottom: none; }
+    .kv .k { width: 96px; color: var(--muted); flex-shrink: 0; }
+    .kv .v { flex: 1; color: var(--text); text-align: right; word-break: break-all; }
+
+    .issue {
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; margin-bottom: 8px; font-size: 13px;
+    }
+    .issue:last-child { margin-bottom: 0; }
+    .issue .row1 {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+    }
+    .issue .comm { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.5; }
+    .tag {
+      display: inline-flex; font-size: 11px; padding: 2px 8px;
+      border-radius: 999px; font-weight: 500; flex-shrink: 0;
+    }
+    .tag-ok { background: var(--ok-soft); color: var(--ok); }
+    .tag-no { background: var(--danger-soft); color: var(--danger); }
+    .tag-done { background: #eef1f6; color: var(--muted); }
+    .tag-wait { background: #fff7e8; color: var(--warn); }
+
+    .dim-list .dim {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 14px;
+    }
+    .dim-list .dim:last-child { border-bottom: none; }
+    .dim-list .left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .dim-list .name { flex: 1; min-width: 0; }
+    .dim-list .right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .dim-problem {
+      font-size: 12px; color: var(--muted); padding: 0 4px 10px 4px;
+      line-height: 1.5; border-bottom: 1px solid var(--line);
+    }
+    .dim-problem:last-child { border-bottom: none; }
+
+    .solution {
+      font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-line;
+    }
+    .photo-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .photo-item {
+      width: 96px; height: 96px; border-radius: 8px; overflow: hidden;
+      background: linear-gradient(135deg, #dbe7f8, #c5d6ef);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: #3a5a8c;
+    }
+    .empty-tip { font-size: 13px; color: var(--muted); padding: 4px 0; }
+    .sub-label {
+      font-size: 12px; color: var(--muted); margin: 10px 0 6px;
+    }
+    .sub-label:first-child { margin-top: 0; }
+
+    .fab {
+      position: absolute; left: 12px; right: 12px; bottom: 16px; z-index: 20;
+    }
+    .btn {
+      width: 100%; border: none; border-radius: 10px;
+      padding: 13px 16px; font-size: 15px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:active { background: var(--blue-deep); }
+    .btn-ghost {
+      background: #fff; color: var(--blue); border: 1px solid #c5d6f7;
+    }
+
+    .dialog-mask {
+      display: none; position: absolute; inset: 0; z-index: 60;
+      background: rgba(26, 35, 50, 0.45);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .dialog-mask.show { display: flex; }
+    .dialog {
+      width: 100%; max-width: 320px; background: #fff; border-radius: 14px;
+      padding: 24px 18px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.18);
+      text-align: center;
+    }
+    .dialog .dialog-ico {
+      width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 700;
+    }
+    .dialog .dialog-ico.ok { background: var(--ok-soft); color: var(--ok); }
+    .dialog .dialog-ico.warn { background: #fff7e8; color: var(--warn); }
+    .dialog .dialog-title {
+      font-size: 16px; font-weight: 600; margin-bottom: 16px; line-height: 1.4;
+    }
+    .dialog .dialog-actions { display: flex; gap: 10px; }
+    .dialog .dialog-actions .btn { flex: 1; margin: 0; padding: 12px 10px; }
+
+    .toast {
+      display: none; position: absolute; left: 50%; top: 48%;
+      transform: translate(-50%, -50%); z-index: 70;
+      background: rgba(26,35,50,.88); color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-size: 13px;
+      max-width: 80%; text-align: center; line-height: 1.5;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-back">‹</button>
+      <h1>巡场报告详情</h1>
+    </div>
+
+    <div class="content" id="detail-root">
+      <!-- 由 JS 渲染 -->
+    </div>
+
+    <div class="fab">
+      <button type="button" class="btn btn-primary" id="btn-share-group">分享到客户群</button>
+    </div>
+
+    <div class="dialog-mask" id="share-mask" role="dialog" aria-modal="true">
+      <div class="dialog">
+        <div class="dialog-ico ok" id="share-ico">✓</div>
+        <div class="dialog-title" id="share-title">巡场报告已分享到张三客户群</div>
+        <div class="dialog-actions" id="share-actions">
+          <button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>
+          <button type="button" class="btn btn-primary" id="btn-open-group">查看</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    // 与 V2 填写页维度一致
+    var FLOCK_DIMS = [
+      { name: "精神状态", status: "ok" },
+      { name: "粪便", status: "ok" },
+      { name: "产蛋率", status: "ok" },
+      { name: "采食与喂料", status: "ok" },
+      { name: "死淘状况", status: "no", problem: "死鸡率偏高，需关注肠胃" },
+      { name: "加药情况", status: "ok" }
+    ];
+    var SHED_DIMS = [
+      { name: "环控设施（含温湿度/通风）", status: "no", problem: "光照强度偏低，补光策略不合理" },
+      { name: "水线与供水", status: "ok" },
+      { name: "饲料仓储情况", status: "ok" },
+      { name: "其他工作 / 其他", status: "ok" }
+    ];
+
+    var reportDb = {
+      "R20260804001": {
+        id: "R20260804001",
+        reportNo: "782-20260804101",
+        customer: "张三",
+        teacher: "王玉东",
+        teacherPhone: "13812345678",
+        date: "2026-08-04",
+        visitTime: "2026-08-04 10:30:00",
+        visitNo: 1,
+        mode: "实地拜访",
+        valid: true,
+        flockType: "鸡",
+        flockBreed: "海兰褐",
+        flockScale: "5 万羽",
+        flockDims: FLOCK_DIMS,
+        shedDims: SHED_DIMS,
+        tracks: [
+          { title: "光照强度太大", time: "2026-07-28", status: "no" },
+          { title: "鸡舍内湿度小，灰尘大", time: "2026-07-21", status: "ok" }
+        ],
+        summary: ["通风太大", "死鸡率偏高", "鸡舍内湿度小，灰尘大"],
+        plan: "1. 测光仪测试，平均光照 17.68 lux；晚上补光每天减 10 分钟，6 天减完。\n2. 干燥天气喷雾增湿，并定期清理灯泡与探头、消毒。\n3. 按建议添加卵炎消消乐，关注肠胃与死淘变化。",
+        problemPhotos: 2,
+        address: "湖南省娄底市新化县枫林街道新洋路",
+        checkinPhotos: 1,
+        selfiePhotos: 1,
+        sent: true,
+        orderId: "d3"
+      },
+      "R20260728001": {
+        id: "R20260728001",
+        reportNo: "782-20260728102",
+        customer: "张三",
+        teacher: "王玉东",
+        teacherPhone: "13812345678",
+        date: "2026-07-28",
+        visitTime: "2026-07-28 14:00:00",
+        visitNo: 2,
+        mode: "实地拜访",
+        valid: true,
+        flockType: "鸡",
+        flockBreed: "海兰褐",
+        flockScale: "5 万羽",
+        flockDims: [
+          { name: "精神状态", status: "ok" },
+          { name: "粪便", status: "ok" },
+          { name: "产蛋率", status: "no", problem: "产蛋率略有波动" },
+          { name: "采食与喂料", status: "ok" },
+          { name: "死淘状况", status: "ok" },
+          { name: "加药情况", status: "ok" }
+        ],
+        shedDims: [
+          { name: "环控设施（含温湿度/通风）", status: "ok" },
+          { name: "水线与供水", status: "ok" },
+          { name: "饲料仓储情况", status: "ok" },
+          { name: "其他工作 / 其他", status: "ok" }
+        ],
+        tracks: [
+          { title: "采食量下降", time: "2026-07-20", status: "ok" }
+        ],
+        summary: ["产蛋率略有波动"],
+        plan: "1. 调整喂料时间，观察 3 天。\n2. 加强饮水消毒。",
+        problemPhotos: 1,
+        address: "湖南省娄底市新化县枫林街道新洋路",
+        checkinPhotos: 1,
+        selfiePhotos: 1,
+        sent: true,
+        orderId: "d4"
+      },
+      "R20260720001": {
+        id: "R20260720001",
+        reportNo: "782-20260720103",
+        customer: "张三",
+        teacher: "王玉东",
+        teacherPhone: "13812345678",
+        date: "2026-07-20",
+        visitTime: "2026-07-20 10:00:00",
+        visitNo: 1,
+        mode: "电话",
+        valid: true,
+        flockType: "鸡",
+        flockBreed: "海兰褐",
+        flockScale: "5 万羽",
+        flockDims: [
+          { name: "精神状态", status: "ok" },
+          { name: "粪便", status: "ok" },
+          { name: "产蛋率", status: "ok" },
+          { name: "采食与喂料", status: "ok" },
+          { name: "死淘状况", status: "no", problem: "死淘率偏高" },
+          { name: "加药情况", status: "ok" }
+        ],
+        shedDims: [
+          { name: "环控设施（含温湿度/通风）", status: "no", problem: "通风需改善" },
+          { name: "水线与供水", status: "ok" },
+          { name: "饲料仓储情况", status: "ok" },
+          { name: "其他工作 / 其他", status: "ok" }
+        ],
+        tracks: [],
+        summary: ["死淘率偏高", "通风需改善"],
+        plan: "1. 建议加药观察。\n2. 改善通风。",
+        problemPhotos: 0,
+        address: "",
+        checkinPhotos: 0,
+        selfiePhotos: 0,
+        sent: true,
+        orderId: "d5"
+      }
+    };
+
+    function $(id) { return document.getElementById(id); }
+
+    function getReportId() {
+      var q = new URLSearchParams(window.location.search || "");
+      return q.get("id") || "R20260804001";
+    }
+
+    function statusTag(status) {
+      if (status === "ok") return '<span class="tag tag-ok">正常</span>';
+      if (status === "no") return '<span class="tag tag-no">异常</span>';
+      return '<span class="tag tag-done">—</span>';
+    }
+
+    function trackTag(status) {
+      if (status === "ok") return '<span class="tag tag-ok">已解决</span>';
+      if (status === "no") return '<span class="tag tag-no">仍未解决</span>';
+      return '<span class="tag tag-wait">待确认</span>';
+    }
+
+    function renderDims(list) {
+      if (!list || !list.length) return '<div class="empty-tip">暂无数据</div>';
+      var html = '<div class="dim-list">';
+      list.forEach(function (d) {
+        html +=
+          '<div class="dim">' +
+          '<div class="left"><span class="name">' + d.name + "</span></div>" +
+          '<div class="right">' + statusTag(d.status) + "</div>" +
+          "</div>";
+        if (d.status === "no" && d.problem) {
+          html += '<div class="dim-problem">' + d.problem + "</div>";
+        }
+      });
+      html += "</div>";
+      return html;
+    }
+
+    function photoGrid(count, label) {
+      if (!count) return '<div class="empty-tip">暂无照片</div>';
+      var html = '<div class="photo-grid">';
+      for (var i = 1; i <= count; i++) {
+        html += '<div class="photo-item">' + label + i + "</div>";
+      }
+      html += "</div>";
+      return html;
+    }
+
+    function kv(k, v) {
+      return '<div class="kv"><span class="k">' + k + '</span><span class="v">' + (v || "—") + "</span></div>";
+    }
+
+    function render(report) {
+      var summaryHtml = (report.summary || []).map(function (s) {
+        return '<div class="issue"><div class="row1"><span>' + s + "</span></div></div>";
+      }).join("") || '<div class="empty-tip">暂无异常汇总</div>';
+
+      var trackHtml = "";
+      if (report.tracks && report.tracks.length) {
+        trackHtml =
+          '<div class="card"><div class="sec-title">服务问题追踪卡</div>' +
+          report.tracks.map(function (t) {
+            return (
+              '<div class="issue">' +
+              '<div class="row1"><span>' + t.title + "</span>" + trackTag(t.status) + "</div>" +
+              '<div class="comm">上次记录：' + t.time + "</div>" +
+              "</div>"
+            );
+          }).join("") +
+          "</div>";
+      }
+
+      var checkinHtml = "";
+      if (report.mode === "实地拜访") {
+        checkinHtml =
+          kv("签到地址", report.address) +
+          '<div class="sub-label">签到照片</div>' + photoGrid(report.checkinPhotos, "签到") +
+          '<div class="sub-label">自拍照片</div>' + photoGrid(report.selfiePhotos, "自拍");
+      } else {
+        checkinHtml = '<div class="empty-tip">电话拜访，无现场签到信息</div>';
+      }
+
+      $("detail-root").innerHTML =
+        '<div class="card">' +
+          '<div class="sec-title">基础信息</div>' +
+          kv("是否有效", report.valid
+            ? '<span class="tag tag-ok">有效</span>'
+            : '<span class="tag tag-wait">无效</span>') +
+          kv("报告编号", report.reportNo) +
+          kv("服务客户", report.customer) +
+          kv("技术官", report.teacher) +
+          kv("技术官手机号", report.teacherPhone) +
+          kv("汇报日期", report.date) +
+          kv("拜访时间", report.visitTime) +
+          kv("拜访次数", "第" + report.visitNo + "次拜访") +
+          kv("发送客户群", report.sent ? "已发送" : "未发送") +
+          kv("关联工单", report.orderId || "—") +
+        "</div>" +
+
+        '<div class="card">' +
+          '<div class="sec-title">鸡群信息</div>' +
+          kv("养殖类型", report.flockType) +
+          kv("养殖品种", report.flockBreed) +
+          kv("合作规模", report.flockScale) +
+          '<div class="sub-label">巡检维度</div>' +
+          renderDims(report.flockDims) +
+        "</div>" +
+
+        '<div class="card">' +
+          '<div class="sec-title">养殖场舍检查</div>' +
+          renderDims(report.shedDims) +
+        "</div>" +
+
+        trackHtml +
+
+        '<div class="card">' +
+          '<div class="sec-title">问题汇总</div>' +
+          summaryHtml +
+        "</div>" +
+
+        '<div class="card">' +
+          '<div class="sec-title">处理方案</div>' +
+          '<div class="solution">' + (report.plan || "暂无处理方案") + "</div>" +
+        "</div>" +
+
+        '<div class="card">' +
+          '<div class="sec-title">问题照片</div>' +
+          photoGrid(report.problemPhotos, "问题图") +
+        "</div>" +
+
+        '<div class="card">' +
+          '<div class="sec-title">现场签到</div>' +
+          kv("拜访方式", report.mode) +
+          checkinHtml +
+        "</div>";
+    }
+
+    $("btn-back").addEventListener("click", function () {
+      if (document.referrer) history.back();
+      else window.location.assign("巡场报告拜访列表.html");
+    });
+
+    function toast(msg) {
+      var el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+    }
+
+    function openShareDialog(mode) {
+      var ico = $("share-ico");
+      var title = $("share-title");
+      var actions = $("share-actions");
+      var customer = (report && report.customer) || "张三";
+      if (mode === "ok") {
+        ico.className = "dialog-ico ok";
+        ico.textContent = "✓";
+        title.textContent = "巡场报告已分享到" + customer + "客户群";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-open-group">查看</button>';
+      } else if (mode === "shared") {
+        ico.className = "dialog-ico ok";
+        ico.textContent = "✓";
+        title.textContent = "已分享给客户，可查看报告";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-view-report">去查看</button>';
+      } else {
+        ico.className = "dialog-ico warn";
+        ico.textContent = "!";
+        title.textContent = "未找到客户群，请分享给客户";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-cancel">取消</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-manual-share">去分享</button>';
+      }
+      $("share-mask").classList.add("show");
+      bindShareActions();
+    }
+
+    function closeShareDialog() {
+      $("share-mask").classList.remove("show");
+    }
+
+    function bindShareActions() {
+      var done = $("btn-share-done");
+      var openGroup = $("btn-open-group");
+      var cancel = $("btn-share-cancel");
+      var manual = $("btn-manual-share");
+      var viewReport = $("btn-view-report");
+      if (done) done.onclick = function () { closeShareDialog(); };
+      if (cancel) cancel.onclick = function () { closeShareDialog(); };
+      if (openGroup) {
+        openGroup.onclick = function () {
+          closeShareDialog();
+          toast("已打开客户群：" + ((report && report.customer) || "张三") + "客户群");
+        };
+      }
+      if (manual) {
+        manual.onclick = function () { openShareDialog("shared"); };
+      }
+      if (viewReport) {
+        viewReport.onclick = function () {
+          closeShareDialog();
+          toast("可查看当前巡场报告详情");
+        };
+      }
+    }
+
+    $("btn-share-group").addEventListener("click", function () {
+      // 已发送过：成功弹窗；未发送：模拟未找到客户群
+      if (report && report.sent) openShareDialog("ok");
+      else openShareDialog("missing");
+    });
+
+    $("share-mask").addEventListener("click", function (e) {
+      if (e.target === $("share-mask")) closeShareDialog();
+    });
+
+    var report = reportDb[getReportId()] || reportDb["R20260804001"];
+    render(report);
+  </script>
+</body>
+</html>

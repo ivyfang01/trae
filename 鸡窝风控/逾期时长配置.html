@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>逾期时长配置</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      min-height: 100vh;
+      padding: 16px 24px 32px;
+    }
+    .page {
+      background: #fff;
+      border-radius: 2px;
+      min-height: calc(100vh - 48px);
+      padding: 16px 24px 24px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .page-title { font-size: 20px; font-weight: 600; }
+    .breadcrumb {
+      font-size: 13px;
+      color: rgba(0,0,0,.45);
+      margin-bottom: 8px;
+    }
+    .breadcrumb a { color: #1890ff; text-decoration: none; }
+
+    .desc {
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      font-size: 13px;
+      color: rgba(0,0,0,.65);
+      line-height: 1.7;
+    }
+    .desc strong { color: rgba(0,0,0,.85); font-weight: 500; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 15px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn:hover { color: #40a9ff; border-color: #40a9ff; }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; color: #fff; }
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: #1890ff;
+      padding: 0 4px;
+      height: auto;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .btn-link:hover { color: #40a9ff; }
+    .btn-link + .btn-link { margin-left: 8px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      color: rgba(0,0,0,.85);
+      font-weight: 500;
+      background: #fafafa;
+      white-space: nowrap;
+    }
+    td { color: rgba(0,0,0,.65); }
+    tr:hover td { background: #fafafa; }
+
+    .unit { margin-left: 4px; color: rgba(0,0,0,.45); }
+    .meta { font-size: 13px; color: rgba(0,0,0,.45); }
+
+    /* 弹窗 */
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .mask.show { display: flex; }
+    .modal {
+      width: 480px;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 2px;
+      box-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.08);
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .modal-close {
+      border: none;
+      background: none;
+      font-size: 16px;
+      color: rgba(0,0,0,.45);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-bd { padding: 24px; }
+    .modal-ft {
+      padding: 10px 16px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-label {
+      width: 120px;
+      flex-shrink: 0;
+      text-align: right;
+      padding-right: 12px;
+      line-height: 32px;
+      color: rgba(0,0,0,.85);
+    }
+    .form-label .req {
+      color: #ff4d4f;
+      margin-right: 2px;
+      font-family: SimSun, sans-serif;
+    }
+    .form-ctrl {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 32px;
+    }
+    .input {
+      height: 32px;
+      padding: 4px 11px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      font-size: 14px;
+      font-family: inherit;
+      color: rgba(0,0,0,.85);
+      outline: none;
+      width: 160px;
+    }
+    .input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,.2); }
+    .input.readonly {
+      background: #f5f5f5;
+      color: rgba(0,0,0,.65);
+      cursor: not-allowed;
+      width: 200px;
+    }
+    .hint {
+      width: 100%;
+      font-size: 12px;
+      color: rgba(0,0,0,.45);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 80px;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="breadcrumb">交易风控规则配置 / <span>逾期时长配置</span></div>
+    <div class="page-hd">
+      <div class="page-title">逾期时长配置</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>品类</th>
+          <th>逾期时长</th>
+          <th>起算节点</th>
+          <th>更新时间</th>
+          <th>更新人</th>
+          <th style="width:100px">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="mask" id="maskEdit">
+    <div class="modal">
+      <div class="modal-hd">
+        <span>编辑逾期时长</span>
+        <button type="button" class="modal-close" id="btnClose">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-row">
+          <div class="form-label">品类</div>
+          <div class="form-ctrl">
+            <input class="input readonly" id="editCat" type="text" readonly />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label"><span class="req">*</span>逾期时长</div>
+          <div class="form-ctrl">
+            <input class="input" id="editDays" type="number" min="0" step="1" placeholder="请输入天数" />
+            <span>天</span>
+            <div class="hint">上传卸货磅单后，超过该天数仍未付款，则判定为逾期。</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">起算节点</div>
+          <div class="form-ctrl">
+            <span>上传卸货磅单时间</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn" id="btnCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="btnSubmit">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const ROWS = [
+      {
+        key: "soy_corn",
+        name: "豆粕/玉米",
+        days: 7,
+        startNode: "上传卸货磅单时间",
+        time: "2026-09-04 18:20:11",
+        updater: "赵璐"
+      },
+      {
+        key: "premix",
+        name: "预混料",
+        days: 3,
+        startNode: "上传卸货磅单时间",
+        time: "2026-09-04 18:20:11",
+        updater: "赵璐"
+      }
+    ];
+
+    let editKey = "";
+    const $ = (s) => document.querySelector(s);
+
+    function toast(msg) {
+      const el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+    }
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function nowStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function render() {
+      $("#tbody").innerHTML = ROWS.map((r) => `
+        <tr>
+          <td>${r.name}</td>
+          <td><strong style="color:rgba(0,0,0,.85)">${r.days}</strong><span class="unit">天</span></td>
+          <td>${r.startNode}</td>
+          <td class="meta">${r.time}</td>
+          <td>${r.updater}</td>
+          <td><button type="button" class="btn-link" data-edit="${r.key}">编辑</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function openEdit(key) {
+      const row = ROWS.find((r) => r.key === key);
+      if (!row) return;
+      editKey = key;
+      $("#editCat").value = row.name;
+      $("#editDays").value = row.days;
+      $("#maskEdit").classList.add("show");
+    }
+
+    function closeEdit() {
+      $("#maskEdit").classList.remove("show");
+      editKey = "";
+    }
+
+    $("#tbody").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-edit]");
+      if (btn) openEdit(btn.dataset.edit);
+    });
+
+    $("#btnClose").addEventListener("click", closeEdit);
+    $("#btnCancel").addEventListener("click", closeEdit);
+    $("#maskEdit").addEventListener("click", (e) => {
+      if (e.target === $("#maskEdit")) closeEdit();
+    });
+
+    $("#btnSubmit").addEventListener("click", () => {
+      const days = $("#editDays").value.trim();
+      if (days === "" || Number(days) < 0 || !Number.isInteger(Number(days))) {
+        toast("请填写非负整数天数");
+        return;
+      }
+      const row = ROWS.find((r) => r.key === editKey);
+      if (!row) return;
+      row.days = Number(days);
+      row.time = nowStr();
+      row.updater = "当前用户";
+      render();
+      closeEdit();
+      toast("保存成功");
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>金融白条 · 消息卡片</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font-size:14px}
+.page{max-width:420px;margin:0 auto;padding:16px 12px 32px}
+h1{font-size:18px;margin:8px 4px 16px}
+.h2{font-size:13px;color:#999;margin:18px 4px 8px;font-weight:600}
+.msg{
+  background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)
+}
+.msg-hd{display:flex;align-items:flex-start;gap:10px}
+.ico{
+  width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0
+}
+.ico.blue{background:#e6f4ff}
+.ico.orange{background:#fff7e6}
+.ico.green{background:#f6ffed}
+.ico.red{background:#fff1f0}
+.msg-title{font-size:15px;font-weight:600;line-height:1.3}
+.msg-time{font-size:11px;color:#bbb;margin-top:2px}
+.msg-body{margin-top:10px;font-size:13px;color:#666;line-height:1.7}
+.msg-body b{color:#333;font-weight:600}
+.msg-foot{margin-top:12px;display:flex;gap:8px}
+.btn{
+  flex:1;height:36px;border-radius:6px;border:none;font-size:13px;cursor:pointer
+}
+.btn-primary{background:#1890ff;color:#fff}
+.btn-ghost{background:#f5f5f5;color:#1890ff}
+.chip{display:inline-block;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle}
+.chip.to{background:#f5f5f5;color:#666}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>消息卡片合集</h1>
+  <p style="font-size:12px;color:#999;margin:0 4px 8px">覆盖初审结果、正式进件、银行通过、催补担保人等触达场景</p>
+
+  <div class="h2">1. 初审通过 → 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico green">✓</div>
+      <div>
+        <div class="msg-title">白条初审已通过 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-08 09:30</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>党闯养殖专业合作社</b> 初审已通过（上银白条）。<br>
+      请尽快补充正式进件资料：银行流水、经营许可证、资产证明等。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">去正式进件</button>
+    </div>
+  </div>
+
+  <div class="h2">2. 初审驳回 → 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico red">!</div>
+      <div>
+        <div class="msg-title">白条初审已驳回 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-06 16:05</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>李明蛋鸡场</b> 初审驳回。<br>
+      原因：法人身份证不清晰；缺少百行征信报告。<br>
+      请按原因补齐后重新提交。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">去补资料重提</button>
+    </div>
+  </div>
+
+  <div class="h2">3. 正式通过（上银）→ 业务员 + 客户</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico blue">📱</div>
+      <div>
+        <div class="msg-title">请前往上银APP申请白条 <span class="chip to">客户</span></div>
+        <div class="msg-time">2026-09-09 17:10</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      您好，<b>党闯养殖专业合作社</b> 白条正式资料已审核通过。<br>
+      请打开 <b>上银APP</b> 完成白条申请，申请结果将同步通知业务经理。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-ghost" type="button">我知道了</button>
+      <button class="btn btn-primary" type="button">打开申请指引</button>
+    </div>
+  </div>
+
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico blue">📢</div>
+      <div>
+        <div class="msg-title">正式进件已通过（上银） <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-09 17:10</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>党闯养殖专业合作社</b> 正式进件已通过。<br>
+      已短信/站内信通知客户前往上银APP申请，请跟进客户完成申请。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">查看进度</button>
+    </div>
+  </div>
+
+  <div class="h2">4. 正式通过（锡商）→ 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico blue">⇄</div>
+      <div>
+        <div class="msg-title">资料已推送银行 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-09 17:12</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>尚兆立养殖场</b> 正式进件已通过，资料已接口推送至 <b>锡商</b>。<br>
+      当前状态：银行审批中，请耐心等待结果通知。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">查看进度</button>
+    </div>
+  </div>
+
+  <div class="h2">5. 正式驳回 → 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico orange">↩</div>
+      <div>
+        <div class="msg-title">正式进件已驳回 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-09 15:00</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>某某客户</b> 正式进件驳回。<br>
+      原因：银行流水时间跨度不足6个月，请补充后重提。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">去补充正式资料</button>
+    </div>
+  </div>
+
+  <div class="h2">6. 银行审批通过 → 金融 + 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico green">🏦</div>
+      <div>
+        <div class="msg-title">银行审批已通过 <span class="chip to">金融 / 业务员</span></div>
+        <div class="msg-time">2026-09-10 09:12</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>王强饲料经营部</b> 银行审批通过。<br>
+      请业务员尽快补充担保人资料；金融侧关注后续三方查询与启用配置。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-ghost" type="button">金融待办</button>
+      <button class="btn btn-primary" type="button">去补担保人</button>
+    </div>
+  </div>
+
+  <div class="h2">7. 催补担保人 → 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico orange">催</div>
+      <div>
+        <div class="msg-title">请补充担保人资料 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-10 09:15</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>王强饲料经营部</b> 已获银行通过，额度激活前需补充：<br>
+      担保人手机号、身份证正反面、资产证明等。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">立即补充</button>
+    </div>
+  </div>
+
+  <div class="h2">8. 担保审核结果 → 业务员</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico green">✓</div>
+      <div>
+        <div class="msg-title">担保资料审核通过 <span class="chip to">业务员</span></div>
+        <div class="msg-time">2026-09-10 15:40</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>王强饲料经营部</b> 担保人资料及三方查询已通过。<br>
+      后续将进入启用标签与额度参数配置（已有能力），完成后办结。
+    </div>
+    <div class="msg-foot">
+      <button class="btn btn-primary" type="button">查看进度</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

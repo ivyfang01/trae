@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开单截图 · 钉钉失败提醒消息模板</title>
+  <style>
+    :root {
+      --bg: #eef0f3;
+      --page-text: #1f2329;
+      --muted: #8f959e;
+      --label: #8a8f99;
+      --value: #1f2329;
+      --border: #ebebeb;
+      --warn: #ff9200;
+      --danger: #f5483b;
+      --ok: #00b578;
+      --primary: #3370ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--page-text);
+      padding: 28px 20px 80px;
+      min-height: 100vh;
+    }
+    .page { max-width: 960px; margin: 0 auto; }
+    .page-hd {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    h1 { font-size: 20px; font-weight: 600; }
+    .sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .toolbar button {
+      border: 1px solid #d0d3d9;
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--page-text);
+    }
+    .toolbar button.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .toolbar button.active {
+      background: #fff7e8;
+      border-color: #ffb84d;
+      color: #b36b00;
+    }
+    .toolbar .tip {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .edit-banner {
+      display: none;
+      background: #fff7e8;
+      border: 1px solid #ffe0a3;
+      color: #8a5a00;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    body.editing .edit-banner { display: block; }
+    body.editing [contenteditable="true"] {
+      outline: 1px dashed #ffb84d;
+      outline-offset: 2px;
+      border-radius: 2px;
+      min-width: 1em;
+      cursor: text;
+    }
+    body.editing [contenteditable="true"]:focus {
+      outline: 2px solid #ff9200;
+      background: #fffbf2;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .block-title {
+      grid-column: 1 / -1;
+      font-size: 14px;
+      font-weight: 600;
+      color: #646a73;
+      margin-top: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #dde0e5;
+    }
+    .bubble-wrap { background: transparent; }
+    .bubble-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .tag-upload { background: #fff1f0; color: var(--danger); }
+    .tag-confirm { background: #e8f3ff; color: #3370ff; }
+    .tag-link { background: #fff7e8; color: var(--warn); }
+    .tag-send { background: #e8f7f0; color: var(--ok); }
+
+    .ding-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 20px 16px;
+      max-width: 380px;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    }
+    .ding-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+    .ding-divider {
+      height: 1px;
+      background: #ebebeb;
+      margin-bottom: 14px;
+      border: none;
+    }
+    .field {
+      display: flex;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .field:last-of-type { margin-bottom: 0; }
+    .field .k {
+      color: var(--label);
+      width: 88px;
+      flex-shrink: 0;
+    }
+    .field .v {
+      color: var(--value);
+      flex: 1;
+      word-break: break-all;
+    }
+    .field .v.em {
+      color: var(--warn);
+      font-weight: 500;
+    }
+    .thumb {
+      margin-top: 4px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      background: #f7f8fa;
+      max-width: 100%;
+    }
+    .thumb-placeholder {
+      width: 100%;
+      height: 110px;
+      background:
+        linear-gradient(135deg, #eef1f5 25%, #f7f8fa 25%, #f7f8fa 50%, #eef1f5 50%, #eef1f5 75%, #f7f8fa 75%);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 6px;
+      color: #8a8f99;
+      font-size: 12px;
+    }
+    .hint-line {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 13px;
+      color: #646a73;
+      line-height: 1.5;
+    }
+    .copy-box {
+      margin-top: 12px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #646a73;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      font-family: ui-monospace, "SF Mono", Consolas, monospace;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+    .copy-hd {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: inherit;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .copy-hd button {
+      border: none;
+      background: #f2f3f5;
+      color: var(--primary);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(31, 35, 41, 0.92);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s;
+      z-index: 99;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>钉钉失败提醒 · 消息模板</h1>
+      <div class="toolbar">
+        <button type="button" id="btn-edit" class="primary">开启编辑</button>
+        <button type="button" id="btn-save">保存文案</button>
+        <button type="button" id="btn-reset">恢复默认</button>
+        <span class="tip">编辑后自动写入浏览器本地</span>
+      </div>
+    </div>
+    <p class="sub">
+      样式参考：考勤异常提醒。固定字段：图片、供应商群名字、发送时间。<br />
+      点击「开启编辑」后，可直接点卡片内文字修改；下方文案区也会同步。
+    </p>
+    <div class="edit-banner">编辑模式已开启：点击橙色虚线框内文字即可修改。改完点「保存文案」或关闭编辑即可落盘。</div>
+
+    <div class="grid" id="template-grid">
+      <div class="block-title">1. 上传 / 入库失败</div>
+
+      <div class="bubble-wrap" data-card="upload">
+        <div class="bubble-label">
+          <span>卡片预览</span>
+          <span class="tag tag-upload">上传失败</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图上传失败</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 14:22:18</span></div>
+          <div class="field"><span class="k" data-f="k_reason">失败原因</span><span class="v em" data-f="reason">落库超时 / OCR 服务异常</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">开单截图</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">请核实后手工上传，或排查自动入库。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+
+      <div class="block-title">2. AI 不确定是否为开单截图（人工确认）</div>
+
+      <div class="bubble-wrap" data-card="ai_uncertain">
+        <div class="bubble-label">
+          <span>卡片预览</span>
+          <span class="tag tag-confirm">待人工确认</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图待人工确认</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 15:06:42</span></div>
+          <div class="field"><span class="k" data-f="k_reason">提醒</span><span class="v em" data-f="reason">AI 无法确定是否为开单截图，请人工确认</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">待确认图片</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">若是开单截图：请到企微手工上传并关联；若不是：可忽略本条。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+
+      <div class="block-title">3. 关联失败（进待匹配列表）</div>
+
+      <div class="bubble-wrap" data-card="link0">
+        <div class="bubble-label">
+          <span>卡片预览 · 0 候选</span>
+          <span class="tag tag-link">关联失败</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图未关联成功</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 14:18:05</span></div>
+          <div class="field"><span class="k" data-f="k_reason">失败原因</span><span class="v em" data-f="reason">0 候选（未筛出符合条件的提货单）</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">开单截图</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">请到企微【待匹配列表】手工关联。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+
+      <div class="bubble-wrap" data-card="link_multi">
+        <div class="bubble-label">
+          <span>卡片预览 · 多候选</span>
+          <span class="tag tag-link">关联失败</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图未关联成功</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">某某粮油/日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 13:55:41</span></div>
+          <div class="field"><span class="k" data-f="k_reason">失败原因</span><span class="v em" data-f="reason">多候选（命中 2 条提货单，可能为拼车）</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">开单截图</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">请到企微【待匹配列表】手工关联。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+
+      <div class="bubble-wrap" data-card="link_ocr">
+        <div class="bubble-label">
+          <span>卡片预览 · OCR 失败</span>
+          <span class="tag tag-link">关联失败</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图未关联成功</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 12:08:33</span></div>
+          <div class="field"><span class="k" data-f="k_reason">失败原因</span><span class="v em" data-f="reason">OCR 失败</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">开单截图</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">请到企微【待匹配列表】手工处理。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+
+      <div class="block-title">4. 自动发送失败（非找不到客户群）</div>
+
+      <div class="bubble-wrap" data-card="send">
+        <div class="bubble-label">
+          <span>卡片预览</span>
+          <span class="tag tag-send">发送失败</span>
+        </div>
+        <div class="ding-card">
+          <div class="ding-title" data-f="title">开单截图发送失败</div>
+          <hr class="ding-divider" />
+          <div class="field"><span class="k" data-f="k_group">供应商群</span><span class="v" data-f="group">日照象明-东耀采购</span></div>
+          <div class="field"><span class="k" data-f="k_time">发送时间</span><span class="v" data-f="time">2026-07-30 11:40:02</span></div>
+          <div class="field"><span class="k" data-f="k_order">提货单</span><span class="v" data-f="order">TH20260730088</span></div>
+          <div class="field"><span class="k" data-f="k_reason">失败原因</span><span class="v em" data-f="reason">企微接口超时</span></div>
+          <div class="field">
+            <span class="k" data-f="k_img">图片</span>
+            <span class="v">
+              <div class="thumb">
+                <div class="thumb-placeholder">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="#8a8f99"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                  <span data-f="img_label">开单截图</span>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="hint-line" data-f="hint">关联已保留，请在已关联提货单补发。</div>
+        </div>
+        <div class="copy-box">
+          <div class="copy-hd"><span>文案模板</span><button type="button" data-copy>复制</button></div>
+          <div class="copy-body" data-copy-body></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var STORAGE_KEY = "kaidan_dingtalk_msg_templates_v1";
+    var editing = false;
+    var defaults = {};
+
+    function $(sel, root) { return (root || document).querySelector(sel); }
+    function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+    function toast(msg) {
+      var el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+    }
+
+    function getField(card, name) {
+      var el = card.querySelector('[data-f="' + name + '"]');
+      return el ? el.textContent.trim() : "";
+    }
+
+    function setField(card, name, text) {
+      var el = card.querySelector('[data-f="' + name + '"]');
+      if (el && text != null) el.textContent = text;
+    }
+
+    function buildCopyText(card) {
+      var title = getField(card, "title");
+      var kGroup = getField(card, "k_group") || "供应商群";
+      var group = getField(card, "group");
+      var kTime = getField(card, "k_time") || "发送时间";
+      var time = getField(card, "time");
+      var kOrder = card.querySelector('[data-f="k_order"]');
+      var order = getField(card, "order");
+      var kReason = getField(card, "k_reason") || "失败原因";
+      var reason = getField(card, "reason");
+      var kImg = getField(card, "k_img") || "图片";
+      var hint = getField(card, "hint");
+      var lines = [title, kGroup + "：" + group, kTime + "：" + time];
+      if (kOrder) lines.push(getField(card, "k_order") + "：" + order);
+      lines.push(kReason + "：" + reason);
+      lines.push(kImg + "：（附图）");
+      if (hint) {
+        lines.push("");
+        lines.push(hint);
+      }
+      return lines.join("\n");
+    }
+
+    function syncCopyBoxes() {
+      $all("[data-card]").forEach(function (card) {
+        var body = card.querySelector("[data-copy-body]");
+        if (body) body.textContent = buildCopyText(card);
+      });
+    }
+
+    function snapshotCard(card) {
+      var data = {};
+      $all("[data-f]", card).forEach(function (el) {
+        data[el.getAttribute("data-f")] = el.textContent.trim();
+      });
+      return data;
+    }
+
+    function applyCard(card, data) {
+      if (!data) return;
+      Object.keys(data).forEach(function (k) {
+        setField(card, k, data[k]);
+      });
+    }
+
+    function saveAll() {
+      var all = {};
+      $all("[data-card]").forEach(function (card) {
+        all[card.getAttribute("data-card")] = snapshotCard(card);
+      });
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        toast("已保存到本机浏览器");
+      } catch (e) {
+        toast("保存失败：" + e.message);
+      }
+      syncCopyBoxes();
+    }
+
+    function loadAll() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        var all = JSON.parse(raw);
+        $all("[data-card]").forEach(function (card) {
+          applyCard(card, all[card.getAttribute("data-card")]);
+        });
+      } catch (e) {}
+      syncCopyBoxes();
+    }
+
+    function captureDefaults() {
+      $all("[data-card]").forEach(function (card) {
+        defaults[card.getAttribute("data-card")] = snapshotCard(card);
+      });
+    }
+
+    function setEditing(on) {
+      editing = on;
+      document.body.classList.toggle("editing", on);
+      var btn = $("#btn-edit");
+      btn.textContent = on ? "关闭编辑" : "开启编辑";
+      btn.classList.toggle("active", on);
+      btn.classList.toggle("primary", !on);
+      $all("[data-f]").forEach(function (el) {
+        el.contentEditable = on ? "true" : "false";
+        el.setAttribute("spellcheck", "false");
+      });
+      if (!on) saveAll();
+    }
+
+    document.getElementById("btn-edit").addEventListener("click", function () {
+      setEditing(!editing);
+    });
+    document.getElementById("btn-save").addEventListener("click", function () {
+      saveAll();
+    });
+    document.getElementById("btn-reset").addEventListener("click", function () {
+      if (!confirm("确定恢复全部默认文案？当前修改会丢失。")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      $all("[data-card]").forEach(function (card) {
+        applyCard(card, defaults[card.getAttribute("data-card")]);
+      });
+      syncCopyBoxes();
+      toast("已恢复默认");
+    });
+
+    document.getElementById("template-grid").addEventListener("input", function (e) {
+      if (e.target && e.target.getAttribute("data-f")) syncCopyBoxes();
+    });
+
+    document.getElementById("template-grid").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-copy]");
+      if (!btn) return;
+      var card = btn.closest("[data-card]");
+      var text = buildCopyText(card);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          toast("文案已复制");
+        }).catch(function () {
+          toast("复制失败，请手动选中下方文案");
+        });
+      } else {
+        toast("请手动选中下方文案复制");
+      }
+    });
+
+    captureDefaults();
+    loadAll();
+    syncCopyBoxes();
+  </script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>开单截图 · 企微侧边栏</title>
+  <style>
+    :root {
+      --bg: #f2f3f5;
+      --card: #fff;
+      --text: #1f2329;
+      --muted: #8f959e;
+      --label: #646a73;
+      --border: #e5e6eb;
+      --primary: #3370ff;
+      --primary-soft: #e8f0ff;
+      --danger: #f54a45;
+      --radius: 10px;
+      --shadow: 0 1px 4px rgba(31, 35, 41, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #dfe3e8;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .phone {
+      width: 390px;
+      max-width: 100%;
+      background: var(--bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      min-height: 780px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 14px 4px 12px;
+      font-size: 13px;
+      color: var(--label);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      right: 18%;
+      bottom: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .panel { display: none; flex: 1; overflow-y: auto; padding: 12px; }
+    .panel.active { display: block; }
+
+    /* filters */
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .select {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--label);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .select::after {
+      content: "›";
+      font-size: 16px;
+      color: var(--muted);
+      transform: scaleY(1.4);
+    }
+
+    /* pending cards */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .card-top .time { color: var(--text); }
+    .card-top .meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--label);
+    }
+    .icon-del {
+      width: 18px;
+      height: 18px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--danger);
+      padding: 0;
+      display: inline-flex;
+    }
+    .row {
+      font-size: 13px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .row .k { color: var(--label); }
+    .file-link {
+      color: var(--primary);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .reason {
+      margin: 8px 0 10px;
+      padding: 8px 10px;
+      background: #fff7e8;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #c27a00;
+      line-height: 1.5;
+    }
+    .reason strong { color: #8a5a00; font-weight: 600; }
+    .ocr-box {
+      background: #f5f6f8;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--label);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .ocr-box b { color: var(--text); font-weight: 500; }
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-ghost {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* recognize page */
+    .preview {
+      background: #fff;
+      border: 1.5px dashed #c9cdd4;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      position: relative;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .preview-strip {
+      width: 100%;
+      height: 56px;
+      object-fit: cover;
+      object-position: left center;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #eef2f7, #f7f8fa 40%, #e8ecf2);
+      font-size: 10px;
+      color: #5b6573;
+      padding: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+    .eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #c5c8ce;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .section {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .section-hd {
+      background: #f0f1f3;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-hd .edit {
+      color: var(--primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      padding: 2px;
+    }
+    .kv {
+      padding: 4px 14px 12px;
+    }
+    .kv-item {
+      display: flex;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f2f3f5;
+    }
+    .kv-item:last-child { border-bottom: none; }
+    .kv-item .k {
+      width: 96px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .kv-item .v { color: var(--text); word-break: break-all; }
+    .empty-order {
+      padding: 28px 14px 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .order-card {
+      margin: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .order-card .title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .tag-ok {
+      color: #00b42a;
+      font-size: 12px;
+    }
+    .tag-warn {
+      color: #ff7d00;
+      font-size: 12px;
+    }
+    .order-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      padding: 8px;
+    }
+    .matched-empty {
+      padding: 48px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="tabs">
+      <button class="tab" data-tab="recognize" type="button">截图识别</button>
+      <button class="tab active" data-tab="pending" type="button">待匹配列表 (4048)</button>
+      <button class="tab" data-tab="matched" type="button">已匹配列表 (42022)</button>
+    </div>
+
+    <!-- 待匹配列表 -->
+    <div class="panel active" id="panel-pending">
+      <div class="filters">
+        <div class="select">选择供应商</div>
+        <div class="select">选择上传人</div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="time">2025-12-20 11:50</span>
+          <div class="meta">
+            <span>张晨</span>
+            <button class="icon-del" title="删除" aria-label="删除">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="row"><span class="k">供应商：</span>日照象明</div>
+        <div class="row"><span class="k">文件：</span><a class="file-link" href="javascript:;">cc958438e7fd4d1f82c7d9ddbe3a3d1a.png</a></div>
+        <div class="reason"><strong>未匹配原因：</strong>0 候选（未筛出符合条件的提货单）</div>
+        <div class="ocr-box">
+          供应商：<b>日照象明</b>　蛋白：<b>43%</b>　包装：<b>50kg</b><br />
+          车牌号：<b>鲁L55955</b>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-primary" type="button" onclick="openRecognize('zero')">查看结果</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="time">2025-12-20 11:50</span>
+          <div class="meta">
+            <span>张晨</span>
+            <button class="icon-del" title="删除" aria-label="删除">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="row"><span class="k">供应商：</span>日照象明</div>
+        <div class="row"><span class="k">文件：</span><a class="file-link" href="javascript:;">c3a1f902bb2140e0a81c4e5f6d7a8901.png</a></div>
+        <div class="reason"><strong>未匹配原因：</strong>多候选（命中 2 条提货单，需人工选择）</div>
+        <div class="ocr-box">
+          供应商：<b>日照象明</b>　蛋白：<b>43%</b>　包装：<b>—</b><br />
+          车牌号：<b>晋JN2103</b>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-primary" type="button" onclick="openRecognize('multi')">查看结果</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="time">2025-12-20 10:22</span>
+          <div class="meta">
+            <span>系统自动</span>
+            <button class="icon-del" title="删除" aria-label="删除">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="row"><span class="k">供应商：</span>日照象明</div>
+        <div class="row"><span class="k">文件：</span><a class="file-link" href="javascript:;">slice_02_鲁L55955.png</a></div>
+        <div class="reason"><strong>未匹配原因：</strong>OCR 失败</div>
+        <div class="ocr-box">供应商：<b>—</b>　蛋白：<b>—</b>　包装：<b>—</b><br />车牌号：<b>—</b></div>
+        <div class="card-actions">
+          <button class="btn btn-primary" type="button" onclick="openRecognize('ocr')">查看结果</button>
+        </div>
+      </div>
+      <p class="hint">二期：列表增加「未匹配原因」；不展示来源群 · 按上传时间升序</p>
+    </div>
+
+    <!-- 截图识别 -->
+    <div class="panel" id="panel-recognize">
+      <div class="preview">
+        <div class="preview-strip">
+          2023/12/20　FHTZD173273　豆粕43%　袋装50kg　33.000MT　鲁L55955　徐立海　18063331589 …
+        </div>
+        <button class="eye" type="button" title="查看原图" aria-label="查看原图">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+        </button>
+      </div>
+
+      <div class="section">
+        <div class="section-hd">
+          <span>开单截图信息</span>
+          <button class="edit" type="button" title="编辑" aria-label="编辑">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </button>
+        </div>
+        <div class="kv" id="ocr-fields">
+          <div class="kv-item"><span class="k">车牌号</span><span class="v">鲁L55955</span></div>
+          <div class="kv-item"><span class="k">司机</span><span class="v">徐立海</span></div>
+          <div class="kv-item"><span class="k">司机手机号</span><span class="v">18063331589</span></div>
+          <div class="kv-item"><span class="k">司机身份证</span><span class="v">230707196910280412</span></div>
+          <div class="kv-item"><span class="k">供应商简称</span><span class="v">日照象明</span></div>
+          <div class="kv-item"><span class="k">开单提货量</span><span class="v">33</span></div>
+          <div class="kv-item"><span class="k">蛋白含量</span><span class="v">43%</span></div>
+          <div class="kv-item"><span class="k">包装方式</span><span class="v">50kg</span></div>
+          <div class="kv-item"><span class="k">是否已关联</span><span class="v">未关联</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-hd"><span>提货单信息</span></div>
+        <div id="order-area">
+          <div class="empty-order">暂无匹配到的提货单<br /><span style="font-size:12px">可手工搜索提货单后关联（一期逻辑）</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 已匹配列表 -->
+    <div class="panel" id="panel-matched">
+      <div class="filters">
+        <div class="select">选择供应商</div>
+        <div class="select">选择上传人</div>
+      </div>
+      <div class="card">
+        <div class="card-top">
+          <span class="time">2025-12-19 18:03</span>
+          <div class="meta"><span>系统自动</span></div>
+        </div>
+        <div class="row"><span class="k">供应商：</span>日照象明</div>
+        <div class="row"><span class="k">文件：</span><a class="file-link" href="javascript:;">auto_linked_鲁L11223.png</a></div>
+        <div class="ocr-box">
+          供应商：<b>日照象明</b>　蛋白：<b>43%</b>　包装：<b>50kg</b><br />
+          车牌号：<b>鲁L11223</b>　关联提货单：<b>TH20251219088</b>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-ghost" type="button">查看结果</button>
+        </div>
+      </div>
+      <p class="hint">示意：二期自动关联并发送成功的记录落入已匹配列表</p>
+    </div>
+  </div>
+
+  <script>
+    var tabs = document.querySelectorAll(".tab");
+    var panels = {
+      pending: document.getElementById("panel-pending"),
+      recognize: document.getElementById("panel-recognize"),
+      matched: document.getElementById("panel-matched")
+    };
+
+    function switchTab(name) {
+      tabs.forEach(function (t) {
+        t.classList.toggle("active", t.getAttribute("data-tab") === name);
+      });
+      Object.keys(panels).forEach(function (k) {
+        panels[k].classList.toggle("active", k === name);
+      });
+    }
+
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function () {
+        switchTab(t.getAttribute("data-tab"));
+      });
+    });
+
+    var multiOrdersHtml =
+      '<div class="order-card">' +
+      '<div class="title"><span>TH20251220001</span><span class="tag-ok">车牌√ 司机√ 供应商√</span></div>' +
+      '<div>客户：某某饲料　提货量：18　蛋白：43%√　包装：50kg√</div>' +
+      '<div style="margin-top:4px;color:#8f959e">吨数与截图差 0.5，未打√</div>' +
+      '<div class="order-actions"><button class="btn btn-primary" type="button">关联</button></div>' +
+      "</div>" +
+      '<div class="order-card">' +
+      '<div class="title"><span>TH20251220002</span><span class="tag-ok">车牌√ 司机√ 供应商√</span></div>' +
+      '<div>客户：某某贸易　提货量：15　蛋白：43%√　包装：—</div>' +
+      '<div class="order-actions"><button class="btn btn-primary" type="button">关联</button></div>' +
+      "</div>";
+
+    function openRecognize(type) {
+      var area = document.getElementById("order-area");
+      if (type === "multi") {
+        area.innerHTML = multiOrdersHtml;
+      } else if (type === "ocr") {
+        area.innerHTML =
+          '<div class="empty-order">OCR 识别失败<br /><span style="font-size:12px">请编辑字段后重新匹配，或删除后手工上传</span></div>';
+      } else {
+        area.innerHTML =
+          '<div class="empty-order">暂无匹配到的提货单<br /><span style="font-size:12px">可手工搜索提货单后关联（一期逻辑）</span></div>';
+      }
+      switchTab("recognize");
+      panels.recognize.scrollTop = 0;
+    }
+  </script>
+</body>
+</html>

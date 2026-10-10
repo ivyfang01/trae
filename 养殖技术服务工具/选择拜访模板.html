@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>选择拜访模板</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 12px;
+    }
+
+    .device {
+      width: 390px;
+      max-width: 100%;
+      height: 780px;
+      background: #f5f6f8;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    }
+
+    /* 背景页（客户列表） */
+    .bg-page {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      filter: blur(0.2px);
+    }
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: #fff;
+      align-items: center;
+    }
+    .search-bar input {
+      flex: 1;
+      height: 36px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 13px;
+      color: #999;
+      background: #fafafa;
+    }
+    .search-bar .btn-s {
+      height: 36px;
+      padding: 0 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-search { background: #2f80ed; color: #fff; }
+    .btn-export { background: #fff; color: #333; border: 1px solid #ddd !important; }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #666;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .filters span::after { content: " ▾"; color: #999; font-size: 10px; }
+
+    .card-list { flex: 1; overflow: auto; padding: 10px 12px; }
+    .cust-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .cust-card .name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .cust-card .meta { font-size: 12px; color: #888; line-height: 1.6; }
+    .cust-card .links { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #2f80ed; }
+    .tabbar {
+      display: flex;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+    .tabbar .item {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+    }
+    .tabbar .item.active { color: #2f80ed; }
+    .tabbar .icon { font-size: 18px; margin-bottom: 2px; }
+
+    /* 遮罩 + 弹窗 */
+    .mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      z-index: 10;
+    }
+
+    .modal {
+      width: 100%;
+      max-height: 86%;
+      background: #fff;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-hd {
+      position: relative;
+      text-align: center;
+      padding: 16px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #222;
+      border-bottom: 1px solid #f0f0f0;
+      flex-shrink: 0;
+    }
+    .modal-hd .close {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      font-size: 22px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-bd {
+      padding: 14px 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .tpl-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      padding: 14px 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background: #fff;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+    .tpl-item:last-child { margin-bottom: 0; }
+    .tpl-item:hover { border-color: #c5d8f5; }
+    .tpl-item.on {
+      border-color: #2f80ed;
+      background: #f5f9ff;
+    }
+
+    .tpl-item input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      margin: 0;
+      background: #fff;
+    }
+    .tpl-item input:checked {
+      border-color: #2f80ed;
+    }
+    .tpl-item input:checked::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: #2f80ed;
+    }
+    .tpl-item .name {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.3;
+    }
+    .tpl-item .tag-new {
+      margin-left: auto;
+      font-size: 11px;
+      color: #2f80ed;
+      background: #eaf2ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .modal-ft {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px 18px;
+      border-top: 1px solid #f0f0f0;
+      flex-shrink: 0;
+    }
+    .modal-ft button {
+      flex: 1;
+      height: 44px;
+      border-radius: 22px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-close {
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #333;
+    }
+    .btn-ok {
+      background: #5b9cf5;
+      border: none;
+      color: #fff;
+    }
+    .btn-ok:active { background: #4a8be0; }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 100px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      z-index: 20;
+      display: none;
+      white-space: nowrap;
+      max-width: 90%;
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="bg-page">
+      <div class="search-bar">
+        <input type="text" placeholder="搜索客户名称..." readonly />
+        <button type="button" class="btn-s btn-search">搜索</button>
+        <button type="button" class="btn-s btn-export">导出</button>
+      </div>
+      <div class="filters">
+        <span>距离从近到远</span>
+        <span>注册类型</span>
+        <span>客户等级</span>
+        <span>客户类型</span>
+      </div>
+      <div class="card-list">
+        <div class="cust-card">
+          <div class="name">张三养殖场</div>
+          <div class="meta">客户类型：养殖场 · 距离 3.2km<br />最近拜访：2026-07-28</div>
+          <div class="links"><span>查看门头照片</span><span>查看拜访记录</span></div>
+        </div>
+        <div class="cust-card">
+          <div class="name">李四蛋鸡场</div>
+          <div class="meta">客户类型：养殖场 · 距离 5.1km<br />最近拜访：2026-07-20</div>
+          <div class="links"><span>查看门头照片</span><span>查看拜访记录</span></div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="item"><div class="icon">💬</div>企微</div>
+        <div class="item"><div class="icon">📞</div>电话</div>
+        <div class="item"><div class="icon">🧭</div>导航</div>
+        <div class="item active"><div class="icon">✏️</div>写跟进</div>
+      </div>
+    </div>
+
+    <div class="mask" id="mask">
+      <div class="modal" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-hd">
+          <span id="modal-title">选择拜访模板</span>
+          <button type="button" class="close" id="btn-x" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-bd" id="tpl-list">
+          <!-- 模板列表由 JS 渲染 -->
+        </div>
+        <div class="modal-ft">
+          <button type="button" class="btn-close" id="btn-close">关闭</button>
+          <button type="button" class="btn-ok" id="btn-ok">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    var TEMPLATES = [
+      "玉米采购拜访记录",
+      "豆粕采购拜访记录",
+      "鸡窝预混料拜访",
+      "鸡窝豆粕拜访记录",
+      "大宗豆粕拜访记录",
+      "大宗玉米拜访记录",
+      "陪访",
+      "鸡蛋拜访记录",
+      "巡场拜访报告"   // 新增
+    ];
+
+    var selected = null;
+    var listEl = document.getElementById("tpl-list");
+
+    function render() {
+      listEl.innerHTML = TEMPLATES.map(function (name, i) {
+        var isNew = name === "巡场拜访报告";
+        return (
+          '<label class="tpl-item' + (selected === i ? " on" : "") + '">' +
+            '<input type="radio" name="visit-tpl" value="' + i + '"' + (selected === i ? " checked" : "") + " />" +
+            '<span class="name">' + name + "</span>" +
+            (isNew ? '<span class="tag-new">新增</span>' : "") +
+          "</label>"
+        );
+      }).join("");
+
+      listEl.querySelectorAll("input").forEach(function (input) {
+        input.addEventListener("change", function () {
+          selected = +input.value;
+          render();
+        });
+      });
+    }
+
+    function closeModal() {
+      document.getElementById("mask").style.display = "none";
+    }
+
+    function toast(msg) {
+      var el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(function () { el.style.display = "none"; }, 1800);
+    }
+
+    document.getElementById("btn-close").addEventListener("click", closeModal);
+    document.getElementById("btn-x").addEventListener("click", closeModal);
+    document.getElementById("btn-ok").addEventListener("click", function () {
+      if (selected == null) {
+        toast("请先选择拜访模板");
+        return;
+      }
+      toast("已选择：" + TEMPLATES[selected]);
+      closeModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>

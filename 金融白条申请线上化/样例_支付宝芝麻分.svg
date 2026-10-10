@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="720" viewBox="0 0 390 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1677ff"/>
+      <stop offset="55%" stop-color="#3d8bfd"/>
+      <stop offset="100%" stop-color="#f5f6f8"/>
+    </linearGradient>
+  </defs>
+  <rect width="390" height="720" fill="url(#bg)"/>
+  <text x="195" y="56" text-anchor="middle" fill="#fff" font-size="16" font-family="PingFang SC, Microsoft YaHei, sans-serif">芝麻信用</text>
+  <text x="195" y="88" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="13" font-family="PingFang SC, Microsoft YaHei, sans-serif">样例参考图 · 非真实数据</text>
+  <circle cx="195" cy="250" r="110" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="10"/>
+  <circle cx="195" cy="250" r="110" fill="none" stroke="#fff" stroke-width="10" stroke-dasharray="520" stroke-dashoffset="90" stroke-linecap="round"/>
+  <text x="195" y="235" text-anchor="middle" fill="#fff" font-size="56" font-weight="700" font-family="DIN Alternate, Arial, sans-serif">712</text>
+  <text x="195" y="268" text-anchor="middle" fill="rgba(255,255,255,.9)" font-size="14" font-family="PingFang SC, Microsoft YaHei, sans-serif">芝麻分</text>
+  <rect x="24" y="400" width="342" height="260" rx="16" fill="#fff"/>
+  <text x="48" y="444" fill="#1677ff" font-size="15" font-weight="600" font-family="PingFang SC, Microsoft YaHei, sans-serif">信用良好</text>
+  <text x="48" y="480" fill="#666" font-size="13" font-family="PingFang SC, Microsoft YaHei, sans-serif">截图需完整展示分数与姓名区域</text>
+  <text x="48" y="510" fill="#999" font-size="12" font-family="PingFang SC, Microsoft YaHei, sans-serif">支付宝 → 我的 → 芝麻信用</text>
+  <rect x="48" y="540" width="294" height="72" rx="10" fill="#f0f5ff"/>
+  <text x="195" y="582" text-anchor="middle" fill="#1677ff" font-size="13" font-family="PingFang SC, Microsoft YaHei, sans-serif">请上传清晰原图，勿裁切关键信息</text>
+</svg>

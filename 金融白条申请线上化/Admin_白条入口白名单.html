@@ -1,0 +1,945 @@
+<!--
+业务线：risk / 金融白条
+项目：金融白条申请线上化
+模块需求：白条入口白名单配置
+系统风格：粮巴巴 Admin（对齐 knowledge/design-spec/liangbaba-app/admin设计规范.md V3.0）
+版本：V1
+说明：仅白名单客户可见客户端银行白条入口；开通后 48 小时内可见，超时不可见，支持二次开通重置 48 小时
+生成时间：2026-09-22
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>白条入口白名单配置</title>
+  <style>
+    :root {
+      --theme-primary: #8096d2;
+      --theme-primary-hover: #6f85c4;
+      --theme-primary-bg: #edf0ff;
+      --theme-link: #8096d2;
+      --theme-success: #52c41a;
+      --theme-warning: #fa8c16;
+      --theme-danger: #ff4d4f;
+      --theme-radius: 4px;
+      --theme-radius-sm: 2px;
+      --theme-border: #dcdfe6;
+      --theme-border-input: #d9d9d9;
+      --theme-text: #333333;
+      --theme-text-secondary: #8c8c8c;
+      --theme-text-btn: #606266;
+      --theme-bg: #f0f2f5;
+      --theme-logo-bg: #8096d2;
+      --theme-table-header: #fafafa;
+      --theme-table-hover: #f7f8fd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--theme-bg);
+      color: var(--theme-text);
+      font: 13px/1.5 "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .container { max-width: 1480px; margin: 12px auto; padding: 0 12px 24px; }
+    .meta-bar, .ui-preview, .logic-desc, .footer-note {
+      background: #fff;
+      border: 1px solid var(--theme-border);
+      border-radius: var(--theme-radius);
+    }
+    .meta-bar { padding: 10px 14px; margin-bottom: 10px; }
+    .meta-bar h3 { font-size: 15px; margin-bottom: 4px; }
+    .meta-sub { color: var(--theme-text-secondary); font-size: 12px; }
+    .tip-warning {
+      background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f;
+      padding: 10px 12px; border-radius: var(--theme-radius); margin-bottom: 10px; font-size: 12px;
+    }
+    .tip-warning ul { margin: 6px 0 0 18px; }
+    .tab-bar { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+    .tab-bar button {
+      padding: 5px 12px; border: 1px solid var(--theme-border-input); background: #fafafa;
+      cursor: pointer; border-radius: var(--theme-radius); font-size: 12px; color: var(--theme-text);
+    }
+    .tab-bar button.active {
+      background: var(--theme-primary); color: #fff; border-color: var(--theme-primary);
+    }
+    .main-wrap { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 12px; }
+    @media (max-width: 1200px) { .main-wrap { grid-template-columns: 1fr; } }
+    .ui-preview, .logic-desc { min-height: 560px; overflow: hidden; }
+    .logic-desc.collapsed { min-height: 0; }
+    .logic-desc.collapsed .logic-body { display: none; }
+    .panel-title {
+      padding: 8px 12px; border-bottom: 1px solid var(--theme-border);
+      font-weight: 600; font-size: 13px; background: var(--theme-table-header);
+    }
+    .panel-title-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .panel-title-toggle:hover { background: #eef0f5; }
+    .panel-title-toggle .collapse-icon {
+      color: var(--theme-primary); font-size: 12px; transition: transform .2s;
+    }
+    .logic-desc.collapsed .panel-title-toggle .collapse-icon { transform: rotate(90deg); }
+    .logic-desc.collapsed .panel-title { border-bottom: none; }
+    .main-wrap.logic-collapsed { grid-template-columns: 1fr 44px; }
+    .logic-desc.collapsed .panel-title-toggle {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 6px;
+      min-height: 180px;
+      letter-spacing: 2px;
+    }
+    .logic-desc.collapsed .collapse-icon {
+      transform: rotate(90deg);
+      letter-spacing: 0;
+    }
+    .state-item { display: none; }
+    .state-item.active { display: block; }
+
+    .app-shell { display: flex; flex-direction: column; height: 680px; background: var(--theme-bg); position: relative; }
+    .topbar-wrap { flex-shrink: 0; background: #fff; }
+    .topbar { height: 48px; display: flex; align-items: stretch; background: #fff; }
+    .logo-block {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 14px; background: var(--theme-logo-bg); color: #fff;
+      font-size: 14px; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+    }
+    .logo-block .burger { font-size: 16px; font-weight: 400; opacity: .95; letter-spacing: -1px; }
+    .top-nav {
+      display: flex; align-items: center; flex: 1; min-width: 0; overflow: hidden; padding: 0 4px;
+    }
+    .top-nav .nav-item {
+      display: inline-flex; align-items: center; gap: 4px; height: 48px;
+      padding: 0 12px; white-space: nowrap; color: #333; font-size: 14px; cursor: default;
+    }
+    .top-nav .nav-item .caret { font-size: 10px; color: #bfbfbf; transform: scale(.85); }
+    .top-nav .nav-item.active { color: var(--theme-primary); font-weight: 500; }
+    .top-nav .nav-item.active .caret { color: var(--theme-primary); }
+    .top-right {
+      margin-left: auto; display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; flex-shrink: 0; font-size: 13px; color: #595959;
+    }
+    .top-search-wrap { position: relative; }
+    .top-search-wrap .search-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: #bfbfbf; font-size: 12px; pointer-events: none;
+    }
+    .top-search {
+      height: 32px; width: 148px; border: 1px solid var(--theme-border-input);
+      border-radius: 16px; padding: 0 12px 0 28px; font-size: 13px; background: #fff; outline: none;
+    }
+    .top-search::placeholder { color: #bfbfbf; }
+    .user-avatar {
+      width: 28px; height: 28px; border-radius: 50%; background: #d9d9d9; color: #666;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
+    }
+    .app-body { display: flex; flex: 1; min-height: 0; }
+    .sidebar {
+      width: 180px;
+      background: #fff;
+      border-right: 1px solid var(--theme-border);
+      padding: 8px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+    .main-col {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--theme-bg);
+    }
+    .page-tabs {
+      height: 36px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: stretch;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--theme-border);
+      flex-shrink: 0;
+    }
+    .page-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 4px;
+      margin-right: 20px;
+      font-size: 13px;
+      color: var(--theme-primary);
+      border-bottom: 2px solid var(--theme-primary);
+    }
+    .page-tab .close { color: #8c8c8c; font-size: 14px; }
+    .side-item {
+      display: block;
+      padding: 10px 14px 10px 11px;
+      color: #595959;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      line-height: 1.3;
+    }
+    .side-item:hover { color: var(--theme-primary); }
+    .side-item.active {
+      background: var(--theme-primary-bg);
+      color: var(--theme-primary);
+      border-left-color: var(--theme-primary);
+      font-weight: 500;
+    }
+    .side-item.new-menu { background: #fff7e6; }
+    .side-item.new-menu.active { background: var(--theme-primary-bg); }
+    .change-badge {
+      display: inline-block; margin-left: 4px; font-size: 10px; font-weight: 400;
+      background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e;
+      border-radius: 2px; padding: 0 4px; vertical-align: middle;
+    }
+    .content { flex: 1; padding: 16px; overflow: auto; background: var(--theme-bg); position: relative; min-height: 0; }
+    .page-card { background: #fff; border-radius: var(--theme-radius-sm); padding: 16px 20px; min-height: 100%; }
+    .page-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #262626; }
+    .rule-box {
+      margin-bottom: 14px; padding: 10px 12px; background: var(--theme-primary-bg);
+      border: 1px dashed var(--theme-primary); border-radius: var(--theme-radius); font-size: 12px; line-height: 1.7; color: #595959;
+    }
+    .rule-box code { font-family: Consolas, monospace; color: var(--theme-primary); }
+
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-bottom: 16px;
+    }
+    .field { display: flex; flex-direction: row; align-items: center; gap: 8px; }
+    .field label {
+      flex-shrink: 0; width: 72px; text-align: right; font-size: 13px; color: #333; line-height: 32px;
+    }
+    .field input, .field select {
+      height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 10px;
+      width: 180px; font-size: 13px; background: #fff; color: #333;
+    }
+    .field input::placeholder { color: #bfbfbf; }
+    .filter-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .btn {
+      height: 32px; padding: 0 14px; border-radius: var(--theme-radius); border: 1px solid transparent;
+      cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-primary { background: var(--theme-primary); color: #fff; border-color: var(--theme-primary); }
+    .btn-primary:hover { background: var(--theme-primary-hover); }
+    .btn-default { background: #fff; border-color: #dcdfe6; color: var(--theme-text-btn); }
+    .btn-link { background: none; border: none; color: var(--theme-link); cursor: pointer; padding: 0 4px; font-size: 13px; }
+    .btn-link.danger { color: var(--theme-danger); }
+    .toolbar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
+
+    table.data { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.data th, table.data td {
+      border-bottom: 1px solid #f0f0f0; padding: 10px; text-align: left;
+      font-size: 13px; word-break: break-all;
+    }
+    table.data th {
+      background: var(--theme-table-header); font-weight: 600; color: #595959;
+      border-top: 1px solid #f0f0f0;
+    }
+    table.data tr:hover td { background: var(--theme-table-hover); }
+    table.data td.ops { white-space: nowrap; }
+    .tag {
+      display: inline-block; padding: 0 7px; height: 22px; line-height: 20px;
+      border-radius: var(--theme-radius-sm); font-size: 12px; border: 1px solid transparent;
+    }
+    .tag-on { background: var(--theme-primary-bg); color: var(--theme-primary); border-color: #adbbe2; }
+    .tag-off { background: #f2f3f5; color: #86909c; border-color: #e5e6eb; }
+    .remain { font-size: 12px; color: var(--theme-text-secondary); }
+    .remain.warn { color: var(--theme-warning); }
+    .pager {
+      display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+      margin-top: 12px; font-size: 13px; color: #595959;
+    }
+    .pager-btn, .pager-num {
+      min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid #dcdfe6;
+      border-radius: 4px; background: #fff; color: #606266; font-size: 13px; cursor: pointer;
+    }
+    .pager-btn:disabled { color: #c0c4cc; cursor: not-allowed; }
+    .pager-num.active {
+      background: var(--theme-primary); border-color: var(--theme-primary); color: #fff;
+    }
+    .pager-size {
+      height: 32px; margin-left: 4px; border: 1px solid #dcdfe6; border-radius: 4px;
+      padding: 0 8px; font-size: 13px; color: #606266; background: #fff;
+    }
+    .empty-box { text-align: center; padding: 64px 16px; color: var(--theme-text-secondary); }
+    .empty-box .icon { font-size: 36px; margin-bottom: 8px; opacity: .4; }
+
+    .modal-mask {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .modal-mask.hidden { display: none; }
+    .modal {
+      width: 480px; background: #fff; border-radius: var(--theme-radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15); overflow: visible;
+    }
+    .modal-hd {
+      padding: 14px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 15px;
+      display: flex; justify-content: space-between; align-items: center; color: #1f2329;
+    }
+    .modal-hd .modal-close { color: #999; cursor: pointer; font-size: 16px; border: none; background: none; padding: 0; }
+    .modal-bd { padding: 24px 20px 8px; position: relative; z-index: 2; }
+    .modal-ft {
+      padding: 12px 20px 16px; border-top: 1px solid #f0f0f0;
+      display: flex; justify-content: flex-end; gap: 8px; position: relative; z-index: 1;
+    }
+    .form-row { display: flex; align-items: flex-start; margin-bottom: 20px; gap: 12px; }
+    .form-row label {
+      flex-shrink: 0; width: 88px; text-align: right; line-height: 32px;
+      color: #333; font-size: 13px; margin: 0;
+    }
+    .form-row label .req { color: var(--theme-danger); margin-right: 2px; }
+    .form-row .form-ctrl { flex: 1; min-width: 0; position: relative; }
+    .form-row input {
+      width: 100%; height: 32px; border: 1px solid var(--theme-border-input);
+      border-radius: var(--theme-radius-sm); padding: 0 10px; font-size: 13px; box-sizing: border-box;
+    }
+    .form-row input::placeholder { color: #bfbfbf; }
+    .form-row input[readonly] {
+      background: #f5f5f5; color: #595959; cursor: not-allowed;
+    }
+    .form-hint { margin-top: 6px; color: var(--theme-text-secondary); font-size: 12px; line-height: 1.5; }
+    .radio-group { display: flex; align-items: center; gap: 20px; min-height: 32px; flex-wrap: wrap; }
+    .radio-group label.radio-item {
+      width: auto; text-align: left; line-height: 22px; display: inline-flex; align-items: center;
+      gap: 6px; cursor: pointer; font-weight: 400; color: #333;
+    }
+    .radio-group input[type="radio"] { width: 14px; height: 14px; margin: 0; accent-color: var(--theme-primary); }
+    .schedule-wrap { margin-top: 10px; }
+    .schedule-wrap input[type="datetime-local"] { max-width: 240px; }
+    .tag-wait { background: #fff7e6; color: #d48806; border: 1px solid #ffd591; }
+    .cust-pick { position: relative; }
+    .cust-pick.open input, .cust-pick input:focus { border-color: #409eff; outline: none; }
+    .cust-drop {
+      display: none; position: absolute; left: 0; top: calc(100% + 10px);
+      min-width: 100%; width: max-content; max-width: 420px; max-height: 240px; overflow: auto;
+      background: #fff; border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,.12); padding: 6px 0; z-index: 30;
+    }
+    .cust-drop::before {
+      content: ""; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+      border-width: 0 6px 6px 6px; border-style: solid; border-color: transparent transparent #fff transparent;
+      filter: drop-shadow(0 -1px 1px rgba(0,0,0,.06));
+    }
+    .cust-pick.open .cust-drop { display: block; }
+    .cust-opt {
+      display: block; width: 100%; border: none; background: transparent; text-align: left;
+      padding: 8px 16px; font-size: 13px; line-height: 20px; color: #333; cursor: pointer; white-space: nowrap;
+    }
+    .cust-opt:hover, .cust-opt.active { background: #f5f7fa; }
+    .confirm-tip { font-size: 13px; color: #595959; line-height: 1.7; }
+
+    .logic-body { padding: 12px 14px 16px; font-size: 12px; color: #595959; }
+    .logic-body h4 { font-size: 14px; color: #262626; margin-bottom: 10px; }
+    .logic-body p { margin-bottom: 12px; }
+    .logic-body strong { color: #262626; }
+    .logic-body ul { margin: 4px 0 0 18px; }
+    .footer-note { margin-top: 12px; padding: 10px 12px; font-size: 12px; color: #595959; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="meta-bar">
+    <h3>【risk / 金融白条】· 白条入口白名单配置</h3>
+    <div class="meta-sub">系统风格：对齐 <code>admin设计规范.md</code> V3.0｜主色 #8096d2｜版本：V1｜2026-09-22｜规则：开通后 48 小时内可见入口，超时不可见，可二次开通</div>
+  </div>
+
+  <div class="tip-warning">
+    ⚠️ 待确认：
+    <ul>
+      <li>侧栏挂载位置（当前示意在一级导航「白条」下）</li>
+      <li>48 小时从「开通/二次开通」时刻起算；时区按服务器时间</li>
+      <li>过期后是否保留名单记录（本原型保留，状态为「已过期」，可二次开通）</li>
+      <li>是否支持批量开通、是否需审批</li>
+    </ul>
+  </div>
+
+  <div class="tab-bar">
+    <button class="active" data-state="state-normal">正常态</button>
+    <button data-state="state-empty">空态</button>
+    <button data-state="state-create">添加开通弹窗</button>
+    <button data-state="state-reopen">开启弹窗</button>
+    <button data-state="state-close">关闭确认</button>
+  </div>
+
+  <div class="main-wrap logic-collapsed" id="mainWrap">
+    <div class="ui-preview">
+      <div class="panel-title">左侧 · UI 模拟（Admin 壳层）</div>
+
+      <div class="state-item active" id="state-normal">
+        <div class="app-shell" id="shellNormal"></div>
+      </div>
+      <div class="state-item" id="state-empty">
+        <div class="app-shell" id="shellEmpty"></div>
+      </div>
+      <div class="state-item" id="state-create">
+        <div class="app-shell" id="shellCreate"></div>
+      </div>
+      <div class="state-item" id="state-reopen">
+        <div class="app-shell" id="shellReopen"></div>
+      </div>
+      <div class="state-item" id="state-close">
+        <div class="app-shell" id="shellClose"></div>
+      </div>
+    </div>
+
+    <div class="logic-desc collapsed" id="logicPanel">
+      <div class="panel-title panel-title-toggle" id="logicToggle" role="button" tabindex="0" title="点击折叠/展开">
+        <span>右侧 · 逻辑说明</span>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="logic-body">
+        <h4>逻辑说明</h4>
+        <p><strong>1. 入口</strong><br>粮巴巴管理系统 → 白条 → <strong>白条入口白名单</strong>（本期新增）。</p>
+        <p><strong>2. 页面字段与规则</strong></p>
+        <ul>
+          <li>仅白名单内、且在「最近开通时间 + 48 小时」内的客户，客户端可见银行白条入口。</li>
+          <li>超过 48 小时：入口不可见；名单记录保留，状态「已过期」。</li>
+          <li>二次开通：重置最近开通时间，重新获得 48 小时可见入口。</li>
+          <li>列表：客户名称、客户 ID、最近开通时间、可见截止时间、状态、操作人、操作时间、操作。</li>
+          <li>筛选：客户名称（名字或手机号）、状态（全部 / 可见中 / 待生效 / 已过期）。</li>
+        </ul>
+        <p><strong>3. 操作与跳转</strong></p>
+        <ul>
+          <li>【搜索】【重置】：按筛选条件过滤。</li>
+          <li>【添加开通】：弹窗选择客户与开通时间（立即 / 选择日期），保存后写入白名单并按开通时间起算 48 小时。</li>
+          <li>【开启】：仅已过期行展示；弹窗同添加开通（客户只读），可选立即或选择开始时分后保存。</li>
+          <li>【关闭】：可见中、待生效行展示；点击后二次弹窗确认，确认后客户端立即不可见入口。</li>
+        </ul>
+        <p><strong>4. 审批流程</strong><br>无。</p>
+        <p><strong>5. 消息通知</strong><br>本期不做。</p>
+        <p><strong>6. 边界与异常</strong></p>
+        <ul>
+          <li>已在白名单且状态为可见中：不可重复添加，提示已在有效期内。</li>
+          <li>已过期客户再次【添加开通】与【开启】效果相同（重置 48 小时）。</li>
+          <li>客户端每次进入入口页按服务端当前时间校验，不以本地缓存为准。</li>
+        </ul>
+        <p><strong>7. 数据字段</strong><br>customer_id、customer_name、mobile、opened_at、expire_at、operator、operated_at、updated_at。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">本 HTML 确认后用于生成 / 回写 PRD。特殊约束：可见窗口固定 48 小时，从开通或二次开通时刻起算。</div>
+</div>
+
+<script>
+const HOURS = 48;
+const MS = HOURS * 3600 * 1000;
+const now = Date.now();
+
+const CATALOG = [
+  { id: "100086", name: "尚兆立养殖场", mobile: "13812345678" },
+  { id: "100092", name: "华东养殖合作社", mobile: "13900001122" },
+  { id: "100093", name: "兰州某某养殖", mobile: "13711112222" },
+  { id: "100101", name: "周敏蛋鸡场", mobile: "13300006666" },
+  { id: "100108", name: "桑姣婧养殖场", mobile: "13812348001" },
+  { id: "100120", name: "党闯养殖专业合作社", mobile: "13900001111" }
+];
+
+let list = [
+  { id: "100086", name: "尚兆立养殖场", mobile: "13812345678", openedAt: now - 5 * 3600 * 1000, operatedAt: now - 5 * 3600 * 1000, openCount: 1, operator: "张敏" },
+  { id: "100108", name: "桑姣婧养殖场", mobile: "13812348001", openedAt: now - 20 * 3600 * 1000, operatedAt: now - 20 * 3600 * 1000, openCount: 2, operator: "李华" },
+  { id: "100092", name: "华东养殖合作社", mobile: "13900001122", openedAt: now - 50 * 3600 * 1000, operatedAt: now - 50 * 3600 * 1000, openCount: 1, operator: "张敏" },
+  { id: "100093", name: "兰州某某养殖", mobile: "13711112222", openedAt: now - 72 * 3600 * 1000, operatedAt: now - 72 * 3600 * 1000, openCount: 3, operator: "朱震" }
+];
+
+let page = 1;
+const pageSize = 10;
+let filterKw = "";
+let filterStatus = "全部";
+let selectedCust = null;
+let reopenTarget = null;
+let closeTarget = null;
+let shellMode = "normal"; // normal | empty | create | reopen | close
+let openTimeMode = "立即"; // 立即 | 选日期
+let scheduleDate = "";
+
+function pad(n){ return String(n).padStart(2, "0"); }
+function fmt(ts){
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+function rowMeta(row){
+  const expireAt = row.openedAt + MS;
+  const nowTs = Date.now();
+  const pending = nowTs < row.openedAt;
+  const visible = !pending && nowTs < expireAt;
+  const left = expireAt - nowTs;
+  let remain = "—";
+  let status = "已过期";
+  if(pending){
+    status = "待生效";
+    remain = `将于 ${fmt(row.openedAt)} 生效`;
+  }else if(visible){
+    status = "可见中";
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    remain = h > 0 ? `${h}小时${m}分` : `${m}分`;
+  }
+  return { expireAt, visible, pending, remain, status };
+}
+function filtered(){
+  return list.filter(r => {
+    const meta = rowMeta(r);
+    const kw = (filterKw || "").trim();
+    const hit = !kw || [r.name, r.id, r.mobile].some(v => String(v).includes(kw));
+    const st = filterStatus === "全部" || meta.status === filterStatus;
+    return hit && st;
+  });
+}
+
+function shellChrome(bodyHtml, opts){
+  const o = opts || {};
+  const showModal = o.modal || "";
+  return `
+    <div class="topbar-wrap">
+      <div class="topbar">
+        <div class="logo-block">粮巴巴管理系统 <span class="burger">☰</span></div>
+        <div class="top-nav">
+          <span class="nav-item">首页</span>
+          <span class="nav-item">客户管理 <i class="caret">▼</i></span>
+          <span class="nav-item">商品管理 <i class="caret">▼</i></span>
+          <span class="nav-item">合同管理 <i class="caret">▼</i></span>
+          <span class="nav-item">物流管理 <i class="caret">▼</i></span>
+          <span class="nav-item active">白条 <i class="caret">▼</i></span>
+          <span class="nav-item">运营管理 <i class="caret">▼</i></span>
+          <span class="nav-item">系统管理 <i class="caret">▼</i></span>
+        </div>
+        <div class="top-right">
+          <div class="top-search-wrap">
+            <span class="search-icon">⌕</span>
+            <input class="top-search" placeholder="搜索菜单" readonly>
+          </div>
+          <span class="user-avatar">方</span>
+          <span>fangweiping</span>
+        </div>
+      </div>
+    </div>
+    <div class="app-body">
+      <div class="sidebar">
+        <div class="side-item">白条申请审核</div>
+        <div class="side-item">客户白条档案</div>
+        <a class="side-item active new-menu" href="javascript:;">白条入口白名单<span class="change-badge">新增</span></a>
+        <div class="side-item">额度启用配置</div>
+      </div>
+      <div class="main-col">
+        <div class="page-tabs">
+          <div class="page-tab">白条入口白名单 <span class="close">×</span></div>
+        </div>
+        <div class="content">
+          ${bodyHtml}
+          ${showModal}
+        </div>
+      </div>
+    </div>`;
+}
+
+function listTableHtml(rows, emptyMode){
+  if(emptyMode || !rows.length){
+    return `<div class="empty-box">
+      <div class="icon">☰</div>
+      <div>暂无白名单客户</div>
+      <div style="margin-top:6px;font-size:12px;">添加开通后，客户在 48 小时内可见银行白条入口</div>
+      <div style="margin-top:12px;"><button class="btn btn-primary" type="button" onclick="openCreate()">添加开通</button></div>
+    </div>`;
+  }
+  const total = rows.length;
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  if(page > pages) page = pages;
+  const slice = rows.slice((page - 1) * pageSize, page * pageSize);
+  const trs = slice.map(r => {
+    const m = rowMeta(r);
+    const ops = m.pending || m.visible
+      ? `<button class="btn-link danger" type="button" onclick="openClose('${r.id}')">关闭</button>`
+      : `<button class="btn-link" type="button" onclick="openReopen('${r.id}')">开启</button>`;
+    const tagClass = m.pending ? "tag-wait" : (m.visible ? "tag-on" : "tag-off");
+    const remainHtml = m.pending
+      ? `<div class="remain">${m.remain}</div>`
+      : "";
+    return `<tr>
+      <td>${r.name}</td>
+      <td>${r.id}</td>
+      <td>${fmt(r.openedAt)}</td>
+      <td>${fmt(m.expireAt)}</td>
+      <td><span class="tag ${tagClass}">${m.status}</span>
+        ${remainHtml}
+      </td>
+      <td>${r.operator}</td>
+      <td>${fmt(r.operatedAt || r.openedAt)}</td>
+      <td class="ops">${ops}</td>
+    </tr>`;
+  }).join("");
+
+  let pageBtns = "";
+  for(let i = 1; i <= Math.min(pages, 3); i++){
+    pageBtns += `<button class="pager-num${i===page?" active":""}" type="button" onclick="gotoPage(${i})">${i}</button>`;
+  }
+  return `
+    <table class="data">
+      <thead>
+        <tr>
+          <th style="width:14%">客户名称</th>
+          <th style="width:10%">客户ID</th>
+          <th style="width:16%">最近开通时间</th>
+          <th style="width:16%">可见截止时间</th>
+          <th style="width:10%">状态</th>
+          <th style="width:10%">操作人</th>
+          <th style="width:16%">操作时间</th>
+          <th style="width:8%">操作</th>
+        </tr>
+      </thead>
+      <tbody>${trs}</tbody>
+    </table>
+    <div class="pager">
+      <span>共 ${total} 条</span>
+      <button class="pager-btn" type="button" ${page<=1?"disabled":""} onclick="gotoPage(${page-1})">‹</button>
+      ${pageBtns}
+      <button class="pager-btn" type="button" ${page>=pages?"disabled":""} onclick="gotoPage(${page+1})">›</button>
+      <select class="pager-size"><option>10 条/页</option></select>
+    </div>`;
+}
+
+function pageBody(emptyMode, modalHtml){
+  const rows = emptyMode ? [] : filtered();
+  return `
+    <div class="page-card">
+      <div class="page-title">白条入口白名单</div>
+      <div class="rule-box">
+        规则：开启后，客户在 <code>48 小时</code> 内可在客户端看到银行白条入口；超时后入口隐藏。<br>
+        已过期客户可【开启】，重新获得 48 小时可见入口。不在名单中的客户始终不可见入口。
+      </div>
+      <div class="filter-bar">
+        <div class="field">
+          <label>客户名称</label>
+          <input id="kwInput" type="text" placeholder="名字或手机号" value="${filterKw.replace(/"/g,"&quot;")}" onkeydown="if(event.key==='Enter')doSearch()">
+        </div>
+        <div class="field">
+          <label>状态</label>
+          <select id="statusSelect" onchange="doSearch()">
+            <option${filterStatus==="全部"?" selected":""}>全部</option>
+            <option${filterStatus==="可见中"?" selected":""}>可见中</option>
+            <option${filterStatus==="待生效"?" selected":""}>待生效</option>
+            <option${filterStatus==="已过期"?" selected":""}>已过期</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary" type="button" onclick="doSearch()">搜索</button>
+          <button class="btn btn-default" type="button" onclick="doReset()">重置</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary" type="button" onclick="openCreate()">添加开通</button>
+      </div>
+      ${listTableHtml(rows, emptyMode)}
+    </div>
+    ${modalHtml || ""}`;
+}
+
+function createModalHtml(){
+  return openFormModalHtml("create");
+}
+
+function reopenModalHtml(){
+  return openFormModalHtml("reopen");
+}
+
+function openFormModalHtml(mode){
+  const isReopen = mode === "reopen";
+  const isDate = openTimeMode === "选日期";
+  const hint = isDate
+    ? "到达所选开始时间起生效，起算 48 小时可见入口（须选择日期与时分）。"
+    : (isReopen
+      ? "开启后立即生效，重新起算 48 小时可见入口。"
+      : "开通后立即生效，客户将在 48 小时内可见银行白条入口。");
+  const r = isReopen && reopenTarget ? list.find(x => x.id === reopenTarget) : null;
+  const custLabel = r ? `${r.name} / ${r.mobile} / id:${r.id}` : "";
+  const custField = isReopen
+    ? `<input type="text" id="custInput" value="${custLabel.replace(/"/g,"&quot;")}" readonly>`
+    : `<div class="cust-pick" id="custPick">
+         <input type="text" id="custInput" placeholder="请输入客户名称" autocomplete="off"
+           onfocus="onCustFocus()" oninput="onCustInput()">
+         <div class="cust-drop" id="custDrop"></div>
+       </div>`;
+  const title = isReopen ? "开启" : "添加开通";
+  const saveFn = isReopen ? "confirmReopen()" : "confirmCreate()";
+  return `
+    <div class="modal-mask" id="${isReopen?"reopenMask":"createMask"}" onclick="if(event.target===this)closeModal()">
+      <div class="modal" role="dialog">
+        <div class="modal-hd">
+          <span>${title}</span>
+          <button class="modal-close" type="button" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-bd">
+          <div class="form-row">
+            <label><span class="req">*</span>${isReopen?"客户":"选择客户"}</label>
+            <div class="form-ctrl">${custField}</div>
+          </div>
+          <div class="form-row">
+            <label><span class="req">*</span>开通时间</label>
+            <div class="form-ctrl">
+              <div class="radio-group">
+                <label class="radio-item">
+                  <input type="radio" name="openTimeMode" value="立即" ${!isDate?"checked":""} onchange="setOpenTimeMode('立即')">立即
+                </label>
+                <label class="radio-item">
+                  <input type="radio" name="openTimeMode" value="选日期" ${isDate?"checked":""} onchange="setOpenTimeMode('选日期')">选择日期
+                </label>
+              </div>
+              <div class="schedule-wrap" id="scheduleWrap" style="display:${isDate?"block":"none"}">
+                <input type="datetime-local" id="scheduleDate" value="${scheduleDate || ""}"
+                  step="60" onchange="scheduleDate=this.value" placeholder="选择开始时间">
+              </div>
+              <div class="form-hint" id="openTimeHint">${hint}</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-ft">
+          <button class="btn btn-default" type="button" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" type="button" onclick="${saveFn}">保存</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function closeConfirmModalHtml(){
+  return `
+    <div class="modal-mask" id="closeMask" onclick="if(event.target===this)closeModal()">
+      <div class="modal" role="dialog">
+        <div class="modal-hd">
+          <span>关闭确认</span>
+          <button class="modal-close" type="button" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-bd">
+          <div class="confirm-tip">
+            确认关闭白条入口的可见权限？
+          </div>
+        </div>
+        <div class="modal-ft">
+          <button class="btn btn-default" type="button" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" type="button" onclick="confirmClose()" style="background:var(--theme-danger);border-color:var(--theme-danger)">确认关闭</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderShells(){
+  const empty = shellMode === "empty" || (shellMode === "normal" && !list.length);
+  document.getElementById("shellNormal").innerHTML = shellChrome(pageBody(false));
+  document.getElementById("shellEmpty").innerHTML = shellChrome(pageBody(true));
+  document.getElementById("shellCreate").innerHTML = shellChrome(pageBody(false, createModalHtml()));
+  document.getElementById("shellReopen").innerHTML = shellChrome(pageBody(false, reopenModalHtml()));
+  const shellClose = document.getElementById("shellClose");
+  if(shellClose) shellClose.innerHTML = shellChrome(pageBody(false, closeConfirmModalHtml()));
+  if(shellMode === "create"){
+    const pick = document.querySelector("#shellCreate #custPick");
+    if(pick && selectedCust){
+      document.querySelector("#shellCreate #custInput").value =
+        `${selectedCust.name} / ${selectedCust.mobile} / id:${selectedCust.id}`;
+    }
+  }
+}
+
+function switchState(id){
+  document.querySelectorAll(".tab-bar button").forEach(b => b.classList.toggle("active", b.dataset.state === id));
+  document.querySelectorAll(".state-item").forEach(el => el.classList.toggle("active", el.id === id));
+  shellMode = id.replace("state-", "");
+  if(shellMode === "create"){ selectedCust = null; openTimeMode = "立即"; scheduleDate = ""; }
+  if(shellMode === "reopen"){
+    openTimeMode = "立即";
+    scheduleDate = "";
+    if(!reopenTarget && list.length){
+      const expired = list.find(r => !rowMeta(r).visible && !rowMeta(r).pending);
+      reopenTarget = expired ? expired.id : list[0].id;
+    }
+  }
+  if(shellMode === "close" && !closeTarget && list.length){
+    const closable = list.find(r => rowMeta(r).visible || rowMeta(r).pending);
+    closeTarget = closable ? closable.id : list[0].id;
+  }
+  renderShells();
+}
+
+function doSearch(){
+  const root = document.querySelector(".state-item.active");
+  const kw = root?.querySelector("#kwInput");
+  const st = root?.querySelector("#statusSelect");
+  if(kw) filterKw = kw.value || "";
+  if(st) filterStatus = st.value || "全部";
+  page = 1;
+  renderShells();
+}
+function doReset(){
+  filterKw = "";
+  filterStatus = "全部";
+  page = 1;
+  renderShells();
+}
+function gotoPage(p){
+  page = Math.max(1, p);
+  renderShells();
+}
+function openCreate(){
+  selectedCust = null;
+  openTimeMode = "立即";
+  scheduleDate = "";
+  switchState("state-create");
+}
+function openReopen(id){
+  reopenTarget = id;
+  openTimeMode = "立即";
+  scheduleDate = "";
+  switchState("state-reopen");
+}
+function setOpenTimeMode(mode){
+  openTimeMode = mode;
+  const root = document.querySelector(".state-item.active");
+  if(!root) return;
+  const wrap = root.querySelector("#scheduleWrap");
+  const hint = root.querySelector("#openTimeHint");
+  if(wrap) wrap.style.display = mode === "选日期" ? "block" : "none";
+  if(hint){
+    const isReopen = shellMode === "reopen";
+    hint.textContent = mode === "选日期"
+      ? "到达所选开始时间起生效，起算 48 小时可见入口（须选择日期与时分）。"
+      : (isReopen
+        ? "开启后立即生效，重新起算 48 小时可见入口。"
+        : "开通后立即生效，客户将在 48 小时内可见银行白条入口。");
+  }
+}
+function openClose(id){
+  closeTarget = id;
+  switchState("state-close");
+}
+function closeModal(){
+  closeTarget = null;
+  switchState(list.length ? "state-normal" : "state-empty");
+}
+function confirmClose(){
+  if(!closeTarget){ alert("记录不存在"); return; }
+  const id = closeTarget;
+  if(!list.find(x => x.id === id)){ alert("记录不存在"); closeModal(); return; }
+  list = list.filter(x => x.id !== id);
+  closeTarget = null;
+  if(!list.length) switchState("state-empty");
+  else switchState("state-normal");
+}
+function resolveOpenedAt(){
+  if(openTimeMode !== "选日期") return Date.now();
+  const root = document.querySelector(".state-item.active");
+  const input = root?.querySelector("#scheduleDate");
+  const val = (input && input.value) || scheduleDate;
+  if(!val) return null;
+  scheduleDate = val;
+  // datetime-local: YYYY-MM-DDTHH:mm
+  const ts = new Date(val).getTime();
+  if(Number.isNaN(ts)) return null;
+  return ts;
+}
+function confirmCreate(){
+  if(!selectedCust){ alert("请选择客户"); return; }
+  const openedAt = resolveOpenedAt();
+  if(openedAt == null){ alert("请选择开通开始时间（含时分）"); return; }
+  const exist = list.find(x => x.id === selectedCust.id);
+  if(exist && rowMeta(exist).visible){
+    alert("该客户已在可见期内，无需重复开通");
+    return;
+  }
+  if(exist){
+    exist.openedAt = openedAt;
+    exist.operatedAt = Date.now();
+    exist.openCount += 1;
+    exist.operator = "张敏";
+  }else{
+    list.unshift({
+      id: selectedCust.id,
+      name: selectedCust.name,
+      mobile: selectedCust.mobile,
+      openedAt,
+      operatedAt: Date.now(),
+      openCount: 1,
+      operator: "张敏"
+    });
+  }
+  openTimeMode = "立即";
+  scheduleDate = "";
+  page = 1;
+  switchState("state-normal");
+}
+function confirmReopen(){
+  const row = list.find(x => x.id === reopenTarget);
+  if(!row){ alert("记录不存在"); return; }
+  const openedAt = resolveOpenedAt();
+  if(openedAt == null){ alert("请选择开通开始时间（含时分）"); return; }
+  row.openedAt = openedAt;
+  row.operatedAt = Date.now();
+  row.openCount += 1;
+  row.operator = "张敏";
+  reopenTarget = null;
+  openTimeMode = "立即";
+  scheduleDate = "";
+  switchState("state-normal");
+}
+
+function filterCatalog(kw){
+  const n = (kw || "").trim();
+  if(!n) return [];
+  return CATALOG.filter(x => x.name.includes(n) || x.id.includes(n) || x.mobile.includes(n));
+}
+function onCustFocus(){
+  const input = document.querySelector(".state-item.active #custInput");
+  if(!input) return;
+  const rows = filterCatalog(input.value);
+  if((input.value || "").trim()) renderCustDrop(rows);
+}
+function onCustInput(){
+  const input = document.querySelector(".state-item.active #custInput");
+  if(!input) return;
+  if(selectedCust){
+    const label = `${selectedCust.name} / ${selectedCust.mobile} / id:${selectedCust.id}`;
+    if(input.value !== label && input.value !== selectedCust.name) selectedCust = null;
+  }
+  renderCustDrop(filterCatalog(input.value));
+}
+function renderCustDrop(rows){
+  const pick = document.querySelector(".state-item.active #custPick");
+  const drop = document.querySelector(".state-item.active #custDrop");
+  if(!pick || !drop) return;
+  const kw = (document.querySelector(".state-item.active #custInput")?.value || "").trim();
+  if(!kw){ pick.classList.remove("open"); drop.innerHTML = ""; return; }
+  if(!rows.length){
+    drop.innerHTML = `<div class="cust-opt" style="color:#999;cursor:default">暂无匹配客户</div>`;
+    pick.classList.add("open");
+    return;
+  }
+  drop.innerHTML = rows.map(x =>
+    `<button type="button" class="cust-opt" onmousedown="event.preventDefault();selectCust('${x.id}')">${x.name} / ${x.mobile} / id:${x.id}</button>`
+  ).join("");
+  pick.classList.add("open");
+}
+function selectCust(id){
+  const c = CATALOG.find(x => x.id === id);
+  if(!c) return;
+  selectedCust = c;
+  const input = document.querySelector(".state-item.active #custInput");
+  const pick = document.querySelector(".state-item.active #custPick");
+  if(input) input.value = `${c.name} / ${c.mobile} / id:${c.id}`;
+  if(pick) pick.classList.remove("open");
+}
+
+document.querySelectorAll(".tab-bar button").forEach(btn => {
+  btn.addEventListener("click", () => switchState(btn.dataset.state));
+});
+document.getElementById("logicToggle").addEventListener("click", () => {
+  document.getElementById("logicPanel").classList.toggle("collapsed");
+  document.getElementById("mainWrap").classList.toggle("logic-collapsed");
+});
+document.getElementById("logicToggle").addEventListener("keydown", e => {
+  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); document.getElementById("logicToggle").click(); }
+});
+
+renderShells();
+</script>
+</body>
+</html>

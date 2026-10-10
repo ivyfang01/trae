@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>鸡窝预混料提成详情</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#fff;color:#333;font-size:14px;
+}
+.page{max-width:750px;margin:0 auto;min-height:100vh;background:#fff;padding-bottom:56px}
+.page-head{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;padding:12px 16px 4px;font-size:17px;font-weight:600;
+}
+.page-head .back{
+  position:absolute;left:12px;border:none;background:none;
+  font-size:22px;color:#333;cursor:pointer;line-height:1;
+}
+.top-tabs{
+  display:flex;justify-content:center;gap:40px;
+  border-bottom:1px solid #eee;background:#fff;padding-top:12px;
+}
+.top-tab{
+  position:relative;border:none;background:none;font-size:15px;color:#333;
+  padding:0 4px 12px;cursor:pointer;
+}
+.top-tab.active{color:#1890ff;font-weight:600}
+.top-tab.active::after{
+  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:28px;height:3px;border-radius:2px;background:#1890ff;
+}
+.content{padding:12px 12px 0}
+.seg{
+  display:inline-flex;border:1px solid #d9d9d9;border-radius:4px;overflow:hidden;margin-bottom:12px;
+}
+.seg button{
+  border:none;background:#fff;color:#333;font-size:14px;padding:6px 14px;cursor:pointer;line-height:1.2;
+}
+.seg button + button{border-left:1px solid #d9d9d9}
+.seg button.active{background:#1890ff;color:#fff}
+.stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;
+}
+.stat-card{
+  background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:12px 14px;
+}
+.stat-card .lab{font-size:13px;color:#999;margin-bottom:6px}
+.stat-card .val{font-size:22px;font-weight:700;color:#333;line-height:1.2;margin-bottom:14px}
+.stat-card .val:last-child{margin-bottom:0}
+.filters{display:flex;gap:8px;margin-bottom:8px}
+.date-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;color:#bfbfbf;font-size:13px;background:#fff;
+}
+.date-box .icon{color:#999;font-size:14px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;padding:0 10px;gap:6px;background:#fff;
+}
+.search-box input{
+  border:none;outline:none;width:100%;font-size:13px;color:#333;background:transparent;
+}
+.search-box input::placeholder{color:#bfbfbf}
+.search-btn{
+  height:36px;padding:0 16px;border:none;border-radius:4px;
+  background:#1890ff;color:#fff;font-size:14px;cursor:pointer;white-space:nowrap;
+}
+.filter-seg{margin-bottom:12px}
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:1060px;border-collapse:collapse;table-layout:fixed}
+thead th{
+  background:#1890ff;color:#fff;font-size:13px;font-weight:600;
+  padding:10px 6px;text-align:center;white-space:nowrap;
+}
+thead th:first-child{text-align:left;padding-left:10px}
+tbody td{
+  font-size:12px;color:#333;padding:10px 6px;text-align:center;
+  border-bottom:1px solid #f0f0f0;vertical-align:middle;word-break:break-all;
+}
+tbody td:first-child{text-align:left;padding-left:10px}
+tbody tr:nth-child(even){background:#fafafa}
+.order-link{color:#1890ff;text-decoration:none}
+.footer{
+  position:fixed;left:0;right:0;bottom:0;
+  background:#fff;border-top:1px solid #f0f0f0;
+  text-align:center;padding:14px 12px;color:#666;font-size:14px;
+}
+.footer-inner{max-width:750px;margin:0 auto}
+.placeholder{
+  padding:40px 16px;text-align:center;color:#999;font-size:14px;
+}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-head">
+    <button class="back" type="button" onclick="history.back()">‹</button>
+    绩效详情
+  </div>
+  <div class="top-tabs">
+    <button class="top-tab" data-main="绩效">绩效</button>
+    <button class="top-tab active" data-main="提成">提成</button>
+    <button class="top-tab" data-main="站台单吨利润">站台单吨利润</button>
+  </div>
+
+  <div class="content" id="panel-提成">
+    <div class="seg" id="comm-seg">
+      <button data-comm-cat="豆粕">豆粕</button>
+      <button data-comm-cat="玉米">玉米</button>
+      <button class="active" data-comm-cat="预混料">预混料</button>
+    </div>
+
+    <div id="premix-block">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="lab">KA客户销量</div>
+          <div class="val" id="s-ka-ton">0</div>
+          <div class="lab">小客户销量</div>
+          <div class="val" id="s-small-ton">33.2483</div>
+        </div>
+        <div class="stat-card">
+          <div class="lab">KA客户提成</div>
+          <div class="val" id="s-ka-comm">0</div>
+          <div class="lab">小客户提成</div>
+          <div class="val" id="s-small-comm">7272.95</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+        <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+      </div>
+      <div class="search-row">
+        <div class="search-box">
+          <span>🔍</span>
+          <input id="kw" type="search" placeholder="请输入客户名称或者提货单编号" />
+        </div>
+        <button class="search-btn" id="btnSearch" type="button">搜索</button>
+      </div>
+
+      <div class="seg filter-seg" id="type-seg">
+        <button class="active" data-type="全部">全部订单</button>
+        <button data-type="KA客户">KA客户</button>
+        <button data-type="小客户">小客户</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:9%">客户名称</th>
+              <th style="width:16%">提成金额</th>
+              <th style="width:8%">提货吨数</th>
+              <th style="width:14%">完成时间</th>
+              <th style="width:15%">提货单编号</th>
+              <th style="width:10%">是否交接订单</th>
+              <th style="width:8%">客户类型</th>
+              <th style="width:8%">周期</th>
+              <th style="width:7%">销售</th>
+              <th style="width:9%">备注</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="placeholder hidden" id="other-block">暂无数据</div>
+  </div>
+
+  <div class="content hidden" id="panel-绩效">
+    <div class="placeholder">绩效明细请从鸡窝绩效列表进入</div>
+  </div>
+  <div class="content hidden" id="panel-站台单吨利润">
+    <div class="placeholder">暂无站台单吨利润数据</div>
+  </div>
+</div>
+
+<div class="footer" id="footer">
+  <div class="footer-inner">总计：<span id="total">33.2483吨，提成：7272.96</span></div>
+</div>
+
+<script>
+const ROWS = [
+  {name:"尚兆立",comm:"0.00=6*350*0",ton:6,time:"2026-08-07 11:29:14",no:"202511298YHLT082",handover:"否",type:"小客户",cycle:"开拓期",reissue:"新客户补发",sales:"朱震"},
+  {name:"党闯",comm:"1470.00=3*350*1.4",ton:3,time:"2026-08-17 19:09:28",no:"202605298YHLT005",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"党闯",comm:"490.00=1*350*1.4",ton:1,time:"2026-08-17 19:08:52",no:"202605308YHLT041",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"党闯",comm:"1470.00=3*350*1.4",ton:3,time:"2026-08-17 19:08:07",no:"202605298YHLT004",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"党闯",comm:"1470.00=3*350*1.4",ton:3,time:"2026-08-17 19:07:28",no:"202605308YHLT040",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"党闯",comm:"245.00=0.5*350*1.4",ton:0.5,time:"2026-08-17 19:06:41",no:"202605308YHLT039",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"党闯",comm:"1470.00=3*350*1.4",ton:3,time:"2026-08-17 19:05:55",no:"202605298YHLT003",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"张伟",comm:"700.00=2*350*1",ton:2,time:"2026-08-15 16:22:10",no:"202606108YHLT021",handover:"否",type:"小客户",cycle:"开拓期",reissue:"新客户补发",sales:"朱震"},
+  {name:"李明",comm:"350.00=1*350*1",ton:1,time:"2026-08-14 10:18:33",no:"202606108YHLT018",handover:"否",type:"小客户",cycle:"维护期",reissue:"低于标准报价",sales:"朱震"},
+  {name:"王强",comm:"0.00=5*350*0",ton:5,time:"2026-08-12 09:41:02",no:"202607018YHLT009",handover:"是",type:"KA客户",cycle:"维护期",reissue:"低于标准报价",sales:"朱震"},
+  {name:"赵磊",comm:"1050.00=3*350*1",ton:3.2483,time:"2026-08-10 14:05:47",no:"202607158YHLT012",handover:"否",type:"小客户",cycle:"开拓期",reissue:"",sales:"朱震"},
+  {name:"刘洋",comm:"0.00=2.5*350*0",ton:2.5,time:"2026-08-08 11:33:19",no:"202608018YHLT001",handover:"否",type:"KA客户",cycle:"维护期",reissue:"",sales:"朱震"}
+];
+
+let mainTab = "提成";
+let commCat = "预混料";
+let custType = "全部";
+let keyword = "";
+
+function parseComm(str){
+  const m = String(str).match(/^([\d.]+)=/);
+  return m ? Number(m[1]) : 0;
+}
+
+function currentRows(){
+  let rows = ROWS.slice();
+  if(custType !== "全部") rows = rows.filter(r => r.type === custType);
+  const q = keyword.trim();
+  if(q) rows = rows.filter(r => r.name.includes(q) || r.no.includes(q));
+  return rows;
+}
+
+function render(){
+  const isPremix = commCat === "预混料";
+  document.getElementById("premix-block").classList.toggle("hidden", !isPremix);
+  document.getElementById("other-block").classList.toggle("hidden", isPremix);
+  document.getElementById("footer").style.display = (mainTab === "提成" && isPremix) ? "block" : "none";
+  if(!isPremix) return;
+
+  const rows = currentRows();
+  document.getElementById("tbody").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${r.comm}</td>
+      <td>${r.ton}</td>
+      <td>${r.time}</td>
+      <td><a class="order-link" href="javascript:void(0)">${r.no}</a></td>
+      <td>${r.handover}</td>
+      <td>${r.type}</td>
+      <td>${r.cycle}</td>
+      <td>${r.sales}</td>
+      <td>${r.reissue || ""}</td>
+    </tr>
+  `).join("");
+
+  const tonSum = rows.reduce((s,r)=>s+Number(r.ton),0);
+  const commSum = rows.reduce((s,r)=>s+parseComm(r.comm),0);
+  const filtered = keyword || custType !== "全部";
+  document.getElementById("total").textContent = filtered
+    ? `${tonSum.toFixed(4).replace(/\.?0+$/,"")}吨，提成：${commSum.toFixed(2)}`
+    : "33.2483吨，提成：7272.96";
+}
+
+document.querySelectorAll(".top-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".top-tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    mainTab = btn.dataset.main;
+    document.getElementById("panel-提成").classList.toggle("hidden", mainTab!=="提成");
+    document.getElementById("panel-绩效").classList.toggle("hidden", mainTab!=="绩效");
+    document.getElementById("panel-站台单吨利润").classList.toggle("hidden", mainTab!=="站台单吨利润");
+    render();
+  });
+});
+
+document.querySelectorAll("#comm-seg button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#comm-seg button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    commCat = btn.dataset.commCat;
+    render();
+  });
+});
+
+document.querySelectorAll("#type-seg button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#type-seg button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    custType = btn.dataset.type;
+    render();
+  });
+});
+
+function doSearch(){
+  keyword = document.getElementById("kw").value || "";
+  render();
+}
+document.getElementById("btnSearch").addEventListener("click", doSearch);
+document.getElementById("kw").addEventListener("keydown",e=>{
+  if(e.key==="Enter") doSearch();
+});
+
+const params = new URLSearchParams(location.search);
+if(params.get("type") === "KA客户" || params.get("type") === "小客户"){
+  custType = params.get("type");
+  document.querySelectorAll("#type-seg button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.type === custType);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

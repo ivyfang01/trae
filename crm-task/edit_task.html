@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>修改任务</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .navbar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .nav-left { display: flex; align-items: center; gap: 20px; z-index: 1; }
+        .nav-btn { font-size: 22px; color: #333; cursor: pointer; line-height: 1; user-select: none; }
+        .nav-btn.back { font-size: 20px; }
+        .nav-title {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 17px; font-weight: 600; color: #333;
+        }
+        .nav-right { font-size: 22px; color: #333; cursor: pointer; z-index: 1; letter-spacing: 2px; }
+
+        .notice {
+            margin: 12px 16px 0;
+            padding: 12px 14px;
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #ad6800;
+            line-height: 1.6;
+        }
+        .notice strong { display: block; margin-bottom: 4px; font-size: 14px; color: #d48806; }
+        .notice ul { padding-left: 18px; margin-top: 6px; }
+        .notice li { margin-bottom: 2px; }
+        .notice.used {
+            background: #f5f5f5;
+            border-color: #d9d9d9;
+            color: #666;
+        }
+        .notice.used strong { color: #333; }
+
+        .quota-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 16px 0;
+            padding: 10px 12px;
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #389e0d;
+        }
+        .quota-bar.warn {
+            background: #fff2f0;
+            border-color: #ffccc7;
+            color: #cf1322;
+        }
+        .quota-bar .num { font-weight: 700; font-size: 16px; }
+
+        .form-container { background: #fff; margin-top: 8px; }
+        .group-header {
+            padding: 10px 16px; background: #f5f5f5;
+            font-size: 14px; font-weight: 500; color: #333;
+        }
+
+        /* 客户选择行 */
+        .customer-section { border-bottom: 1px solid #f0f0f0; }
+        .form-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px;
+        }
+        .form-row.no-arrow {
+            padding-bottom: 8px;
+            justify-content: flex-start;
+            gap: 8px;
+        }
+        .form-label { font-size: 15px; color: #333; white-space: nowrap; flex-shrink: 0; }
+        .required { color: #ff4d4f; margin-right: 2px; }
+        .form-arrow { font-size: 18px; color: #ccc; font-weight: 300; }
+
+        .form-tip {
+            font-size: 13px;
+            color: #fa8c16;
+            line-height: 1.4;
+        }
+
+        /* 标签样式 — 对齐创建页 */
+        .customer-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 16px 12px;
+            align-items: center;
+        }
+        .customer-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            background: #f5f5f5;
+            border: 1px solid #e8e8e8;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            max-width: 100%;
+        }
+        .customer-tag .name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 120px;
+        }
+        .customer-tag .tag-close {
+            color: #999;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            flex-shrink: 0;
+            padding: 0 2px;
+            user-select: none;
+        }
+        .customer-tag .tag-close:hover { color: #666; }
+        .customer-tag .tag-close.disabled {
+            color: #d9d9d9;
+            cursor: not-allowed;
+        }
+        .customer-tag.removed {
+            opacity: .45;
+            text-decoration: line-through;
+        }
+        .customer-tag.removed .tag-close { display: none; }
+
+        .form-tip.disabled-tip { color: #bfbfbf; }
+
+        .form-row.readonly { border-bottom: 1px solid #f0f0f0; cursor: default; }
+        .form-value { font-size: 15px; color: #999; }
+        .form-value.muted { color: #999; }
+
+        /* 修改原因 */
+        .reason-section {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .reason-section .form-label { margin-bottom: 10px; }
+        .reason-textarea {
+            width: 100%;
+            min-height: 100px;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.6;
+            font-family: inherit;
+        }
+        .reason-textarea::placeholder { color: #c0c4cc; }
+        .reason-textarea:disabled {
+            background: transparent;
+            color: #999;
+        }
+        .reason-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #c0c4cc;
+            margin-top: 4px;
+        }
+
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; gap: 12px; padding: 12px 16px; background: #fff;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn {
+            flex: 1; padding: 12px; border-radius: 6px;
+            font-size: 16px; font-weight: 500; cursor: pointer;
+        }
+        .btn-cancel { background: #fff; color: #333; border: 1px solid #d9d9d9; }
+        .btn-confirm { background: #1890ff; color: #fff; border: 1px solid #1890ff; }
+        .btn-confirm:disabled { background: #bae0ff; border-color: #bae0ff; cursor: not-allowed; }
+
+        .mask {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,.45); align-items: center; justify-content: center; padding: 24px;
+        }
+        .mask.show { display: flex; }
+        .dialog {
+            width: 100%; max-width: 320px; background: #fff; border-radius: 10px;
+            overflow: hidden; text-align: center;
+        }
+        .dialog-bd { padding: 22px 18px 16px; font-size: 15px; color: #333; line-height: 1.6; }
+        .dialog-bd .sub { margin-top: 8px; font-size: 13px; color: #999; }
+        .dialog-ft { display: flex; border-top: 1px solid #f0f0f0; }
+        .dialog-ft button {
+            flex: 1; border: none; background: #fff; padding: 14px 0;
+            font-size: 16px; cursor: pointer;
+        }
+        .dialog-ft button + button { border-left: 1px solid #f0f0f0; color: #1890ff; font-weight: 600; }
+
+        .toast {
+            display: none; position: fixed; left: 50%; top: 45%; transform: translate(-50%, -50%);
+            z-index: 200; background: rgba(0,0,0,.75); color: #fff;
+            padding: 10px 16px; border-radius: 6px; font-size: 14px; white-space: nowrap;
+        }
+        .toast.show { display: block; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-left">
+            <span class="nav-btn back" id="btnBack">&lt;</span>
+            <span class="nav-btn" id="btnClose">&times;</span>
+        </div>
+        <h1 class="nav-title">修改任务</h1>
+        <span class="nav-right">&hellip;</span>
+    </header>
+
+    <div class="notice" id="notice">
+        <strong>修改要求</strong>
+         <ul>
+            <li>修改客户名单，最多删减 1 个</li>
+            <li>修改客户只能修改1次</li>
+            
+        </ul>
+   </div>
+ <!-- 
+    <div class="quota-bar" id="quotaBar">
+        <span>剩余可删减客户：<span class="num" id="removeQuota">1</span> 个</span>
+        <span>剩余修改次数：<span class="num" id="editQuota">1</span> 次</span>
+    </div> -->
+
+    <main class="form-container">
+        <div class="group-header">客户名单</div>
+
+        <div class="customer-section">
+            <div class="form-row no-arrow">
+                <label class="form-label"><span class="required">*</span>客户</label>
+                <span class="form-tip" id="removeTip">最多删减1个客户</span>
+            </div>
+            <div class="customer-tags" id="customerTags"></div>
+        </div>
+
+        <div class="form-row readonly">
+            <label class="form-label"><span class="required">*</span>完成时间</label>
+            <span class="form-value">2026/8/30 周日</span>
+        </div>
+        <div class="form-row readonly">
+            <label class="form-label">开始时间</label>
+            <span class="form-value muted">2026/8/24 周一</span>
+        </div>
+
+        <div class="reason-section">
+            <div class="form-label"><span class="required">*</span>修改原因</div>
+            <textarea class="reason-textarea" id="reasonInput" maxlength="500" placeholder="请输入修改原因"></textarea>
+            <div class="reason-counter"><span id="reasonCount">0</span>/500</div>
+        </div>
+    </main>
+
+    <footer class="bottom-bar">
+        <button type="button" class="btn btn-cancel" id="btnCancel">取消</button>
+        <button type="button" class="btn btn-confirm" id="btnConfirm" disabled>确定</button>
+    </footer>
+
+    <div class="mask" id="confirmMask">
+        <div class="dialog">
+            <div class="dialog-bd">
+                确认提交任务修改？
+                <div class="sub" id="confirmText">将删减 1 个客户，提交后不可再次修改。</div>
+            </div>
+            <div class="dialog-ft">
+                <button type="button" id="dialogCancel">取消</button>
+                <button type="button" id="dialogOk">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var CUSTOMERS = [
+            { id: 1, name: "王志强" },
+            { id: 2, name: "闫冬" },
+            { id: 3, name: "候越" },
+            { id: 4, name: "般若" },
+            { id: 5, name: "道。。。" }
+        ];
+
+        var removedIds = [];
+        var maxRemove = 1;
+        var alreadyUsed = new URLSearchParams(location.search).get("used") === "1";
+        var LIMIT_MSG = "最多删减1个客户";
+
+        function toast(msg) {
+            var el = document.getElementById("toast");
+            el.textContent = msg;
+            el.classList.add("show");
+            clearTimeout(toast._t);
+            toast._t = setTimeout(function () { el.classList.remove("show"); }, 1800);
+        }
+
+        function renderTags() {
+            var container = document.getElementById("customerTags");
+            var canRemoveMore = !alreadyUsed && removedIds.length < maxRemove;
+
+            container.innerHTML = CUSTOMERS.map(function (c) {
+                var removed = removedIds.indexOf(c.id) !== -1;
+                var closeClass = "tag-close";
+                if (removed) {
+                    return (
+                        '<span class="customer-tag removed" data-id="' + c.id + '">' +
+                        '<span class="name">' + c.name + '</span></span>'
+                    );
+                }
+                if (!canRemoveMore) closeClass += " disabled";
+                return (
+                    '<span class="customer-tag" data-id="' + c.id + '">' +
+                    '<span class="name">' + c.name + '</span>' +
+                    '<span class="' + closeClass + '" data-id="' + c.id + '">&times;</span></span>'
+                );
+            }).join("");
+
+            container.querySelectorAll(".tag-close").forEach(function (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    if (alreadyUsed) return;
+                    if (removedIds.length >= maxRemove) {
+                        toast(LIMIT_MSG);
+                        return;
+                    }
+                    removedIds.push(Number(btn.getAttribute("data-id")));
+                    updateState();
+                });
+            });
+        }
+
+        function checkSubmitEnabled() {
+            var reason = document.getElementById("reasonInput").value.trim();
+            var hasRemove = removedIds.length > 0;
+            document.getElementById("btnConfirm").disabled = alreadyUsed || !hasRemove || !reason;
+        }
+
+        function updateState() {
+            renderTags();
+            if (!alreadyUsed) {
+                document.getElementById("removeTip").textContent = LIMIT_MSG;
+            }
+
+            if (removedIds.length) {
+                var name = CUSTOMERS.find(function (c) { return c.id === removedIds[0]; }).name;
+                document.getElementById("confirmText").textContent =
+                    "将删减客户「" + name + "」，提交后不可再次修改。";
+            }
+
+            checkSubmitEnabled();
+        }
+
+        function initUsedMode() {
+            if (!alreadyUsed) return;
+            document.getElementById("notice").classList.add("used");
+            document.getElementById("notice").innerHTML =
+                "<strong>本任务已修改过</strong>当前任务不支持再次修改，仅可查看客户名单与任务时间。";
+            document.getElementById("removeTip").className = "form-tip disabled-tip";
+            document.getElementById("removeTip").textContent = "该任务已完成修改，不可再次操作";
+            document.getElementById("reasonInput").disabled = true;
+            document.getElementById("reasonInput").value = "客户临时无法拜访，删减该客户";
+            document.getElementById("reasonCount").textContent = document.getElementById("reasonInput").value.length;
+            document.getElementById("btnConfirm").disabled = true;
+            document.getElementById("btnConfirm").textContent = "不可修改";
+            removedIds = [5];
+        }
+
+        document.getElementById("reasonInput").addEventListener("input", function () {
+            document.getElementById("reasonCount").textContent = this.value.length;
+            checkSubmitEnabled();
+        });
+
+        document.getElementById("btnConfirm").addEventListener("click", function () {
+            if (alreadyUsed || !removedIds.length) return;
+            if (!document.getElementById("reasonInput").value.trim()) {
+                toast("请填写修改原因");
+                return;
+            }
+            document.getElementById("confirmMask").classList.add("show");
+        });
+
+        document.getElementById("dialogCancel").addEventListener("click", function () {
+            document.getElementById("confirmMask").classList.remove("show");
+        });
+
+        document.getElementById("dialogOk").addEventListener("click", function () {
+            document.getElementById("confirmMask").classList.remove("show");
+            toast("修改已提交，本任务不可再次修改");
+            setTimeout(function () {
+                location.href = "edit_task.html?used=1";
+            }, 1200);
+        });
+
+        document.getElementById("btnCancel").addEventListener("click", function () { history.back(); });
+        document.getElementById("btnBack").addEventListener("click", function () { history.back(); });
+        document.getElementById("btnClose").addEventListener("click", function () { history.back(); });
+
+        initUsedMode();
+        updateState();
+    </script>
+</body>
+</html>

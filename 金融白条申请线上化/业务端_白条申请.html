@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>业务端 · 金融白条申请</title>
+<style>
+:root{
+  --blue:#1677ff;
+  --text:#1d2129;
+  --text-secondary:#4e5969;
+  --text-muted:#86909c;
+  --bg-page:#f2f3f5;
+  --bg-card:#ffffff;
+  --bg-blue-light:#e8f3ff;
+  --border:#f0f0f0;
+  --border-light:#e5e6eb;
+  --orange:#fa8c16;
+  --orange-bg:#fff7e6;
+  --green:#00b42a;
+  --red:#f53f3f;
+  --radius-card:12px;
+  --radius-sm:8px;
+  --shadow-card:0 1px 4px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg-page);color:var(--text);font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg-page);padding-bottom:24px}
+.nav{
+  background:var(--bg-card);color:var(--text);
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border);
+}
+.nav .back{
+  border:none;background:none;color:var(--text);font-size:22px;cursor:pointer;line-height:1;
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nav .title{font-size:17px;font-weight:600;color:var(--text);flex:1;text-align:center;margin-right:28px}
+.tabs{display:flex;background:var(--bg-card);border-bottom:1px solid var(--border)}
+.tab{flex:1;text-align:center;padding:12px 4px;border:none;background:none;font-size:14px;color:var(--text-muted);cursor:pointer;position:relative}
+.tab.active{color:var(--blue);font-weight:600}
+.tab.active::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:28px;height:3px;background:var(--blue);border-radius:2px}
+.panel{display:none;padding:12px}
+.panel.on{display:block}
+.card{background:var(--bg-card);border-radius:var(--radius-card);padding:14px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+.cust{font-size:16px;font-weight:600;color:var(--text)}
+.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--bg-blue-light);color:var(--blue);white-space:nowrap}
+.tag.warn{background:var(--orange-bg);color:var(--orange)}
+.tag.err{background:#ffece8;color:var(--red)}
+.tag.ok{background:#e8ffea;color:var(--green)}
+.meta{font-size:12px;color:var(--text-muted);line-height:1.7}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+.btn-check{background:var(--bg-blue-light);color:var(--blue);border:1px solid #bedaff;padding:6px 10px;white-space:nowrap;border-radius:var(--radius-sm)}
+.btn-block{width:100%;padding:12px;font-size:15px;border-radius:var(--radius-sm)}
+.form-item{margin-bottom:14px}
+.form-item label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+.form-item label .req{color:var(--red);margin-right:2px}
+.form-item input,.form-item select,.form-item textarea{
+  width:100%;height:40px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:0 10px;font-size:14px;outline:none;background:#fff;color:var(--text)
+}
+.form-item textarea{height:72px;padding:8px 10px;resize:none}
+.form-item input:focus,.form-item select:focus,.form-item textarea:focus{border-color:var(--blue)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{flex:1;min-width:90px;height:40px;border:1px solid var(--border-light);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text-secondary)}
+.seg input{display:none}
+.seg label:has(input:checked){border-color:var(--blue);background:var(--bg-blue-light);color:var(--blue);font-weight:600}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upload{
+  border:1px dashed var(--border-light);border-radius:var(--radius-sm);min-height:88px;padding:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:12px;background:#fafafa;cursor:pointer;gap:4px;text-align:center
+}
+.upload.field{min-height:72px;margin-top:0}
+.form-item .upload{width:100%}
+.upload.done{border-style:solid;border-color:#bedaff;background:var(--bg-blue-light);color:var(--blue)}
+.upload .ico{font-size:20px;line-height:1}
+.upload .hint{font-size:11px;color:var(--text-muted)}
+.upload.done .hint{color:var(--blue)}
+.sys-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sys-photo{border:1px solid var(--border-light);border-radius:var(--radius-sm);background:#fafafa;overflow:hidden}
+.sys-photo .ph{
+  height:110px;display:flex;align-items:center;justify-content:center;
+  background:var(--bg-blue-light);color:var(--blue);font-size:13px;font-weight:600
+}
+.sys-photo .cap{padding:8px 10px;font-size:12px;color:var(--text-secondary);border-top:1px solid var(--border)}
+.sys-photo .cap .from{color:var(--green);margin-left:6px}
+.sec{font-size:15px;font-weight:600;margin:4px 0 12px;color:var(--text)}
+.tip{font-size:12px;color:var(--orange);background:var(--orange-bg);padding:8px 10px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.6}
+.tip.blue{color:var(--blue);background:var(--bg-blue-light)}
+.tip.red{color:var(--red);background:#ffece8}
+.check-row{display:flex;gap:8px;align-items:center}
+.check-row input{flex:1}
+.check-status{font-size:12px;margin-top:6px}
+.check-status.ok{color:var(--green)}
+.check-status.no{color:var(--red)}
+.check-status.wait{color:var(--orange)}
+.timeline{padding-left:4px}
+.tl-item{position:relative;padding:0 0 16px 20px;border-left:2px solid var(--border)}
+.tl-item:last-child{border-left-color:transparent;padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:#c9cdd4}
+.tl-item.done::before{background:var(--blue)}
+.tl-item.cur::before{background:var(--green);box-shadow:0 0 0 3px rgba(0,180,42,.2)}
+.tl-t{font-size:14px;font-weight:600;color:var(--text)}
+.tl-d{font-size:12px;color:var(--text-muted);margin-top:2px}
+.reject{background:#ffece8;color:var(--red);font-size:12px;padding:8px 10px;border-radius:var(--radius-sm);margin:8px 0}
+.footer-bar{
+  position:sticky;bottom:0;background:var(--bg-card);padding:10px 12px;
+  border-top:1px solid var(--border);margin:12px -12px -12px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.04)
+}
+.hidden{display:none!important}
+.sub-lab{font-size:12px;color:var(--text-muted);margin:-4px 0 10px}
+#view-list{padding:0}
+#view-list .tabs + div{padding:12px}
+.queue-box{
+  margin-top:10px;padding:10px 12px;border-radius:var(--radius-sm);
+  background:var(--orange-bg);color:var(--orange);font-size:13px;font-weight:600;line-height:1.5
+}
+.kv{display:grid;grid-template-columns:88px 1fr;gap:8px 10px;font-size:13px}
+.kv .k{color:var(--text-muted)}
+.kv .v{color:var(--text);word-break:break-all}
+.mat-list{display:flex;flex-direction:column;gap:8px}
+.mat-item{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 12px;background:#fafafa;border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:13px
+}
+.mat-item .name{color:var(--text);flex:1}
+.mat-item .st{font-size:12px;color:var(--green);white-space:nowrap}
+.mat-item .st.wait{color:var(--orange)}
+.mat-item .st.sys{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav">
+    <button class="back" type="button" onclick="goList()">‹</button>
+    <div class="title" id="navTitle">金融白条申请</div>
+  </div>
+
+  <div class="panel on" id="view-list">
+    <div class="tabs">
+      <button class="tab active" data-filter="全部">全部</button>
+      <button class="tab" data-filter="进行中">进行中</button>
+      <button class="tab" data-filter="已驳回">已驳回</button>
+      <button class="tab" data-filter="已办结">已办结</button>
+    </div>
+    <div style="padding:12px" id="listBody"></div>
+    <div style="padding:0 12px 12px">
+      <button class="btn btn-primary btn-block" type="button" onclick="openForm('初审')">+ 新建初审申请</button>
+    </div>
+  </div>
+
+  <div class="panel" id="view-progress">
+    <div class="card">
+      <div class="card-hd">
+        <span class="cust" id="p-name">—</span>
+        <span class="tag" id="p-status">—</span>
+      </div>
+      <div class="meta" id="p-meta"></div>
+      <div class="queue-box hidden" id="p-queue"></div>
+      <div class="reject hidden" id="p-reject"></div>
+      <div class="actions" id="p-actions"></div>
+    </div>
+    <div class="card">
+      <div class="sec">申请进度</div>
+      <div class="timeline" id="p-timeline"></div>
+    </div>
+    <div class="card">
+      <div class="sec">已提交资料</div>
+      <div class="kv" id="p-info"></div>
+      <div class="mat-list" id="p-mats" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- 初审 -->
+  <div class="panel" id="view-初审">
+    <div class="card">
+      <div class="form-item">
+        <label><span class="req">*</span>客户名称</label>
+        <input value="尚兆立养殖场" />
+      </div>
+
+      <div class="sec">营业执照照片</div>
+      <div class="sys-photos" style="grid-template-columns:1fr">
+        <div class="sys-photo">
+          <div class="ph">营业执照（系统照片）</div>
+          <div class="cap">来源：客户档案</div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:16px">法人身份证照片</div>
+      <div class="sys-photos">
+        <div class="sys-photo">
+          <div class="ph">身份证人像面</div>
+        </div>
+        <div class="sys-photo">
+          <div class="ph">身份证国徽面</div>
+        </div>
+      </div>
+
+      <div class="form-item" style="margin-top:16px">
+        <label><span class="req">*</span>实名手机号</label>
+        <input value="13812345678" />
+      </div>
+
+      <div class="sec">个人征信报告</div>
+      <div class="tip blue">请通过所选银行 APP 将个人征信直接发送至金融部对接人邮箱：名字拼音@shyuanyao.com，勿自行下载转发。</div>
+      <div class="form-item">
+        <label><span class="req">*</span>征信银行</label>
+        <select id="creditBank">
+          <option value="">请选择征信报告来源银行</option>
+          <option>建设银行</option>
+          <option>工商银行</option>
+          <option>农业银行</option>
+          <option>中国银行</option>
+          <option>交通银行</option>
+          <option>上海银行</option>
+          <option>其他银行</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <button class="btn btn-check" type="button" onclick="checkMail('credit')">检查是否已收到</button>
+      </div>
+
+      <div class="form-item">
+        <label><span class="req">*</span>是否全价料白条</label>
+        <div class="seg" id="fullPriceSeg">
+          <label><input type="radio" name="fullPrice" value="否" checked onchange="toggleBaihang()" /><span>否</span></label>
+          <label><input type="radio" name="fullPrice" value="是" onchange="toggleBaihang()" /><span>是</span></label>
+        </div>
+      </div>
+      <div id="baihangBlock" class="hidden">
+        <div class="sec" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span>百行征信报告</span>
+          <button class="btn btn-check" type="button" onclick="checkMail('baihang')">检查是否发送成功</button>
+        </div>
+      </div>
+
+      <div class="form-item">
+        <label>备注</label>
+        <textarea placeholder="选填"></textarea>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <button class="btn btn-primary btn-block" type="button" onclick="submitChuShen()">提交初审</button>
+    </div>
+  </div>
+
+  <!-- 正式进件 -->
+  <div class="panel" id="view-正式">
+    <div class="card">
+      <div class="form-item">
+        <label>客户</label>
+        <input value="党闯养殖专业合作社" disabled />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>申请模板</label>
+        <select id="tpl" onchange="syncFormal()">
+          <option value="预混料">预混料白条</option>
+          <option value="全价料">全价料白条</option>
+          <option value="大宗">大宗免息白条</option>
+          <option value="青年鸡">青年鸡白条</option>
+          <option value="水产">水产客户</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label><span class="req">*</span>上银额度（万）</label>
+          <input id="amtShang" type="number" value="20" oninput="syncFormal()" />
+        </div>
+        <div class="form-item" id="xiAmtWrap">
+          <label><span class="req">*</span>锡商额度（万）</label>
+          <input id="amtXi" type="number" value="10" oninput="syncFormal()" />
+        </div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>申请总额度（万）</label>
+        <input id="amtTotal" value="30" disabled />
+        <div class="sub-lab" id="amtTip">当前档位：≥30万（将展示加严资料与保证金提示）</div>
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label><span class="req">*</span>上银产品类型</label>
+          <select><option>免息30天</option><option>免息X天</option><option>不申请上银</option></select>
+        </div>
+        <div class="form-item" id="xiTypeWrap">
+          <label><span class="req">*</span>锡商产品类型</label>
+          <select><option>免息X天</option><option>标准产品</option></select>
+        </div>
+      </div>
+      <div class="form-item hidden" id="noShangReason">
+        <label><span class="req">*</span>不申请上银原因</label>
+        <input placeholder="请说明原因" />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>申请原因</label>
+        <textarea placeholder="信誉结算、合作次数、免息诉求等">信誉结算良好，和平台合作过12次</textarea>
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label><span class="req">*</span>养殖种类</label>
+          <select id="breed" onchange="syncFormal()">
+            <option>蛋鸡</option><option>肉鸡</option><option>青年鸡</option>
+            <option>猪</option><option>奶牛</option><option>肉牛</option>
+            <option>鸭</option><option>鹅</option><option>羊</option><option>水产</option><option>其他</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>养殖规模</label>
+          <input id="scale" placeholder="如：3万羽 / 200头 / 10亩" value="3万羽" />
+        </div>
+      </div>
+
+      <div class="sec">模板结构化信息</div>
+      <div id="tplFields"></div>
+
+      <div id="commonFiles"></div>
+
+      <div class="sec" id="dynTitle">额度档位追加资料</div>
+      <div class="tip" id="dynTip"></div>
+      <div id="dynFiles"></div>
+
+      <div id="specialBlock" class="hidden">
+        <div class="sec">专项政策资料</div>
+        <div class="tip red" id="specialTip"></div>
+        <div id="specialFiles"></div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <button class="btn btn-primary btn-block" type="button" onclick="toast('正式进件已提交，等待金融审批')">提交正式进件</button>
+    </div>
+  </div>
+
+  <!-- 担保人 -->
+  <div class="panel" id="view-担保人">
+    <div class="card">
+      <div class="tip">银行审批通过后补充担保人资料。养猪客户按 2026-05-10 政策：年龄 22–50 周岁，并加严代偿能力证明。</div>
+      <div class="form-item">
+        <label><span class="req">*</span>是否养猪客户加严担保</label>
+        <div class="seg">
+          <label><input type="radio" name="pigG" value="否" checked onchange="togglePigG()" /><span>否</span></label>
+          <label><input type="radio" name="pigG" value="是" onchange="togglePigG()" /><span>是</span></label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label><span class="req">*</span>担保人姓名</label>
+          <input placeholder="请输入" />
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>担保人手机号</label>
+          <input placeholder="请输入" />
+        </div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>身份证正面</label>
+        <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>身份证反面</label>
+        <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>资产证明</label>
+        <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+      </div>
+      <div class="form-item">
+        <label>银行要求其他材料</label>
+        <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+      </div>
+      <div id="pigGBlock" class="hidden">
+        <div class="sec" style="margin-top:14px">养猪 · 代偿能力评估资料</div>
+        <div class="form-item">
+          <label><span class="req">*</span>近1月社保缴纳证明</label>
+          <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>近6个月工资卡流水</label>
+          <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>工作单位证明</label>
+          <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>可交易资产证明</label>
+          <div class="upload field" data-up><span class="ico">＋</span><span class="hint">点击上传</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <button class="btn btn-primary btn-block" type="button" onclick="toast('担保人资料已提交，等待金融审核')">提交补充资料</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ORDERS = [
+  {id:1,name:"尚兆立养殖场",bank:"锡商+上银",tpl:"预混料",status:"初审审核中",group:"进行中",
+   meta:"申请人 朱震", submitTime:"2026-09-09 14:22",
+   queue:3, mobile:"13812345678", creditBank:"建设银行", fullPrice:"否",
+   materials:[
+     {name:"营业执照照片",st:"系统带入",cls:"sys"},
+     {name:"法人身份证正反面",st:"系统带入",cls:"sys"},
+     {name:"个人征信报告（建设银行）",st:"邮箱已收到",cls:""}
+   ],
+   timeline:[
+     {t:"提交初审资料",d:"2026-09-09 14:22",s:"done"},
+     {t:"征信/风控查询",d:"个人征信已校验 · 风控已跑批",s:"done"},
+     {t:"金融初审",d:"审核中",s:"cur"},
+     {t:"正式进件",d:"待开始",s:""},
+     {t:"银行审批",d:"待开始",s:""},
+     {t:"补充担保人 / 启用",d:"待开始",s:""}
+   ],actions:[{label:"补充正式进件资料",type:"primary",go:"正式"}]},
+  {id:2,name:"党闯养殖专业合作社",bank:"上银白条",tpl:"全价料",status:"初审通过",group:"进行中",
+   meta:"", submitTime:"2026-09-08 09:30", passTime:"2026-09-08 09:30",
+   mobile:"13900001111", creditBank:"上海银行", fullPrice:"是",
+   materials:[
+     {name:"营业执照照片",st:"系统带入",cls:"sys"},
+     {name:"法人身份证正反面",st:"系统带入",cls:"sys"},
+     {name:"个人征信报告（上海银行）",st:"邮箱已收到",cls:""},
+     {name:"百行征信报告",st:"邮箱已收到",cls:""}
+   ],
+   timeline:[
+     {t:"初审通过",d:"2026-09-08 09:30",s:"done"},
+     {t:"正式进件",d:"待按全价料模板补充资料",s:"cur"},
+     {t:"客户上银APP申请",d:"待正式通过后通知",s:""},
+     {t:"银行审批 / 补担保人",d:"待开始",s:""}
+   ],actions:[{label:"补充正式进件资料",type:"primary",go:"正式"}]},
+  {id:3,name:"李明蛋鸡场",bank:"锡商白条",tpl:"预混料",status:"初审已驳回",group:"已驳回",
+   reject:"个人征信邮箱未收到；请重新在银行 APP 发至金融部邮箱后点击「检查是否已收到」。",
+   meta:"驳回时间 2026-09-06 16:05 · 申请人 朱震", submitTime:"2026-09-05 11:00",
+   mobile:"13700002222", creditBank:"工商银行", fullPrice:"否",
+   materials:[
+     {name:"营业执照照片",st:"系统带入",cls:"sys"},
+     {name:"法人身份证正反面",st:"系统带入",cls:"sys"},
+     {name:"个人征信报告（工商银行）",st:"未收到",cls:"wait"}
+   ],
+   timeline:[{t:"初审驳回",d:"2026-09-06 16:05",s:"cur"},{t:"补资料重提",d:"待处理",s:""}],
+   actions:[{label:"修改资料",type:"primary",go:"修改资料"}]},
+  {id:6,name:"张伟养殖场",bank:"上银白条",tpl:"预混料",status:"进件资料被驳回",group:"已驳回",
+   reject:"银行流水时间跨度不足6个月，请补充近1年完整流水后重提。",
+   meta:"驳回时间 2026-09-09 15:20 · 申请人 朱震", submitTime:"2026-09-08 16:40",
+   mobile:"13400005555", creditBank:"建设银行", fullPrice:"否",
+   materials:[
+     {name:"营业执照 / 法人身份证",st:"已归档",cls:""},
+     {name:"个人征信报告",st:"已归档",cls:""},
+     {name:"正式进件资料包",st:"已驳回",cls:"wait"}
+   ],
+   timeline:[
+     {t:"初审通过",d:"2026-09-07 10:00",s:"done"},
+     {t:"提交正式进件",d:"2026-09-08 16:40",s:"done"},
+     {t:"正式进件驳回",d:"2026-09-09 15:20",s:"cur"},
+     {t:"重新补充进件资料",d:"待业务员处理",s:""}
+   ],
+   actions:[{label:"重新补充进件资料",type:"primary",go:"正式"}]},
+  {id:7,name:"周敏蛋鸡场",bank:"上银白条",tpl:"预混料",status:"正式进件审核中",group:"进行中",
+   meta:"金融审核中", submitTime:"2026-09-09 11:05",
+   queue:2, mobile:"13300006666", creditBank:"上海银行", fullPrice:"否",
+   materials:[
+     {name:"营业执照 / 法人身份证",st:"已归档",cls:""},
+     {name:"个人征信报告",st:"已归档",cls:""},
+     {name:"正式进件资料包",st:"已提交",cls:""}
+   ],
+   timeline:[
+     {t:"初审通过",d:"2026-09-08 10:00",s:"done"},
+     {t:"提交正式进件",d:"2026-09-09 11:05",s:"done"},
+     {t:"正式进件审核",d:"审核中",s:"cur"},
+     {t:"银行审批",d:"待开始",s:""}
+   ],actions:[]},
+  {id:8,name:"陈浩养殖合作社",bank:"上银白条",bankChannel:"上银",tpl:"全价料",status:"进件资料审核通过",group:"进行中",
+   meta:"请引导客户申请白条", submitTime:"2026-09-07 14:00", passTime:"2026-09-09 17:10",
+   amt:"30万", amtShang:"30", amtXi:"0",
+   mobile:"13200007777", creditBank:"上海银行", fullPrice:"是",
+   materials:[
+     {name:"初审资料",st:"已归档",cls:""},
+     {name:"正式进件资料包",st:"审核通过",cls:""}
+   ],
+   timeline:[
+     {t:"正式进件审核通过",d:"2026-09-09 17:10",s:"done"},
+     {t:"申请白条（上银APP）",d:"待客户申请",s:"cur"},
+     {t:"银行审批",d:"待客户完成申请",s:""}
+   ],actions:[{label:"申请白条",type:"primary",go:"申请白条"}]},
+  {id:9,name:"孙丽水产养殖",bank:"锡商白条",bankChannel:"锡商",tpl:"水产",status:"银行审核中",group:"进行中",
+   meta:"资料已推送锡商，等待银行审批结果", submitTime:"2026-09-06 09:30", passTime:"2026-09-08 11:00",
+   mobile:"13100008888", creditBank:"建设银行", fullPrice:"否",
+   materials:[
+     {name:"初审/正式资料",st:"已推送银行",cls:""}
+   ],
+   timeline:[
+     {t:"正式进件审核通过",d:"2026-09-08 11:00",s:"done"},
+     {t:"推送锡商银行",d:"接口已推送",s:"done"},
+     {t:"银行审核",d:"审核中",s:"cur"},
+     {t:"补充担保人 / 启用",d:"待开始",s:""}
+   ],actions:[]},
+  {id:10,name:"吴强牧场",bank:"上银白条",tpl:"大宗",status:"银行审核通过",group:"进行中",
+   meta:"银行审核通过时间 2026-09-10 09:12", submitTime:"2026-09-02 10:00", passTime:"2026-09-10 09:12",
+   mobile:"13000009999", creditBank:"工商银行", fullPrice:"否",
+   materials:[
+     {name:"初审/正式资料",st:"已归档",cls:""},
+     {name:"担保人资料",st:"待补充",cls:"wait"}
+   ],
+   timeline:[
+     {t:"银行审核通过",d:"2026-09-10 09:12",s:"done"},
+     {t:"补充担保人资料",d:"待业务员提交",s:"cur"},
+     {t:"启用配置（已有）",d:"待开始",s:""}
+   ],actions:[{label:"补充担保人资料",type:"primary",go:"担保人"}]},
+  {id:12,name:"刘洋蛋鸡合作社",bank:"上银白条",bankChannel:"上银",tpl:"全价料",status:"待开启配置",group:"进行中",
+   meta:"", submitTime:"2026-08-20 09:00", passTime:"2026-09-09 11:00",
+   amt:"40万", amtShang:"40", amtXi:"0",
+   mobile:"12800001212", creditBank:"上海银行", fullPrice:"是",
+   materials:[
+     {name:"初审/正式资料",st:"已归档",cls:""},
+     {name:"银行审批结果",st:"已通过",cls:""}
+   ],
+   timeline:[
+     {t:"银行审核通过",d:"2026-09-09 11:00",s:"done"},
+     {t:"开启配置（已有流程）",d:"待处理",s:"cur"},
+     {t:"办结",d:"待开始",s:""}
+   ],actions:[]},
+  {id:5,name:"赵磊养殖场",bank:"锡商白条",bankChannel:"锡商",tpl:"预混料",status:"已办结",group:"已办结",
+   meta:"额度已启用 2026-08-28", submitTime:"2026-08-10 09:00", passTime:"2026-08-28",
+   amt:"25万", amtShang:"10", amtXi:"15",
+   mobile:"13500004444", creditBank:"农业银行", fullPrice:"否",
+   materials:[
+     {name:"营业执照 / 法人身份证",st:"已归档",cls:""},
+     {name:"个人征信报告",st:"已归档",cls:""},
+     {name:"正式进件资料包",st:"已归档",cls:""},
+     {name:"担保人资料",st:"已归档",cls:""}
+   ],
+   timeline:[{t:"全流程完成",d:"2026-08-28",s:"done"}],actions:[]},
+  {id:13,name:"马超饲料经营部",bank:"上银白条",bankChannel:"上银",tpl:"大宗",status:"禁用",group:"已办结",
+   meta:"禁用时间 2026-09-05 10:00", submitTime:"2026-07-12 09:00", passTime:"2026-09-05 10:00",
+   amt:"50万", amtShang:"50", amtXi:"0",
+   mobile:"12700001313", creditBank:"工商银行", fullPrice:"否",
+   materials:[
+     {name:"初审/正式资料",st:"已归档",cls:""},
+     {name:"启用记录",st:"已禁用",cls:"wait"}
+   ],
+   timeline:[
+     {t:"额度启用",d:"2026-08-01",s:"done"},
+     {t:"禁用",d:"2026-09-05 10:00",s:"cur"}
+   ],actions:[]}
+];
+
+let filter="全部", stack=["list"];
+function toast(m){alert(m)}
+function show(id){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  const viewId = id==="修改资料" ? "初审" : id;
+  document.getElementById("view-"+viewId).classList.add("on");
+  const titles={list:"金融白条申请",progress:"申请详情","初审":"初审进件","修改资料":"修改资料","正式":"正式进件","担保人":"补充担保人资料"};
+  document.getElementById("navTitle").textContent=titles[id]||"金融白条申请";
+  const submitBtn=document.querySelector("#view-初审 .footer-bar .btn-primary");
+  if(submitBtn){
+    submitBtn.textContent = id==="修改资料" ? "提交修改" : "提交初审";
+  }
+  const formalBtn=document.querySelector("#view-正式 .footer-bar .btn-primary");
+  if(viewId==="正式"){
+    const lastAction = window.__lastFormalAction || "";
+    if(formalBtn) formalBtn.textContent = lastAction==="重新补充进件资料" ? "重新提交正式进件" : "提交正式进件";
+    document.getElementById("navTitle").textContent = lastAction==="重新补充进件资料" ? "重新补充进件资料" : "正式进件";
+    syncFormal();
+  }
+}
+function goList(){ if(stack.length>1){stack.pop();show(stack[stack.length-1])} else show("list") }
+function openForm(name, actionLabel){
+  window.__lastFormalAction = actionLabel || "";
+  if(name==="申请白条"){
+    const ch = window.__lastBankChannel || "银行";
+    toast(ch==="上银"
+      ? "请打开上银APP完成白条申请（已向客户发送引导消息）"
+      : "锡商路径：确认资料接口推送银行，进入银行审核");
+    return;
+  }
+  stack.push(name); show(name);
+}
+function openProgress(id){
+  const o=ORDERS.find(x=>x.id===id); if(!o) return;
+  document.getElementById("p-name").textContent=o.name;
+  const st=document.getElementById("p-status");
+  st.textContent=o.status;
+  const isChuShen = (o.status||"").startsWith("初审") && o.status!=="初审通过";
+  st.className="tag"+(o.group==="已驳回"||o.status==="禁用"?" err":o.group==="已办结"||o.status==="初审通过"||o.status==="进件资料审核通过"||o.status==="审核通过"||o.status==="银行审核通过"?" ok":(o.status.includes("待")||o.status.includes("审核中")?" warn":""));
+  const timeLine = o.submitTime ? `提交时间 ${o.submitTime}` : "";
+  if(o.status==="初审通过"){
+    document.getElementById("p-meta").innerHTML = `初审通过时间 ${o.passTime||o.submitTime||"—"}`;
+  }else if(o.status==="进件资料审核通过"||o.status==="审核通过"){
+    document.getElementById("p-meta").innerHTML = [
+      `合作银行：${o.bankChannel||o.bank||"—"}`,
+      `额度：${o.amt||"—"}`,
+      `审核通过时间 ${o.passTime||"—"}`
+    ].join("<br>");
+  }else if(o.status==="银行审核通过"){
+    document.getElementById("p-meta").innerHTML = o.meta||`银行审核通过时间 ${o.passTime||"—"}`;
+  }else if(o.status==="待开启配置"){
+    document.getElementById("p-meta").innerHTML = [
+      `合作银行：${o.bankChannel||o.bank||"—"}`,
+      `额度：${o.amt||"—"}`
+    ].join("<br>");
+  }else if(o.status==="正式进件审核中"){
+    document.getElementById("p-meta").innerHTML = [o.submitTime?`提交时间 ${o.submitTime}`:"", o.meta||""].filter(Boolean).join("<br>");
+  }else if(o.status==="银行审核中"){
+    document.getElementById("p-meta").innerHTML = [
+      `合作银行：${o.bankChannel||o.bank||"—"}`,
+      o.meta||"银行审核中，请耐心等待"
+    ].filter(Boolean).join("<br>");
+  }else if(o.status==="已办结"){
+    document.getElementById("p-meta").innerHTML = [
+      `合作银行：${o.bankChannel||o.bank||"—"}`,
+      `金额：${o.amt||"—"}`,
+      o.meta||""
+    ].filter(Boolean).join("<br>");
+  }else if(o.status==="禁用"){
+    document.getElementById("p-meta").innerHTML = [
+      `合作银行：${o.bankChannel||o.bank||"—"}`,
+      `金额：${o.amt||"—"}`,
+      o.meta||""
+    ].filter(Boolean).join("<br>");
+  }else if(o.status==="初审已驳回"||o.status==="进件资料被驳回"||o.status==="正式已驳回"){
+    document.getElementById("p-meta").innerHTML = o.meta||"";
+  }else{
+    document.getElementById("p-meta").innerHTML = isChuShen
+      ? [timeLine, o.meta||""].filter(Boolean).join("<br>")
+      : `${o.bank} · ${o.tpl}<br>${[timeLine, o.meta||""].filter(Boolean).join(" · ")}`;
+  }
+  const qb=document.getElementById("p-queue");
+  if(typeof o.queue==="number"){
+    qb.classList.remove("hidden");
+    qb.textContent="前面还有 "+o.queue+" 位客户排队审核中";
+  }else{
+    qb.classList.add("hidden");
+    qb.textContent="";
+  }
+
+  const rj=document.getElementById("p-reject");
+  if(o.reject){rj.textContent="驳回原因："+o.reject;rj.classList.remove("hidden")} else rj.classList.add("hidden");
+
+  document.getElementById("p-timeline").innerHTML=(o.timeline||[]).map(x=>`
+    <div class="tl-item ${x.s}">
+      <div class="tl-t">${x.t}</div>
+      <div class="tl-d">${x.d}</div>
+    </div>
+  `).join("");
+
+  document.getElementById("p-info").innerHTML=`
+    <div class="k">提交时间</div><div class="v">${o.submitTime||"—"}</div>
+    <div class="k">实名手机号</div><div class="v">${o.mobile||"—"}</div>
+    <div class="k">征信银行</div><div class="v">${o.creditBank||"—"}</div>
+    <div class="k">全价料白条</div><div class="v">${o.fullPrice||"—"}</div>
+    <div class="k">合作银行</div><div class="v">${o.bankChannel||o.bank||"—"}</div>
+    <div class="k">申请额度</div><div class="v">${o.amt||"—"}</div>
+    <div class="k">产品模板</div><div class="v">${o.tpl||"—"}</div>
+  `;
+  document.getElementById("p-mats").innerHTML=(o.materials||[]).map(m=>`
+    <div class="mat-item">
+      <span class="name">${m.name}</span>
+      <span class="st ${m.cls||""}">${m.st}</span>
+    </div>
+  `).join("") || `<div class="meta">暂无资料</div>`;
+
+  window.__lastBankChannel = o.bankChannel || "";
+  document.getElementById("p-actions").innerHTML=(o.actions||[]).map(a=>`
+    <button class="btn ${a.type==="primary"?"btn-primary":"btn-ghost"}" type="button" onclick="window.__lastBankChannel='${o.bankChannel||""}';openForm('${a.go}','${a.label}')">${a.label}</button>
+  `).join("");
+  stack.push("progress"); show("progress");
+}
+function renderList(){
+  const rows=ORDERS.filter(o=>filter==="全部"||o.group===filter);
+  document.getElementById("listBody").innerHTML=rows.map(o=>{
+    const cls=o.group==="已驳回"||o.status==="禁用"?"err":o.group==="已办结"||o.status==="初审通过"||o.status==="进件资料审核通过"||o.status==="审核通过"||o.status==="银行审核通过"?"ok":(o.status.includes("待")||o.status.includes("审核中"))?"warn":"";
+    const isChuShen=(o.status||"").startsWith("初审") && o.status!=="初审通过";
+    const timeLine=o.submitTime?`提交时间 ${o.submitTime}`:"";
+    let metaHtml="";
+    if(o.status==="初审通过"){
+      metaHtml=`初审通过时间 ${o.passTime||o.submitTime||"—"}`;
+    }else if(o.status==="进件资料审核通过"||o.status==="审核通过"){
+      metaHtml=`合作银行：${o.bankChannel||"—"}<br>额度：${o.amt||"—"}<br>审核通过时间 ${o.passTime||"—"}`;
+    }else if(o.status==="银行审核通过"){
+      metaHtml=o.meta||`银行审核通过时间 ${o.passTime||"—"}`;
+    }else if(o.status==="待开启配置"){
+      metaHtml=`合作银行：${o.bankChannel||o.bank||"—"}<br>额度：${o.amt||"—"}`;
+    }else if(o.status==="正式进件审核中"){
+      metaHtml=`${timeLine?timeLine+"<br>":""}${typeof o.queue==="number"?`<span style="color:var(--orange)">前面还有 ${o.queue} 位客户排队审核中</span>`:(o.meta||"金融审核中")}`;
+    }else if(o.status==="银行审核中"){
+      metaHtml=`合作银行：${o.bankChannel||o.bank||"—"}<br>${o.meta||"银行审核中，请耐心等待"}`;
+    }else if(o.status==="已办结"){
+      metaHtml=`合作银行：${o.bankChannel||o.bank||"—"}<br>金额：${o.amt||"—"}`;
+    }else if(o.status==="禁用"){
+      metaHtml=`合作银行：${o.bankChannel||o.bank||"—"}<br>金额：${o.amt||"—"}`;
+    }else if(o.status==="初审已驳回"||o.status==="进件资料被驳回"||o.status==="正式已驳回"){
+      metaHtml=o.meta||"";
+    }else if(typeof o.queue==="number"){
+      metaHtml=`${timeLine?timeLine+"<br>":""}<span style="color:var(--orange)">前面还有 ${o.queue} 位客户排队审核中</span>`;
+    }else if(isChuShen){
+      metaHtml=[timeLine, o.meta||""].filter(Boolean).join("<br>");
+    }else{
+      metaHtml=`${o.bank} · ${o.tpl}<br>${[timeLine, o.meta||""].filter(Boolean).join(" · ")}`;
+    }
+    const actionBtns=(o.actions||[]).map(a=>`
+      <button class="btn ${a.type==="primary"?"btn-primary":"btn-ghost"}" type="button"
+        onclick="event.stopPropagation();window.__lastBankChannel='${o.bankChannel||""}';openForm('${a.go}','${a.label}')">${a.label}</button>
+    `).join("");
+    return `<div class="card" onclick="openProgress(${o.id})" style="cursor:pointer">
+      <div class="card-hd"><span class="cust">${o.name}</span><span class="tag ${cls}">${o.status}</span></div>
+      <div class="meta">${metaHtml}</div>
+      ${o.reject?`<div class="reject">驳回原因：${o.reject}</div>`:""}
+      ${actionBtns?`<div class="actions" onclick="event.stopPropagation()">${actionBtns}</div>`:""}
+    </div>`;
+  }).join("")||`<div class="card" style="text-align:center;color:#999">暂无申请</div>`;
+}
+function toggleBaihang(){
+  const yes=document.querySelector('input[name="fullPrice"]:checked').value==="是";
+  document.getElementById("baihangBlock").classList.toggle("hidden",!yes);
+}
+function checkMail(wh){
+  if(wh==="credit"){
+    toast("个人征信已收到 · 校验通过（原型模拟）");
+    return;
+  }
+  toast("百行征信已收到 · 校验通过（原型模拟）");
+}
+function submitChuShen(){
+  if(!document.getElementById("creditBank").value){
+    toast("请选择征信银行");return
+  }
+  toast("已提交初审，已触发风控查询，等待金融审核");
+}
+function togglePigG(){
+  const yes=document.querySelector('input[name="pigG"]:checked').value==="是";
+  document.getElementById("pigGBlock").classList.toggle("hidden",!yes);
+}
+function upCell(name,done){
+  return `<div class="upload ${done?"done":""}" data-up><span class="ico">${done?"✓":"＋"}</span><span>${name}</span></div>`;
+}
+function upField(name, opts){
+  const o=opts||{};
+  const req=o.req!==false ? `<span class="req">*</span>` : "";
+  const done=!!o.done;
+  return `<div class="form-item">
+    <label>${req}${name}</label>
+    <div class="upload field ${done?"done":""}" data-up>
+      <span class="ico">${done?"✓":"＋"}</span>
+      <span class="hint">${done?"已上传，点击可重传":"点击上传"}</span>
+    </div>
+  </div>`;
+}
+function syncFormal(){
+  const tpl=document.getElementById("tpl").value;
+  const shang=Number(document.getElementById("amtShang").value||0);
+  const xi=Number(document.getElementById("amtXi").value||0);
+  const isFull=tpl==="全价料";
+  document.getElementById("xiAmtWrap").classList.toggle("hidden",isFull);
+  document.getElementById("xiTypeWrap").classList.toggle("hidden",isFull);
+  const total=isFull?shang:(shang+xi);
+  document.getElementById("amtTotal").value=total;
+  const ge30=total>=30;
+  document.getElementById("amtTip").textContent=ge30
+    ?`当前档位：≥30万（加严资料；保证金：${total>=50?"≥10%":"30–50万至少5%"}）`
+    :"当前档位：＜30万";
+
+  let fields="";
+  if(tpl==="预混料"){
+    fields=`
+      <div class="row2"><div class="form-item"><label>合作次数</label><input value="12" /></div>
+      <div class="form-item"><label>免息天数</label><input value="30" /></div></div>
+      <div class="form-item"><label>是否绑定销售预混料</label>
+        <div class="seg"><label><input type="radio" name="bind" checked/><span>是</span></label>
+        <label><input type="radio" name="bind"/><span>否</span></label></div></div>
+      <div class="row2"><div class="form-item"><label>预混料月吨数</label><input value="8" /></div>
+      <div class="form-item"><label>预混料报价（元）</label><input value="3200" /></div></div>
+      <div class="form-item"><label>是否平台收蛋/鸡粪客户</label>
+        <div class="seg"><label><input type="checkbox"/><span>收蛋</span></label>
+        <label><input type="checkbox"/><span>鸡粪</span></label></div></div>`;
+  }else if(tpl==="全价料"){
+    fields=`
+      <div class="form-item"><label>客户类型</label><input value="养殖户" /></div>
+      <div class="row2"><div class="form-item"><label>全价料月吨数</label><input value="40" /></div>
+      <div class="form-item"><label>全价料厂家</label><input placeholder="厂家" /></div></div>
+      <div class="form-item"><label>单价（元/吨）</label><input /></div>
+      <div class="form-item"><label>是否供应商存量客户</label>
+        <div class="seg"><label><input type="radio" name="stock" checked/><span>是</span></label>
+        <label><input type="radio" name="stock"/><span>否</span></label></div></div>`;
+  }else if(tpl==="大宗"){
+    fields=`
+      <div class="form-item"><label>类型</label>
+        <div class="seg"><label><input type="checkbox" checked/><span>次终端</span></label>
+        <label><input type="checkbox"/><span>饲料厂</span></label></div></div>
+      <div class="row2"><div class="form-item"><label>新/存量</label><select><option>存量</option><option>新</option></select></div>
+      <div class="form-item"><label>月豆粕玉米需求（吨）</label><input value="120" /></div></div>`;
+  }else if(tpl==="青年鸡"){
+    fields=`
+      <div class="tip red">授信：存栏&lt;2万羽最多买存栏×3；≥2万羽×2；无存栏老客最多1万羽≈10万；总额度≤100万。新养殖客户不做青年鸡白条。</div>
+      <div class="row2"><div class="form-item"><label>当前存栏（万羽）</label><input value="1.8" /></div>
+      <div class="form-item"><label>本次购买（万羽）</label><input value="4" /></div></div>`;
+  }else{
+    fields=`
+      <div class="tip red">水产：最高50万；经验≥3年；规模≥5亩；除法人实控人外至少1名担保人；双分不得同时&lt;600。</div>
+      <div class="row2"><div class="form-item"><label>养殖经验（年）</label><input value="5" /></div>
+      <div class="form-item"><label>养殖规模（亩）</label><input value="12" /></div></div>`;
+  }
+  document.getElementById("tplFields").innerHTML=fields;
+
+  document.getElementById("commonFiles").innerHTML=[
+    {name:"银行流水",done:true},
+    {name:"经营许可证"},
+    {name:"个人/企业资产证明"},
+    {name:"其他银行要求材料",req:false}
+  ].map(x=>upField(x.name,{req:x.req,done:x.done})).join("");
+
+  const low=[
+    "近1年经营性入账流水（直发金融邮箱）","现场水印照/视频（大门仓库养殖区入镜）",
+    "近3个月水电费账单","养殖资产买卖合同或首付凭证","非禽类防疫证/出栏记录","下游乳企合同（牧场）","尽调表单"
+  ];
+  const high=[
+    "近1年经营性入账流水（直发金融邮箱）","实控人近1月人行征信","现场水印照/视频",
+    "近3个月水电费","资产买卖合同/首付凭证","场地权属/租赁/土地证明","非禽防疫证","下游乳企合同（牧场）",
+    "公户近1年及近1期财务三表","尽调表单-业务经理","白条保证金凭证"
+  ];
+  if(isFull && ge30) high.splice(2,0,"百行征信报告（全价料）");
+  document.getElementById("dynTitle").textContent=ge30?"额度≥30万追加资料":"额度＜30万追加资料";
+  document.getElementById("dynTip").textContent=ge30
+    ?"含人行征信、场地权属、财务三表、保证金等。流水请直发金融邮箱，不可自行下载转发。"
+    :"流水请申请下载时直填金融部邮箱；现场照需水印相机，养殖区需业务与厂长/员工视频或截图。";
+  document.getElementById("dynFiles").innerHTML=(ge30?high:low).map(n=>upField(n)).join("");
+
+  const special=document.getElementById("specialBlock");
+  const breed=document.getElementById("breed").value;
+  let specFiles=[], tip="";
+  if(tpl==="青年鸡"||breed==="青年鸡"){
+    tip="青年鸡准入四项缺一不可";
+    specFiles=["购鸡合同及定金凭证","设备采购/安装合同及付款凭证","现场设备鸡棚安装完毕照片/视频","交付日现场装卸视频"];
+  }else if(tpl==="水产"||breed==="水产"){
+    tip="水产资料：基础证件 + 经营/场地/销售流水等";
+    specFiles=["水域滩涂养殖证","养殖流水/苗种销售记录","土地使用权或承包合同","近12个月水产销售流水","近三期承包/租赁费支付证明","近半年鱼料动保采购证明","房产证明","担保人代偿能力证明"];
+  }else if(breed==="猪"){
+    tip="养猪客户：正式阶段可提示后续担保人加严；流水不足可用优质担保人方案替换（以金融风控为准）";
+    specFiles=["防疫相关证明","出栏/养殖规模证明"];
+  }
+  if(specFiles.length){
+    special.classList.remove("hidden");
+    document.getElementById("specialTip").textContent=tip;
+    document.getElementById("specialFiles").innerHTML=specFiles.map(n=>upField(n)).join("");
+  }else special.classList.add("hidden");
+
+  document.querySelectorAll("#view-正式 [data-up]").forEach(bindUpload);
+}
+function bindUpload(el){
+  el.onclick=()=>{
+    el.classList.toggle("done");
+    const span=el.querySelector("span:last-child");
+    const t=(span.textContent||"").replace(/^✓\s*/,"");
+    el.innerHTML=`<span class="ico">${el.classList.contains("done")?"✓":"＋"}</span><span>${t}</span>`;
+  };
+}
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active"); filter=btn.dataset.filter; renderList();
+  });
+});
+document.querySelectorAll("[data-up]").forEach(bindUpload);
+renderList();
+</script>
+</body>
+</html>

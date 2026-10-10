@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 装货磅单待审核</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute; left: 0; height: 44px; padding: 0 12px;
+      display: flex; align-items: center; color: #333; font-size: 20px;
+    }
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+    .list { padding: 0 12px 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title { font-size: 15px; font-weight: 600; color: #222; }
+    .tag {
+      font-size: 12px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .row .label {
+      width: 96px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.emphasize {
+      color: var(--warn);
+      font-weight: 600;
+    }
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .spec h3 { font-size: 14px; color: #222; margin-bottom: 8px; }
+    .spec ul { padding-left: 18px; }
+    .spec li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <span class="nav-back">‹</span>
+      <div class="nav-title">工作通知</div>
+    </div>
+    <div class="ding-context">粮巴巴物流 · 刚刚</div>
+    <div class="list">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">豆粕寄售装货磅单待审核</div>
+          <span class="tag">待审核</span>
+        </div>
+        <div class="row">
+          <div class="label">物流订单号</div>
+          <div class="value">LBBWLSP20260831216</div>
+        </div>
+        <div class="row">
+          <div class="label">业务类型</div>
+          <div class="value emphasize">豆粕寄售</div>
+        </div>
+        <div class="row">
+          <div class="label">车牌号</div>
+          <div class="value">苏B·D12345</div>
+        </div>
+        <div class="row">
+          <div class="label">司机</div>
+          <div class="value">张师傅 138****1024</div>
+        </div>
+        <div class="row">
+          <div class="label">粮点</div>
+          <div class="value">泰州汇福</div>
+        </div>
+        <div class="row">
+          <div class="label">货物</div>
+          <div class="value">豆粕 50kg 43% 34吨</div>
+        </div>
+        <div class="row">
+          <div class="label">上传时间</div>
+          <div class="value">2026-08-31 14:26:08</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>钉钉卡片说明（对接用）</h3>
+    <ul>
+      <li>接收人：刘悦悦（可配置）</li>
+      <li>触发：豆粕寄售物流订单 · 司机上传装货磅单成功后</li>
+      <li>卡片仅展示信息提醒，无操作按钮</li>
+    </ul>
+  </div>
+</body>
+</html>

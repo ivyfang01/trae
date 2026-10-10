@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>差旅异常申请次数配置</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      padding: 24px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      min-height: calc(100vh - 48px);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 14px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .page-hd h1 { font-size: 16px; font-weight: 600; margin-right: 8px; }
+    .page-bd { padding: 16px 24px 28px; }
+    .tip {
+      font-size: 13px;
+      color: rgba(0,0,0,.45);
+      margin-bottom: 16px;
+    }
+
+    .biz-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+    .biz-tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      color: rgba(0,0,0,.65);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      user-select: none;
+    }
+    .biz-tab:hover { color: #1890ff; }
+    .biz-tab.active {
+      color: #1890ff;
+      font-weight: 500;
+      border-bottom-color: #1890ff;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 16px;
+      margin-bottom: 16px;
+    }
+    .toolbar label { color: rgba(0,0,0,.45); font-size: 13px; }
+    .toolbar select,
+    .toolbar input[type="text"] {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      min-width: 180px;
+    }
+    .toolbar select:focus,
+    .toolbar input:focus { border-color: #40a9ff; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 15px;
+      font-size: 14px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn:hover { color: #40a9ff; border-color: #40a9ff; }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; color: #fff; }
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: #1890ff;
+      height: auto;
+      padding: 0 4px;
+    }
+    .btn-link:hover { color: #40a9ff; }
+    .btn-link:disabled {
+      color: rgba(0,0,0,.25);
+      cursor: not-allowed;
+    }
+    .btn-link.danger { color: #ff4d4f; }
+    .btn-link.danger:hover { color: #ff7875; }
+    .btn + .btn { margin-left: 8px; }
+
+    .cfg-card {
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    .cfg-card-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cfg-card-hd .title { font-weight: 600; font-size: 14px; }
+    .cfg-card-hd .sub {
+      color: rgba(0,0,0,.45);
+      font-size: 13px;
+      font-weight: 400;
+      margin-left: 8px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .cfg-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      min-width: 760px;
+    }
+    .cfg-table th,
+    .cfg-table td {
+      border: 1px solid #f0f0f0;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 13px;
+      vertical-align: middle;
+      background: #fff;
+    }
+    .cfg-table th { background: #fafafa; font-weight: 500; }
+    .cfg-table td.name { text-align: left; padding-left: 16px; font-weight: 500; }
+    .cfg-table td.num {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+    .cfg-table select,
+    .cfg-table input[type="number"] {
+      height: 28px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .cfg-table select { min-width: 140px; }
+    .cfg-table input[type="number"] {
+      width: 88px;
+      text-align: center;
+    }
+    .cfg-table select:focus,
+    .cfg-table input:focus { border-color: #40a9ff; }
+    .cfg-table select:disabled,
+    .cfg-table input:disabled {
+      background: #f5f5f5;
+      color: rgba(0,0,0,.45);
+      cursor: not-allowed;
+    }
+    .unit-text {
+      color: rgba(0,0,0,.45);
+      font-size: 12px;
+      margin-left: 4px;
+    }
+    .mode-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .limit-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .tag {
+      display: inline-block;
+      height: 22px;
+      line-height: 20px;
+      padding: 0 8px;
+      font-size: 12px;
+      border-radius: 2px;
+      border: 1px solid #91d5ff;
+      background: #e6f7ff;
+      color: #096dd9;
+    }
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: rgba(0,0,0,.45);
+      font-size: 13px;
+    }
+    .muted { color: rgba(0,0,0,.45); }
+    .row-editing td { background: #f6fbff; }
+
+    .modal-mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-mask.show { display: flex; }
+    .modal {
+      width: 440px;
+      max-width: calc(100vw - 32px);
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      line-height: 1;
+      color: rgba(0,0,0,.45);
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    .modal-close:hover { color: rgba(0,0,0,.75); }
+    .modal-bd { padding: 20px; }
+    .modal-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+    .form-item:last-child { margin-bottom: 0; }
+    .form-item .form-label {
+      width: 88px;
+      flex-shrink: 0;
+      text-align: right;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+    }
+    .form-item .form-label .req { color: #ff4d4f; margin-right: 2px; }
+    .form-item .form-ctrl {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-item select,
+    .form-item input[type="number"] {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      width: 100%;
+    }
+    .form-item input[type="number"] { width: 120px; }
+    .form-item input[type="month"] { width: 100%; max-width: 200px; }
+    .form-item select:focus,
+    .form-item input:focus { border-color: #40a9ff; }
+    .cfg-table input[type="month"] {
+      height: 28px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+      width: 120px;
+    }
+    .cfg-table input[type="month"]:focus { border-color: #40a9ff; }
+
+    .toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>差旅异常申请次数配置</h1>
+    </div>
+
+    <div class="page-bd">
+      <div class="tip">
+        为每位业务员单独配置异常申请次数。每人可选择「每人每月次数」或「每人次数」其一，填写对应次数后保存。
+      </div>
+
+      <div class="toolbar">
+        <label>业务员</label>
+        <input type="text" id="nameFilter" placeholder="输入姓名筛选" />
+        <button type="button" class="btn btn-primary" id="btnSearch">查询</button>
+        <button type="button" class="btn" id="btnReset">重置</button>
+      </div>
+
+      <div class="cfg-card">
+        <div class="cfg-card-hd">
+          <div>
+            <span class="title">个人配置</span>
+            <span class="sub">每位业务员独立选择配置方式并填写次数</span>
+          </div>
+          <button type="button" class="btn btn-primary" id="btnAdd">新增配置</button>
+        </div>
+        <div class="table-wrap">
+          <table class="cfg-table">
+            <colgroup>
+              <col style="width: 56px;" />
+              <col style="width: 100px;" />
+              <col style="width: 160px;" />
+              <col style="width: 140px;" />
+              <col style="width: 120px;" />
+              <col style="width: 150px;" />
+              <col style="width: 120px;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>业务员</th>
+                <th>配置方式</th>
+                <th>次数</th>
+                <th>生效月份</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="personBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-mask" id="addModal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-hd">
+        <span>新增配置</span>
+        <button type="button" class="modal-close" id="btnModalClose" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-item">
+          <div class="form-label"><span class="req">*</span>业务员</div>
+          <div class="form-ctrl">
+            <select id="modalName"></select>
+          </div>
+        </div>
+        <div class="form-item">
+          <div class="form-label"><span class="req">*</span>配置方式</div>
+          <div class="form-ctrl">
+            <select id="modalMode">
+              <option value="monthly" selected>每人每月次数</option>
+              <option value="total">每人次数</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-item">
+          <div class="form-label"><span class="req">*</span>次数</div>
+          <div class="form-ctrl">
+            <input type="number" id="modalLimit" min="0" step="1" value="3" />
+            <span class="unit-text" id="modalUnit">次 / 人 / 月</span>
+          </div>
+        </div>
+        <div class="form-item">
+          <div class="form-label"><span class="req">*</span>生效月份</div>
+          <div class="form-ctrl">
+            <input type="month" id="modalMonth" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn" id="btnModalCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="btnModalOk">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      /* 演示数据：业务员列表；每人自选 mode + limit */
+      var PERSONS = [
+        { id: "zs", name: "张三", mode: "monthly", limit: 5, effectiveMonth: "2026-07", updatedAt: "2026-07-20 10:12" },
+        { id: "fw", name: "方伟萍", mode: "total", limit: 8, effectiveMonth: "2026-07", updatedAt: "2026-07-18 15:40" },
+        { id: "ls", name: "李四", mode: "monthly", limit: 3, effectiveMonth: "2026-06", updatedAt: "2026-07-16 09:05" },
+        { id: "wq", name: "王强", mode: "monthly", limit: 2, effectiveMonth: "2026-07", updatedAt: "2026-07-12 14:22" },
+        { id: "hm", name: "韩梅", mode: "monthly", limit: 4, effectiveMonth: "2026-07", updatedAt: "2026-07-15 09:20" },
+        { id: "lg", name: "刘刚", mode: "total", limit: 6, effectiveMonth: "2026-05", updatedAt: "2026-07-14 11:30" },
+        { id: "cy", name: "陈雨", mode: "total", limit: 10, effectiveMonth: "2026-07", updatedAt: "2026-07-19 14:18" },
+        { id: "zl", name: "赵磊", mode: "monthly", limit: 3, effectiveMonth: "2026-07", updatedAt: "2026-07-10 16:00" }
+      ];
+
+      var NAME_POOL = ["周敏", "吴磊", "郑浩", "孙倩", "钱勇", "冯莉"];
+
+      var editingId = null;
+      var nameKeyword = "";
+      var personBody = document.getElementById("personBody");
+      var nameFilter = document.getElementById("nameFilter");
+      var addModal = document.getElementById("addModal");
+      var modalName = document.getElementById("modalName");
+      var modalMode = document.getElementById("modalMode");
+      var modalLimit = document.getElementById("modalLimit");
+      var modalUnit = document.getElementById("modalUnit");
+      var modalMonth = document.getElementById("modalMonth");
+      var toastEl = document.getElementById("toast");
+      var toastTimer = null;
+
+      function nowStr() {
+        var d = new Date();
+        function p(n) { return n < 10 ? "0" + n : "" + n; }
+        return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) +
+          " " + p(d.getHours()) + ":" + p(d.getMinutes());
+      }
+
+      function currentMonth() {
+        var d = new Date();
+        function p(n) { return n < 10 ? "0" + n : "" + n; }
+        return d.getFullYear() + "-" + p(d.getMonth() + 1);
+      }
+
+      function formatMonth(m) {
+        if (!m) return "—";
+        return m;
+      }
+
+      function toast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1800);
+      }
+
+      function allList() {
+        return PERSONS.slice();
+      }
+
+      function currentList() {
+        var kw = (nameKeyword || "").trim();
+        var list = allList();
+        if (!kw) return list;
+        return list.filter(function (p) {
+          return p.name.indexOf(kw) !== -1;
+        });
+      }
+
+      function availableNames() {
+        var used = {};
+        PERSONS.forEach(function (p) { used[p.name] = true; });
+        return NAME_POOL.filter(function (n) { return !used[n]; });
+      }
+
+      function unitOf(mode) {
+        return mode === "total" ? "次 / 人" : "次 / 人 / 月";
+      }
+
+      function modeLabel(mode) {
+        return mode === "total" ? "每人次数" : "每人每月次数";
+      }
+
+      function openAddModal() {
+        var pool = availableNames();
+        if (!pool.length) {
+          toast("可配置业务员已全部添加");
+          return;
+        }
+        modalName.innerHTML = pool.map(function (n) {
+          return '<option value="' + n + '">' + n + "</option>";
+        }).join("");
+        modalMode.value = "monthly";
+        modalLimit.value = "3";
+        modalUnit.textContent = unitOf("monthly");
+        modalMonth.value = currentMonth();
+        addModal.classList.add("show");
+      }
+
+      function closeAddModal() {
+        addModal.classList.remove("show");
+      }
+
+      function render() {
+        var list = currentList();
+        personBody.innerHTML = "";
+        if (!list.length) {
+          var emptyText = nameKeyword
+            ? "未找到匹配的业务员"
+            : "暂无业务员配置，可点击「新增配置」添加";
+          personBody.innerHTML = '<tr><td colspan="7" class="empty">' + emptyText + "</td></tr>";
+          return;
+        }
+        list.forEach(function (p, idx) {
+          var editing = editingId === p.id;
+          var tr = document.createElement("tr");
+          tr.setAttribute("data-id", p.id);
+          if (editing) tr.className = "row-editing";
+
+          var modeHtml = editing
+            ? '<select class="mode-select">' +
+              '<option value="monthly"' + (p.mode === "monthly" ? " selected" : "") + ">每人每月次数</option>" +
+              '<option value="total"' + (p.mode === "total" ? " selected" : "") + ">每人次数</option>" +
+              "</select>"
+            : '<span>' + modeLabel(p.mode) + "</span>";
+
+          var limitHtml = editing
+            ? '<input type="number" min="0" step="1" class="limit-input" value="' + p.limit + '" />' +
+              '<span class="unit-text unit-live">' + unitOf(p.mode) + "</span>"
+            : '<span class="num">' + p.limit + '</span><span class="unit-text">' + unitOf(p.mode) + "</span>";
+
+          var monthHtml = editing
+            ? '<input type="month" class="month-input" value="' + (p.effectiveMonth || "") + '" />'
+            : formatMonth(p.effectiveMonth);
+
+          var actionHtml = editing
+            ? '<button type="button" class="btn btn-link" data-action="save">保存</button>' +
+              '<button type="button" class="btn btn-link" data-action="cancel">取消</button>'
+            : '<button type="button" class="btn btn-link" data-action="edit">编辑</button>' +
+              '<button type="button" class="btn btn-link danger" data-action="del">删除</button>';
+
+          tr.innerHTML =
+            '<td class="num">' + (idx + 1) + "</td>" +
+            '<td class="name">' + p.name + "</td>" +
+            '<td><div class="mode-cell">' + modeHtml + "</div></td>" +
+            '<td><div class="limit-cell">' + limitHtml + "</div></td>" +
+            "<td>" + monthHtml + "</td>" +
+            '<td class="muted">' + (p.updatedAt || "—") + "</td>" +
+            "<td>" + actionHtml + "</td>";
+          personBody.appendChild(tr);
+        });
+      }
+
+      nameFilter.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnSearch").click();
+        }
+      });
+
+      document.getElementById("btnSearch").addEventListener("click", function () {
+        nameKeyword = (nameFilter.value || "").trim();
+        editingId = null;
+        render();
+      });
+
+      document.getElementById("btnReset").addEventListener("click", function () {
+        nameFilter.value = "";
+        nameKeyword = "";
+        editingId = null;
+        render();
+      });
+
+      document.getElementById("btnAdd").addEventListener("click", function () {
+        if (editingId) {
+          toast("请先保存或取消当前编辑行");
+          return;
+        }
+        openAddModal();
+      });
+
+      modalMode.addEventListener("change", function () {
+        modalUnit.textContent = unitOf(modalMode.value);
+      });
+
+      document.getElementById("btnModalClose").addEventListener("click", closeAddModal);
+      document.getElementById("btnModalCancel").addEventListener("click", closeAddModal);
+      addModal.addEventListener("click", function (e) {
+        if (e.target === addModal) closeAddModal();
+      });
+
+      document.getElementById("btnModalOk").addEventListener("click", function () {
+        var name = modalName.value;
+        var mode = modalMode.value;
+        var limit = parseInt(modalLimit.value, 10);
+        var month = modalMonth.value;
+        if (!name) { toast("请选择业务员"); return; }
+        if (PERSONS.some(function (p) { return p.name === name; })) {
+          toast("该业务员已存在配置");
+          return;
+        }
+        if (isNaN(limit) || limit < 0) { toast("请输入有效的非负整数"); return; }
+        if (!month) { toast("请选择生效月份"); return; }
+        PERSONS.unshift({
+          id: "p-" + Date.now(),
+          name: name,
+          mode: mode,
+          limit: limit,
+          effectiveMonth: month,
+          updatedAt: nowStr()
+        });
+        closeAddModal();
+        toast("已新增 " + name + "：" + modeLabel(mode) + " = " + limit + "，生效 " + month);
+        render();
+      });
+
+      personBody.addEventListener("change", function (e) {
+        if (!e.target.classList.contains("mode-select")) return;
+        var tr = e.target.closest("tr");
+        var unit = tr.querySelector(".unit-live");
+        if (unit) unit.textContent = unitOf(e.target.value);
+      });
+
+      personBody.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-action]");
+        if (!btn || btn.disabled) return;
+        var action = btn.getAttribute("data-action");
+        var tr = btn.closest("tr");
+        var id = tr.getAttribute("data-id");
+        var list = currentList();
+        var person = list.filter(function (p) { return p.id === id; })[0];
+        if (!person) return;
+
+        if (action === "edit") {
+          if (editingId && editingId !== id) {
+            toast("请先保存或取消当前编辑行");
+            return;
+          }
+          editingId = id;
+          render();
+          return;
+        }
+
+        if (action === "del") {
+          if (editingId) {
+            toast("请先完成当前编辑后再删除");
+            return;
+          }
+          PERSONS = PERSONS.filter(function (p) { return p.id !== id; });
+          toast("已删除 " + person.name + " 的配置");
+          render();
+          return;
+        }
+
+        if (action === "cancel") {
+          editingId = null;
+          render();
+          return;
+        }
+
+        if (action === "save") {
+          if (editingId !== id) return;
+          var modeSel = tr.querySelector(".mode-select");
+          var limitInput = tr.querySelector(".limit-input");
+          var monthInput = tr.querySelector(".month-input");
+          var mode = modeSel ? modeSel.value : person.mode;
+          var limit = parseInt(limitInput ? limitInput.value : person.limit, 10);
+          var month = monthInput ? monthInput.value : person.effectiveMonth;
+          if (isNaN(limit) || limit < 0) {
+            toast("请输入有效的非负整数");
+            return;
+          }
+          if (!month) {
+            toast("请选择生效月份");
+            return;
+          }
+          person.mode = mode;
+          person.limit = limit;
+          person.effectiveMonth = month;
+          person.updatedAt = nowStr();
+          editingId = null;
+          toast("已保存 " + person.name + "：" + modeLabel(mode) + " = " + limit + "，生效 " + month);
+          render();
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

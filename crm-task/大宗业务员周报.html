@@ -270,7 +270,7 @@
 
     <div class="page-bd">
       <div class="tip">
-        时间：2026/06/01-2026/06/07，按照豆粕交易量排名
+        时间：2026/06/01-2026/06/07，按照任务完成度排名
       </div>
 
       <div class="table-wrap">
@@ -285,12 +285,12 @@
           <col class="c-city" />
           <col class="c-miles" />
           <col class="c-fee" />
+          <col class="c-contract" />
           <col class="c-serve" />
           <col class="c-ton" />
           <col class="c-ton" />
           <col class="c-ton" />
           <col class="c-amt" />
-          <col class="c-contract" />
         </colgroup>
         <thead>
           <tr>
@@ -303,12 +303,12 @@
             <th>城市</th>
             <th>本周有效里程（km）</th>
             <th>本周使用差旅费（元）</th>
+            <th>未提合同</th>
             <th>本月服务客户数</th>
             <th>本月豆粕成交吨数</th>
             <th>本月玉米成交吨数</th>
             <th>本月预混料成交吨数</th>
             <th>本月动保成交金额</th>
-            <th>未提合同</th>
           </tr>
         </thead>
         <tbody id="summaryBody"></tbody>
@@ -674,14 +674,14 @@
             "<td>" + (emp.cities.length ? emp.cities.join("、") : "—") + "</td>" +
             "<td class=\"num\">" + emp.weekMiles + "</td>" +
             "<td class=\"num\">" + emp.weekTravelFee.toLocaleString() + "</td>" +
+            "<td class=\"num\">" + (emp.unclaimed
+              ? '<a class="link" href="javascript:;" data-action="contract">' + emp.unclaimed + "</a>"
+              : "0") + "</td>" +
             "<td class=\"num\">" + emp.monthServe + "</td>" +
             "<td class=\"num\"><span class=\"rank-val\">" + emp.monthSoybeanTon + "</span></td>" +
             "<td class=\"num\">" + emp.monthCornTon + "</td>" +
             "<td class=\"num\">" + emp.monthPremixTon + "</td>" +
-            "<td class=\"num\">" + emp.monthAnimalAmt.toLocaleString() + "</td>" +
-            "<td class=\"num\">" + (emp.unclaimed
-              ? '<a class="link" href="javascript:;" data-action="contract">' + emp.unclaimed + "</a>"
-              : "0") + "</td>";
+            "<td class=\"num\">" + emp.monthAnimalAmt.toLocaleString() + "</td>";
           summaryBody.appendChild(tr);
         });
         if (activeId && !list.some(function (e) { return e.id === activeId; })) {
@@ -729,26 +729,34 @@
 
         var openTask = !openMod || openMod === "task";
         modules.innerHTML =
-          mod("task", "任务完成度", "今日拜访 " + emp.todayVisitCount + " · 本周拜访 " + emp.weekVisitCount + " · 修改 " + emp.taskModifyCount + " 次 · 进度 " + emp.progress + "%",
+          mod("task", "本周任务进展", "今日拜访 " + emp.todayVisitCount + " · 本周拜访 " + emp.weekVisitCount + " · 进度 " + emp.progress + "%",
             '<div class="grid-2">' +
             field("拜访客户数目标", emp.visitTarget + "个") +
-            field("今日拜访客户数", emp.todayVisitCount + "个") +
+            // field("今日拜访客户数", emp.todayVisitCount + "个") +
             field("本周拜访客户数", emp.weekVisitCount + "个") +
             field("任务修改次数", emp.taskModifyCount + "次") +
-            field("已拜访客户", emp.visitedNames.length ? emp.visitedNames.join("、") : "—") +
             field("城市", emp.cities.length ? emp.cities.join("、") : "—", true) +
             "</div>", openTask && openMod !== "contract") +
+
+            mod("contract", "本月未提合同", "合同数量 " + emp.unclaimed + " 个",
+            '<div style="font-weight:600;font-size:13px">本月未提合同详情</div>' +
+            '<table class="sub-table"><thead><tr>' +
+            "<th>合同编号</th><th>客户名称</th><th>最早提货期</th><th>最晚提货期</th><th>合同吨位</th><th>未提吨位</th><th>单价</th><th>油厂</th><th>蛋白</th>" +
+            "</tr></thead><tbody>" + contractRows + "</tbody></table>", openMod === "contract")+
+
+
 
           mod("visit", "本周拜访数据", "拜访 " + emp.weekVisitCount + " 个 · 有效里程 " + emp.weekMiles + " km · 差旅费 " + emp.weekTravelFee + " 元",
             '<div class="grid-2">' +
             field("今日拜访客户数", emp.todayVisitCount + "个") +
             field("本周拜访客户数", emp.weekVisitCount + "个") +
+            field("已拜访客户", emp.visitedNames.length ? emp.visitedNames.join("、") : "—") +
             field("本周使用差旅费", emp.weekTravelFee + "元") +
-            field("本周预估里程", emp.weekMilesPlan + "公里") +
-            field("本周有效里程", emp.weekMiles + "公里，" + overText, true) +
+            // field("本周预估里程", emp.weekMilesPlan + "公里") +
+            field("本周有效里程", emp.weekMiles + "公里，") +
             '</div><div style="margin-top:10px;font-weight:600;font-size:13px">拜访客户明细</div>' + visitClientsHtml, openMod === "visit") +
 
-          mod("trade", "本周交易数据", "成交客户 " + emp.trade.dealClientCount + " 个",
+          mod("trade", "本周交易数据", "",
             '<div class="grid-2">' +
             field("豆粕成交吨数", emp.trade.soybeanTon + "吨") +
             field("豆粕成交客户", emp.trade.soybeanClients) +
@@ -763,7 +771,7 @@
             field("新客户", emp.trade.newCustomer) +
             "</div>", openMod === "trade") +
 
-          mod("month", "本月数据", "服务客户 " + emp.monthServe + " · 豆粕 " + emp.monthSoybeanTon + "吨",
+          mod("month", "本月数据", "",
             '<div class="grid-2">' +
             field("本月服务客户数", emp.monthServe + "个") +
             field("本月豆粕成交吨数", emp.monthSoybeanTon + "吨") +
@@ -773,13 +781,9 @@
             field("动保成交客户", emp.month.animalClients) +
             field("新客户数", emp.month.newCount) +
             field("新客户", emp.month.newList, true) +
-            "</div>", openMod === "month") +
+            "</div>", openMod === "month") ;
 
-          mod("contract", "本月未提合同", "合同数量 " + emp.unclaimed + " 个",
-            '<div style="font-weight:600;font-size:13px">本月未提合同详情</div>' +
-            '<table class="sub-table"><thead><tr>' +
-            "<th>合同编号</th><th>客户名称</th><th>最早提货期</th><th>最晚提货期</th><th>合同吨位</th><th>未提吨位</th><th>单价</th><th>油厂</th><th>蛋白</th>" +
-            "</tr></thead><tbody>" + contractRows + "</tbody></table>", openMod === "contract");
+
 
         detailPanel.classList.add("show");
         bindModToggle();

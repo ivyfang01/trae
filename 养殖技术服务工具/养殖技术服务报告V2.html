@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>养殖技术服务报告 · H5 原型</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --card: #ffffff;
+      --text: #1a2332;
+      --muted: #8b95a5;
+      --label: #5c6b7a;
+      --line: #e8ecf1;
+      --blue: #2b6de5;
+      --blue-deep: #1e54b8;
+      --blue-soft: #e8f0ff;
+      --danger: #c45c3e;
+      --danger-soft: #fdf0eb;
+      --ok: #1f9d6a;
+      --ok-soft: #e6f7f0;
+      --warn: #d48806;
+      --shadow: 0 2px 10px rgba(26, 35, 50, 0.06);
+      --radius: 12px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c5ccd6;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px 32px;
+    }
+    .device {
+      width: 390px;
+      max-width: 100%;
+      min-height: 780px;
+      background: var(--bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .topbar {
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-deep) 100%);
+      color: #fff;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .topbar .back {
+      width: 28px; height: 28px;
+      border: none; background: transparent; color: #fff;
+      font-size: 20px; cursor: pointer; line-height: 1;
+    }
+    .topbar h1 { font-size: 17px; font-weight: 600; flex: 1; }
+    .topbar .top-action {
+      border: none; background: rgba(255,255,255,.18); color: #fff;
+      font-size: 12px; font-weight: 500; font-family: inherit;
+      padding: 5px 10px; border-radius: 999px; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .topbar .top-action:active { background: rgba(255,255,255,.28); }
+    .screens { flex: 1; overflow: hidden; position: relative; }
+    .screen {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      padding: 12px 12px calc(88px + var(--safe-bottom));
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen.active { display: block; }
+    .screen.no-fab { padding-bottom: 16px; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .sec-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sec-title::before {
+      content: "";
+      width: 3px; height: 14px;
+      background: var(--blue);
+      border-radius: 2px;
+    }
+    .kv { display: flex; font-size: 13px; padding: 6px 0; line-height: 1.5; }
+    .kv .k { width: 96px; color: var(--muted); flex-shrink: 0; }
+    .kv .v { flex: 1; color: var(--text); text-align: right; }
+
+    .alert-box {
+      background: var(--danger-soft);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--danger);
+      line-height: 1.65;
+    }
+    .alert-box p + p { margin-top: 4px; }
+
+    .pending-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .chip {
+      flex: 1; border: 1px solid var(--blue); background: #fff;
+      border-radius: 8px; padding: 7px 0; font-size: 12px;
+      cursor: pointer; font-family: inherit; color: var(--blue);
+    }
+    .chip.on-ok { background: var(--ok-soft); border-color: #9dd9bf; color: var(--ok); font-weight: 600; }
+    .chip.on-no { background: var(--danger-soft); border-color: #f0c4b6; color: var(--danger); font-weight: 600; }
+
+    .dim-list .dim {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 4px; border-bottom: 1px solid var(--line);
+      font-size: 14px; cursor: pointer;
+    }
+    .dim-list .dim:last-child { border-bottom: none; }
+    .dim-list .dim .left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .dim-list .check {
+      width: 18px; height: 18px; border-radius: 4px;
+      border: 1.5px solid #b8c2d0; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 11px; color: #fff;
+    }
+    .dim-list .check.done { background: var(--blue); border-color: var(--blue); }
+    .dim-list .arrow { color: var(--muted); font-size: 16px; }
+    .badge-dot {
+      font-size: 11px; color: var(--danger); background: var(--danger-soft);
+      padding: 1px 6px; border-radius: 999px; flex-shrink: 0;
+    }
+    .badge-done {
+      font-size: 11px; color: var(--ok); background: var(--ok-soft);
+      padding: 1px 6px; border-radius: 999px; flex-shrink: 0;
+    }
+    .badge-ok {
+      font-size: 11px; color: var(--blue); background: var(--blue-soft);
+      padding: 1px 6px; border-radius: 999px; flex-shrink: 0;
+    }
+    .dim-list .dim .name { flex: 1; min-width: 0; }
+    .dim-list .dim .req-star { color: #e54d42; margin-right: 2px; }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; padding: 2px 8px; border-radius: 999px; font-weight: 500;
+    }
+    .tag-ok { background: var(--ok-soft); color: var(--ok); }
+    .tag-no { background: var(--danger-soft); color: var(--danger); }
+    .tag-doing { background: #fff7e8; color: var(--warn); }
+    .issue-time { color: var(--muted); font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+    .issue {
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; margin-bottom: 8px; font-size: 13px;
+    }
+    .issue .row1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .issue .comm { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .issue:last-child { margin-bottom: 0; }
+    .empty-tip { font-size: 13px; color: var(--muted); padding: 4px 0; }
+    .photo-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .photo-grid .photo-item {
+      width: 96px; height: 96px; border-radius: 8px; overflow: hidden;
+      background: linear-gradient(135deg, #dbe7f8, #c5d6ef);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: #3a5a8c;
+    }
+
+    .fab {
+      position: absolute; left: 12px; right: 12px; bottom: calc(12px + var(--safe-bottom));
+      z-index: 20;
+    }
+    .btn {
+      width: 100%; border: none; border-radius: 10px;
+      padding: 13px 16px; font-size: 15px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:active { background: var(--blue-deep); }
+    .btn-ghost {
+      background: #fff; color: var(--blue); border: 1px solid #c5d6f7;
+    }
+
+    .list-item {
+      background: var(--card); border-radius: var(--radius);
+      padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+    .list-item .t1 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .list-item .t2 { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+
+    /* sheet */
+    .mask {
+      display: none; position: absolute; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 30;
+    }
+    .mask.show { display: block; }
+
+    /* 提交结果弹窗 */
+    .dialog-mask {
+      display: none; position: absolute; inset: 0; z-index: 60;
+      background: rgba(26, 35, 50, 0.45);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .dialog-mask.show { display: flex; }
+    .dialog {
+      width: 100%; max-width: 320px; background: #fff; border-radius: 14px;
+      padding: 24px 18px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.18);
+      text-align: center;
+    }
+    .dialog .dialog-ico {
+      width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 700;
+    }
+    .dialog .dialog-ico.ok { background: var(--ok-soft); color: var(--ok); }
+    .dialog .dialog-ico.warn { background: #fff7e8; color: var(--warn); }
+    .dialog .dialog-title {
+      font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4;
+    }
+    .dialog .dialog-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 18px;
+    }
+    .dialog .dialog-actions { display: flex; gap: 10px; }
+    .dialog .dialog-actions .btn { flex: 1; margin: 0; padding: 12px 10px; }
+
+    .sheet {
+      display: none; position: absolute; left: 0; right: 0; bottom: 0;
+      background: #fff; border-radius: 16px 16px 0 0;
+      z-index: 40; max-height: 78%; overflow-y: auto;
+      padding: 16px 16px calc(20px + var(--safe-bottom));
+    }
+    .sheet.show { display: block; }
+    .sheet h3 { font-size: 16px; margin-bottom: 12px; }
+    .sheet label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 6px; }
+    .sheet textarea, .sheet select, .sheet input[type="text"] {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px; font-size: 14px; font-family: inherit;
+      background: #f7f9fc; box-sizing: border-box;
+    }
+    .sheet textarea { min-height: 110px; resize: vertical; }
+    .sheet textarea.sheet-short { min-height: 72px; }
+    .sheet .row-btns { display: flex; gap: 10px; margin-top: 14px; }
+    .sheet .row-btns .btn { flex: 1; }
+    .sheet .opt-row {
+      display: flex; gap: 10px;
+    }
+    .sheet .opt-row label {
+      flex: 1; margin: 0; display: flex; align-items: center; justify-content: center;
+      padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: #f7f9fc; color: var(--text); font-size: 14px; cursor: pointer;
+      user-select: none;
+    }
+    .sheet .opt-row input[type="radio"] {
+      position: absolute; opacity: 0; width: 0; height: 0; margin: 0; pointer-events: none;
+    }
+    .sheet .opt-row label:has(input:checked) {
+      border-color: var(--blue); background: #eef5ff; color: var(--blue); font-weight: 600;
+    }
+    .opt-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .opt-row label {
+      flex: 0 0 calc(25% - 6px); margin: 0; display: flex; align-items: center; justify-content: center;
+      padding: 8px 6px; border: 1px solid var(--line); border-radius: 8px;
+      background: #f7f9fc; color: var(--text); font-size: 13px; cursor: pointer;
+      user-select: none; box-sizing: border-box;
+    }
+    .opt-row input[type="radio"] {
+      position: absolute; opacity: 0; width: 0; height: 0; margin: 0; pointer-events: none;
+    }
+    .opt-row label:has(input:checked) {
+      border-color: var(--blue); background: #eef5ff; color: var(--blue); font-weight: 600;
+    }
+    #problem-wrap { display: none; }
+
+    /* 企微卡片 */
+    .wx-preview {
+      background: #ededed; border-radius: 8px; padding: 12px;
+    }
+    .wx-card {
+      background: #fff; border-radius: 6px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06); max-width: 280px;
+    }
+    .wx-card .bar {
+      height: 4px; background: linear-gradient(90deg, #07c160, #10ad6a);
+    }
+    .wx-card .body { padding: 12px; }
+    .wx-card .title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .wx-card .line { font-size: 12px; color: #666; margin-bottom: 4px; line-height: 1.5; }
+    .wx-card .warn { color: var(--danger); }
+    .wx-card .ft {
+      border-top: 1px solid #f0f0f0; padding: 8px 12px;
+      font-size: 12px; color: #576b95;
+    }
+    .at-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .at-person {
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 5px 10px; font-size: 12px; cursor: pointer;
+      background: #fff; font-family: inherit;
+    }
+    .at-person.on { background: var(--blue-soft); border-color: #9bb8f0; color: var(--blue); }
+
+    #group-mock label {
+      flex: 1 1 calc(33% - 6px); min-width: 0; font-size: 12px; padding: 10px 6px;
+    }
+
+    .solution { font-size: 13px; line-height: 1.7; color: var(--text); }
+    .solution ol { padding-left: 18px; }
+    .plan-area {
+      width: 100%; min-height: 120px; resize: vertical;
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; font-size: 14px; font-family: inherit;
+      background: #f7f9fc; color: var(--text); line-height: 1.65;
+      box-sizing: border-box;
+    }
+    .plan-area:focus {
+      outline: none; border-color: #9bb8f0; background: #fff;
+    }
+    .field-block { margin-bottom: 16px; }
+    .field-block:last-child { margin-bottom: 0; }
+    .field-label {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+      font-size: 13px; color: var(--label); margin-bottom: 8px;
+    }
+    .field-label .req { color: #e54d42; margin-right: 2px; }
+    .field-label .ref-link {
+      color: var(--blue); font-size: 12px; cursor: pointer;
+      border: none; background: none; padding: 0; font-family: inherit;
+    }
+    .field-label .ref-tip { color: var(--blue); font-size: 12px; }
+    .form-input {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; font-size: 14px; font-family: inherit;
+      background: #f7f9fc; color: var(--text); box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none; border-color: #9bb8f0; background: #fff;
+    }
+    .form-input::placeholder { color: #b0b8c4; }
+    .input-with-unit {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .input-with-unit .form-input { flex: 1; min-width: 0; }
+    .input-with-unit .unit {
+      flex-shrink: 0; font-size: 14px; color: var(--label); white-space: nowrap;
+    }
+    .loc-row { display: flex; gap: 8px; align-items: stretch; }
+    .loc-input {
+      flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; font-family: inherit;
+      background: #f7f9fc; color: var(--text);
+    }
+    .loc-input::placeholder { color: #b0b8c4; }
+    .loc-btn {
+      flex-shrink: 0; border: 1px solid var(--blue); border-radius: 8px;
+      background: #fff; color: var(--blue); font-size: 12px; font-weight: 500;
+      font-family: inherit; padding: 0 12px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+    }
+    .loc-btn:active { background: var(--blue-soft); }
+    .upload-box {
+      width: 96px; height: 96px; border-radius: 8px; background: #f2f4f7;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; color: var(--muted); user-select: none;
+    }
+    .upload-box:active { background: #e8ecf1; }
+    .upload-box .cam {
+      width: 28px; height: 28px; border-radius: 6px;
+      border: 1.5px solid #c5ccd6; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #9aa3b2;
+    }
+    .upload-box .u1 { font-size: 12px; color: var(--label); }
+    .upload-box .u2 { font-size: 11px; color: var(--muted); }
+    .upload-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .upload-thumb {
+      width: 96px; height: 96px; border-radius: 8px; overflow: hidden;
+      background: linear-gradient(135deg, #dbe7f8, #c5d6ef);
+      position: relative;
+    }
+    .upload-thumb span {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: #3a5a8c;
+    }
+    .hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="topbar">
+      <button class="back" type="button" id="btn-back" style="visibility:hidden">‹</button>
+      <h1 id="page-title">服务报告</h1>
+      <button type="button" class="top-action" id="btn-customer-view">客户查看</button>
+    </div>
+
+    <div class="screens">
+      <!-- 列表 -->
+      <div class="screen active no-fab" id="screen-list">
+        <div class="list-item" data-open="report" data-mode="revisit">
+          <div class="t1">拜访巡检报告</div>
+          <div class="t2"><span>2026-08-04 · 王玉东</span><span class="tag tag-doing">待确认问题 2</span></div>
+        </div>
+        <div class="list-item" data-open="report" data-mode="new">
+          <div class="t1">+ 新建服务报告</div>
+          <div class="t2"><span>选客户 / 场舍后填写 14 维度</span><span></span></div>
+        </div>
+      </div>
+
+      <!-- 报告详情/编辑 -->
+      <div class="screen" id="screen-report">
+        <div class="card">
+          <div class="sec-title">基础信息</div>
+          <div class="kv"><span class="k">服务客户</span><span class="v">张三</span></div>
+          <div class="kv"><span class="k">技术官</span><span class="v">王玉东</span></div>
+          <div class="kv"><span class="k">汇报日期</span><span class="v">2026-08-04</span></div>
+          <div class="kv"><span class="k">拜访次数</span><span class="v">第1次拜访</span></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">鸡群信息</div>
+          <div class="field-block">
+            <div class="field-label"><span class="req">*</span>养殖类型</div>
+            <select class="form-input" id="flock-type">
+              <option value="鸡" selected>鸡</option>
+              <option value="鸭">鸭</option>
+              <option value="鹅">鹅</option>
+              <option value="猪">猪</option>
+              <option value="牛">牛</option>
+              <option value="羊">羊</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+          <div class="field-block">
+            <div class="field-label"><span class="req">*</span>养殖品种</div>
+            <input type="text" class="form-input" id="flock-breed" placeholder="如：海兰褐、罗曼粉等" value="海兰褐" />
+          </div>
+          <div class="field-block">
+            <div class="field-label"><span class="req">*</span>合作规模</div>
+            <div class="input-with-unit">
+              <input type="number" class="form-input" id="flock-scale" placeholder="请输入羽数" value="5" min="0" inputmode="numeric" />
+              <span class="unit">万羽</span>
+            </div>
+          </div>
+          <div class="dim-list" id="flock-dim-list" style="margin-top:4px;border-top:1px solid var(--line);padding-top:2px"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">养殖场舍检查 <span style="font-weight:400;font-size:12px;color:var(--muted)">必填 4 项</span></div>
+          <div class="dim-list" id="dim-list"></div>
+        </div>
+
+        <div class="card" id="track-block" style="display:none">
+          <div class="sec-title">服务问题追踪卡</div>
+          <div class="issue" data-pid="p1" data-status="open">
+            <div class="row1">
+              <span>光照强度太大</span>
+              <span class="issue-time" id="tag-p1">2026-07-28</span>
+            </div>
+            <div class="pending-actions">
+              <button type="button" class="chip" data-resolve="ok">已解决</button>
+              <button type="button" class="chip" data-resolve="no">仍未解决</button>
+            </div>
+          </div>
+          <div class="issue" data-pid="p2" data-status="open">
+            <div class="row1">
+              <span>鸡舍内湿度小，灰尘大</span>
+              <span class="issue-time" id="tag-p2">2026-07-21</span>
+            </div>
+            <div class="pending-actions">
+              <button type="button" class="chip" data-resolve="ok">已解决</button>
+              <button type="button" class="chip" data-resolve="no">仍未解决</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">问题汇总</div>
+          <div id="alert-summary">
+            <div class="issue">
+              <div class="row1"><span>通风太大</span></div>
+            </div>
+            <div class="issue">
+              <div class="row1"><span>死鸡率偏高</span></div>
+            </div>
+            <div class="issue">
+              <div class="row1"><span>鸡舍内湿度小，灰尘大</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">处理方案</div>
+          <textarea id="plan-text" class="plan-area" placeholder="请填写本次服务的整体处理方案…">1. 测光仪测试，平均光照 17.68 lux；晚上补光每天减 10 分钟，6 天减完。
+2. 干燥天气喷雾增湿，并定期清理灯泡与探头、消毒。
+3. 按建议添加卵炎消消乐，关注肠胃与死淘变化。</textarea>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">上传问题照片</div>
+          <div class="field-block">
+            <div class="field-label">
+              <span class="req">*</span>问题照片
+              <button type="button" class="ref-link" id="ref-problem">参考图片</button>
+            </div>
+            <div class="upload-thumbs" id="thumbs-problem">
+              <div class="upload-box" data-upload="problem" data-max="10">
+                <div class="u1">拍照 / 上传</div>
+                <div class="u2">(0 / 10)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sec-title">现场签到</div>
+          <div class="field-block">
+            <div class="field-label"><span class="req">*</span>拜访方式</div>
+            <div class="opt-row" id="visit-mode">
+              <label><input type="radio" name="visit-mode" value="onsite" checked /> 实地拜访</label>
+              <label><input type="radio" name="visit-mode" value="phone" /> 电话</label>
+            </div>
+          </div>
+          <div id="onsite-checkin-fields">
+            <div class="field-block">
+              <div class="field-label"><span class="req">*</span>签到地址</div>
+              <div class="loc-row">
+                <input type="text" class="loc-input" id="checkin-addr" placeholder="暂未选择签到地址" readonly />
+                <button type="button" class="loc-btn" id="btn-pick-loc">选择定位地址</button>
+              </div>
+            </div>
+            <div class="field-block">
+              <div class="field-label">
+                <span class="req">*</span>签到照片
+                <button type="button" class="ref-link" id="ref-checkin">参考图片</button>
+              </div>
+              <div class="upload-thumbs" id="thumbs-checkin">
+                <div class="upload-box" data-upload="checkin" data-max="10">
+                  <div class="u1">拍照 / 上传</div>
+                  <div class="u2">(0 / 10)</div>
+                </div>
+              </div>
+            </div>
+            <div class="field-block">
+              <div class="field-label">
+                <span class="req">*</span>自拍照片
+                <button type="button" class="ref-link" id="ref-selfie">参考图片</button>
+                <span class="ref-tip">需包含人脸和工服标识</span>
+              </div>
+              <div class="upload-thumbs" id="thumbs-selfie">
+                <div class="upload-box" data-upload="selfie" data-max="10">
+                  <div class="u1">拍照 / 上传</div>
+                  <div class="u2">(0 / 10)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分享预览 -->
+      <div class="screen no-fab" id="screen-share">
+        <div class="card">
+          <div class="sec-title">企微卡片预览</div>
+          <div class="wx-preview">
+            <div class="wx-card">
+              <div class="bar"></div>
+              <div class="body">
+                <div class="title">养殖服务报告 · 张三养殖场</div>
+                <div class="line">服务日期：2026-08-04</div>
+                <div class="line">技术老师：王玉东</div>
+                <div class="line warn" id="card-alert">异常问题 2 条 · 未解决 2 条</div>
+              </div>
+              <div class="ft">查看详情</div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-send">发送到客户企微群</button>
+        <div class="card" style="padding:12px 14px;margin-top:12px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">原型演示 · 客户群匹配</div>
+          <div class="opt-row" id="group-mock">
+            <label><input type="radio" name="group-mock" value="found" /> 已匹配客户群</label>
+            <label><input type="radio" name="group-mock" value="missing" checked /> 未找到客户群</label>
+            <label><input type="radio" name="group-mock" value="shared" /> 已分享给客户</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 客户查看报告（只读） -->
+      <div class="screen no-fab" id="screen-customer">
+        <div class="card">
+          <div class="sec-title">基础信息</div>
+          <div class="kv"><span class="k">服务客户</span><span class="v">张三</span></div>
+          <div class="kv"><span class="k">技术官</span><span class="v">王玉东</span></div>
+          <div class="kv"><span class="k">技术官手机号</span><span class="v">13812345678</span></div>
+          <div class="kv"><span class="k">拜访日期</span><span class="v">2026-08-04</span></div>
+          <div class="kv"><span class="k">拜访次数</span><span class="v">第1次拜访</span></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">鸡群异常信息</div>
+          <div id="customer-flock-abnormal"></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">场舍巡检异常维度</div>
+          <div id="customer-abnormal"></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">问题图片</div>
+          <div class="photo-grid" id="customer-photos"></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">处理方案</div>
+          <div class="solution" id="customer-plan"></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">正常巡检维度</div>
+          <div id="customer-normal"></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">鸡群信息</div>
+          <div class="kv"><span class="k">养殖类型</span><span class="v" id="customer-flock-type">—</span></div>
+          <div class="kv"><span class="k">养殖品种</span><span class="v" id="customer-flock-breed">—</span></div>
+          <div class="kv"><span class="k">养殖规模</span><span class="v" id="customer-flock-scale">—</span></div>
+        </div>
+        <!-- <p class="hint">客户只读视图 · 可从企微卡片「查看详情」进入</p> -->
+      </div>
+    </div>
+
+    <div class="fab" id="fab-bar" style="display:none">
+      <button type="button" class="btn btn-primary" id="btn-share">提交并分享给客户</button>
+    </div>
+
+    <div class="mask" id="mask"></div>
+
+    <!-- 提交巡场报告 · 结果弹窗 -->
+    <div class="dialog-mask" id="share-result-mask" role="dialog" aria-modal="true">
+      <div class="dialog">
+        <div class="dialog-ico ok" id="share-result-ico">✓</div>
+        <div class="dialog-title" id="share-result-title">巡场报告已分享到张三客户群</div>
+        <div class="dialog-desc" id="share-result-desc" style="display:none"></div>
+        <div class="dialog-actions" id="share-result-actions">
+          <button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>
+          <button type="button" class="btn btn-primary" id="btn-open-group">查看</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" style="display:none;position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);z-index:70;background:rgba(26,35,50,.88);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;max-width:80%;text-align:center;line-height:1.5"></div>
+
+    <div class="sheet" id="sheet-dim">
+      <h3 id="sheet-dim-title">维度填写</h3>
+      <label>是否正常</label>
+      <div class="opt-row">
+        <label><input type="radio" name="sheet-dim-status" value="0" checked /> 正常</label>
+        <label><input type="radio" name="sheet-dim-status" value="1" /> 异常</label>
+      </div>
+      <div id="problem-wrap">
+        <label>问题描述</label>
+        <textarea id="sheet-dim-problem" placeholder="描述现场现状与发现的问题…"></textarea>
+      </div>
+      <div class="row-btns">
+        <button type="button" class="btn btn-ghost" id="sheet-dim-cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="sheet-dim-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var DIMENSIONS = [
+      "环控设施（含温湿度/通风）",
+      "精神状态",
+      "水线与供水",
+      "粪便",
+      "饲料仓储情况",
+      "其他工作 / 其他",
+      "产蛋率",
+      "蛋品情况",
+      "体重/均匀度",
+      "采食与喂料",
+      "死淘状况",
+      "加药情况"
+    ];
+    var REQUIRED_DIMS = {
+      0: true, // 环控设施
+      1: true, // 精神状态
+      2: true, // 水线与供水
+      3: true, // 粪便
+      4: true, // 饲料仓储情况
+      5: true  // 其他工作
+    };
+    // 产蛋率 / 蛋品情况 / 体重均匀度：三选一
+    var ONE_OF_DIMS = { 6: true, 7: true, 8: true };
+    // 明确选填
+    var OPTIONAL_DIMS = { 9: true, 10: true, 11: true }; // 采食与喂料、死淘状况、加药情况
+    // 鸡群信息模块：精神状态、粪便、产蛋相关、采食、死淘、加药
+    var FLOCK_DIMS = [1, 3, 6, 7, 8, 9, 10, 11];
+    // 场舍检查模块：环控、水线、饲料仓储、其他工作
+    var SHED_DIMS = [0, 2, 4, 5];
+
+    var dimState = {};
+    DIMENSIONS.forEach(function (n, i) {
+      var isAbn = i === 0 || i === 10; // 环控、死淘
+      var isNormalDone = i === 1 || i === 2 || i === 3 || i === 4 || i === 5 || i === 6;
+      dimState[i] = {
+        problem: i === 0 ? "光照强度偏低，补光策略不合理" : (i === 10 ? "死鸡率偏高，需关注肠胃" : ""),
+        done: isAbn || isNormalDone,
+        abnormal: isAbn
+      };
+    });
+
+    var currentDim = null;
+    var stack = ["list"];
+
+    function $(id) { return document.getElementById(id); }
+
+    function showScreen(name, title) {
+      document.querySelectorAll(".screen").forEach(function (s) { s.classList.remove("active"); });
+      $("screen-" + name).classList.add("active");
+      $("page-title").textContent = title;
+      $("btn-back").style.visibility = name === "list" ? "hidden" : "visible";
+      $("fab-bar").style.display = name === "report" ? "block" : "none";
+      $("btn-customer-view").style.display = name === "list" ? "inline-block" : "none";
+    }
+
+    function go(name, title) {
+      stack.push(name);
+      showScreen(name, title);
+    }
+
+    function back() {
+      if (stack.length <= 1) return;
+      stack.pop();
+      var name = stack[stack.length - 1];
+      if (name === "list") showScreen("list", "服务报告");
+      else if (name === "report") showScreen("report", "养殖服务报告");
+      else if (name === "share") showScreen("share", "分享预览");
+      else if (name === "customer") showScreen("customer", "客户查看报告");
+    }
+
+    function dimRowHtml(i) {
+      var s = dimState[i];
+      var req = !!REQUIRED_DIMS[i];
+      var status = "";
+      if (s.done) {
+        if (s.abnormal) status = '<span class="badge-dot">异常</span>';
+        else status = '<span class="badge-ok">正常</span>';
+        status += '<span class="badge-done">已填写</span>';
+      }
+      return '<div class="dim" data-dim="' + i + '">' +
+        '<div class="left">' +
+        '<span class="name">' + (req ? '<span class="req-star">*</span>' : "") + DIMENSIONS[i] + "</span>" +
+        status +
+        '</div><span class="arrow">›</span></div>';
+    }
+
+    function renderDims() {
+      $("flock-dim-list").innerHTML = FLOCK_DIMS.map(dimRowHtml).join("");
+      $("dim-list").innerHTML = SHED_DIMS.map(dimRowHtml).join("");
+    }
+
+    function syncProblemVisible() {
+      var abn = document.querySelector('input[name="sheet-dim-status"]:checked').value === "1";
+      $("problem-wrap").style.display = abn ? "block" : "none";
+    }
+
+    function openDim(i) {
+      currentDim = i;
+      $("sheet-dim-title").textContent = DIMENSIONS[i];
+      $("sheet-dim-problem").value = dimState[i].problem || "";
+      var abn = !!dimState[i].abnormal;
+      document.querySelector('input[name="sheet-dim-status"][value="1"]').checked = abn;
+      document.querySelector('input[name="sheet-dim-status"][value="0"]').checked = !abn;
+      syncProblemVisible();
+      $("mask").classList.add("show");
+      $("sheet-dim").classList.add("show");
+    }
+
+    function closeSheet() {
+      $("mask").classList.remove("show");
+      $("sheet-dim").classList.remove("show");
+      currentDim = null;
+    }
+
+    function updateCardAlert() {
+      var unresolved = 0;
+      document.querySelectorAll("#track-block .issue[data-pid]").forEach(function (item) {
+        if (item.getAttribute("data-status") !== "ok") unresolved++;
+      });
+      var abn = 0;
+      Object.keys(dimState).forEach(function (k) { if (dimState[k].abnormal) abn++; });
+      $("card-alert").textContent = "异常问题 " + abn + " 条 · 未解决 " + unresolved + " 条";
+    }
+
+    $("btn-back").addEventListener("click", back);
+
+    document.querySelectorAll("[data-open=report]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var mode = el.getAttribute("data-mode");
+        $("track-block").style.display = mode === "revisit" ? "block" : "none";
+        go("report", "养殖服务报告");
+      });
+    });
+
+    function onDimClick(e) {
+      var row = e.target.closest(".dim");
+      if (!row) return;
+      openDim(+row.getAttribute("data-dim"));
+    }
+    $("flock-dim-list").addEventListener("click", onDimClick);
+    $("dim-list").addEventListener("click", onDimClick);
+
+    $("sheet-dim-cancel").addEventListener("click", closeSheet);
+    $("mask").addEventListener("click", closeSheet);
+    document.querySelectorAll('input[name="sheet-dim-status"]').forEach(function (r) {
+      r.addEventListener("change", syncProblemVisible);
+    });
+    $("sheet-dim-save").addEventListener("click", function () {
+      if (currentDim == null) return;
+      var abnormal = document.querySelector('input[name="sheet-dim-status"]:checked').value === "1";
+      var problem = abnormal ? $("sheet-dim-problem").value.trim() : "";
+      dimState[currentDim].abnormal = abnormal;
+      dimState[currentDim].problem = problem;
+      dimState[currentDim].done = abnormal ? !!problem : true;
+      renderDims();
+      closeSheet();
+    });
+
+    document.querySelectorAll("#track-block .issue[data-pid]").forEach(function (item) {
+      item.querySelectorAll("[data-resolve]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          item.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("on-ok", "on-no"); });
+          var ok = btn.getAttribute("data-resolve") === "ok";
+          btn.classList.add(ok ? "on-ok" : "on-no");
+          item.setAttribute("data-status", ok ? "ok" : "no");
+          updateCardAlert();
+        });
+      });
+    });
+
+    $("btn-share").addEventListener("click", function () {
+      updateCardAlert();
+      go("share", "分享预览");
+      if (isGroupMissing()) {
+        setTimeout(function () { openShareResultDialog("missing"); }, 200);
+      }
+    });
+
+    function isGroupMissing() {
+      var mock = document.querySelector('input[name="group-mock"]:checked');
+      return !!(mock && mock.value === "missing");
+    }
+
+    document.querySelectorAll('input[name="group-mock"]').forEach(function (r) {
+      r.addEventListener("change", function () {
+        if (!$("screen-share").classList.contains("active")) return;
+        var val = document.querySelector('input[name="group-mock"]:checked');
+        val = val ? val.value : "found";
+        if (val === "missing") openShareResultDialog("missing");
+        else if (val === "shared") openShareResultDialog("shared");
+        else if (val === "found") openShareResultDialog("ok");
+        else closeShareResultDialog();
+      });
+    });
+
+    var customerGroupName = "张三养殖场客户群";
+
+    function toast(msg) {
+      var el = $("toast");
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.style.display = "none"; }, 1800);
+    }
+
+    function openShareResultDialog(mode) {
+      var ico = $("share-result-ico");
+      var title = $("share-result-title");
+      var desc = $("share-result-desc");
+      var actions = $("share-result-actions");
+      if (mode === "ok") {
+        ico.className = "dialog-ico ok";
+        ico.textContent = "✓";
+        title.textContent = "巡场报告已分享到张三客户群";
+        desc.textContent = "";
+        desc.style.display = "none";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-open-group">查看</button>';
+      } else if (mode === "shared") {
+        ico.className = "dialog-ico ok";
+        ico.textContent = "✓";
+        title.textContent = "已分享给客户，可查看报告";
+        desc.textContent = "报告已分享给客户，可前往查看完整巡场报告";
+        desc.style.display = "block";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-done">知道了</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-view-report">去查看</button>';
+      } else {
+        ico.className = "dialog-ico warn";
+        ico.textContent = "!";
+        title.textContent = "未找到客户群，请分享给客户";
+        desc.textContent = "当前客户未关联企微群，请手动将报告分享给客户";
+        desc.style.display = "block";
+        actions.innerHTML =
+          '<button type="button" class="btn btn-ghost" id="btn-share-cancel">取消</button>' +
+          '<button type="button" class="btn btn-primary" id="btn-manual-share">去分享</button>';
+      }
+      $("share-result-mask").classList.add("show");
+      bindShareResultActions(mode);
+    }
+
+    function closeShareResultDialog() {
+      $("share-result-mask").classList.remove("show");
+    }
+
+    function bindShareResultActions() {
+      var done = $("btn-share-done");
+      var openGroup = $("btn-open-group");
+      var cancel = $("btn-share-cancel");
+      var manual = $("btn-manual-share");
+      var viewReport = $("btn-view-report");
+      if (done) {
+        done.onclick = function () {
+          closeShareResultDialog();
+          stack = ["list"];
+          showScreen("list", "服务报告");
+        };
+      }
+      if (openGroup) {
+        openGroup.onclick = function () {
+          closeShareResultDialog();
+          toast("已打开客户群：" + customerGroupName);
+          setTimeout(function () {
+            stack = ["list"];
+            showScreen("list", "服务报告");
+          }, 900);
+        };
+      }
+      if (cancel) {
+        cancel.onclick = function () { closeShareResultDialog(); };
+      }
+      if (manual) {
+        manual.onclick = function () {
+          // 手动分享成功后，进入「已分享给客户」弹窗
+          openShareResultDialog("shared");
+        };
+      }
+      if (viewReport) {
+        viewReport.onclick = function () {
+          closeShareResultDialog();
+          openCustomerView();
+        };
+      }
+    }
+
+    $("btn-send").addEventListener("click", function () {
+      var mock = document.querySelector('input[name="group-mock"]:checked');
+      var val = mock ? mock.value : "found";
+      if (val === "missing") openShareResultDialog("missing");
+      else if (val === "shared") openShareResultDialog("shared");
+      else openShareResultDialog("ok");
+    });
+
+    $("share-result-mask").addEventListener("click", function (e) {
+      if (e.target === $("share-result-mask")) closeShareResultDialog();
+    });
+
+    function syncPlanToCustomer() {
+      var text = ($("plan-text").value || "").trim();
+      $("customer-plan").textContent = text || "暂无处理方案";
+    }
+
+    function syncDimsToCustomer() {
+      var flockAbnHtml = "";
+      var normalHtml = "";
+      var abnormalHtml = "";
+      var flockSet = {};
+      FLOCK_DIMS.forEach(function (i) { flockSet[i] = true; });
+
+      DIMENSIONS.forEach(function (name, i) {
+        var s = dimState[i];
+        if (!s.done && !s.abnormal && !s.problem) return;
+        if (flockSet[i]) {
+          if (s.abnormal) {
+            flockAbnHtml +=
+              '<div class="issue"><div class="row1"><span>' + name + '</span><span class="tag tag-no">异常</span></div>' +
+              (s.problem ? '<div class="comm">' + s.problem + "</div>" : "") +
+              "</div>";
+          }
+          return;
+        }
+        if (s.abnormal) {
+          abnormalHtml +=
+            '<div class="issue"><div class="row1"><span>' + name + '</span><span class="tag tag-no">异常</span></div>' +
+            (s.problem ? '<div class="comm">' + s.problem + "</div>" : "") +
+            "</div>";
+        } else if (s.done) {
+          normalHtml +=
+            '<div class="issue"><div class="row1"><span>' + name + '</span><span class="tag tag-ok">正常</span></div></div>';
+        }
+      });
+      $("customer-flock-abnormal").innerHTML = flockAbnHtml || '<div class="empty-tip">暂无鸡群异常</div>';
+      $("customer-normal").innerHTML = normalHtml || '<div class="empty-tip">暂无已填正常项</div>';
+      $("customer-abnormal").innerHTML = abnormalHtml || '<div class="empty-tip">暂无异常项</div>';
+
+      var n = uploadCount.problem || 0;
+      var photoHtml = "";
+      if (n === 0) {
+        // 原型示意：无上传时展示示例图
+        photoHtml =
+          '<div class="photo-item">问题图1</div>' +
+          '<div class="photo-item">问题图2</div>';
+      } else {
+        for (var i = 0; i < n; i++) {
+          photoHtml += '<div class="photo-item">照片' + (i + 1) + "</div>";
+        }
+      }
+      $("customer-photos").innerHTML = photoHtml;
+    }
+
+    function syncFlockToCustomer() {
+      var typeEl = $("flock-type");
+      var breed = ($("flock-breed").value || "").trim();
+      var scale = ($("flock-scale").value || "").trim();
+      var unitEl = document.querySelector("#flock-scale") && document.querySelector("#flock-scale").closest(".input-with-unit");
+      var unit = unitEl ? (unitEl.querySelector(".unit") || {}).textContent || "羽" : "羽";
+      $("customer-flock-type").textContent = typeEl ? (typeEl.value || "—") : "—";
+      $("customer-flock-breed").textContent = breed || "—";
+      $("customer-flock-scale").textContent = scale ? (scale + unit) : "—";
+    }
+
+    function openCustomerView() {
+      syncPlanToCustomer();
+      syncFlockToCustomer();
+      syncDimsToCustomer();
+      go("customer", "客户查看报告");
+    }
+
+    if ($("btn-customer-view")) {
+      $("btn-customer-view").addEventListener("click", openCustomerView);
+    }
+
+    $("btn-pick-loc").addEventListener("click", function () {
+      $("checkin-addr").value = "山东省青岛市即墨区蓝村镇张三养殖场";
+    });
+
+    function syncVisitMode() {
+      var mode = document.querySelector('input[name="visit-mode"]:checked');
+      var phone = mode && mode.value === "phone";
+      $("onsite-checkin-fields").style.display = phone ? "none" : "block";
+    }
+    document.querySelectorAll('input[name="visit-mode"]').forEach(function (r) {
+      r.addEventListener("change", syncVisitMode);
+    });
+    syncVisitMode();
+
+    var uploadCount = { problem: 0, checkin: 0, selfie: 0 };
+
+    function renderUpload(kind) {
+      var wrap = $("thumbs-" + kind);
+      var max = 10;
+      var n = uploadCount[kind];
+      var html = "";
+      for (var i = 0; i < n; i++) {
+        html += '<div class="upload-thumb"><span>照片' + (i + 1) + "</span></div>";
+      }
+      if (n < max) {
+        html +=
+          '<div class="upload-box" data-upload="' + kind + '" data-max="' + max + '">' +
+          '<div class="u1">拍照 / 上传</div>' +
+          '<div class="u2">(' + n + " / " + max + ")</div></div>";
+      }
+      wrap.innerHTML = html;
+    }
+
+    document.querySelectorAll("#thumbs-problem, #thumbs-checkin, #thumbs-selfie").forEach(function (wrap) {
+      wrap.addEventListener("click", function (e) {
+        var box = e.target.closest(".upload-box");
+        if (!box) return;
+        var kind = box.getAttribute("data-upload");
+        var max = +box.getAttribute("data-max") || 10;
+        if (uploadCount[kind] >= max) return;
+        uploadCount[kind] += 1;
+        renderUpload(kind);
+      });
+    });
+
+    $("ref-problem").addEventListener("click", function () {
+      alert("参考图片：现场问题实拍示意（原型）");
+    });
+    $("ref-checkin").addEventListener("click", function () {
+      alert("参考图片：场舍门口 / 场内环境签到示意（原型）");
+    });
+    $("ref-selfie").addEventListener("click", function () {
+      alert("参考图片：需包含人脸和工服标识（原型）");
+    });
+
+    syncPlanToCustomer();
+    renderDims();
+    updateCardAlert();
+  </script>
+</body>
+</html>

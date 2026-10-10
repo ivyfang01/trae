@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>技术服务需求 · 提需分配日程原型</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --card: #fff;
+      --text: #1a2332;
+      --muted: #8b95a5;
+      --label: #5c6b7a;
+      --line: #e8ecf1;
+      --blue: #3b71e8;
+      --blue-deep: #2b5fd0;
+      --blue-soft: #e8f0ff;
+      --danger: #e54d42;
+      --ok: #1f9d6a;
+      --ok-soft: #e6f7f0;
+      --warn: #d48806;
+      --warn-soft: #fff7e8;
+      --shadow: 0 2px 10px rgba(26, 35, 50, 0.06);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c5ccd6;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px 32px;
+    }
+    .device {
+      width: 390px;
+      max-width: 100%;
+      min-height: 780px;
+      background: var(--bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,.18);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-height: 52px;
+    }
+    .topbar.blue {
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-deep) 100%);
+      border-bottom: none;
+      color: #fff;
+    }
+    .topbar .back {
+      width: 28px; height: 28px; border: none; background: transparent;
+      font-size: 22px; cursor: pointer; line-height: 1; color: inherit;
+    }
+    .topbar h1 { font-size: 17px; font-weight: 600; flex: 1; text-align: center; margin-right: 28px; }
+    .topbar.blue h1 { margin-right: 28px; text-align: center; }
+    .screens { flex: 1; overflow: hidden; position: relative; }
+    .screen {
+      display: none; height: 100%; overflow-y: auto;
+      padding: 12px 12px 24px; -webkit-overflow-scrolling: touch;
+    }
+    .screen.active { display: block; }
+    .screen.no-pad { padding: 0; background: #fff; }
+
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 14px; margin-bottom: 10px;
+    }
+    .sec-title {
+      font-size: 15px; font-weight: 600; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sec-title::before {
+      content: ""; width: 3px; height: 14px; background: var(--blue); border-radius: 2px;
+    }
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 13px; color: var(--label); margin-bottom: 8px;
+    }
+    .field label .req { color: var(--danger); margin-right: 2px; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; font-size: 14px; font-family: inherit;
+      background: #f7f9fc; color: var(--text);
+    }
+    .field textarea { min-height: 100px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: #9bb8f0; background: #fff;
+    }
+    .opt-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .opt-row label {
+      flex: 1; min-width: 40%; margin: 0; display: flex; align-items: center; justify-content: center;
+      padding: 10px; border: 1px solid var(--line); border-radius: 8px;
+      background: #f7f9fc; font-size: 13px; cursor: pointer; color: var(--text);
+    }
+    .opt-row input { display: none; }
+    .opt-row label:has(input:checked) {
+      border-color: var(--blue); background: var(--blue-soft); color: var(--blue); font-weight: 600;
+    }
+
+    .kv { display: flex; font-size: 13px; padding: 8px 0; line-height: 1.5; border-bottom: 1px solid #f3f5f8; }
+    .kv:last-child { border-bottom: none; }
+    .kv .k { width: 88px; color: var(--muted); flex-shrink: 0; }
+    .kv .v { flex: 1; color: var(--text); text-align: right; }
+
+    .btn {
+      width: 100%; border: none; border-radius: 10px;
+      padding: 13px 16px; font-size: 15px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:active { background: var(--blue-deep); }
+    .btn-ghost { background: #fff; color: var(--blue); border: 1px solid #c5d6f7; margin-top: 10px; }
+    .btn-ok { background: var(--ok); color: #fff; }
+
+    .list-item {
+      background: var(--card); border-radius: var(--radius);
+      padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); cursor: pointer;
+    }
+    .list-item .t1 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .list-item .t2 {
+      font-size: 12px; color: var(--muted);
+      display: flex; justify-content: space-between; gap: 8px; align-items: center;
+    }
+    .tag {
+      display: inline-flex; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500;
+    }
+    .tag-wait { background: var(--warn-soft); color: var(--warn); }
+    .tag-ok { background: var(--ok-soft); color: var(--ok); }
+    .tag-doing { background: var(--blue-soft); color: var(--blue); }
+    .tag-done { background: #eef1f6; color: var(--muted); }
+    .tag-no { background: #fdf0eb; color: #e54d42; }
+
+    .demand-tabs {
+      display: flex; background: #fff; border-radius: 10px;
+      padding: 4px; margin-bottom: 12px; box-shadow: var(--shadow);
+    }
+    .demand-tabs button {
+      flex: 1; border: none; background: transparent; border-radius: 8px;
+      padding: 10px 0; font-size: 14px; font-family: inherit;
+      color: var(--muted); cursor: pointer; font-weight: 500;
+    }
+    .demand-tabs button.on {
+      background: var(--blue-soft); color: var(--blue); font-weight: 600;
+    }
+
+    .list-filter-head {
+      background: #fff;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    }
+    .screen-list {
+      padding: 0 0 24px;
+    }
+    .screen-list .list-body {
+      padding: 0 12px;
+    }
+
+    .filter-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+    }
+    .filter-search-input {
+      flex: 1;
+      background: #f5f5f5;
+      border-radius: 20px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .filter-search-input svg {
+      width: 16px;
+      height: 16px;
+      color: #c0c4cc;
+      flex-shrink: 0;
+    }
+    .filter-search-input input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      color: var(--text);
+      width: 100%;
+      font-family: inherit;
+    }
+    .filter-search-input input::placeholder {
+      color: #c0c4cc;
+    }
+    .filter-search-btn {
+      border: none;
+      background: transparent;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      padding: 0;
+    }
+    .filter-search-btn:active { opacity: .75; }
+
+    .filter-status-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 16px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+    }
+    .filter-status-scroll {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-status-scroll::-webkit-scrollbar { display: none; }
+    .filter-tab {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: #4e5969;
+      white-space: nowrap;
+      cursor: pointer;
+      padding: 4px 0 6px;
+      position: relative;
+      font-family: inherit;
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+    .filter-tab.active {
+      color: var(--blue);
+      font-weight: 500;
+    }
+    .filter-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 1px;
+    }
+    .filter-divider {
+      width: 1px;
+      height: 16px;
+      background: #e5e6eb;
+      flex-shrink: 0;
+    }
+    .filter-more-btn {
+      border: none;
+      background: transparent;
+      color: #4e5969;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 0;
+      flex-shrink: 0;
+    }
+    .filter-more-btn svg {
+      width: 12px;
+      height: 12px;
+      color: #86909c;
+      transition: transform .2s;
+    }
+    .filter-more-btn.open svg {
+      transform: rotate(180deg);
+    }
+    .filter-more-panel {
+      display: none;
+      padding: 10px 16px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #fff;
+    }
+    .filter-more-panel.open {
+      display: block;
+    }
+    .filter-more-panel select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #f7f9fc;
+      color: var(--text);
+    }
+    .filter-more-panel select + select {
+      margin-top: 8px;
+    }
+    .filter-more-panel select:focus {
+      outline: none;
+      border-color: #9bb8f0;
+      background: #fff;
+    }
+
+    .resolve-row {
+      display: flex; gap: 10px; margin-top: 4px;
+    }
+    .resolve-row .btn {
+      flex: 1; padding: 12px 10px; font-size: 14px;
+    }
+    .resolve-row .btn.on-ok {
+      background: var(--ok-soft); color: var(--ok); border: 1px solid #9dd9bf;
+    }
+    .resolve-row .btn.on-no {
+      background: var(--danger-soft, #fdf0eb); color: var(--danger, #e54d42);
+      border: 1px solid #f0c4b6;
+    }
+    .resolve-result {
+      margin-top: 10px; font-size: 13px; text-align: center; color: var(--muted);
+    }
+    .resolve-hint {
+      margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.5;
+    }
+
+    .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .hub-card {
+      background: #fff; border-radius: 12px; padding: 18px 14px;
+      box-shadow: var(--shadow); cursor: pointer; text-align: center;
+      display: block; color: inherit; text-decoration: none;
+      position: relative; z-index: 1; -webkit-tap-highlight-color: transparent;
+    }
+    .hub-card * { pointer-events: none; }
+    .hub-card .ico { font-size: 28px; margin-bottom: 8px; }
+    .hub-card .n { font-size: 14px; font-weight: 600; }
+    .hub-card .d { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .toast {
+      display: none; position: absolute; left: 50%; top: 48%;
+      transform: translate(-50%, -50%); z-index: 50;
+      background: rgba(26,35,50,.88); color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-size: 13px;
+      max-width: 80%; text-align: center; line-height: 1.5;
+    }
+    .toast.show { display: block; }
+
+    .confirm-mask {
+      display: none; position: absolute; inset: 0; z-index: 60;
+      background: rgba(26, 35, 50, 0.45);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .confirm-mask.show { display: flex; }
+    .confirm-dialog {
+      width: 100%; background: #fff; border-radius: 14px;
+      padding: 22px 18px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.18);
+      text-align: center;
+    }
+    .confirm-dialog .confirm-title {
+      font-size: 16px; font-weight: 600; margin-bottom: 8px;
+    }
+    .confirm-dialog .confirm-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 18px;
+    }
+    .confirm-dialog .confirm-reason {
+      display: none; text-align: left; margin: -6px 0 16px;
+    }
+    .confirm-dialog .confirm-reason.show { display: block; }
+    .confirm-dialog .confirm-reason label {
+      display: block; font-size: 13px; color: var(--label); margin-bottom: 8px;
+    }
+    .confirm-dialog .confirm-reason label .req { color: var(--danger); margin-right: 2px; }
+    .confirm-dialog .confirm-reason textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px 12px; font-size: 14px; font-family: inherit;
+      background: #f7f9fc; color: var(--text); min-height: 80px; resize: vertical;
+    }
+    .confirm-dialog .confirm-reason textarea:focus {
+      outline: none; border-color: #9bb8f0; background: #fff;
+    }
+    .confirm-dialog .confirm-actions {
+      display: flex; gap: 10px;
+    }
+    .confirm-dialog .confirm-actions .btn {
+      flex: 1; margin: 0; padding: 12px 10px;
+    }
+
+    .push-banner {
+      background: #fff; border-radius: 10px; padding: 12px;
+      box-shadow: var(--shadow); margin-bottom: 12px;
+      border-left: 3px solid var(--blue); cursor: pointer;
+    }
+    .push-banner .p1 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .push-banner .p2 { font-size: 12px; color: var(--muted); }
+
+    /* —— 日程（对齐 CRM） —— */
+    .crm-tabs {
+      display: flex; background: #fff; border-bottom: 1px solid #f0f0f0;
+      padding: 0 8px;
+    }
+    .crm-tabs button {
+      flex: 1; border: none; background: transparent; padding: 14px 0 12px;
+      font-size: 15px; color: #666; font-family: inherit; cursor: pointer;
+      position: relative;
+    }
+    .crm-tabs button.on {
+      color: var(--blue); font-weight: 600;
+    }
+    .crm-tabs button.on::after {
+      content: ""; position: absolute; left: 50%; bottom: 0;
+      transform: translateX(-50%); width: 28px; height: 3px;
+      background: var(--blue); border-radius: 2px;
+    }
+    .cal-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px 6px; background: #fff; font-size: 14px; color: #333;
+    }
+    .cal-bar .pick { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .week-row {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      padding: 4px 8px 0; background: #fff; text-align: center;
+    }
+    .week-row .wd { font-size: 12px; color: #999; padding: 4px 0; }
+    .week-row .dd {
+      font-size: 15px; color: #333; padding: 8px 0; border-radius: 50%;
+      width: 36px; height: 36px; margin: 4px auto; display: flex;
+      align-items: center; justify-content: center; cursor: pointer;
+    }
+    .week-row .dd.on { background: var(--blue); color: #fff; font-weight: 600; }
+    .cal-expand {
+      text-align: center; background: #fff; color: #bbb; font-size: 12px;
+      padding: 4px 0 10px; border-bottom: 8px solid #f5f6f8;
+    }
+    .task-wrap { padding: 12px; background: #f5f6f8; min-height: 420px; }
+    .task-card {
+      background: #fff; border-radius: 12px; padding: 14px 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .task-hd {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; font-size: 14px; font-weight: 600; gap: 8px;
+    }
+    .task-hd .title { flex: 1; min-width: 0; }
+    .task-hd .pct { color: var(--danger); font-weight: 600; }
+    .task-actions {
+      display: flex; justify-content: flex-end; align-items: center;
+      padding-top: 10px; border-top: 1px solid #f3f5f8; margin-top: 4px;
+    }
+    .btn-visit {
+      border: 1px solid var(--blue); background: #fff; color: var(--blue);
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      padding: 6px 14px; border-radius: 8px; cursor: pointer;
+    }
+    .btn-visit:active { background: var(--blue-soft); }
+    .task-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid #f3f5f8; cursor: pointer;
+    }
+    .task-row:last-child { border-bottom: none; }
+    .task-row .name { font-size: 15px; color: #222; }
+    .task-row .when { font-size: 13px; color: #999; }
+    .task-row .sub {
+      font-size: 11px; color: var(--blue); margin-top: 4px;
+    }
+    .task-row.new-req .name::before {
+      content: "需"; display: inline-block; width: 16px; height: 16px;
+      background: var(--blue-soft); color: var(--blue); border-radius: 4px;
+      font-size: 10px; text-align: center; line-height: 16px; margin-right: 6px;
+      vertical-align: 1px;
+    }
+
+    .fab-bar {
+      position: absolute; left: 12px; right: 12px; bottom: 16px; z-index: 10;
+    }
+    .hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; }
+    .flow-tip {
+      background: var(--blue-soft); color: var(--blue); font-size: 12px;
+      padding: 8px 10px; border-radius: 8px; margin-bottom: 12px; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="topbar blue" id="topbar">
+      <button class="back" type="button" id="btn-back" style="visibility:hidden">‹</button>
+      <h1 id="page-title">技术服务需求</h1>
+    </div>
+
+    <div class="screens">
+      <!-- 入口 -->
+      <div class="screen active" id="screen-hub">
+        <div class="flow-tip">流程：业务员创建工单 → 自动分配技术老师 → 老师拜访写报告 → 业务员确认问题是否解决</div>
+        <div class="hub-grid">
+          <div class="hub-card" data-go="sales-list">
+            <div class="ico">📋</div>
+            <div class="n">业务员 · 工单列表</div>
+            <div class="d">未诊断 / 已诊断 · 反馈</div>
+          </div>
+          <div class="hub-card" data-go="teacher-inbox">
+            <div class="ico">📬</div>
+            <div class="n">技术老师 · 工单列表</div>
+            <div class="d">未诊断 / 已诊断 · 去拜访</div>
+          </div>
+          <div class="hub-card" data-go="sales-submit">
+            <div class="ico">📝</div>
+            <div class="n">业务员 · 提需</div>
+            <div class="d">创建诊断工单</div>
+          </div>
+          <a class="hub-card" href="消息通知.html" role="link">
+            <div class="ico">🔔</div>
+            <div class="n">消息通知</div>
+            <div class="d">三类推送 · 跳转详情</div>
+          </a>
+          <a class="hub-card" href="数据查询_管理端.html" role="link">
+            <div class="ico">📊</div>
+            <div class="n">数据查询</div>
+            <div class="d">PC · 报告/工单导出</div>
+          </a>
+          <a class="hub-card" href="巡场报告拜访列表.html" role="link">
+            <div class="ico">📑</div>
+            <div class="n">巡场报告拜访列表</div>
+            <div class="d">对齐拜访记录查询</div>
+          </a>
+        </div>
+        <p class="hint">两个角色分看各自工单列表；业务员可在详情中反馈问题是否解决</p>
+      </div>
+
+      <!-- 业务员：需求列表 -->
+      <div class="screen screen-list" id="screen-sales-list">
+        <div class="list-filter-head" id="sales-list-filter">
+          <div class="filter-search-bar">
+            <div class="filter-search-input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="sales-filter-customer" placeholder="搜索客户名称" autocomplete="off" />
+            </div>
+            <button type="button" class="filter-search-btn" id="sales-filter-search-btn">搜索</button>
+          </div>
+          <div class="filter-status-bar">
+            <div class="filter-status-scroll" id="sales-resolve-chips">
+              <button type="button" class="filter-tab active" data-resolve="all">全部</button>
+              <button type="button" class="filter-tab" data-resolve="undiag">未诊断</button>
+              <button type="button" class="filter-tab" data-resolve="pending">待反馈</button>
+              <button type="button" class="filter-tab" data-resolve="ok">已解决</button>
+              <button type="button" class="filter-tab" data-resolve="no">未解决</button>
+            </div>
+            <span class="filter-divider"></span>
+            <button type="button" class="filter-more-btn" id="sales-filter-more-toggle" aria-expanded="false">
+              更多
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+          <div class="filter-more-panel" id="sales-filter-more-panel">
+            <select id="sales-filter-submitter">
+              <option value="">提交人（全部）</option>
+              <option value="李明">李明</option>
+              <option value="方伟萍">方伟萍</option>
+              <option value="向仁兵">向仁兵</option>
+            </select>
+          </div>
+        </div>
+        <div class="list-body" id="demand-list"></div>
+      </div>
+
+      <!-- 业务员：提交需求 -->
+      <div class="screen" id="screen-sales-submit">
+        <div class="card">
+          <div class="field" id="customer-fixed-wrap">
+            <div class="kv" style="border:none;padding:0;margin:0">
+              <span class="k">客户名字</span>
+              <span class="v" id="demand-customer-fixed">张三</span>
+            </div>
+          </div>
+          <select id="demand-customer" style="display:none" aria-hidden="true">
+            <option value="张三">张三</option>
+            <option value="粮巴巴">粮巴巴</option>
+            <option value="周卫兵">周卫兵</option>
+            <option value="姚萍芬">姚萍芬</option>
+            <option value="张大胆">张大胆</option>
+          </select>
+          <div class="field">
+            <label><span class="req">*</span>需求类型</label>
+            <div class="opt-row">
+              <label><input type="radio" name="demand-type" value="客户纠纷" /> 客户纠纷</label>
+              <label><input type="radio" name="demand-type" value="鸡群诊断" checked /> 鸡群诊断</label>
+            </div>
+          </div>
+          <div class="field">
+            <label><span class="req">*</span>需求说明</label>
+            <textarea id="demand-desc" placeholder="请描述现场问题、诉求与期望上门时间…">近两日产蛋率下降约 8%，疑似肠炎，请技术老师上门诊断。</textarea>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-submit-demand">提交给技术老师</button>
+        <!-- <p class="hint">提交后自动分给技术老师，进入其待办与日程（无需接单）</p> -->
+      </div>
+
+      <!-- 老师：诊断工单列表（同业务员列表结构） -->
+      <div class="screen screen-list" id="screen-teacher-inbox">
+        <div class="list-filter-head" id="teacher-list-filter">
+          <div class="filter-search-bar">
+            <div class="filter-search-input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="teacher-filter-customer" placeholder="搜索客户名称" autocomplete="off" />
+            </div>
+            <button type="button" class="filter-search-btn" id="teacher-filter-search-btn">搜索</button>
+          </div>
+          <div class="filter-status-bar">
+            <div class="filter-status-scroll" id="teacher-resolve-chips">
+              <button type="button" class="filter-tab active" data-resolve="all">全部</button>
+              <button type="button" class="filter-tab" data-resolve="undiag">未诊断</button>
+              <button type="button" class="filter-tab" data-resolve="pending">待确认</button>
+              <button type="button" class="filter-tab" data-resolve="ok">已解决</button>
+              <button type="button" class="filter-tab" data-resolve="no">未解决</button>
+            </div>
+            <span class="filter-divider"></span>
+            <button type="button" class="filter-more-btn" id="teacher-filter-more-toggle" aria-expanded="false">
+              更多
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+          <div class="filter-more-panel" id="teacher-filter-more-panel">
+            <select id="teacher-filter-submitter">
+              <option value="">提交人（全部）</option>
+              <option value="李明">李明</option>
+              <option value="方伟萍">方伟萍</option>
+              <option value="向仁兵">向仁兵</option>
+            </select>
+            <select id="teacher-filter-assignee">
+              <option value="">接单人（全部）</option>
+              <option value="王玉东">王玉东</option>
+              <option value="陈老师">陈老师</option>
+            </select>
+          </div>
+        </div>
+        <div class="list-body" id="teacher-demand-list"></div>
+      </div>
+
+      <!-- 老师：工单详情 -->
+      <div class="screen" id="screen-teacher-task">
+        <div class="card">
+          <div class="sec-title">工单详情</div>
+          <div class="kv"><span class="k">业务员</span><span class="v" id="acc-sales">李明</span></div>
+          <div class="kv"><span class="k">客户名称</span><span class="v" id="acc-customer">张三</span></div>
+          <div class="kv"><span class="k">提交时间</span><span class="v" id="acc-time">2026-08-14 09:20</span></div>
+          <div class="kv"><span class="k">需求类型</span><span class="v" id="acc-type">鸡群诊断</span></div>
+          <div class="kv"><span class="k">状态</span><span class="v"><span class="tag tag-wait" id="acc-status">未诊断</span></span></div>
+          <div class="kv"><span class="k">技术老师</span><span class="v">王玉东</span></div>
+          <div class="kv" id="acc-visit-row" style="display:none"><span class="k">拜访时间</span><span class="v" id="acc-visit">—</span></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">需求说明</div>
+          <div style="font-size:13px;line-height:1.7;color:var(--text)" id="acc-desc">
+            近两日产蛋率下降约 8%，疑似肠炎，请技术老师上门诊断。
+          </div>
+        </div>
+        <div class="card" id="acc-report-block" style="display:none;text-align:left">
+          <div class="sec-title">巡场报告</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px">处理方案</div>
+          <div style="font-size:13px;line-height:1.7;white-space:pre-line" id="acc-report-text"></div>
+          <a href="养殖技术服务报告V2.html" class="btn btn-ghost" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-top:12px">查看详情</a>
+        </div>
+        <div class="card" id="acc-resolve-block" style="display:none">
+          <div class="sec-title">问题反馈</div>
+          <div class="kv"><span class="k">反馈结果</span><span class="v" id="acc-resolve-status">待确认</span></div>
+          <div class="kv" id="acc-resolve-reason-row" style="display:none"><span class="k">未解决原因</span><span class="v" id="acc-resolve-reason" style="text-align:left">—</span></div>
+          <div class="kv" id="acc-resolve-time-row" style="display:none"><span class="k">确认时间</span><span class="v" id="acc-resolve-time">—</span></div>
+          <div class="kv" id="acc-resolve-by-row" style="display:none"><span class="k">确认人</span><span class="v" id="acc-resolve-by">—</span></div>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-go-visit-from-task">去拜访</button>
+        <!-- <button type="button" class="btn btn-ghost" id="btn-task-to-schedule">查看日程</button> -->
+        <!-- <p class="hint" id="teacher-task-hint">工单创建后已自动分配，可直接安排拜访并填写巡场报告</p> -->
+      </div>
+
+      <!-- 日程表（CRM 样式） -->
+      <div class="screen no-pad" id="screen-schedule">
+        <div class="crm-tabs">
+          <button type="button" class="on">日程</button>
+          <button type="button">任务</button>
+          <button type="button">日报</button>
+        </div>
+        <div class="cal-bar">
+          <span class="pick">2026年8月 ▾</span>
+          <span class="pick">我的 ▾</span>
+        </div>
+        <div class="week-row">
+          <div class="wd">日</div><div class="wd">一</div><div class="wd">二</div>
+          <div class="wd">三</div><div class="wd">四</div><div class="wd">五</div><div class="wd">六</div>
+        </div>
+        <div class="week-row">
+          <div class="dd">10</div><div class="dd">11</div><div class="dd">12</div>
+          <div class="dd">13</div><div class="dd">14</div><div class="dd on">15</div><div class="dd">16</div>
+        </div>
+        <div class="cal-expand">˅</div>
+        <div class="task-wrap">
+          <div class="task-card" id="sched-task-card" style="display:none">
+            <div class="task-hd">
+              <span class="title" id="sched-hd-title">张三养殖场 · 鸡群诊断</span>
+              <span class="tag tag-wait" id="sched-status">未诊断</span>
+            </div>
+            <div class="task-actions">
+              <button type="button" class="btn-visit" id="btn-go-visit">去拜访</button>
+            </div>
+          </div>
+          <p class="hint" id="sched-hint">创建工单后会自动出现在老师日程拜访任务中</p>
+        </div>
+      </div>
+
+      <!-- 拜访后：写报告入口示意 -->
+      <div class="screen" id="screen-visit-report">
+        <div class="flow-tip">原型示意：从此进入「养殖技术服务报告」填写；完成后可回填需求反馈。</div>
+        <div class="card">
+          <div class="sec-title">本趟拜访</div>
+          <div class="kv"><span class="k">客户</span><span class="v" id="vr-customer">张三养殖场</span></div>
+          <div class="kv"><span class="k">拜访时间</span><span class="v" id="vr-time">2026-08-16 10:00</span></div>
+          <div class="kv"><span class="k">来源需求</span><span class="v">鸡群诊断</span></div>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-open-report">打开巡场报告（V2）</button>
+        <button type="button" class="btn btn-ghost" id="btn-finish-visit">模拟拜访完成并反馈</button>
+      </div>
+
+      <!-- 业务员：工单详情（在老师详情基础上增加解决反馈） -->
+      <div class="screen" id="screen-sales-detail">
+        <div class="card">
+          <div class="sec-title">工单详情</div>
+          <div class="kv"><span class="k">业务员</span><span class="v" id="detail-sales">李明</span></div>
+          <div class="kv"><span class="k">客户名称</span><span class="v" id="detail-customer">张三</span></div>
+          <div class="kv"><span class="k">提交时间</span><span class="v" id="detail-time">2026-08-14 09:20</span></div>
+          <div class="kv"><span class="k">需求类型</span><span class="v" id="detail-type">鸡群诊断</span></div>
+          <div class="kv"><span class="k">状态</span><span class="v"><span class="tag tag-wait" id="detail-status">未诊断</span></span></div>
+          <div class="kv" id="detail-teacher-row"><span class="k">技术老师</span><span class="v" id="detail-teacher">—</span></div>
+          <div class="kv" id="detail-visit-row" style="display:none"><span class="k">拜访时间</span><span class="v" id="detail-visit">—</span></div>
+        </div>
+        <div class="card">
+          <div class="sec-title">需求说明</div>
+          <div style="font-size:13px;line-height:1.7" id="detail-desc">近两日产蛋率下降约 8%，疑似肠炎，请技术老师上门诊断。</div>
+        </div>
+        <div class="card" id="feedback-block" style="display:none;text-align:left">
+          <div class="sec-title">巡场报告</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-align:left">处理方案</div>
+          <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-line;text-align:left" id="feedback-text"></div>
+          <a href="养殖技术服务报告V2.html" id="feedback-detail-link" class="btn btn-ghost" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-top:12px">查看详情</a>
+        </div>
+        <div class="card" id="resolve-block" style="display:none">
+          <div id="resolve-actions">
+            <div class="sec-title">问题反馈</div>
+            <div class="resolve-row">
+              <button type="button" class="btn btn-ghost" id="btn-resolve-ok">已解决</button>
+              <button type="button" class="btn btn-ghost" id="btn-resolve-no">未解决</button>
+            </div>
+            <p class="resolve-hint">确认后不可修改</p>
+          </div>
+          <div id="resolve-info" style="display:none">
+            <div class="sec-title">问题反馈</div>
+            <div class="kv"><span class="k">反馈结果</span><span class="v" id="resolve-status-text">—</span></div>
+            <div class="kv" id="resolve-reason-row" style="display:none"><span class="k">未解决原因</span><span class="v" id="resolve-reason-text" style="text-align:left">—</span></div>
+            <div class="kv"><span class="k">确认时间</span><span class="v" id="resolve-confirm-time">—</span></div>
+            <div class="kv"><span class="k">确认人</span><span class="v" id="resolve-confirm-by">—</span></div>
+          </div>
+        </div>
+        <div class="card" id="feedback-empty" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="confirm-mask" id="resolve-confirm-mask" role="dialog" aria-modal="true">
+      <div class="confirm-dialog">
+        <div class="confirm-title" id="resolve-confirm-title">确认反馈</div>
+        <div class="confirm-desc" id="resolve-confirm-desc">确认后不可修改，是否继续？</div>
+        <div class="confirm-reason" id="resolve-confirm-reason-wrap">
+          <label for="resolve-confirm-reason"><span class="req">*</span>未解决原因</label>
+          <textarea id="resolve-confirm-reason" placeholder="请填写未解决的原因…"></textarea>
+        </div>
+        <div class="confirm-actions">
+          <button type="button" class="btn btn-ghost" id="btn-resolve-cancel">取消</button>
+          <button type="button" class="btn btn-primary" id="btn-resolve-confirm">确认</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var stack = ["hub"];
+    var state = {
+      submitted: true,
+      accepted: true, // 创建即自动分配老师
+      visited: false,
+      customer: "张三",
+      type: "鸡群诊断",
+      desc: "近两日产蛋率下降约 8%，疑似肠炎，请技术老师上门诊断。",
+      sales: "李明",
+      time: "2026-08-14 09:20",
+      teacher: "王玉东",
+      visitTime: "",
+      feedback: "",
+      resolveStatus: "", // "" | "ok" | "no"
+      resolveReason: "",
+      resolveConfirmTime: "",
+      resolveConfirmBy: ""
+    };
+    var currentDemandId = "";
+
+    // 工单列表示例（创建后自动分配老师，无需接单）
+    var demandList = [
+      {
+        id: "d1",
+        customer: "张三",
+        type: "鸡群诊断",
+        time: "2026-08-14 09:20",
+        sales: "李明",
+        accepted: true,
+        visited: false,
+        teacher: "王玉东",
+        visitTime: "",
+        desc: "近两日产蛋率下降约 8%，疑似肠炎，请技术老师上门诊断。",
+        feedback: "",
+        resolveStatus: ""
+      },
+      {
+        id: "d2",
+        customer: "张三",
+        type: "鸡群诊断",
+        time: "2026-08-10 14:30",
+        sales: "李明",
+        accepted: true,
+        visited: false,
+        teacher: "王玉东",
+        visitTime: "",
+        desc: "鸡群精神状态不佳，请老师上门排查。",
+        feedback: "",
+        resolveStatus: ""
+      },
+      {
+        id: "d3",
+        customer: "张三",
+        type: "鸡群诊断",
+        time: "2026-08-04 09:00",
+        sales: "李明",
+        accepted: true,
+        visited: true,
+        teacher: "王玉东",
+        visitTime: "2026-08-04T10:30:00",
+        desc: "用料后产蛋率波动，客户不满意",
+        feedback: "1. 测光仪测试，平均光照 17.68 lux；晚上补光每天减 10 分钟，6 天减完。\n2. 干燥天气喷雾增湿，并定期清理灯泡与探头、消毒。\n3. 按建议添加卵炎消消乐，关注肠胃与死淘变化。",
+        resolveStatus: "",
+        resolveConfirmTime: "",
+        resolveConfirmBy: ""
+      },
+      {
+        id: "d4",
+        customer: "周卫兵",
+        type: "鸡群诊断",
+        time: "2026-07-28 11:00",
+        sales: "方伟萍",
+        accepted: true,
+        visited: true,
+        teacher: "陈老师",
+        visitTime: "2026-07-28T14:00:00",
+        desc: "采食量下降，需现场排查。",
+        feedback: "1. 调整喂料时间，观察 3 天。\n2. 加强饮水消毒。",
+        resolveStatus: "ok",
+        resolveConfirmTime: "2026-03-12 02:00:00",
+        resolveConfirmBy: "方伟萍"
+      },
+      {
+        id: "d5",
+        customer: "姚萍芬",
+        type: "鸡群诊断",
+        time: "2026-07-20 09:30",
+        sales: "向仁兵",
+        accepted: true,
+        visited: true,
+        teacher: "王玉东",
+        visitTime: "2026-07-20T10:00:00",
+        desc: "死淘率偏高，客户要求上门。",
+        feedback: "1. 建议加药观察。\n2. 改善通风。",
+        resolveStatus: "no",
+        resolveReason: "用药后死淘仍偏高，客户暂不认可方案，需二次上门复查。",
+        resolveConfirmTime: "2026-07-22 15:30:00",
+        resolveConfirmBy: "方伟萍"
+      }
+    ];
+
+    function resolveFeedbackLabel(status) {
+      if (status === "ok") return { text: "已解决", cls: "tag-ok" };
+      if (status === "no") return { text: "未解决", cls: "tag-no" };
+      return { text: "待确认", cls: "tag-wait" };
+    }
+
+    function syncTeacherResolveInfo() {
+      var block = $("acc-resolve-block");
+      if (!block) return;
+      if (!state.visited) {
+        block.style.display = "none";
+        return;
+      }
+      block.style.display = "block";
+      var statusEl = $("acc-resolve-status");
+      var reasonRow = $("acc-resolve-reason-row");
+      var timeRow = $("acc-resolve-time-row");
+      var byRow = $("acc-resolve-by-row");
+      if (state.resolveStatus === "ok" || state.resolveStatus === "no") {
+        statusEl.textContent = state.resolveStatus === "ok" ? "已解决" : "未解决";
+        statusEl.style.color = state.resolveStatus === "ok" ? "var(--ok)" : "var(--danger, #e54d42)";
+        timeRow.style.display = "flex";
+        byRow.style.display = "flex";
+        $("acc-resolve-time").textContent = state.resolveConfirmTime || "—";
+        $("acc-resolve-by").textContent = state.resolveConfirmBy || "—";
+        if (state.resolveStatus === "no" && state.resolveReason) {
+          reasonRow.style.display = "flex";
+          $("acc-resolve-reason").textContent = state.resolveReason;
+        } else {
+          reasonRow.style.display = "none";
+        }
+      } else {
+        statusEl.textContent = "待确认";
+        statusEl.style.color = "var(--warn)";
+        timeRow.style.display = "none";
+        byRow.style.display = "none";
+        reasonRow.style.display = "none";
+      }
+    }
+
+    function demandStatusLabel(item, role) {
+      if (!item.visited) return { text: "未诊断", cls: "tag-wait" };
+      // 技术老师 · 列表：按业务员反馈展示
+      if (role === "teacher") {
+        if (item.resolveStatus === "ok") return { text: "已解决", cls: "tag-ok" };
+        if (item.resolveStatus === "no") return { text: "未解决", cls: "tag-no" };
+        return { text: "待确认", cls: "tag-wait" };
+      }
+      // 业务员 · 列表：按工单状态展示
+      if (role === "sales") {
+        if (item.resolveStatus === "ok") return { text: "已解决", cls: "tag-ok" };
+        if (item.resolveStatus === "no") return { text: "未解决", cls: "tag-no" };
+        return { text: "待反馈", cls: "tag-wait" };
+      }
+      return { text: "已诊断", cls: "tag-done" };
+    }
+
+    var salesListFilter = {
+      resolve: "all", // all | undiag | pending | ok | no
+      customer: "",
+      sales: ""
+    };
+    var teacherListFilter = {
+      resolve: "all", // all | undiag | pending | ok | no
+      customer: "",
+      sales: "",
+      teacher: ""
+    };
+
+    function matchListResolveFilter(item, resolve) {
+      if (resolve === "all") return true;
+      if (resolve === "undiag") return !item.visited;
+      if (!item.visited) return false;
+      if (resolve === "pending") return !item.resolveStatus;
+      if (resolve === "ok") return item.resolveStatus === "ok";
+      if (resolve === "no") return item.resolveStatus === "no";
+      return true;
+    }
+
+    function matchSalesListFilter(item) {
+      var kw = (salesListFilter.customer || "").trim();
+      if (kw && item.customer.indexOf(kw) === -1) return false;
+      if (salesListFilter.sales && (item.sales || "") !== salesListFilter.sales) return false;
+      return matchListResolveFilter(item, salesListFilter.resolve);
+    }
+
+    function matchTeacherListFilter(item) {
+      var kw = (teacherListFilter.customer || "").trim();
+      if (kw && item.customer.indexOf(kw) === -1) return false;
+      if (teacherListFilter.sales && (item.sales || "") !== teacherListFilter.sales) return false;
+      if (teacherListFilter.teacher && (item.teacher || "") !== teacherListFilter.teacher) return false;
+      return matchListResolveFilter(item, teacherListFilter.resolve);
+    }
+
+    function renderDemandListInto(wrapId, role) {
+      var wrap = $(wrapId);
+      if (!wrap) return;
+      var html = "";
+      var filtered = demandList.filter(function (item) {
+        if (role === "sales") return matchSalesListFilter(item);
+        if (role === "teacher") return matchTeacherListFilter(item);
+        return true;
+      });
+      if (!filtered.length) {
+        html = '<div class="hint" style="padding:24px 0">暂无符合条件的工单</div>';
+      } else {
+        filtered.forEach(function (item) {
+          var st = demandStatusLabel(item, role);
+          var meta = item.time + " 提交";
+          if (item.sales) meta += " · " + item.sales;
+          if (role === "teacher" && item.teacher) meta += " · " + item.teacher;
+          html +=
+            '<div class="list-item" data-demand-id="' + item.id + '">' +
+            '<div class="t1">' + item.customer + " · " + item.type + "</div>" +
+            '<div class="t2">' +
+            "<span>" + meta + "</span>" +
+            '<span class="tag ' + st.cls + '">' + st.text + "</span>" +
+            "</div></div>";
+        });
+      }
+      wrap.innerHTML = html;
+    }
+
+    function renderDemandList() {
+      renderDemandListInto("demand-list", "sales");
+      renderDemandListInto("teacher-demand-list", "teacher");
+    }
+
+    function applyDemandToState(item) {
+      currentDemandId = item.id;
+      state.customer = item.customer;
+      state.type = item.type;
+      state.time = item.time;
+      state.desc = item.desc;
+      state.sales = item.sales || state.sales || "李明";
+      state.accepted = true; // 创建即自动分配
+      state.visited = !!item.visited;
+      state.teacher = item.teacher || "王玉东";
+      state.visitTime = item.visitTime || "";
+      state.feedback = item.feedback || "";
+      state.resolveStatus = item.resolveStatus || "";
+      state.resolveReason = item.resolveReason || "";
+      state.resolveConfirmTime = item.resolveConfirmTime || "";
+      state.resolveConfirmBy = item.resolveConfirmBy || "";
+      state.submitted = true;
+    }
+
+    function $(id) { return document.getElementById(id); }
+
+    var titles = {
+      hub: "技术服务需求",
+      "sales-list": "业务员·诊断工单",
+      "sales-submit": "创建养殖诊断工单",
+      "teacher-inbox": "技术老师·诊断工单",
+      "teacher-task": "工单详情",
+      schedule: "日程",
+      "visit-report": "上门拜访",
+      "sales-detail": "工单详情"
+    };
+
+    function showScreen(name) {
+      document.querySelectorAll(".screen").forEach(function (s) { s.classList.remove("active"); });
+      $("screen-" + name).classList.add("active");
+      $("page-title").textContent = titles[name] || "技术服务需求";
+      $("btn-back").style.visibility = name === "hub" ? "hidden" : "visible";
+      var isSchedule = name === "schedule";
+      $("topbar").classList.toggle("blue", !isSchedule);
+      if (isSchedule) {
+        $("topbar").style.display = "none";
+      } else {
+        $("topbar").style.display = "flex";
+      }
+      refreshUI();
+    }
+
+    function go(name) {
+      if (name === "sales-submit") {
+        syncSubmitCustomerDisplay(state.customer || "张三");
+      }
+      stack.push(name);
+      showScreen(name);
+    }
+
+    var fromCrm = false;
+
+    function back() {
+      if (fromCrm && stack.length <= 2 && (stack[stack.length - 1] === "sales-submit" || stack[stack.length - 1] === "sales-list")) {
+        window.location.assign(new URL("../crm-temp/crm_customerlsit.html", window.location.href).href);
+        return;
+      }
+      if (stack.length <= 1) return;
+      stack.pop();
+      showScreen(stack[stack.length - 1]);
+    }
+
+    function toast(msg) {
+      var el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(function () { el.classList.remove("show"); }, 1800);
+    }
+
+    function formatVisitLabel(val) {
+      if (!val) return "—";
+      // 2026-08-16T10:00 / 2026-08-16T10:00:00 -> 2026-08-16 10:00:00
+      var m = val.match(/(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})(?::(\d{2}))?/);
+      if (!m) return val;
+      var sec = m[6] || "00";
+      return m[1] + "-" + m[2] + "-" + m[3] + " " + m[4] + ":" + m[5] + ":" + sec;
+    }
+
+    function refreshUI() {
+      var tag = state.visited ? "已诊断" : "未诊断";
+      var tagClass = state.visited ? "tag-done" : "tag-wait";
+
+      ["detail-status"].forEach(function (id) {
+        var el = $(id);
+        if (!el) return;
+        el.textContent = tag;
+        el.className = "tag " + tagClass;
+      });
+
+      if ($("detail-sales")) $("detail-sales").textContent = state.sales;
+      $("detail-customer").textContent = state.customer;
+      $("detail-type").textContent = state.type;
+      if ($("detail-time")) $("detail-time").textContent = state.time;
+      $("detail-desc").textContent = state.desc;
+      $("detail-teacher").textContent = state.teacher || "王玉东";
+      $("detail-teacher-row").style.display = "flex";
+
+      if (state.visited) {
+        $("detail-visit-row").style.display = "flex";
+        $("detail-visit").textContent = formatVisitLabel(state.visitTime);
+      } else {
+        $("detail-visit-row").style.display = "none";
+      }
+
+      if (state.visited && state.feedback) {
+        $("feedback-block").style.display = "block";
+        if ($("feedback-empty")) $("feedback-empty").style.display = "none";
+        $("feedback-text").textContent = state.feedback;
+      } else {
+        $("feedback-block").style.display = "none";
+        if ($("feedback-empty")) $("feedback-empty").style.display = "none";
+      }
+
+      // 业务员详情：已诊断后可反馈问题是否解决
+      if ($("resolve-block")) {
+        if (state.visited) {
+          $("resolve-block").style.display = "block";
+          syncResolveButtons(state.resolveStatus);
+        } else {
+          $("resolve-block").style.display = "none";
+        }
+      }
+
+      $("acc-customer").textContent = state.customer;
+      $("acc-type").textContent = state.type;
+      $("acc-desc").textContent = state.desc;
+      $("acc-sales").textContent = state.sales;
+      $("acc-time").textContent = state.time;
+      if ($("acc-status")) {
+        $("acc-status").textContent = state.visited ? "已诊断" : "未诊断";
+        $("acc-status").className = "tag " + (state.visited ? "tag-done" : "tag-wait");
+      }
+      if ($("acc-visit-row")) {
+        if (state.visited) {
+          $("acc-visit-row").style.display = "flex";
+          $("acc-visit").textContent = formatVisitLabel(state.visitTime);
+        } else {
+          $("acc-visit-row").style.display = "none";
+        }
+      }
+      syncTeacherResolveInfo();
+      if ($("acc-report-block")) {
+        if (state.visited && state.feedback) {
+          $("acc-report-block").style.display = "block";
+          $("acc-report-text").textContent = state.feedback;
+          $("btn-go-visit-from-task").style.display = "none";
+          $("btn-task-to-schedule").style.display = "none";
+          if ($("teacher-task-hint")) $("teacher-task-hint").style.display = "none";
+        } else {
+          $("acc-report-block").style.display = "none";
+          $("btn-go-visit-from-task").style.display = "block";
+          $("btn-task-to-schedule").style.display = "block";
+          if ($("teacher-task-hint")) $("teacher-task-hint").style.display = "block";
+        }
+      }
+
+      $("sched-task-card").style.display = state.accepted ? "block" : "none";
+      $("sched-hint").style.display = state.accepted ? "none" : "block";
+      $("sched-hd-title").textContent = state.customer + " · " + state.type;
+      var st = $("sched-status");
+      if (state.visited) {
+        st.textContent = "已诊断";
+        st.className = "tag tag-done";
+        $("btn-go-visit").textContent = "查看报告";
+      } else {
+        st.textContent = "未诊断";
+        st.className = "tag tag-wait";
+        $("btn-go-visit").textContent = "去拜访";
+      }
+
+      $("vr-customer").textContent = state.customer;
+      $("vr-time").textContent = formatVisitLabel(state.visitTime) || "待上门";
+
+      renderDemandList();
+    }
+
+    function syncResolveButtons(status) {
+      var actions = $("resolve-actions");
+      var info = $("resolve-info");
+      if (!actions || !info) return;
+      if (status === "ok" || status === "no") {
+        actions.style.display = "none";
+        info.style.display = "block";
+        $("resolve-status-text").textContent = status === "ok" ? "已解决" : "未解决";
+        $("resolve-status-text").style.color = status === "ok" ? "var(--ok)" : "var(--danger, #e54d42)";
+        $("resolve-confirm-time").textContent = state.resolveConfirmTime || "—";
+        $("resolve-confirm-by").textContent = state.resolveConfirmBy || "—";
+        var reasonRow = $("resolve-reason-row");
+        if (status === "no" && state.resolveReason) {
+          reasonRow.style.display = "flex";
+          $("resolve-reason-text").textContent = state.resolveReason;
+        } else {
+          reasonRow.style.display = "none";
+        }
+      } else {
+        actions.style.display = "block";
+        info.style.display = "none";
+      }
+    }
+
+    function setResolveStatus(status, reason) {
+      // 确认后不可修改
+      if (state.resolveStatus === "ok" || state.resolveStatus === "no") {
+        toast("已确认，不可修改");
+        return;
+      }
+      var confirmTime = "2026-03-12 02:00:00";
+      var confirmBy = "方伟萍";
+      var resolveReason = status === "no" ? (reason || "") : "";
+      state.resolveStatus = status;
+      state.resolveReason = resolveReason;
+      state.resolveConfirmTime = confirmTime;
+      state.resolveConfirmBy = confirmBy;
+      for (var i = 0; i < demandList.length; i++) {
+        if (demandList[i].id === currentDemandId) {
+          demandList[i].resolveStatus = status;
+          demandList[i].resolveReason = resolveReason;
+          demandList[i].resolveConfirmTime = confirmTime;
+          demandList[i].resolveConfirmBy = confirmBy;
+          break;
+        }
+      }
+      syncResolveButtons(status);
+      toast(status === "ok" ? "已确认：已解决" : "已确认：未解决");
+      renderDemandList();
+    }
+
+    $("btn-back").addEventListener("click", back);
+
+    document.querySelectorAll("[data-go]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        go(el.getAttribute("data-go"));
+      });
+    });
+
+    $("demand-list").addEventListener("click", function (e) {
+      var row = e.target.closest("[data-demand-id]");
+      if (!row) return;
+      var id = row.getAttribute("data-demand-id");
+      var item = null;
+      for (var i = 0; i < demandList.length; i++) {
+        if (demandList[i].id === id) {
+          item = demandList[i];
+          break;
+        }
+      }
+      if (!item) return;
+      applyDemandToState(item);
+      go("sales-detail");
+    });
+
+    $("teacher-demand-list").addEventListener("click", function (e) {
+      var row = e.target.closest("[data-demand-id]");
+      if (!row) return;
+      var id = row.getAttribute("data-demand-id");
+      var item = null;
+      for (var i = 0; i < demandList.length; i++) {
+        if (demandList[i].id === id) {
+          item = demandList[i];
+          break;
+        }
+      }
+      if (!item) return;
+      applyDemandToState(item);
+      go("teacher-task");
+    });
+
+    function bindListFilterUi(opts) {
+      var chips = $(opts.chipsId);
+      var filterState = opts.filterState;
+      if (chips) {
+        chips.addEventListener("click", function (e) {
+          var btn = e.target.closest("button[data-resolve]");
+          if (!btn) return;
+          chips.querySelectorAll(".filter-tab").forEach(function (c) { c.classList.remove("active"); });
+          btn.classList.add("active");
+          filterState.resolve = btn.getAttribute("data-resolve") || "all";
+          renderDemandList();
+        });
+      }
+      var customerInput = $(opts.customerInputId);
+      var searchBtn = $(opts.searchBtnId);
+      function applyCustomerSearch() {
+        filterState.customer = (customerInput && customerInput.value) || "";
+        renderDemandList();
+      }
+      if (searchBtn) searchBtn.addEventListener("click", applyCustomerSearch);
+      if (customerInput) {
+        customerInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") applyCustomerSearch();
+        });
+      }
+      var moreToggle = $(opts.moreToggleId);
+      var morePanel = $(opts.morePanelId);
+      if (moreToggle && morePanel) {
+        moreToggle.addEventListener("click", function () {
+          var open = morePanel.classList.toggle("open");
+          moreToggle.classList.toggle("open", open);
+          moreToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      }
+      (opts.extraBinds || []).forEach(function (bind) { bind(filterState); });
+    }
+
+    bindListFilterUi({
+      chipsId: "sales-resolve-chips",
+      filterState: salesListFilter,
+      customerInputId: "sales-filter-customer",
+      searchBtnId: "sales-filter-search-btn",
+      moreToggleId: "sales-filter-more-toggle",
+      morePanelId: "sales-filter-more-panel",
+      extraBinds: [function (filterState) {
+        var submitter = $("sales-filter-submitter");
+        if (submitter) {
+          submitter.addEventListener("change", function () {
+            filterState.sales = submitter.value || "";
+            renderDemandList();
+          });
+        }
+      }]
+    });
+
+    bindListFilterUi({
+      chipsId: "teacher-resolve-chips",
+      filterState: teacherListFilter,
+      customerInputId: "teacher-filter-customer",
+      searchBtnId: "teacher-filter-search-btn",
+      moreToggleId: "teacher-filter-more-toggle",
+      morePanelId: "teacher-filter-more-panel",
+      extraBinds: [function (filterState) {
+        var submitter = $("teacher-filter-submitter");
+        if (submitter) {
+          submitter.addEventListener("change", function () {
+            filterState.sales = submitter.value || "";
+            renderDemandList();
+          });
+        }
+        var assignee = $("teacher-filter-assignee");
+        if (assignee) {
+          assignee.addEventListener("change", function () {
+            filterState.teacher = assignee.value || "";
+            renderDemandList();
+          });
+        }
+      }]
+    });
+
+    var pendingResolveStatus = "";
+
+    function openResolveConfirm(status) {
+      if (state.resolveStatus === "ok" || state.resolveStatus === "no") {
+        toast("已确认，不可修改");
+        return;
+      }
+      pendingResolveStatus = status;
+      var label = status === "ok" ? "已解决" : "未解决";
+      $("resolve-confirm-title").textContent = "确认反馈为「" + label + "」？";
+      $("resolve-confirm-desc").textContent = "确认后不可修改，请核对后再提交。";
+      var reasonWrap = $("resolve-confirm-reason-wrap");
+      var reasonInput = $("resolve-confirm-reason");
+      if (status === "no") {
+        reasonWrap.classList.add("show");
+        reasonInput.value = "";
+      } else {
+        reasonWrap.classList.remove("show");
+        reasonInput.value = "";
+      }
+      $("resolve-confirm-mask").classList.add("show");
+      if (status === "no") setTimeout(function () { reasonInput.focus(); }, 50);
+    }
+
+    function closeResolveConfirm() {
+      pendingResolveStatus = "";
+      $("resolve-confirm-reason-wrap").classList.remove("show");
+      $("resolve-confirm-reason").value = "";
+      $("resolve-confirm-mask").classList.remove("show");
+    }
+
+    if ($("btn-resolve-ok")) {
+      $("btn-resolve-ok").addEventListener("click", function () { openResolveConfirm("ok"); });
+    }
+    if ($("btn-resolve-no")) {
+      $("btn-resolve-no").addEventListener("click", function () { openResolveConfirm("no"); });
+    }
+    if ($("btn-resolve-cancel")) {
+      $("btn-resolve-cancel").addEventListener("click", closeResolveConfirm);
+    }
+    if ($("btn-resolve-confirm")) {
+      $("btn-resolve-confirm").addEventListener("click", function () {
+        var status = pendingResolveStatus;
+        var reason = ($("resolve-confirm-reason").value || "").trim();
+        if (status === "no" && !reason) {
+          toast("请填写未解决原因");
+          $("resolve-confirm-reason").focus();
+          return;
+        }
+        closeResolveConfirm();
+        if (status) setResolveStatus(status, reason);
+      });
+    }
+    if ($("resolve-confirm-mask")) {
+      $("resolve-confirm-mask").addEventListener("click", function (e) {
+        if (e.target === $("resolve-confirm-mask")) closeResolveConfirm();
+      });
+    }
+
+    function syncSubmitCustomerDisplay(name) {
+      if (!name) name = "张三";
+      state.customer = name;
+      if ($("demand-customer-fixed")) $("demand-customer-fixed").textContent = name;
+      var sel = $("demand-customer");
+      if (!sel) return;
+      var found = false;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === name) {
+          sel.value = name;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+        sel.value = name;
+      }
+    }
+
+    function applyCustomerFromCrm(name) {
+      syncSubmitCustomerDisplay(name);
+    }
+
+    $("btn-submit-demand").addEventListener("click", function () {
+      state.customer = ($("demand-customer-fixed") && $("demand-customer-fixed").textContent) || state.customer || "张三";
+      state.type = document.querySelector('input[name="demand-type"]:checked').value;
+      state.desc = $("demand-desc").value.trim() || state.desc;
+      state.submitted = true;
+      state.accepted = true; // 自动分配，无需接单
+      state.visited = false;
+      state.teacher = "王玉东";
+      state.feedback = "";
+      state.visitTime = "";
+      state.time = "刚刚";
+      state.resolveStatus = "";
+      state.resolveReason = "";
+      state.resolveConfirmTime = "";
+      state.resolveConfirmBy = "";
+      demandList.unshift({
+        id: "d" + Date.now(),
+        customer: state.customer,
+        type: state.type,
+        time: state.time,
+        sales: state.sales || "李明",
+        accepted: true,
+        visited: false,
+        teacher: state.teacher,
+        visitTime: "",
+        desc: state.desc,
+        feedback: "",
+        resolveStatus: "",
+        resolveReason: "",
+        resolveConfirmTime: "",
+        resolveConfirmBy: ""
+      });
+      toast("已自动分配给技术老师王玉东");
+      setTimeout(function () {
+        stack = ["hub", "sales-list"];
+        showScreen("sales-list");
+      }, 800);
+    });
+
+    $("btn-go-visit-from-task").addEventListener("click", function () {
+      go("visit-report");
+    });
+    $("btn-task-to-schedule").addEventListener("click", function () {
+      go("schedule");
+    });
+
+    $("btn-go-visit").addEventListener("click", function () {
+      go("visit-report");
+    });
+
+    $("btn-open-report").addEventListener("click", function () {
+      window.open("养殖技术服务报告V2.html", "_blank");
+    });
+
+    $("btn-finish-visit").addEventListener("click", function () {
+      state.visited = true;
+      state.accepted = true;
+      if (!state.visitTime) state.visitTime = "2026-08-16T10:00";
+      state.feedback =
+        "1. 测光仪测试，平均光照 17.68 lux；晚上补光每天减 10 分钟，6 天减完。\n2. 干燥天气喷雾增湿，并定期清理灯泡与探头、消毒。\n3. 按建议添加卵炎消消乐，关注肠胃与死淘变化。";
+      // 同步列表状态
+      for (var i = 0; i < demandList.length; i++) {
+        if (demandList[i].customer === state.customer && !demandList[i].visited) {
+          demandList[i].visited = true;
+          demandList[i].visitTime = state.visitTime;
+          demandList[i].feedback = state.feedback;
+          break;
+        }
+      }
+      toast("已回写需求反馈");
+      setTimeout(function () {
+        stack = ["hub", "sales-detail"];
+        showScreen("sales-detail");
+      }, 700);
+    });
+
+    // 支持从 CRM / 消息通知 带参直达
+    (function bootFromQuery() {
+      var q = new URLSearchParams(window.location.search || "");
+      var customer = q.get("customer");
+      var screen = q.get("screen");
+      var from = q.get("from");
+      var demandId = q.get("demand");
+      if (from === "crm") fromCrm = true;
+      if (customer) {
+        applyCustomerFromCrm(customer);
+        state.customer = customer;
+      }
+
+      function openDemandDetail(id, targetScreen) {
+        var item = null;
+        for (var i = 0; i < demandList.length; i++) {
+          if (demandList[i].id === id) { item = demandList[i]; break; }
+        }
+        if (!item) {
+          refreshUI();
+          return false;
+        }
+        applyDemandToState(item);
+        refreshUI();
+        stack = ["hub", targetScreen === "sales-detail" ? "sales-list" : "teacher-inbox", targetScreen];
+        showScreen(targetScreen);
+        return true;
+      }
+
+      if (screen === "sales-detail" && demandId) {
+        if (openDemandDetail(demandId, "sales-detail")) return;
+      }
+      if (screen === "teacher-task" && demandId) {
+        if (openDemandDetail(demandId, "teacher-task")) return;
+      }
+      // 创建诊断工单：默认类型为鸡群诊断
+      if (screen === "sales-submit") {
+        var typeRadio = document.querySelector('input[name="demand-type"][value="鸡群诊断"]');
+        if (typeRadio) typeRadio.checked = true;
+        syncSubmitCustomerDisplay(customer || state.customer || "张三");
+        stack = ["hub", "sales-submit"];
+        showScreen("sales-submit");
+        return;
+      }
+      if (screen === "sales-list") {
+        stack = ["hub", "sales-list"];
+        showScreen("sales-list");
+        return;
+      }
+      if (from === "crm") {
+        syncSubmitCustomerDisplay(customer || state.customer || "张三");
+        stack = ["hub", "sales-submit"];
+        showScreen("sales-submit");
+        return;
+      }
+      refreshUI();
+    })();
+  </script>
+</body>
+</html>

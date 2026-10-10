@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>鸡窝绩效列表</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#f5f5f5;color:#333;font-size:14px;
+}
+.page{max-width:750px;margin:0 auto;min-height:100vh;background:#f5f5f5;padding-bottom:24px}
+.header{
+  background:#1890ff;color:#fff;padding:16px 16px 18px;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.user{display:flex;gap:10px;align-items:center}
+.avatar{
+  width:48px;height:48px;border-radius:50%;background:#ffe08a;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  border:2px solid rgba(255,255,255,.35);flex-shrink:0;
+}
+.name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.name{font-size:20px;font-weight:700;line-height:1.2}
+.role-tag{
+  display:inline-block;background:rgba(255,255,255,.22);border-radius:12px;
+  padding:2px 8px;font-size:12px;line-height:1.4;
+}
+.set-btn{
+  border:none;background:rgba(0,0,0,.18);color:#fff;border-radius:8px;
+  padding:8px 10px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:52px;line-height:1.2;cursor:pointer;
+}
+.daily{
+  margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+}
+.daily-card{
+  background:#fff;border-radius:8px;padding:10px 10px 12px;color:#333;
+}
+.daily-card .val{font-size:22px;font-weight:700;color:#1890ff;line-height:1.2}
+.daily-card .val span{font-size:13px;font-weight:500;margin-left:2px;color:#1890ff}
+.daily-card .lab{margin-top:4px;font-size:12px;color:#666}
+.daily-wide{margin-top:8px}
+.daily-wide .daily-card{padding:12px 14px}
+.panel{background:#fff;margin-top:10px;padding:14px 16px}
+.month-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.month-tabs{display:flex;gap:8px}
+.month-tab{
+  border:none;border-radius:4px;padding:6px 12px;font-size:14px;cursor:pointer;
+  background:#f0f0f0;color:#666;
+}
+.month-tab.active{background:#1890ff;color:#fff}
+.mode-tabs{margin-left:auto;display:flex;gap:10px;font-size:12px}
+.mode-tabs a{color:#1890ff;text-decoration:none;white-space:nowrap}
+.mode-tabs a.on{font-weight:600}
+.sec-title{font-size:15px;font-weight:700;margin:4px 0 8px;color:#333}
+.sec-sub{font-size:12px;color:#999;font-weight:400}
+.kpi{padding:12px 0;border-bottom:1px solid #f0f0f0}
+.kpi:last-child{border-bottom:none}
+.kpi-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.kpi-name{color:#1890ff;font-size:14px;font-weight:600;flex:1}
+.kpi-pct{color:#1890ff;font-size:13px;font-weight:600;white-space:nowrap}
+.kpi-body{font-size:13px;color:#666;line-height:1.8}
+.kpi-body > div{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+}
+.lab-l{flex:0 1 auto;white-space:nowrap;color:#666}
+.num-r{text-align:right;flex:1 1 auto;margin-left:12px;color:#1890ff;font-weight:600;word-break:break-all}
+.dash{color:#999}
+.score-box{
+  margin:10px 0 0;background:#e6f4ff;border-radius:8px;padding:16px;
+}
+.score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.score-top .lab{font-size:15px;font-weight:600}
+.score-top .num{font-size:40px;font-weight:800;color:#1890ff;line-height:1}
+.score-bottom{display:flex;align-items:center;justify-content:space-between}
+.score-part .lab{font-size:12px;color:#666}
+.score-part .val{margin-top:4px;font-size:20px;font-weight:700;color:#333}
+.score-plus{width:40px;text-align:center;color:#1890ff;font-size:22px;font-weight:700}
+.meta-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:14px;
+}
+.meta-row:last-child{border-bottom:none}
+.meta-row .muted{color:#999}
+.meta-links{display:flex;gap:16px;padding:8px 0 0;font-size:13px}
+.meta-links a{color:#1890ff;text-decoration:none}
+.comm-item{padding:12px 0;border-bottom:1px solid #f0f0f0}
+.comm-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.comm-name{font-weight:600;color:#333}
+.comm-val{margin-left:auto;font-weight:700;color:#333}
+.comm-body{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  font-size:13px;color:#666;line-height:1.7;
+}
+.sub-row{
+  display:flex;justify-content:space-between;padding:4px 0 4px 12px;font-size:13px;color:#666;
+}
+.sub-row .blue{color:#1890ff;font-weight:600}
+.total-comm{
+  margin-top:8px;padding-top:14px;border-top:1px solid #f0f0f0;
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.total-comm .left{display:flex;align-items:center;gap:4px;font-size:15px;font-weight:600}
+.total-comm .right{text-align:right;max-width:68%}
+.total-comm .big{font-size:32px;font-weight:800;color:#1890ff;line-height:1}
+.total-comm .calc{margin-top:8px;font-size:12px;color:#999;word-break:break-all;line-height:1.5}
+.info{
+  display:inline-flex;width:14px;height:14px;border-radius:50%;border:1px solid #bbb;color:#999;
+  font-size:10px;align-items:center;justify-content:center;line-height:1;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <div class="header-top">
+      <div class="user">
+        <div class="avatar">⭐</div>
+        <div>
+          <div class="name-row">
+            <span class="name">朱震</span>
+            <span class="role-tag">销售部区域经理</span>
+          </div>
+        </div>
+      </div>
+      <button class="set-btn" type="button"><span>⚙</span><span>设置</span></button>
+    </div>
+    <div class="daily">
+      <div class="daily-card">
+        <div class="val">0<span>笔</span></div>
+        <div class="lab">当日提货单</div>
+      </div>
+      <div class="daily-card">
+        <div class="val">0<span>吨</span></div>
+        <div class="lab">当日采购量</div>
+      </div>
+      <div class="daily-card">
+        <div class="val">0<span>吨</span></div>
+        <div class="lab">当日销售量</div>
+      </div>
+      <div class="daily-card">
+        <div class="val">0<span>人</span></div>
+        <div class="lab">当日新增客户数</div>
+      </div>
+      <div class="daily-card">
+        <div class="val">0<span>人</span></div>
+        <div class="lab">当日新增意向客户</div>
+      </div>
+      <div class="daily-card">
+        <div class="val">4<span>次</span></div>
+        <div class="lab">当日拜访记录</div>
+      </div>
+    </div>
+    <div class="daily-wide">
+      <div class="daily-card">
+        <div class="val">0<span>元</span></div>
+        <div class="lab">本月预提</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="month-row">
+      <div class="month-tabs">
+        <button class="month-tab active" type="button">2026-08</button>
+        <button class="month-tab" type="button">2026-07</button>
+      </div>
+      <div class="mode-tabs">
+        <a class="on" href="javascript:void(0)">按实发销售吨计算</a>
+        <a href="javascript:void(0)">按订单数据结算</a>
+      </div>
+    </div>
+
+    <div class="sec-title">历史绩效 <span class="sec-sub">（按实际销售吨数计算）</span></div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">豆粕销量达成权重</span>
+        <span class="kpi-pct">0.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="num-r">12吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础量</span><span class="num-r">0吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">1吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月修改目标</span><span class="num-r">是</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 增量达成</span><span class="num-r">12 / 1 = 12</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0 × 0% = 0</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">玉米销量达成权重</span>
+        <span class="kpi-pct">50.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="num-r">52吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础量</span><span class="num-r">40吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">100吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 增量达成</span><span class="num-r">52 / 100 = 0.52</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0.52 × 50% = 0.26</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">预混料销量达成权重</span>
+        <span class="kpi-pct">0.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="num-r">0吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础量</span><span class="num-r">10吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">20吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月修改目标</span><span class="num-r">是</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 增量达成</span><span class="num-r">0</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0 × 0% = 0</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 20号是否完成基础值的50%</span><span class="num-r">否</span></div>
+      </div>
+    </div>
+
+    
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">动保销售额达成权重</span>
+        <span class="kpi-pct">0.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="num-r">0元</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础量</span><span class="num-r">2吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">5吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 增量达成</span><span class="num-r">0</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0 × 0% = 0</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">客户拜访达成</span>
+        <span class="kpi-pct">30.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="num-r">12次</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础量</span><span class="num-r">0次</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">40次</span></div>
+        <!-- <div><span class="lab-l"><span class="dash">—</span> 达成</span><span class="num-r">12 / 40 = 0.3</span></div> -->
+      </div>
+    </div>
+
+    <div class="score-box">
+      <div class="score-top">
+        <span class="lab">考核得分</span>
+        <span class="num">0</span>
+      </div>
+      <div class="score-bottom">
+        <div class="score-part">
+          <div class="lab">基础分评</div>
+          <div class="val">0</div>
+        </div>
+        <div class="score-plus">+</div>
+        <div class="score-part" style="text-align:right">
+          <div class="lab">行政扣分</div>
+          <div class="val">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-row"><span>月绩效考核系数</span><span>0</span></div>
+    <div class="meta-row"><span>分产考核系数</span><span class="muted">--</span></div>
+    <div class="meta-row"><span>绩效评级</span><span class="muted">暂未评级</span></div>
+    <div class="meta-links">
+      <a href="javascript:void(0)">绩效详情</a>
+      <a href="javascript:void(0)">异常反馈</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="sec-title">提成明细 <span class="sec-sub">（按实际销售吨数计算）</span></div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">豆粕提成</span>
+        <span class="comm-val">48</span>
+      </div>
+      <div class="comm-body">
+        <span class="lab-l"><span class="dash">—</span></span>
+        <span class="num-r">12 × 4 = 48</span>
+      </div>
+    </div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">玉米提成</span>
+        <span class="comm-val">0元</span>
+      </div>
+      <div class="comm-body">
+        <span class="lab-l"><span class="dash">—</span> 吨位提成</span>
+        <span class="num-r">0 × 1 + 0 × 2 + 0 × 3 = 0</span>
+      </div>
+    </div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">KA预混料提成</span>
+        <a href="./鸡窝预混料提成详情.html?type=KA客户" style="margin-left:auto;color:#1890ff;text-decoration:none;font-size:13px;font-weight:500">查看明细</a>
+        <span class="comm-val" style="margin-left:12px">0元</span>
+      </div>
+    </div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">小客户预混料提成</span>
+        <a href="./鸡窝预混料提成详情.html?type=小客户" style="margin-left:auto;color:#1890ff;text-decoration:none;font-size:13px;font-weight:500">查看明细</a>
+      </div>
+      <div class="sub-row"><span>2026-08</span><span class="blue">6 × 250 +1*100= 2200</span></div>
+      <div class="sub-row"><span>2026-07</span><span class="blue">4 × 250 +2*100= 1600</span></div>
+      <div class="sub-row"><span>2026-06</span><span class="blue">2 × 250 = 500</span></div>
+      <div class="sub-row"><span>2026-05</span><span class="blue">2918.33</span></div>
+      <div class="sub-row"><span>2026-04</span><span class="blue">5 × 375 = 1875</span></div>
+    </div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">动保提成</span>
+        <a href="./鸡窝动保提成详情.html" style="margin-left:auto;color:#1890ff;text-decoration:none;font-size:13px;font-weight:500">查看明细</a>
+        <span class="comm-val" style="margin-left:12px">386.40元</span>
+      </div>
+      <div class="sub-row"><span>2026-08</span><span class="blue">146.40 = 244 × 0.6</span></div>
+      <div class="sub-row"><span>2026-09</span><span class="blue">240= 480 × 0.5</span></div>
+    </div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">其他奖金</span>
+        <span class="comm-val">0</span>
+      </div>
+    </div>
+
+    <div class="total-comm">
+      <div class="left">本月进账提成 <span class="info">i</span></div>
+      <div class="right">
+        <div class="big">6715.23</div>
+        <div class="calc">(48 + 104) × 0 + (0) + (2100 × 0 + 1400 × 1.4 + 500 × 1.15 + 2918.33 × 1.3 + 1875 × 0) + (244 × 0.6+480 × 0.5) = 6715.23</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+document.querySelectorAll(".month-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".month-tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
+document.querySelectorAll(".mode-tabs a").forEach(a=>{
+  a.addEventListener("click",()=>{
+    document.querySelectorAll(".mode-tabs a").forEach(x=>x.classList.remove("on"));
+    a.classList.add("on");
+  });
+});
+</script>
+</body>
+</html>

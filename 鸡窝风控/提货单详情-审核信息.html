@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>合同详情 · 审核信息</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #e8e8e8;
+      color: #333;
+      font-size: 14px;
+    }
+    .phone {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #f5f5f5;
+      padding-bottom: 88px;
+      position: relative;
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 17px;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .nav .back {
+      position: absolute;
+      left: 12px;
+      border: 0;
+      background: none;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, #ff7a1a 0%, #ff6a00 72%, #f5f5f5 72%);
+      padding: 14px 14px 0;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .hero-status { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .hero-shop { font-size: 13px; opacity: .95; margin-top: 4px; }
+    .hero-tip { font-size: 13px; opacity: .9; margin-top: 6px; }
+    .btn-copy-info {
+      border: 1px solid rgba(255,255,255,.85);
+      background: transparent;
+      color: #fff;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 14px 12px;
+      margin-bottom: 10px;
+    }
+    .prod-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .kv {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .kv .lab { color: #999; flex-shrink: 0; }
+    .kv .val { color: #333; text-align: right; word-break: break-all; }
+    .kv .val.money { color: #ff4d4f; font-weight: 500; }
+    .kv.left .val { text-align: left; flex: 1; }
+    .kv.left { justify-content: flex-start; }
+
+    .pickup-link {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px solid #f5f5f5;
+    }
+    .pickup-link a {
+      color: #ff6a00;
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid #ffb366;
+      border-radius: 4px;
+      padding: 4px 10px;
+    }
+
+    .sec-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 8px;
+    }
+    .formula-empty {
+      color: #999;
+      font-size: 14px;
+      padding: 4px 0 6px;
+    }
+    .copy {
+      color: #1890ff;
+      margin-left: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .audit-list { padding: 2px 0 4px; }
+    .audit-row {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.75;
+      padding: 2px 0;
+    }
+    .audit-row .lab { color: #999; }
+    .audit-row .st-wait { color: #ff6a00; }
+    .audit-row .st-ok { color: #52c41a; }
+
+    .footer {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 100%;
+      max-width: 390px;
+      background: #fff;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      box-shadow: 0 -2px 8px rgba(0,0,0,.04);
+    }
+    .btn-share {
+      width: 100%;
+      height: 44px;
+      border: 0;
+      border-radius: 22px;
+      background: #ff6a00;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .demo-bar {
+      background: #1f1f1f;
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .demo-bar span { opacity: .75; margin-right: 4px; }
+    .demo-bar button {
+      border: 0;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+    }
+    .demo-bar button.active { background: #ff6a00; }
+
+    .content { padding: 0 10px 16px; margin-top: -4px; }
+  </style>
+</head>
+<body>
+  <div class="demo-bar">
+    <span>审核状态演示</span>
+    <button type="button" class="active" data-scene="pending-zl">待审核·赵璐</button>
+    <button type="button" data-scene="pending-dg">待审核·东哥</button>
+    <button type="button" data-scene="passed">已通过</button>
+  </div>
+
+  <div class="phone">
+    <div class="nav">
+      <button type="button" class="back" aria-label="返回">‹</button>
+      订单详情
+    </div>
+
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-status">执行中</div>
+          <div class="hero-shop">源耀饲料（黄冈）有限公司</div>
+          <div class="hero-tip" id="heroTip">您可以对该笔合同进行提货</div>
+        </div>
+        <button type="button" class="btn-copy-info">复制信息</button>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="prod-name">源耀蛋鸡育雏前期配合饲料（40kg包装）</div>
+        <div class="kv"><span class="lab">下单数量</span><span class="val" id="orderQty">200包(8吨)</span></div>
+        <div class="kv"><span class="lab">订单单价</span><span class="val">¥187.20元/包（送达价）</span></div>
+        <div class="kv"><span class="lab">订单总额</span><span class="val money" id="orderAmt">¥37,440.00</span></div>
+        <div class="kv"><span class="lab">剩余订金</span><span class="val money">¥0.00</span></div>
+        <div class="pickup-link"><a href="javascript:;">提货记录</a></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="card">
+        <div class="kv left"><span class="lab">提货期限：</span><span class="val" id="pickPeriod">2026.09.03-2026.09.04</span></div>
+        <div class="kv left"><span class="lab">付款方式：</span><span class="val">货到付款</span></div>
+        <div class="kv left"><span class="lab">订金：</span><span class="val">0元</span></div>
+        <div class="kv left"><span class="lab">是否线下支付运费：</span><span class="val">否</span></div>
+        <div class="kv left"><span class="lab">期望提货日期：</span><span class="val" id="expectDate">2026-09-03</span></div>
+        <div class="kv left"><span class="lab">收货地址：</span><span class="val">安徽省阜阳市颍州区清河街道颍河西路</span></div>
+        <div class="kv left"><span class="lab">提货点：</span><span class="val">源耀黄冈站台</span></div>
+        <div class="kv left"><span class="lab">提货地址：</span><span class="val">安徽省阜阳市颍上县耿棚镇十字沟村委会</span></div>
+      </div>
+
+      <div class="card">
+        <div class="kv left"><span class="lab">签约账户：</span><span class="val">郭雷</span></div>
+      </div>
+
+      <div class="card">
+        <div class="kv left">
+          <span class="lab">订单编号：</span>
+          <span class="val">WHL20260903JWFYYM37101<span class="copy">复制</span></span>
+        </div>
+        <div class="kv left"><span class="lab">创建时间：</span><span class="val">2026.09.03 18:40:12</span></div>
+        <div class="kv left"><span class="lab">签约时间：</span><span class="val">2026.09.03 18:42:08</span></div>
+        <div class="kv left"><span class="lab">付款时间：</span><span class="val">--</span></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-title">配方明细</div>
+        <div class="formula-empty">无需确认配方</div>
+      </div>
+
+      <div class="card">
+        <div class="sec-title">审核信息</div>
+        <div class="audit-list" id="auditInfo">
+          <div class="audit-row"><span class="lab">审批类型：</span><span>提货吨数超过5吨</span></div>
+          <div class="audit-row"><span class="lab">提交时间：</span><span>2026-09-03 18:47:59</span></div>
+          <div class="audit-row"><span class="lab">提交人：</span><span>王园康</span></div>
+          <div class="audit-row"><span class="lab">审核状态：</span><span class="st-wait">待审核</span></div>
+          <div class="audit-row"><span class="lab">审核人：</span><span>赵璐</span></div>
+          <div class="audit-row"><span class="lab">审核时间：</span><span>--</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button type="button" class="btn-share">分享</button>
+    </div>
+  </div>
+
+  <script>
+    const SCENES = {
+      "pending-zl": {
+        qty: "200包(8吨)",
+        amt: "¥37,440.00",
+        period: "2026.09.03-2026.09.04",
+        expect: "2026-09-03",
+        tip: "提货申请待审核，审核通过后方可继续提货",
+        html: `
+          <div class="audit-row"><span class="lab">审批类型：</span><span>提货吨数超过5吨</span></div>
+          <div class="audit-row"><span class="lab">提交时间：</span><span>2026-09-03 18:47:59</span></div>
+          <div class="audit-row"><span class="lab">提交人：</span><span>王园康</span></div>
+          <div class="audit-row"><span class="lab">审核状态：</span><span class="st-wait">待审核</span></div>
+          <div class="audit-row"><span class="lab">审核人：</span><span>赵璐</span></div>
+          <div class="audit-row"><span class="lab">审核时间：</span><span>--</span></div>
+        `
+      },
+      "pending-dg": {
+        qty: "300包(12吨)",
+        amt: "¥56,160.00",
+        period: "2026.09.05-2026.09.06",
+        expect: "2026-09-05",
+        tip: "提货申请待审核，审核通过后方可继续提货",
+        html: `
+          <div class="audit-row"><span class="lab">审批类型：</span><span>提货吨数超过5吨</span></div>
+          <div class="audit-row"><span class="lab">提交时间：</span><span>2026-09-05 10:12:20</span></div>
+          <div class="audit-row"><span class="lab">提交人：</span><span>王园康</span></div>
+          <div class="audit-row"><span class="lab">审核状态：</span><span class="st-wait">待审核</span></div>
+          <div class="audit-row"><span class="lab">审核人：</span><span>东哥</span></div>
+          <div class="audit-row"><span class="lab">审核时间：</span><span>--</span></div>
+        `
+      },
+      passed: {
+        qty: "200包(8吨)",
+        amt: "¥37,440.00",
+        period: "2026.09.03-2026.09.04",
+        expect: "2026-09-03",
+        tip: "您可以对该笔合同进行提货",
+        html: `
+          <div class="audit-row"><span class="lab">审批类型：</span><span>提货吨数超过5吨</span></div>
+          <div class="audit-row"><span class="lab">提交时间：</span><span>2026-09-03 18:47:59</span></div>
+          <div class="audit-row"><span class="lab">提交人：</span><span>王园康</span></div>
+          <div class="audit-row"><span class="lab">审核状态：</span><span class="st-ok">已通过</span></div>
+          <div class="audit-row"><span class="lab">审核人：</span><span>赵璐</span></div>
+          <div class="audit-row"><span class="lab">审核时间：</span><span>2026-09-04 09:15:32</span></div>
+        `
+      }
+    };
+
+    document.querySelectorAll(".demo-bar button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".demo-bar button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const s = SCENES[btn.dataset.scene];
+        document.getElementById("auditInfo").innerHTML = s.html;
+        document.getElementById("orderQty").textContent = s.qty;
+        document.getElementById("orderAmt").textContent = s.amt;
+        document.getElementById("pickPeriod").textContent = s.period;
+        document.getElementById("expectDate").textContent = s.expect;
+        document.getElementById("heroTip").textContent = s.tip;
+      });
+    });
+  </script>
+</body>
+</html>

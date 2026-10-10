@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据查询 · 技术服务管理端</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --card: #fff;
+      --text: #1a2332;
+      --muted: #8b95a5;
+      --label: #5c6b7a;
+      --line: #e8ecf1;
+      --blue: #3b71e8;
+      --blue-deep: #2b5fd0;
+      --blue-soft: #e8f0ff;
+      --ok: #1f9d6a;
+      --ok-soft: #e6f7f0;
+      --warn: #d48806;
+      --warn-soft: #fff7e8;
+      --danger: #e54d42;
+      --danger-soft: #fdf0eb;
+      --shadow: 0 2px 10px rgba(26, 35, 50, 0.06);
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 220px; background: #1a2332; color: #c9d1dc; flex-shrink: 0;
+      padding: 20px 0;
+    }
+    .sidebar .logo {
+      padding: 0 20px 24px; font-size: 16px; font-weight: 700; color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 12px;
+    }
+    .sidebar .logo small { display: block; font-size: 11px; font-weight: 400; color: #8b95a5; margin-top: 4px; }
+    .nav-item {
+      display: block; padding: 12px 20px; font-size: 14px; color: #c9d1dc;
+      cursor: pointer; border-left: 3px solid transparent;
+    }
+    .nav-item.on { background: rgba(59,113,232,.18); color: #fff; border-left-color: var(--blue); font-weight: 600; }
+    .nav-item:hover:not(.on) { background: rgba(255,255,255,.04); }
+
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      background: #fff; border-bottom: 1px solid var(--line);
+      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar h1 { font-size: 18px; font-weight: 600; }
+    .content { padding: 20px 24px 32px; flex: 1; }
+
+    .tabs {
+      display: inline-flex; background: #fff; border-radius: 8px;
+      padding: 4px; box-shadow: var(--shadow); margin-bottom: 16px;
+    }
+    .tabs button {
+      border: none; background: transparent; padding: 8px 20px;
+      font-size: 14px; font-family: inherit; color: var(--muted);
+      border-radius: 6px; cursor: pointer; font-weight: 500;
+    }
+    .tabs button.on { background: var(--blue-soft); color: var(--blue); font-weight: 600; }
+
+    .filter-card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 16px;
+    }
+    .filter-row {
+      display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end;
+    }
+    .filter-item label {
+      display: block; font-size: 12px; color: var(--label); margin-bottom: 6px;
+    }
+    .filter-item input, .filter-item select {
+      height: 36px; border: 1px solid var(--line); border-radius: 6px;
+      padding: 0 10px; font-size: 13px; font-family: inherit;
+      background: #f7f9fc; min-width: 140px;
+    }
+    .filter-item input:focus, .filter-item select:focus {
+      outline: none; border-color: #9bb8f0; background: #fff;
+    }
+    .filter-actions { display: flex; gap: 8px; margin-left: auto; }
+    .btn {
+      height: 36px; padding: 0 16px; border-radius: 6px; border: none;
+      font-size: 13px; font-family: inherit; font-weight: 600; cursor: pointer;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-deep); }
+    .btn-ghost { background: #fff; color: var(--blue); border: 1px solid #c5d6f7; }
+    .btn-ghost:hover { background: var(--blue-soft); }
+    .btn-export { background: var(--ok); color: #fff; }
+    .btn-export:hover { filter: brightness(.95); }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px 18px;
+    }
+    .stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .stat-card .num { font-size: 28px; font-weight: 700; line-height: 1; }
+    .stat-card .sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+    .table-card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .table-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--line);
+    }
+    .table-head .title { font-size: 15px; font-weight: 600; }
+    .table-head .count { font-size: 12px; color: var(--muted); margin-left: 8px; font-weight: 400; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #f3f5f8; white-space: nowrap; }
+    th { background: #f7f9fc; color: var(--label); font-weight: 600; font-size: 12px; }
+    tr:hover td { background: #fafbfd; }
+    .tag {
+      display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500;
+    }
+    .tag-ok { background: var(--ok-soft); color: var(--ok); }
+    .tag-warn { background: var(--warn-soft); color: var(--warn); }
+    .tag-muted { background: #eef1f6; color: var(--muted); }
+    .tag-no { background: var(--danger-soft); color: var(--danger); }
+    .tag-blue { background: var(--blue-soft); color: var(--blue); }
+    a.op-link {
+      color: var(--blue); text-decoration: none; cursor: pointer; font-weight: 500;
+    }
+    a.op-link:hover { text-decoration: underline; }
+    .valid-reason {
+      display: block; margin-top: 4px; font-size: 11px; color: var(--muted);
+      line-height: 1.4; white-space: normal; max-width: 160px;
+    }
+    .table-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; font-size: 12px; color: var(--muted);
+    }
+    .pager { display: flex; gap: 4px; }
+    .pager button {
+      min-width: 32px; height: 32px; border: 1px solid var(--line); background: #fff;
+      border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit;
+    }
+    .pager button.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    .toast {
+      display: none; position: fixed; left: 50%; top: 24px;
+      transform: translateX(-50%); z-index: 100;
+      background: rgba(26,35,50,.88); color: #fff;
+      padding: 10px 18px; border-radius: 8px; font-size: 13px;
+    }
+    .toast.show { display: block; }
+
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    @media (max-width: 1200px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">养殖技术服务<small>管理端 · 数据查询</small></div>
+      <div class="nav-item on" data-tab="report">巡场报告</div>
+      <div class="nav-item" data-tab="order">诊断工单</div>
+      <div class="nav-item" data-tab="teacher">技术老师工作</div>
+      <a class="nav-item" href="巡场报告详情_PC.html" style="text-decoration:none;color:inherit">报告详情(PC)</a>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <h1 id="page-title">巡场报告查询</h1>
+      </header>
+
+      <div class="content">
+        <!-- 巡场报告 -->
+        <div class="panel on" id="panel-report">
+          <div class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item">
+                <label>创建日期</label>
+                <input type="date" id="r-date-start" value="2026-07-01" />
+              </div>
+              <div class="filter-item">
+                <label>至</label>
+                <input type="date" id="r-date-end" value="2026-08-31" />
+              </div>
+              <div class="filter-item">
+                <label>技术老师</label>
+                <select id="r-teacher">
+                  <option value="">全部</option>
+                  <option value="王玉东">王玉东</option>
+                  <option value="李明">李明</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>客户</label>
+                <input type="text" id="r-customer" placeholder="客户名称" />
+              </div>
+              <div class="filter-item">
+                <label>发送状态</label>
+                <select id="r-sent">
+                  <option value="">全部</option>
+                  <option value="yes">已发送客户群</option>
+                  <option value="no">未发送</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary" id="r-search">查询</button>
+                <button type="button" class="btn btn-ghost" id="r-reset">重置</button>
+                <button type="button" class="btn btn-export" id="r-export">导出明细</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats" id="r-stats"></div>
+
+          <div class="table-card">
+            <div class="table-head">
+              <div><span class="title">巡场报告明细</span><span class="count" id="r-count"></span></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>报告编号</th>
+                    <th>客户</th>
+                    <th>技术老师</th>
+                    <th>汇报日期</th>
+                    <th>拜访次数</th>
+                    <th>拜访方式</th>
+                    <th>异常维度数</th>
+                    <th>未解决数</th>
+                    <th>是否有效</th>
+                    <th>发送客户群</th>
+                    <th>关联工单</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="r-tbody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <span id="r-page-info">—</span>
+              <div class="pager" id="r-pager"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 诊断工单 -->
+        <div class="panel" id="panel-order">
+          <div class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item">
+                <label>提交时间</label>
+                <input type="date" id="o-date-start" value="2026-07-01" />
+              </div>
+              <div class="filter-item">
+                <label>至</label>
+                <input type="date" id="o-date-end" value="2026-08-31" />
+              </div>
+              <div class="filter-item">
+                <label>技术老师</label>
+                <select id="o-teacher">
+                  <option value="">全部</option>
+                  <option value="王玉东">王玉东</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>客户</label>
+                <input type="text" id="o-customer" placeholder="客户名称" />
+              </div>
+              <div class="filter-item">
+                <label>诊断状态</label>
+                <select id="o-visited">
+                  <option value="">全部</option>
+                  <option value="false">未诊断</option>
+                  <option value="true">已诊断</option>
+                </select>
+              </div>
+              <div class="filter-item">
+                <label>反馈状态</label>
+                <select id="o-resolve">
+                  <option value="">全部</option>
+                  <option value="pending">待反馈</option>
+                  <option value="ok">已解决</option>
+                  <option value="no">未解决</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary" id="o-search">查询</button>
+                <button type="button" class="btn btn-ghost" id="o-reset">重置</button>
+                <button type="button" class="btn btn-export" id="o-export">导出明细</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats" id="o-stats"></div>
+
+          <div class="table-card">
+            <div class="table-head">
+              <div><span class="title">诊断工单明细</span><span class="count" id="o-count"></span></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>工单编号</th>
+                    <th>客户</th>
+                    <th>业务员</th>
+                    <th>技术老师</th>
+                    <th>需求类型</th>
+                    <th>提交时间</th>
+                    <th>诊断状态</th>
+                    <th>拜访时间</th>
+                    <th>反馈状态</th>
+                    <th>反馈时长</th>
+                    <th>确认人</th>
+                    <th>确认时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="o-tbody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <span id="o-page-info">—</span>
+              <div class="pager" id="o-pager"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 技术老师工作体现 -->
+        <div class="panel" id="panel-teacher">
+          <div class="filter-card">
+            <div class="filter-row">
+              <div class="filter-item">
+                <label>提交时间</label>
+                <input type="date" id="t-date-start" value="2026-07-01" />
+              </div>
+              <div class="filter-item">
+                <label>至</label>
+                <input type="date" id="t-date-end" value="2026-08-31" />
+              </div>
+              <div class="filter-item">
+                <label>技术老师</label>
+                <select id="t-teacher">
+                  <option value="">全部</option>
+                  <option value="王玉东">王玉东</option>
+                  <option value="李明">李明</option>
+                </select>
+              </div>
+              <div class="filter-actions">
+                <button type="button" class="btn btn-primary" id="t-search">查询</button>
+                <button type="button" class="btn btn-ghost" id="t-reset">重置</button>
+                <button type="button" class="btn btn-export" id="t-export">导出明细</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats" id="t-stats"></div>
+
+          <div class="table-card">
+            <div class="table-head">
+              <div><span class="title">技术老师工作列表</span><span class="count" id="t-count"></span></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>技术老师</th>
+                    <th>巡场报告数</th>
+                    <th>已发送客户群</th>
+                    <th>有效拜访量</th>
+                    <th>主动拜访</th>
+                    <th>工单诊断</th>
+                    <th>覆盖客户数</th>
+                    <th>实地拜访</th>
+                    <th>电话拜访</th>
+                    <th>已诊断工单</th>
+                    <th>未诊断工单</th>
+                    <th>工单解决率</th>
+                    <th>待反馈工单</th>
+                  </tr>
+                </thead>
+                <tbody id="t-tbody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <span id="t-page-info">按技术老师汇总，数据来源于巡场报告与诊断工单</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var PAGE_SIZE = 10;
+
+    var reportList = [
+      { id: "R20260804001", customer: "张三", teacher: "王玉东", date: "2026-08-04", visitNo: 1, mode: "实地拜访", abnormal: 3, unresolved: 2, valid: true, sent: true, orderId: "d3" },
+      { id: "R20260728001", customer: "张三", teacher: "王玉东", date: "2026-07-28", visitNo: 2, mode: "实地拜访", abnormal: 1, unresolved: 0, valid: true, sent: true, orderId: "d4" },
+      { id: "R20260720001", customer: "张三", teacher: "王玉东", date: "2026-07-20", visitNo: 1, mode: "电话", abnormal: 2, unresolved: 1, valid: false, invalidReason: "电话拜访不计入有效拜访", sent: true, orderId: "d5" },
+      { id: "R20260810001", customer: "周卫兵", teacher: "王玉东", date: "2026-08-10", visitNo: 1, mode: "实地拜访", abnormal: 0, unresolved: 0, valid: true, sent: true, orderId: "" },
+      { id: "R20260815001", customer: "粮巴巴", teacher: "李明", date: "2026-08-15", visitNo: 1, mode: "实地拜访", abnormal: 2, unresolved: 0, valid: true, sent: false, orderId: "" },
+      { id: "R20260705001", customer: "姚萍芬", teacher: "王玉东", date: "2026-07-05", visitNo: 3, mode: "实地拜访", abnormal: 1, unresolved: 0, valid: true, sent: true, orderId: "" }
+    ];
+
+    var orderList = [
+      { id: "d1", customer: "张三", sales: "李明", teacher: "王玉东", type: "鸡群诊断", time: "2026-08-14 09:20", visited: false, visitTime: "", resolveStatus: "", resolveConfirmBy: "", resolveConfirmTime: "" },
+      { id: "d2", customer: "张三", sales: "李明", teacher: "王玉东", type: "鸡群诊断", time: "2026-08-10 14:30", visited: false, visitTime: "", resolveStatus: "", resolveConfirmBy: "", resolveConfirmTime: "" },
+      { id: "d3", customer: "张三", sales: "李明", teacher: "王玉东", type: "鸡群诊断", time: "2026-08-04 09:00", visited: true, visitTime: "2026-08-04 10:30:00", resolveStatus: "", resolveConfirmBy: "", resolveConfirmTime: "" },
+      { id: "d4", customer: "张三", sales: "李明", teacher: "王玉东", type: "鸡群诊断", time: "2026-07-28 11:00", visited: true, visitTime: "2026-07-28 14:00:00", resolveStatus: "ok", resolveConfirmBy: "方伟萍", resolveConfirmTime: "2026-07-29 10:00:00" },
+      { id: "d5", customer: "张三", sales: "李明", teacher: "王玉东", type: "鸡群诊断", time: "2026-07-20 09:30", visited: true, visitTime: "2026-07-20 10:00:00", resolveStatus: "no", resolveConfirmBy: "方伟萍", resolveConfirmTime: "2026-07-22 15:30:00" },
+      { id: "d6", customer: "周卫兵", sales: "方伟萍", teacher: "王玉东", type: "客户纠纷", time: "2026-08-12 16:00", visited: true, visitTime: "2026-08-13 09:00:00", resolveStatus: "ok", resolveConfirmBy: "方伟萍", resolveConfirmTime: "2026-08-14 10:00:00" }
+    ];
+
+    var rPage = 1;
+    var oPage = 1;
+    var rFiltered = reportList.slice();
+    var oFiltered = orderList.slice();
+    var tFiltered = [];
+
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg) {
+      var el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.classList.remove("show"); }, 2000);
+    }
+
+    function parseDate(str) {
+      if (!str) return null;
+      return new Date(str.replace(/-/g, "/").slice(0, 10));
+    }
+
+    function inDateRange(dateStr, start, end) {
+      var d = parseDate(dateStr);
+      var s = parseDate(start);
+      var e = parseDate(end);
+      if (!d) return false;
+      if (s && d < s) return false;
+      if (e && d > e) return false;
+      return true;
+    }
+
+    function resolveLabel(s, visited) {
+      if (!visited) return { text: "—", cls: "tag-muted" };
+      if (s === "ok") return { text: "已解决", cls: "tag-ok" };
+      if (s === "no") return { text: "未解决", cls: "tag-no" };
+      return { text: "待反馈", cls: "tag-warn" };
+    }
+
+    function filterReports() {
+      var start = $("r-date-start").value;
+      var end = $("r-date-end").value;
+      var teacher = $("r-teacher").value;
+      var customer = $("r-customer").value.trim();
+      var sent = $("r-sent").value;
+      rFiltered = reportList.filter(function (r) {
+        if (!inDateRange(r.date, start, end)) return false;
+        if (teacher && r.teacher !== teacher) return false;
+        if (customer && r.customer.indexOf(customer) < 0) return false;
+        if (sent === "yes" && !r.sent) return false;
+        if (sent === "no" && r.sent) return false;
+        return true;
+      });
+      rPage = 1;
+      renderReports();
+    }
+
+    function filterOrders() {
+      var start = $("o-date-start").value;
+      var end = $("o-date-end").value;
+      var teacher = $("o-teacher").value;
+      var customer = $("o-customer").value.trim();
+      var visited = $("o-visited").value;
+      var resolve = $("o-resolve").value;
+      oFiltered = orderList.filter(function (o) {
+        if (!inDateRange(o.time.slice(0, 10), start, end)) return false;
+        if (teacher && o.teacher !== teacher) return false;
+        if (customer && o.customer.indexOf(customer) < 0) return false;
+        if (visited === "true" && !o.visited) return false;
+        if (visited === "false" && o.visited) return false;
+        if (resolve === "pending" && (o.resolveStatus || !o.visited)) return false;
+        if (resolve === "ok" && o.resolveStatus !== "ok") return false;
+        if (resolve === "no" && o.resolveStatus !== "no") return false;
+        return true;
+      });
+      oPage = 1;
+      renderOrders();
+    }
+
+    function renderReportStats() {
+      var total = rFiltered.length;
+      var sent = rFiltered.filter(function (r) { return r.sent; }).length;
+      var teachers = {};
+      rFiltered.forEach(function (r) { teachers[r.teacher] = true; });
+      $("r-stats").innerHTML =
+        statCard("报告总数", total, "当前筛选结果") +
+        statCard("已发送客户群", sent, "发送率 " + (total ? Math.round(sent / total * 100) : 0) + "%") +
+        statCard("涉及老师数", Object.keys(teachers).length, "按技术老师去重");
+    }
+
+    function buildTeacherWorkList(start, end, teacherFilter) {
+      var reports = reportList.filter(function (r) {
+        if (!inDateRange(r.date, start, end)) return false;
+        if (teacherFilter && r.teacher !== teacherFilter) return false;
+        return true;
+      });
+      var orders = orderList.filter(function (o) {
+        if (!inDateRange(o.time.slice(0, 10), start, end)) return false;
+        if (teacherFilter && o.teacher !== teacherFilter) return false;
+        return true;
+      });
+      var map = {};
+      function ensure(name) {
+        if (!map[name]) {
+          map[name] = {
+            teacher: name,
+            reportCount: 0,
+            sentCount: 0,
+            validVisit: 0,
+            activeVisit: 0,
+            orderVisit: 0,
+            customers: {},
+            onsite: 0,
+            phone: 0,
+            orderTotal: 0,
+            orderDone: 0,
+            orderPending: 0,
+            orderResolved: 0,
+            orderFeedbackPending: 0
+          };
+        }
+        return map[name];
+      }
+      reports.forEach(function (r) {
+        var t = ensure(r.teacher);
+        t.reportCount++;
+        if (r.sent) t.sentCount++;
+        if (r.valid !== false) t.validVisit++;
+        t.customers[r.customer] = true;
+        if (r.mode === "实地拜访") t.onsite++;
+        else if (r.mode === "电话") t.phone++;
+        if (r.orderId) t.orderVisit++;
+        else t.activeVisit++;
+      });
+      orders.forEach(function (o) {
+        var t = ensure(o.teacher);
+        t.orderTotal++;
+        t.customers[o.customer] = true;
+        if (o.visited) t.orderDone++;
+        else t.orderPending++;
+        if (o.resolveStatus === "ok") t.orderResolved++;
+        if (o.visited && !o.resolveStatus) t.orderFeedbackPending++;
+      });
+      return Object.keys(map).sort().map(function (name) {
+        var t = map[name];
+        var resolveRate = t.orderDone ? Math.round(t.orderResolved / t.orderDone * 100) : 0;
+        var sentRate = t.reportCount ? Math.round(t.sentCount / t.reportCount * 100) : 0;
+        return {
+          teacher: t.teacher,
+          reportCount: t.reportCount,
+          sentCount: t.sentCount,
+          validVisit: t.validVisit,
+          activeVisit: t.activeVisit,
+          orderVisit: t.orderVisit,
+          customerCount: Object.keys(t.customers).length,
+          onsite: t.onsite,
+          phone: t.phone,
+          orderDone: t.orderDone,
+          orderPending: t.orderPending,
+          resolveRate: resolveRate,
+          feedbackPending: t.orderFeedbackPending,
+          sentRate: sentRate
+        };
+      });
+    }
+
+    function filterTeachers() {
+      tFiltered = buildTeacherWorkList($("t-date-start").value, $("t-date-end").value, $("t-teacher").value);
+      renderTeachers();
+    }
+
+    function renderTeacherStats() {
+      var totalReports = tFiltered.reduce(function (s, t) { return s + t.reportCount; }, 0);
+      var totalActive = tFiltered.reduce(function (s, t) { return s + t.activeVisit; }, 0);
+      var totalOrders = tFiltered.reduce(function (s, t) { return s + t.orderDone + t.orderPending; }, 0);
+      var avgResolve = tFiltered.length
+        ? Math.round(tFiltered.reduce(function (s, t) { return s + t.resolveRate; }, 0) / tFiltered.length)
+        : 0;
+      $("t-stats").innerHTML =
+        statCard("技术老师人数", tFiltered.length, "当前筛选范围") +
+        statCard("巡场报告合计", totalReports, "含主动拜访与工单诊断") +
+        statCard("主动拜访报告", totalActive, "无关联工单的报告") +
+        statCard("平均工单解决率", avgResolve + "%", "已诊断工单中已解决占比");
+    }
+
+    function renderTeachers() {
+      renderTeacherStats();
+      $("t-count").textContent = "共 " + tFiltered.length + " 位老师";
+      $("t-tbody").innerHTML = tFiltered.map(function (t) {
+        return "<tr>" +
+          "<td><strong>" + t.teacher + "</strong></td>" +
+          "<td>" + t.reportCount + "</td>" +
+          "<td>" + t.sentCount + " <span style='color:#8b95a5;font-size:11px'>(" + t.sentRate + "%)</span></td>" +
+          "<td>" + t.validVisit + "</td>" +
+          "<td>" + t.activeVisit + "</td>" +
+          "<td>" + t.orderVisit + "</td>" +
+          "<td>" + t.customerCount + "</td>" +
+          "<td>" + t.onsite + "</td>" +
+          "<td>" + t.phone + "</td>" +
+          "<td>" + t.orderDone + "</td>" +
+          "<td>" + t.orderPending + "</td>" +
+          "<td>" + t.resolveRate + "%</td>" +
+          "<td>" + t.feedbackPending + "</td>" +
+          "</tr>";
+      }).join("") || '<tr><td colspan="13" style="text-align:center;color:#8b95a5;padding:32px">暂无数据</td></tr>';
+    }
+
+    function exportTeachers() {
+      var rows = tFiltered.map(function (t) {
+        return [
+          t.teacher, t.reportCount, t.sentCount, t.validVisit, t.activeVisit, t.orderVisit,
+          t.customerCount, t.onsite, t.phone, t.orderDone, t.orderPending,
+          t.resolveRate + "%", t.feedbackPending
+        ];
+      });
+      exportCsv("技术老师工作_" + dateStamp() + ".csv",
+        ["技术老师", "巡场报告数", "已发送客户群", "有效拜访量", "主动拜访", "工单诊断", "覆盖客户数", "实地拜访", "电话拜访", "已诊断工单", "未诊断工单", "工单解决率", "待反馈工单"],
+        rows);
+      toast("已导出 " + rows.length + " 位老师工作数据");
+    }
+
+    function renderOrderStats() {
+      var total = oFiltered.length;
+      var done = oFiltered.filter(function (o) { return o.visited; }).length;
+      var pending = oFiltered.filter(function (o) { return o.visited && !o.resolveStatus; }).length;
+      var resolved = oFiltered.filter(function (o) { return o.resolveStatus === "ok"; }).length;
+      $("o-stats").innerHTML =
+        statCard("工单总数", total, "当前筛选结果") +
+        statCard("已诊断", done, "占比 " + (total ? Math.round(done / total * 100) : 0) + "%") +
+        statCard("待反馈", pending, "已诊断未反馈") +
+        statCard("已解决", resolved, "业务员确认已解决");
+    }
+
+    function statCard(label, num, sub) {
+      return '<div class="stat-card"><div class="label">' + label + '</div><div class="num">' + num + '</div><div class="sub">' + sub + '</div></div>';
+    }
+
+    function paginate(list, page) {
+      var start = (page - 1) * PAGE_SIZE;
+      return { items: list.slice(start, start + PAGE_SIZE), total: list.length, pages: Math.max(1, Math.ceil(list.length / PAGE_SIZE)) };
+    }
+
+    function renderPager(containerId, page, pages, setPage) {
+      var html = "";
+      for (var i = 1; i <= pages; i++) {
+        html += '<button type="button" class="' + (i === page ? "on" : "") + '" data-p="' + i + '">' + i + "</button>";
+      }
+      var el = $(containerId);
+      el.innerHTML = html;
+      el.onclick = function (e) {
+        var btn = e.target.closest("button[data-p]");
+        if (!btn) return;
+        setPage(parseInt(btn.getAttribute("data-p"), 10));
+      };
+    }
+
+    function validLabel(valid) {
+      if (valid === false) return { text: "无效", cls: "tag-warn" };
+      return { text: "有效", cls: "tag-ok" };
+    }
+
+    function validCellHtml(r) {
+      var vl = validLabel(r.valid);
+      var html = '<span class="tag ' + vl.cls + '">' + vl.text + "</span>";
+      if (r.valid === false && r.invalidReason) {
+        html += '<span class="valid-reason">' + r.invalidReason + "</span>";
+      }
+      return html;
+    }
+
+    function validExportText(r) {
+      if (r.valid === false) {
+        return r.invalidReason ? "无效（" + r.invalidReason + "）" : "无效";
+      }
+      return "有效";
+    }
+
+    function renderReports() {
+      renderReportStats();
+      var p = paginate(rFiltered, rPage);
+      $("r-count").textContent = "共 " + p.total + " 条";
+      $("r-page-info").textContent = "第 " + rPage + " / " + p.pages + " 页，每页 " + PAGE_SIZE + " 条";
+      $("r-tbody").innerHTML = p.items.map(function (r) {
+        return "<tr>" +
+          "<td>" + r.id + "</td>" +
+          "<td>" + r.customer + "</td>" +
+          "<td>" + r.teacher + "</td>" +
+          "<td>" + r.date + "</td>" +
+          "<td>第" + r.visitNo + "次</td>" +
+          "<td>" + r.mode + "</td>" +
+          "<td>" + r.abnormal + "</td>" +
+          "<td>" + r.unresolved + "</td>" +
+          "<td>" + validCellHtml(r) + "</td>" +
+          '<td><span class="tag ' + (r.sent ? "tag-ok" : "tag-warn") + '">' + (r.sent ? "已发送" : "未发送") + "</span></td>" +
+          "<td>" + (r.orderId || "—") + "</td>" +
+          '<td><a class="op-link" href="巡场报告详情_PC.html?id=' + encodeURIComponent(r.id) + '" target="_blank">查看详情</a></td>' +
+          "</tr>";
+      }).join("") || '<tr><td colspan="12" style="text-align:center;color:#8b95a5;padding:32px">暂无数据</td></tr>';
+      renderPager("r-pager", rPage, p.pages, function (n) { rPage = n; renderReports(); });
+    }
+
+    function parseDateTime(str) {
+      if (!str) return null;
+      return new Date(str.replace(/-/g, "/"));
+    }
+
+    function feedbackHoursLabel(o) {
+      if (!o.visitTime || !o.resolveConfirmTime) return "—";
+      var start = parseDateTime(o.visitTime);
+      var end = parseDateTime(o.resolveConfirmTime);
+      if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime()) || end < start) return "—";
+      return Math.round((end - start) / 3600000) + "小时";
+    }
+
+    function reportIdByOrder(orderId) {
+      if (!orderId) return "";
+      for (var i = 0; i < reportList.length; i++) {
+        if (reportList[i].orderId === orderId) return reportList[i].id;
+      }
+      return "";
+    }
+
+    function renderOrders() {
+      renderOrderStats();
+      var p = paginate(oFiltered, oPage);
+      $("o-count").textContent = "共 " + p.total + " 条";
+      $("o-page-info").textContent = "第 " + oPage + " / " + p.pages + " 页，每页 " + PAGE_SIZE + " 条";
+      $("o-tbody").innerHTML = p.items.map(function (o) {
+        var rs = resolveLabel(o.resolveStatus, o.visited);
+        var reportId = reportIdByOrder(o.id);
+        var reportOp = reportId
+          ? '<a class="op-link" href="巡场报告详情_PC.html?id=' + encodeURIComponent(reportId) + '" target="_blank">查看巡场报告</a>'
+          : "—";
+        return "<tr>" +
+          "<td>" + o.id + "</td>" +
+          "<td>" + o.customer + "</td>" +
+          "<td>" + o.sales + "</td>" +
+          "<td>" + o.teacher + "</td>" +
+          "<td>" + o.type + "</td>" +
+          "<td>" + o.time + "</td>" +
+          '<td><span class="tag ' + (o.visited ? "tag-muted" : "tag-warn") + '">' + (o.visited ? "已诊断" : "未诊断") + "</span></td>" +
+          "<td>" + (o.visitTime || "—") + "</td>" +
+          '<td><span class="tag ' + rs.cls + '">' + rs.text + "</span></td>" +
+          "<td>" + feedbackHoursLabel(o) + "</td>" +
+          "<td>" + (o.resolveConfirmBy || "—") + "</td>" +
+          "<td>" + (o.resolveConfirmTime || "—") + "</td>" +
+          "<td>" + reportOp + "</td>" +
+          "</tr>";
+      }).join("") || '<tr><td colspan="13" style="text-align:center;color:#8b95a5;padding:32px">暂无数据</td></tr>';
+      renderPager("o-pager", oPage, p.pages, function (n) { oPage = n; renderOrders(); });
+    }
+
+    function exportCsv(filename, headers, rows) {
+      function esc(v) {
+        var s = String(v == null ? "" : v);
+        if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+      var lines = [headers.map(esc).join(",")];
+      rows.forEach(function (row) { lines.push(row.map(esc).join(",")); });
+      var blob = new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function exportReports() {
+      var rows = rFiltered.map(function (r) {
+        return [r.id, r.customer, r.teacher, r.date, "第" + r.visitNo + "次", r.mode, r.abnormal, r.unresolved, validExportText(r), r.sent ? "已发送" : "未发送", r.orderId || ""];
+      });
+      exportCsv("巡场报告明细_" + dateStamp() + ".csv",
+        ["报告编号", "客户", "技术老师", "汇报日期", "拜访次数", "拜访方式", "异常维度数", "未解决数", "是否有效", "发送客户群", "关联工单"],
+        rows);
+      toast("已导出 " + rows.length + " 条巡场报告");
+    }
+
+    function exportOrders() {
+      var rows = oFiltered.map(function (o) {
+        var rs = resolveLabel(o.resolveStatus, o.visited);
+        return [o.id, o.customer, o.sales, o.teacher, o.type, o.time, o.visited ? "已诊断" : "未诊断", o.visitTime || "", rs.text, feedbackHoursLabel(o), o.resolveConfirmBy || "", o.resolveConfirmTime || "", reportIdByOrder(o.id) || ""];
+      });
+      exportCsv("诊断工单明细_" + dateStamp() + ".csv",
+        ["工单编号", "客户", "业务员", "技术老师", "需求类型", "提交时间", "诊断状态", "拜访时间", "反馈状态", "反馈时长", "确认人", "确认时间", "巡场报告编号"],
+        rows);
+      toast("已导出 " + rows.length + " 条诊断工单");
+    }
+
+    function dateStamp() {
+      var d = new Date();
+      return d.getFullYear() + "" + pad(d.getMonth() + 1) + pad(d.getDate()) + "_" + pad(d.getHours()) + pad(d.getMinutes());
+    }
+    function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+    function switchTab(tab) {
+      document.querySelectorAll(".nav-item").forEach(function (el) {
+        el.classList.toggle("on", el.getAttribute("data-tab") === tab);
+      });
+      $("panel-report").classList.toggle("on", tab === "report");
+      $("panel-order").classList.toggle("on", tab === "order");
+      $("panel-teacher").classList.toggle("on", tab === "teacher");
+      var titles = { report: "巡场报告查询", order: "诊断工单查询", teacher: "技术老师工作" };
+      $("page-title").textContent = titles[tab] || "数据查询";
+    }
+
+    document.querySelectorAll(".nav-item").forEach(function (el) {
+      el.addEventListener("click", function () { switchTab(el.getAttribute("data-tab")); });
+    });
+
+    $("r-search").addEventListener("click", filterReports);
+    $("r-reset").addEventListener("click", function () {
+      $("r-date-start").value = "2026-07-01";
+      $("r-date-end").value = "2026-08-31";
+      $("r-teacher").value = "";
+      $("r-customer").value = "";
+      $("r-sent").value = "";
+      rFiltered = reportList.slice();
+      rPage = 1;
+      renderReports();
+    });
+    $("r-export").addEventListener("click", exportReports);
+
+    $("o-search").addEventListener("click", filterOrders);
+    $("o-reset").addEventListener("click", function () {
+      $("o-date-start").value = "2026-07-01";
+      $("o-date-end").value = "2026-08-31";
+      $("o-teacher").value = "";
+      $("o-customer").value = "";
+      $("o-visited").value = "";
+      $("o-resolve").value = "";
+      oFiltered = orderList.slice();
+      oPage = 1;
+      renderOrders();
+    });
+    $("o-export").addEventListener("click", exportOrders);
+
+    $("t-search").addEventListener("click", filterTeachers);
+    $("t-reset").addEventListener("click", function () {
+      $("t-date-start").value = "2026-07-01";
+      $("t-date-end").value = "2026-08-31";
+      $("t-teacher").value = "";
+      filterTeachers();
+    });
+    $("t-export").addEventListener("click", exportTeachers);
+
+    renderReports();
+    renderOrders();
+    filterTeachers();
+  </script>
+</body>
+</html>

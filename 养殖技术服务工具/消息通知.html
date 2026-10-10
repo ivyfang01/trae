@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>消息通知</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f0f3f7;
+      --card: #fff;
+      --text: #1a2332;
+      --muted: #8b95a5;
+      --label: #5c6b7a;
+      --line: #e8ecf1;
+      --blue: #3b71e8;
+      --blue-deep: #2b5fd0;
+      --blue-soft: #e8f0ff;
+      --danger: #e54d42;
+      --ok: #1f9d6a;
+      --ok-soft: #e6f7f0;
+      --warn: #d48806;
+      --warn-soft: #fff7e8;
+      --shadow: 0 2px 10px rgba(26, 35, 50, 0.06);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #c5ccd6;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px 32px;
+    }
+    .device {
+      width: 390px;
+      max-width: 100%;
+      min-height: 780px;
+      background: var(--bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,.18);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .topbar {
+      background: linear-gradient(180deg, var(--blue) 0%, var(--blue-deep) 100%);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-height: 52px;
+      color: #fff;
+    }
+    .topbar .back {
+      width: 28px; height: 28px; border: none; background: transparent;
+      font-size: 22px; cursor: pointer; line-height: 1; color: inherit;
+    }
+    .topbar h1 { font-size: 17px; font-weight: 600; flex: 1; text-align: center; margin-right: 28px; }
+
+    .screens { flex: 1; overflow: hidden; position: relative; }
+    .screen {
+      display: none; height: 100%; overflow-y: auto;
+      padding: 12px 12px 24px; -webkit-overflow-scrolling: touch;
+    }
+    .screen.active { display: block; }
+
+    .flow-tip {
+      background: var(--blue-soft); color: var(--blue); font-size: 12px;
+      padding: 8px 10px; border-radius: 8px; margin-bottom: 12px; line-height: 1.5;
+    }
+    .hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+    .role-tabs {
+      display: flex; background: #fff; border-radius: 10px;
+      padding: 4px; margin-bottom: 12px; box-shadow: var(--shadow);
+    }
+    .role-tabs button {
+      flex: 1; border: none; background: transparent; padding: 10px 4px;
+      font-size: 13px; font-family: inherit; color: var(--muted);
+      border-radius: 8px; cursor: pointer; font-weight: 500;
+    }
+    .role-tabs button.on {
+      background: var(--blue-soft); color: var(--blue); font-weight: 600;
+    }
+
+    .scene-label {
+      font-size: 12px; color: var(--label); margin: 14px 2px 8px;
+      font-weight: 600; display: flex; align-items: center; gap: 6px;
+    }
+    .scene-label span {
+      font-weight: 400; color: var(--muted);
+    }
+
+    /* 系统推送条样式 */
+    .push-sheet {
+      background: rgba(255,255,255,.96);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 24px rgba(26,35,50,.12);
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: 1px solid rgba(232,236,241,.9);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .push-sheet:active { transform: scale(.98); }
+    .push-sheet .app-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .push-sheet .app-ico {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+      color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+    .push-sheet .app-name { font-size: 12px; color: var(--muted); flex: 1; }
+    .push-sheet .app-time { font-size: 11px; color: var(--muted); }
+    .push-sheet .pt { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+    .push-sheet .pd { font-size: 12px; color: var(--label); line-height: 1.5; }
+
+    /* 消息中心列表 */
+    .msg-list { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .msg-item {
+      display: flex; gap: 12px; padding: 14px 14px;
+      border-bottom: 1px solid #f3f5f8; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .msg-item:last-child { border-bottom: none; }
+    .msg-item:active { background: #f7f9fc; }
+    .msg-item.read .msg-title { color: var(--label); font-weight: 500; }
+    .msg-item.read .dot { visibility: hidden; }
+    .msg-avatar {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: #fff;
+    }
+    .msg-avatar.s1 { background: linear-gradient(135deg, #4f86f0, #3b71e8); }
+    .msg-avatar.s2 { background: linear-gradient(135deg, #2db87a, #1f9d6a); }
+    .msg-avatar.s3 { background: linear-gradient(135deg, #f0a04b, #d48806); }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-hd {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    }
+    .msg-title { font-size: 14px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--danger); flex-shrink: 0;
+    }
+    .msg-time { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+    .msg-desc {
+      font-size: 12px; color: var(--muted); line-height: 1.5;
+      overflow: hidden; text-overflow: ellipsis;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+    .msg-tag {
+      display: inline-block; margin-top: 6px; font-size: 11px;
+      padding: 2px 8px; border-radius: 4px; background: #eef1f6; color: var(--muted);
+    }
+    .msg-tag.t-new { background: var(--blue-soft); color: var(--blue); }
+    .msg-tag.t-report { background: var(--ok-soft); color: var(--ok); }
+    .msg-tag.t-feedback { background: var(--warn-soft); color: var(--warn); }
+
+    .empty {
+      padding: 40px 16px; text-align: center; color: var(--muted); font-size: 13px;
+    }
+
+    .toast {
+      display: none; position: absolute; left: 50%; top: 48%;
+      transform: translate(-50%, -50%); z-index: 50;
+      background: rgba(26,35,50,.88); color: #fff;
+      padding: 12px 18px; border-radius: 10px; font-size: 13px;
+      max-width: 80%; text-align: center; line-height: 1.5;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="topbar">
+      <button class="back" type="button" id="btn-back" title="返回">‹</button>
+      <h1>消息通知</h1>
+    </div>
+
+    <div class="screens">
+      <div class="screen active" id="screen-msg">
+        <div class="flow-tip">三类推送：提交工单 → 提交巡检报告 → 业务员反馈；点击消息跳转工单详情</div>
+
+        <div class="role-tabs" id="role-tabs">
+          <button type="button" class="on" data-role="teacher">技术老师</button>
+          <button type="button" data-role="sales">业务员</button>
+          <button type="button" data-role="manager">区域经理</button>
+        </div>
+
+        <!-- <div class="scene-label">系统推送样式 <span></span></div> -->
+        <div id="push-preview"></div>
+
+        <div class="scene-label">消息中心 <span id="inbox-tip">—</span></div>
+        <div class="msg-list" id="msg-list"></div>
+        <p class="hint">点击任意消息进入对应工单详情（技术老师 / 业务员视角）</p>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    // 三类业务场景消息
+    // scene: submit | report | feedback
+    // to: teacher | sales | manager
+    var messages = [
+      // 1. 业务员提交工单 → 技术老师、区域经理
+      {
+        id: "m1",
+        scene: "submit",
+        to: ["teacher", "manager"],
+        title: "新诊断工单待处理",
+        desc: "业务员李明提交了客户「张三」的鸡群诊断工单，请尽快安排拜访。",
+        pushTitle: "新诊断工单",
+        pushBody: "张三 · 鸡群诊断，请尽快处理",
+        time: "刚刚",
+        pushTime: "现在",
+        unread: true,
+        tag: "提交工单",
+        tagCls: "t-new",
+        avatar: "单",
+        avatarCls: "s1",
+        demandId: "d1",
+        detailRole: "teacher"
+      },
+      {
+        id: "m1b",
+        scene: "submit",
+        to: ["manager"],
+        title: "张三创建诊断工单",
+        desc: "业务员李明为客户「张三」创建鸡群诊断工单，已分配给技术老师王玉东。",
+        pushTitle: "辖区新工单",
+        pushBody: "张三 · 已分配王玉东",
+        time: "刚刚",
+        pushTime: "现在",
+        unread: true,
+        tag: "提交工单",
+        tagCls: "t-new",
+        avatar: "单",
+        avatarCls: "s1",
+        demandId: "d1",
+        detailRole: "teacher"
+      },
+      // 2. 技术老师提交巡检报告 → 业务员、区域经理
+      {
+        id: "m2",
+        scene: "report",
+        to: ["sales", "manager"],
+        title: "巡场报告已提交",
+        desc: "技术老师王玉东已完成客户「张三」拜访，并提交巡场报告，请查看处理方案并反馈是否解决。",
+        pushTitle: "巡场报告已提交",
+        pushBody: "张三 · 请查看处理方案并反馈",
+        time: "10分钟前",
+        pushTime: "10分钟前",
+        unread: true,
+        tag: "巡检报告",
+        tagCls: "t-report",
+        avatar: "报",
+        avatarCls: "s2",
+        demandId: "d3",
+        detailRole: "sales"
+      },
+      // 3. 业务员反馈后 → 技术老师、区域经理
+      {
+        id: "m3",
+        scene: "feedback",
+        to: ["teacher", "manager"],
+        title: "业务员已反馈问题结果",
+        desc: "业务员方伟萍反馈客户「张三」问题已解决。确认时间：2026-03-12 02:00:00。",
+        pushTitle: "问题反馈：已解决",
+        pushBody: "张三 · 方伟萍已确认已解决",
+        time: "昨天 14:20",
+        pushTime: "昨天",
+        unread: false,
+        tag: "问题反馈",
+        tagCls: "t-feedback",
+        avatar: "馈",
+        avatarCls: "s3",
+        demandId: "d4",
+        detailRole: "teacher"
+      },
+      {
+        id: "m4",
+        scene: "feedback",
+        to: ["teacher", "manager"],
+        title: "业务员已反馈问题结果",
+        desc: "业务员方伟萍反馈客户「张三」问题未解决。确认时间：2026-07-22 15:30:00。",
+        pushTitle: "问题反馈：未解决",
+        pushBody: "张三 · 方伟萍确认未解决，请关注",
+        time: "08-22 15:32",
+        pushTime: "08-22",
+        unread: true,
+        tag: "问题反馈",
+        tagCls: "t-feedback",
+        avatar: "馈",
+        avatarCls: "s3",
+        demandId: "d5",
+        detailRole: "teacher"
+      }
+    ];
+
+    var currentRole = "teacher";
+    var DETAIL_BASE = "技术服务需求接单_原型.html";
+
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg) {
+      var el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+    }
+
+    function roleLabel(role) {
+      return { teacher: "技术老师", sales: "业务员", manager: "区域经理" }[role] || role;
+    }
+
+    function detailUrl(msg) {
+      var screen = msg.detailRole === "sales" ? "sales-detail" : "teacher-task";
+      return DETAIL_BASE + "?from=msg&screen=" + screen + "&demand=" + encodeURIComponent(msg.demandId);
+    }
+
+    function forRole(role) {
+      return messages.filter(function (m) {
+        return m.to.indexOf(role) >= 0;
+      });
+    }
+
+    /** 每个场景在当前角色下取一条用于顶部推送示意 */
+    function pushSamples(role) {
+      var list = forRole(role);
+      var seen = {};
+      var out = [];
+      list.forEach(function (m) {
+        if (seen[m.scene]) return;
+        seen[m.scene] = true;
+        out.push(m);
+      });
+      return out;
+    }
+
+    function renderPushPreview() {
+      var wrap = $("push-preview");
+      if (!wrap) return; // 页面未放推送容器时跳过，不影响消息中心
+      var samples = pushSamples(currentRole);
+      if (!samples.length) {
+        wrap.innerHTML = '<div class="empty">当前角色暂无推送示意</div>';
+        return;
+      }
+      wrap.innerHTML = samples.map(function (m) {
+        // return (
+        //   '<div class="push-sheet" data-msg-id="' + m.id + '">' +
+        //     '<div class="app-row">' +
+        //       '<div class="app-ico">养</div>' +
+        //       '<div class="app-name">养殖技术服务</div>' +
+        //       '<div class="app-time">' + m.pushTime + '</div>' +
+        //     "</div>" +
+        //     '<div class="pt">' + m.pushTitle + "</div>" +
+        //     '<div class="pd">' + m.pushBody + "</div>" +
+        //   "</div>"
+        // );
+      }).join("");
+    }
+
+    function renderMsgList() {
+      var list = forRole(currentRole);
+      $("inbox-tip").textContent = "（" + roleLabel(currentRole) + " · " + list.length + " 条）";
+      var wrap = $("msg-list");
+      if (!list.length) {
+        wrap.innerHTML = '<div class="empty">暂无消息</div>';
+        return;
+      }
+      wrap.innerHTML = list.map(function (m) {
+        return (
+          '<div class="msg-item' + (m.unread ? "" : " read") + '" data-msg-id="' + m.id + '">' +
+            // '<div class="msg-avatar ' + m.avatarCls + '">' + m.avatar + "</div>" +
+            '<div class="msg-body">' +
+              '<div class="msg-hd">' +
+                '<span class="dot"></span>' +
+                '<div class="msg-title">' + m.title + "</div>" +
+                '<div class="msg-time">' + m.time + "</div>" +
+              "</div>" +
+              '<div class="msg-desc">' + m.desc + "</div>" +
+              // '<span class="msg-tag ' + m.tagCls + '">' + m.tag + "</span>" +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    function openMessage(id) {
+      var msg = null;
+      for (var i = 0; i < messages.length; i++) {
+        if (messages[i].id === id) { msg = messages[i]; break; }
+      }
+      if (!msg) return;
+      msg.unread = false;
+      renderMsgList();
+      renderPushPreview();
+      toast("跳转工单详情…");
+      setTimeout(function () {
+        window.location.assign(detailUrl(msg));
+      }, 350);
+    }
+
+    function renderAll() {
+      renderPushPreview();
+      renderMsgList();
+    }
+
+    $("role-tabs").addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-role]");
+      if (!btn) return;
+      $("role-tabs").querySelectorAll("button").forEach(function (b) { b.classList.remove("on"); });
+      btn.classList.add("on");
+      currentRole = btn.getAttribute("data-role");
+      renderAll();
+    });
+
+    var pushPreview = $("push-preview");
+    if (pushPreview) {
+      pushPreview.addEventListener("click", function (e) {
+        var row = e.target.closest("[data-msg-id]");
+        if (!row) return;
+        openMessage(row.getAttribute("data-msg-id"));
+      });
+    }
+
+    $("msg-list").addEventListener("click", function (e) {
+      var row = e.target.closest("[data-msg-id]");
+      if (!row) return;
+      openMessage(row.getAttribute("data-msg-id"));
+    });
+
+    $("btn-back").addEventListener("click", function () {
+      if (document.referrer) {
+        history.back();
+      } else {
+        window.location.assign("技术服务需求接单_原型.html");
+      }
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>

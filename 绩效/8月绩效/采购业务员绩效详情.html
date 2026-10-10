@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>采购业务员绩效详情</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#f5f5f5;color:#333;font-size:14px;
+}
+.page{max-width:750px;margin:0 auto;min-height:100vh;background:#f5f5f5;padding-bottom:20px}
+.header{
+  background:#1890ff;color:#fff;padding:16px 16px 18px;position:relative;
+}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.user{display:flex;gap:10px;align-items:center}
+.avatar{
+  width:48px;height:48px;border-radius:50%;background:#ffe08a;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  border:2px solid rgba(255,255,255,.35);overflow:hidden;flex-shrink:0;
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.name{font-size:20px;font-weight:700;line-height:1.2}
+.role-tag{
+  display:inline-block;background:rgba(255,255,255,.22);border-radius:12px;
+  padding:2px 8px;font-size:12px;line-height:1.4;
+}
+.region{margin-top:6px;font-size:13px;opacity:.95;display:flex;align-items:center;gap:4px}
+.status-btn{
+  border:none;background:rgba(0,0,0,.18);color:#fff;border-radius:8px;
+  padding:8px 10px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:52px;line-height:1.2;
+}
+.daily{
+  margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.daily-card{
+  background:#fff;border-radius:8px;padding:12px 14px;color:#333;
+}
+.daily-card .val{font-size:24px;font-weight:700;color:#1890ff;line-height:1.2}
+.daily-card .val span{font-size:14px;font-weight:500;margin-left:2px}
+.daily-card .lab{margin-top:4px;font-size:12px;color:#666}
+.panel{background:#fff;margin-top:10px;padding:14px 16px}
+.month-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.month-tabs{display:flex;gap:8px}
+.month-tab{
+  border:none;border-radius:4px;padding:6px 12px;font-size:14px;cursor:pointer;
+  background:#f0f0f0;color:#666;
+}
+.month-tab.active{background:#1890ff;color:#fff}
+.links{margin-left:auto;display:flex;gap:12px;font-size:13px}
+.links a{color:#1890ff;text-decoration:none}
+.sec-title{font-size:15px;font-weight:700;margin:4px 0 12px;color:#333}
+.kpi{padding:12px 0;border-bottom:1px solid #f0f0f0}
+.kpi:last-child{border-bottom:none}
+.kpi-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.kpi-name{color:#1890ff;font-size:14px;font-weight:600}
+.kpi-detail{color:#1890ff;font-size:12px;text-decoration:none}
+.kpi-weight{margin-left:auto;color:#999;font-size:13px}
+.kpi-body{font-size:13px;color:#666;line-height:1.8}
+.kpi-body > div{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+}
+.kpi-body .lab-l{flex:0 1 auto;min-width:0;white-space:nowrap}
+.kpi-body .red,.kpi-body .green,.kpi-body .num-r{
+  color:inherit;font-weight:600;text-align:right;flex:1 1 auto;
+  margin-left:12px;word-break:break-all;
+}
+.kpi-body .red{color:#ff4d4f}
+.kpi-body .green{color:#52c41a}
+.kpi-body .num-r{color:#333;font-weight:500}
+.dash{color:#999}
+.score-box{
+  margin:10px 12px 0;background:#e6f4ff;border-radius:8px;padding:16px;
+}
+.score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.score-top .lab{font-size:15px;font-weight:600}
+.score-top .num{font-size:36px;font-weight:800;color:#1890ff;line-height:1}
+.score-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.score-part{flex:1}
+.score-part .lab{font-size:12px;color:#666}
+.score-part .val{margin-top:4px;font-size:20px;font-weight:700;color:#333}
+.score-plus{width:40px;text-align:center;color:#1890ff;font-size:22px;font-weight:700}
+.meta-list{background:#fff;margin-top:0;padding:4px 16px 12px}
+.meta-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid #f0f0f0;font-size:14px;
+}
+.meta-row:last-child{border-bottom:none}
+.meta-row .lab{color:#333}
+.meta-row .val{color:#333}
+.meta-row .muted{color:#999}
+.comm-item{padding:12px 0;border-bottom:1px solid #f0f0f0}
+.comm-item:last-of-type{border-bottom:none}
+.comm-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.comm-name{font-weight:600;color:#333}
+.comm-val{margin-left:auto;font-weight:700;color:#333}
+.comm-body{font-size:13px;color:#666;line-height:1.7}
+.comm-body .blue{color:#1890ff;font-weight:600}
+.total-comm{
+  margin-top:8px;padding-top:14px;border-top:1px solid #f0f0f0;
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.total-comm .left{display:flex;align-items:center;gap:4px;font-size:15px;font-weight:600}
+.total-comm .right{text-align:right}
+.total-comm .big{font-size:32px;font-weight:800;color:#1890ff;line-height:1}
+.total-comm .calc{margin-top:6px;font-size:12px;color:#999}
+.info{display:inline-flex;width:14px;height:14px;border-radius:50%;border:1px solid #bbb;color:#999;
+  font-size:10px;align-items:center;justify-content:center;line-height:1}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <div class="header-top">
+      <div class="user">
+        <div class="avatar">⭐</div>
+        <div>
+          <div class="name-row">
+            <span class="name">张轩铭</span>
+            <span class="role-tag">头寸采购专员</span>
+          </div>
+          <div class="region">📍 华北</div>
+        </div>
+      </div>
+      <button class="status-btn"><span>🕒</span><span>待确认</span></button>
+    </div>
+    <div class="daily">
+      <div class="daily-card">
+        <div class="val">1108<span>吨</span></div>
+        <div class="lab">当日豆粕提货量</div>
+      </div>
+      <!-- <div class="daily-card">
+        <div class="val">0<span>吨</span></div>
+        <div class="lab">当日玉米提货量</div>
+      </div> -->
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="month-row">
+      <div class="month-tabs">
+        <button class="month-tab active">2026-08</button>
+        <button class="month-tab">2026-07</button>
+      </div>
+      <div class="links">
+        <a href="./采购业务员绩效列表.html?tab=提成">提成及奖惩明细</a>
+        <a href="javascript:void(0)">查看绩效条例</a>
+      </div>
+    </div>
+
+    <div class="sec-title">历史绩效</div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">远月销售量</span>
+        <a class="kpi-detail" href="./采购业务员绩效列表.html">查看明细</a>
+        <span class="kpi-weight">25.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="red">11410.88吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">36000吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月修改目标</span><span class="num-r">是</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 达成</span><span class="num-r">11410.882 / 36000 * 100% = 0.317</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0.317 * 25% = 7.93</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">远月采购量</span>
+        <a class="kpi-detail" href="./采购业务员绩效列表.html?cat=远月采购量">查看明细</a>
+        <span class="kpi-weight">25.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="red">8200.50吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">30000吨</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月修改目标</span><span class="num-r">是</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 达成</span><span class="num-r">8200.50 / 30000 * 100% = 0.273</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0.273 * 25% = 6.83</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">豆粕利润额</span>
+        <a class="kpi-detail" href="javascript:void(0)">查看明细</a>
+        <span class="kpi-weight">15.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="red">0元</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">36000元</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 达成</span><span class="num-r">0</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0 * 15% = 0</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">授信额度</span>
+        <span class="kpi-weight">10.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="green">850万</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">1000万</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 达成</span><span class="num-r">0.85</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">0.85 * 10% = 8.5</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">平均保证金目标值</span>
+        <span class="kpi-weight">15.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 本月已完成</span><span class="green">6.02%</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 基础值</span><span class="num-r">8.40%</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月目标</span><span class="num-r">7.00%</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 本月修改目标</span><span class="num-r">是</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 增量达成</span><span class="num-r">1</span></div>
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">1 * 15% = 15</span></div>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-head">
+        <span class="kpi-name">月关键项目达成</span>
+        <span class="kpi-weight">10.00%</span>
+      </div>
+      <div class="kpi-body">
+        <div><span class="lab-l"><span class="dash">—</span> 对应分值</span><span class="num-r">—</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="score-box">
+    <div class="score-top">
+      <span class="lab">考核总分</span>
+      <span class="num">34</span>
+    </div>
+    <div class="score-bottom">
+      <div class="score-part">
+        <div class="lab">基础分值</div>
+        <div class="val">34</div>
+      </div>
+      <div class="score-plus">+</div>
+      <div class="score-part" style="text-align:right">
+        <div class="lab">月关键指标分</div>
+        <div class="val">0</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="meta-list">
+    <div class="meta-row"><span class="lab">月绩效考核系数</span><span class="val">0</span></div>
+    <div class="meta-row"><span class="lab">保护考核系数</span><span class="val">--</span></div>
+    <div class="meta-row"><span class="lab">绩效评级</span><span class="val muted">暂未评级</span></div>
+  </section>
+
+  <section class="panel">
+    <div class="sec-title">激励提成（按实际结算吨数计算）</div>
+
+    <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">豆粕提成</span>
+        <a class="kpi-detail" href="javascript:void(0)">查看明细</a>
+        <span class="comm-val">2474.39</span>
+      </div>
+      <div class="comm-body">
+        <div><span class="dash">—</span> 吨位提成：12371.947 x 0.2 + 0 x 0.1 = <span class="blue">2474.39</span></div>
+      </div>
+    </div>
+
+    <!-- <div class="comm-item">
+      <div class="comm-head">
+        <span class="comm-name">玉米提成</span>
+        <a class="kpi-detail" href="javascript:void(0)">查看明细</a>
+        <span class="comm-val">0</span>
+      </div>
+      <div class="comm-body">
+        <div><span class="dash">—</span> 吨位提成：0 x 0.1 + 0 x 0.4 + 0 x 0.8 = <span class="blue">0</span></div>
+      </div>
+    </div> -->
+
+    <div class="total-comm">
+      <div class="left">本月总提成 <span class="info">i</span></div>
+      <div class="right">
+        <div class="big">0</div>
+        <div class="calc">(2474.39 + 0) x 0 = 0</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+document.querySelectorAll(".month-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".month-tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
+</script>
+</body>
+</html>

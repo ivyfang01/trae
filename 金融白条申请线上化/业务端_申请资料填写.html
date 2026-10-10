@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>业务端 · 申请资料填写</title>
+<style>
+:root{
+  --blue:#1677ff;
+  --text:#1d2129;
+  --text-secondary:#4e5969;
+  --text-muted:#86909c;
+  --bg-page:#f2f3f5;
+  --bg-card:#ffffff;
+  --bg-blue-light:#e8f3ff;
+  --border:#f0f0f0;
+  --border-light:#e5e6eb;
+  --orange:#fa8c16;
+  --green:#00b42a;
+  --red:#f53f3f;
+  --radius-card:12px;
+  --radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#e8e8e8;color:var(--text);font-size:14px;
+}
+.page{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg-page);padding-bottom:88px}
+.nav{
+  background:var(--bg-card);padding:12px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)
+}
+.nav .back{border:none;background:none;font-size:22px;cursor:pointer;width:24px;color:var(--text)}
+.nav .title{font-size:17px;font-weight:600;flex:1;text-align:center;margin-right:28px}
+.card{background:var(--bg-card);margin:10px 12px;border-radius:var(--radius-card);padding:14px}
+.sec{font-size:15px;font-weight:600;margin-bottom:12px;padding-left:8px;border-left:3px solid var(--blue)}
+.form-item{margin-bottom:14px}
+.form-item label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+.form-item label .req{color:var(--red);margin-right:2px}
+.form-item input,.form-item select,.form-item textarea{
+  width:100%;height:40px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:0 10px;font-size:14px;outline:none;background:#fff;color:var(--text)
+}
+.form-item textarea{height:88px;padding:8px 10px;resize:vertical}
+.form-item input:focus,.form-item select:focus,.form-item textarea:focus{border-color:var(--blue)}
+.hint{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{
+  flex:0 1 auto;min-width:0;height:36px;padding:0 12px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text-secondary);white-space:nowrap
+}
+.seg input{display:none}
+.seg label:has(input:checked){border-color:var(--blue);background:var(--bg-blue-light);color:var(--blue);font-weight:600}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upload-grid.one{grid-template-columns:1fr}
+.upload{
+  border:1px dashed var(--border-light);border-radius:var(--radius-sm);min-height:88px;padding:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;background:#fafafa;cursor:pointer;text-align:center;font-size:12px;color:var(--text-muted)
+}
+.upload.done{border-color:#91caff;background:var(--bg-blue-light);color:var(--blue)}
+.upload .plus{font-size:22px;line-height:1;color:#c9cdd4}
+.upload.done .plus{color:var(--blue)}
+.link{color:var(--blue);text-decoration:none;font-size:13px}
+.crm-box{
+  background:#f7f8fa;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:10px 12px;line-height:1.55
+}
+.crm-box .crm-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.crm-box .crm-tag{
+  font-size:11px;color:var(--blue);background:var(--bg-blue-light);
+  border-radius:4px;padding:2px 6px;flex-shrink:0
+}
+.crm-box .crm-detail{
+  font-size:13px;color:var(--blue);flex-shrink:0;text-decoration:none;cursor:pointer
+}
+.crm-box .crm-title{font-size:13px;font-weight:600;color:var(--text)}
+.crm-box .crm-meta{font-size:12px;color:var(--text-muted)}
+.tpl{display:none}
+.tpl.on{display:block}
+.unit{display:flex;align-items:center;gap:6px}
+.unit input{flex:1}
+.unit span{color:var(--text-muted);font-size:13px;flex-shrink:0}
+.foot{
+  position:fixed;left:0;right:0;bottom:0;background:#fff;padding:10px 16px 16px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.04);z-index:11
+}
+.foot .inner{max-width:430px;margin:0 auto;display:flex;gap:10px}
+.btn{border:none;border-radius:var(--radius-sm);padding:12px;font-size:15px;cursor:pointer;font-weight:600;flex:1}
+.btn-default{background:#fff;border:1px solid var(--border-light);color:var(--text)}
+.btn-primary{background:var(--blue);color:#fff}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav">
+    <button class="back" type="button" onclick="goBack()" aria-label="返回">‹</button>
+    <div class="title">业务员申请资料</div>
+  </div>
+
+  <div class="card">
+    <div class="sec">基础申请信息</div>
+    <div class="form-item">
+      <label><span class="req">*</span>客户名称</label>
+      <input id="custName" value="桑姣婧" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>白条产品类型<span class="hint" style="display:inline;margin-left:6px">可根据申请初审资料和员工组织架构取值</span></label>
+      <div class="seg" id="tplSeg">
+        <label><input type="radio" name="tpl" value="预混料" checked onchange="syncTpl()" />预混料</label>
+        <label><input type="radio" name="tpl" value="全价料" onchange="syncTpl()" />全价料</label>
+        <label><input type="radio" name="tpl" value="大宗" onchange="syncTpl()" />大宗</label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>额度档位</label>
+      <div class="seg">
+        <label><input type="radio" name="quotaTier" value="lt30" checked />＜30万</label>
+        <label><input type="radio" name="quotaTier" value="ge30" />≥30万</label>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="form-item">
+        <label><span class="req">*</span>上海银行额度</label>
+        <div class="unit"><input id="syQuota" type="number" min="0" placeholder="请输入" oninput="syncSyReason()" /><span>万</span></div>
+      </div>
+      <div class="form-item" id="xsQuotaItem">
+        <label>锡商银行额度</label>
+        <div class="unit"><input id="xsQuota" type="number" min="0" placeholder="请输入" /><span>万</span></div>
+      </div>
+    </div>
+    <div class="form-item" id="noSyReason" style="display:none">
+      <label><span class="req">*</span>不申请上海银行原因</label>
+      <input id="noSyText" placeholder="上银额度为0时必填" />
+    </div>
+    <div id="breedBlock">
+      <div class="form-item">
+        <label>养殖种类<span class="hint" style="display:inline;margin-left:6px">来自养殖档案</span></label>
+        <input id="breed" value="蛋鸡" readonly style="background:#f7f8fa" />
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label>养殖数量<span class="hint" style="display:inline;margin-left:6px">来自客户档案</span></label>
+          <input id="breedQty" value="2.5万羽" readonly style="background:#f7f8fa" />
+        </div>
+        <div class="form-item">
+          <label>鸡龄 / 规模补充</label>
+          <input id="breedExtra" placeholder="鸡龄、年出栏等" />
+        </div>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>从事行业年限</label>
+      <div class="unit"><input id="years" type="number" placeholder="请输入" /><span>年</span></div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>申请原因</label>
+      <textarea id="reason" placeholder="信誉结算、合作次数、免息天数、利息规则等"></textarea>
+    </div>
+  </div>
+
+  <div class="card tpl on" id="tpl-预混料">
+    <div class="sec">预混料模板字段</div>
+    <div class="form-item">
+      <label><span class="req">*</span>每月豆粕玉米需求总量</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>是否绑定销售预混料</label>
+      <div class="seg">
+        <label><input type="radio" name="bindPremix" value="是" checked onchange="syncPremix()" />是</label>
+        <label><input type="radio" name="bindPremix" value="否" onchange="syncPremix()" />否</label>
+      </div>
+    </div>
+    <div id="premixYes">
+      <div class="row2">
+        <div class="form-item"><label>预混料每月吨数</label><div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div></div>
+        <div class="form-item"><label>预混料报价</label><div class="unit"><input type="number" placeholder="请输入" /><span>元</span></div></div>
+      </div>
+      <div class="form-item"><label>预混料商品名称</label><input placeholder="请输入" /></div>
+    </div>
+    <div class="form-item" id="premixNo" style="display:none">
+      <label><span class="req">*</span>不能绑定预混料的原因</label>
+      <input placeholder="请填写原因" />
+    </div>
+    <div class="form-item">
+      <label>是否平台合作收蛋客户</label>
+      <div class="seg">
+        <label><input type="radio" name="egg" value="是" /><span>是</span></label>
+        <label><input type="radio" name="egg" value="否" checked /><span>否</span></label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label>是否平台合作处理鸡粪</label>
+      <div class="seg">
+        <label><input type="radio" name="manure" value="是" /><span>是</span></label>
+        <label><input type="radio" name="manure" value="否" checked /><span>否</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tpl" id="tpl-全价料">
+    <div class="sec">全价料模板字段</div>
+    <div class="form-item"><label><span class="req">*</span>客户类型</label><input value="养殖户" /></div>
+    <div class="row2">
+      <div class="form-item"><label><span class="req">*</span>全价料每月吨数</label><div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div></div>
+      <div class="form-item"><label><span class="req">*</span>单价</label><div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div></div>
+    </div>
+    <div class="form-item"><label><span class="req">*</span>全价料厂家</label><input placeholder="请输入" /></div>
+    <div class="form-item">
+      <label><span class="req">*</span>是否供应商存量客户</label>
+      <div class="seg">
+        <label><input type="radio" name="stock" value="是" /><span>是</span></label>
+        <label><input type="radio" name="stock" value="否" checked /><span>否</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tpl" id="tpl-大宗">
+    <div class="sec">大宗模板字段</div>
+    <div class="form-item">
+      <label>客户类型<span class="hint" style="display:inline;margin-left:6px">来自客户档案，无需选择</span></label>
+      <input id="bulkType" value="次终端/饲料厂" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label>新/存量客户<span class="hint" style="display:inline;margin-left:6px">系统取值，无需选择</span></label>
+      <input id="bulkCust" value="存量" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label>平台购买次数<span class="hint" style="display:inline;margin-left:6px">平台统计，无需填写</span></label>
+      <input id="bulkBuyCount" type="number" value="12" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>每月豆粕玉米需求总量</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">附件资料包</div>
+    <div class="form-item" style="margin-bottom:0">
+      <div class="upload-grid">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>厂房大门</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>仓库</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>养殖区域</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">CRM拜访记录</div>
+    <div class="form-item" style="margin-bottom:0">
+      <div class="hint" style="margin-bottom:8px">自动取今日拜访</div>
+      <div class="crm-box" id="crmVisit" data-visit-id="280447">
+        <div class="crm-top">
+          <div class="crm-title">今日拜访 · 桑姣婧</div>
+          <a class="crm-detail" href="javascript:void(0)" onclick="openCrmVisitDetail()">查看详情</a>
+        </div>
+        <div class="crm-meta" id="crmMeta">2026-09-16 10:28 · 业务经理 张伟 · 实地拜访</div>
+      </div>
+      <div class="hint" id="crmEmpty" style="display:none;color:var(--orange)">今日暂无该客户拜访记录，请先在 CRM 完成今日拜访后再提交</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">尽调报告</div>
+    <div class="form-item">
+      <label><span class="req">*</span>申请人姓名</label>
+      <input id="ddApplicant" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>手机号</label>
+      <input id="ddMobile" type="tel" maxlength="11" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>申请人是否为实控人</label>
+      <div class="seg">
+        <label><input type="radio" name="isController" value="是" checked onchange="syncController()" />是</label>
+        <label><input type="radio" name="isController" value="否" onchange="syncController()" />否</label>
+      </div>
+    </div>
+    <div id="controllerBlock" style="display:none">
+      <div class="form-item">
+        <label><span class="req">*</span>实控人姓名</label>
+        <input id="ctrlName" placeholder="请输入" />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>实控人身份证号码</label>
+        <input id="ctrlId" maxlength="18" placeholder="请输入" />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>实控人手机号</label>
+        <input id="ctrlMobile" type="tel" maxlength="11" placeholder="请输入" />
+      </div>
+    </div>
+    <div class="form-item">
+      <label>合伙人姓名</label>
+      <input id="partnerName" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label>合伙人手机号</label>
+      <input id="partnerMobile" type="tel" maxlength="11" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>实控人家庭住址</label>
+      <input id="ctrlHomeAddr" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label>实控人车牌号</label>
+      <input id="ctrlPlate" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>经营场所属性</label>
+      <input id="siteAttr" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label>年租金</label>
+      <input id="yearRent" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>经营场所规模</label>
+      <input id="siteScale" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>向上下游打听实控人和企业口碑</label>
+      <div class="seg">
+        <label><input type="radio" name="repUpDown" value="良好" />良好</label>
+        <label><input type="radio" name="repUpDown" value="存在负面评价" />存在负面评价</label>
+        <label><input type="radio" name="repUpDown" value="无法获取" />无法获取</label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>向周边及员工打听实控人及企业口碑</label>
+      <div class="seg">
+        <label><input type="radio" name="repAround" value="良好" />良好</label>
+        <label><input type="radio" name="repAround" value="存在负面评价" />存在负面评价</label>
+        <label><input type="radio" name="repAround" value="无法获取" />无法获取</label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>平均出货频率</label>
+      <div class="seg">
+        <label><input type="radio" name="shipFreq" value="每日" />每日</label>
+        <label><input type="radio" name="shipFreq" value="每3至7天" />每3至7天</label>
+        <label><input type="radio" name="shipFreq" value="每15日至1个月" />每15日至1个月</label>
+        <label><input type="radio" name="shipFreq" value="1个月以上" />1个月以上</label>
+        <label><input type="radio" name="shipFreq" value="不固定" />不固定</label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>下游结算形式</label>
+      <div class="seg">
+        <label><input type="radio" name="settleForm" value="现金" />现金</label>
+        <label><input type="radio" name="settleForm" value="微信" />微信</label>
+        <label><input type="radio" name="settleForm" value="支付宝" />支付宝</label>
+        <label><input type="radio" name="settleForm" value="公户转账" />公户转账</label>
+        <label><input type="radio" name="settleForm" value="个人银行卡" />个人卡</label>
+      </div>
+    </div>
+    <div class="form-item" style="margin-bottom:0">
+      <label><span class="req">*</span>单月饲料原料消耗量</label>
+      <input id="feedConsume" placeholder="请输入" />
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="inner">
+      <button class="btn btn-default" type="button" onclick="saveDraft()">保存</button>
+      <button class="btn btn-primary" type="button" onclick="submitSales()">提交申请资料</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function goBack(){
+  if(history.length>1) history.back();
+  else location.href="业务端_客户档案_白条档案.html";
+}
+function saveDraft(){
+  alert("已保存");
+}
+/** 跳转已有 CRM 拜访详情（不新建页面） */
+function openCrmVisitDetail(){
+  const id=document.getElementById("crmVisit")?.dataset?.visitId||"";
+  if(window.LBB?.openVisitDetail){ window.LBB.openVisitDetail(id); return; }
+  location.href="/crm/visit/detail?id="+encodeURIComponent(id);
+}
+(function boot(){
+  const q=new URLSearchParams(location.search);
+  const name=q.get("cust");
+  if(name){
+    document.getElementById("custName").value=name;
+    document.getElementById("ddApplicant").value=name;
+    const title=document.querySelector("#crmVisit .crm-title");
+    if(title) title.textContent="今日拜访 · "+name;
+  }else{
+    document.getElementById("ddApplicant").value=document.getElementById("custName").value;
+  }
+  // 演示：养殖档案 / 客户档案带出
+  document.getElementById("breed").value=q.get("breed")||"蛋鸡";
+  document.getElementById("breedQty").value=q.get("qty")||"2.5万羽";
+  // 客户档案类型：次终端 / 饲料厂 时不展示养殖信息
+  document.getElementById("bulkType").value=q.get("custType")||q.get("type")||"次终端/饲料厂";
+  document.getElementById("bulkCust").value=q.get("bulkCust")||"存量";
+  document.getElementById("bulkBuyCount").value=q.get("buyCount")||"12";
+})();
+function syncSyReason(){
+  const v=document.getElementById("syQuota").value;
+  const show=v!=="" && Number(v)===0;
+  document.getElementById("noSyReason").style.display=show?"":"none";
+  if(!show) document.getElementById("noSyText").value="";
+}
+function syncBreedByCustType(){
+  const tpl=document.querySelector('input[name="tpl"]:checked')?.value;
+  const t=document.getElementById("bulkType").value.trim();
+  const hide=tpl==="大宗" && /次终端|饲料厂/.test(t);
+  document.getElementById("breedBlock").style.display=hide?"none":"";
+}
+function syncTpl(){
+  const v=document.querySelector('input[name="tpl"]:checked')?.value||"预混料";
+  document.querySelectorAll(".tpl").forEach(el=>el.classList.toggle("on", el.id==="tpl-"+v));
+  document.getElementById("xsQuotaItem").style.display=v==="全价料"?"none":"";
+  syncBreedByCustType();
+}
+function syncPremix(){
+  const yes=document.querySelector('input[name="bindPremix"]:checked')?.value==="是";
+  document.getElementById("premixYes").style.display=yes?"":"none";
+  document.getElementById("premixNo").style.display=yes?"none":"";
+}
+function syncController(){
+  const same=document.querySelector('input[name="isController"]:checked')?.value==="是";
+  document.getElementById("controllerBlock").style.display=same?"none":"";
+  if(same){
+    document.getElementById("ctrlName").value="";
+    document.getElementById("ctrlId").value="";
+    document.getElementById("ctrlMobile").value="";
+  }
+}
+function submitSales(){
+  const tpl=document.querySelector('input[name="tpl"]:checked')?.value;
+  const sy=document.getElementById("syQuota").value;
+  const reason=document.getElementById("reason").value.trim();
+  if(!tpl){alert("请选择申请模板");return}
+  if(sy===""){alert("请填写上海银行额度（不申请请填0）");return}
+  if(Number(sy)===0){
+    const why=document.getElementById("noSyText").value.trim();
+    if(!why){alert("上银额度为0时，请填写不申请上海银行原因");return}
+  }
+  if(!reason){alert("请填写申请原因");return}
+  if(!document.getElementById("ddApplicant").value.trim()){alert("请填写申请人姓名");return}
+  if(!document.getElementById("ddMobile").value.trim()){alert("请填写手机号");return}
+  if(document.querySelector('input[name="isController"]:checked')?.value==="否"){
+    if(!document.getElementById("ctrlName").value.trim()){alert("请填写实控人姓名");return}
+    if(!document.getElementById("ctrlId").value.trim()){alert("请填写实控人身份证号码");return}
+    if(!document.getElementById("ctrlMobile").value.trim()){alert("请填写实控人手机号");return}
+  }
+  if(!document.getElementById("ctrlHomeAddr").value.trim()){alert("请填写实控人家庭住址");return}
+  if(!document.getElementById("siteAttr").value.trim()){alert("请填写经营场所属性");return}
+  if(!document.getElementById("siteScale").value.trim()){alert("请填写经营场所规模");return}
+  if(!document.querySelector('input[name="repUpDown"]:checked')){alert("请选择向上下游打听口碑");return}
+  if(!document.querySelector('input[name="repAround"]:checked')){alert("请选择向周边及员工打听口碑");return}
+  if(!document.querySelector('input[name="shipFreq"]:checked')){alert("请选择平均出货频率");return}
+  if(!document.querySelector('input[name="settleForm"]:checked')){alert("请选择下游结算形式");return}
+  if(!document.getElementById("feedConsume").value.trim()){alert("请填写单月饲料原料消耗量");return}
+  const done=[...document.querySelectorAll(".upload.done")].length;
+  if(done<1){alert("请完善现场照片等附件");return}
+  alert("业务员申请资料已提交");
+  goBack();
+}
+syncTpl();
+syncPremix();
+syncSyReason();
+syncController();
+</script>
+</body>
+</html>

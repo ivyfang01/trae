@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 用户运营核实养殖数据</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --danger: #ff4d4f;
+      --ok: #52c41a;
+      --ok-bg: #f6ffed;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute; left: 0; height: 44px; padding: 0 12px;
+      display: flex; align-items: center; color: #333; font-size: 20px;
+    }
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+    .at-line {
+      margin: 0 12px 8px;
+      font-size: 13px;
+      color: var(--primary);
+      line-height: 1.5;
+    }
+    .list { padding: 0 12px 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title { font-size: 15px; font-weight: 600; color: #222; line-height: 1.4; flex: 1; }
+    .tag {
+      font-size: 12px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    .tag.done {
+      color: var(--ok);
+      background: var(--ok-bg);
+    }
+    .tag.reject {
+      color: var(--danger);
+      background: #fff1f0;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .row .label {
+      width: 88px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.emphasize {
+      color: var(--warn);
+      font-weight: 600;
+    }
+    .sec {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line);
+    }
+    .sec:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .sec-label {
+      font-size: 12px;
+      color: #8c8c8c;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .sec .row:last-child { margin-bottom: 0; }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .actions button {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-reject {
+      border: 1px solid #ffccc7;
+      background: #fff;
+      color: var(--danger);
+    }
+    .btn-pass {
+      border: none;
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-pass:active, .btn-reject:active { opacity: .85; }
+    .btn-ghost {
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #595959;
+    }
+    .btn-primary-outline {
+      border: none;
+      background: var(--primary);
+      color: #fff;
+    }
+    .revise-panel {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .revise-panel.show { display: block; }
+    .revise-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 4px;
+    }
+    .revise-hint {
+      font-size: 12px;
+      color: var(--label);
+      margin-bottom: 10px;
+    }
+    .revise-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .revise-field label {
+      width: 72px;
+      flex-shrink: 0;
+      font-size: 13px;
+      color: var(--label);
+    }
+    .revise-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      height: 36px;
+      border: 1px solid #d9d9d9;
+      border-radius: 6px;
+      padding: 0 10px;
+      background: #fff;
+    }
+    .revise-input-wrap:focus-within { border-color: var(--primary); }
+    .revise-input-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      width: 100%;
+      background: transparent;
+    }
+    .revise-input-wrap .unit {
+      color: var(--label);
+      font-size: 13px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    .revise-err {
+      display: none;
+      font-size: 12px;
+      color: var(--danger);
+      margin: -6px 0 10px 80px;
+    }
+    .revise-err.show { display: block; }
+    .revise-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .revise-actions button {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .result-tip {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      text-align: center;
+      color: var(--label);
+    }
+    .result-tip.show { display: block; }
+    .result-tip.ok { color: var(--ok); }
+    .result-tip.no { color: var(--danger); }
+
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .spec h3 { font-size: 14px; color: #222; margin-bottom: 8px; }
+    .spec ul { padding-left: 18px; }
+    .spec li { margin-bottom: 4px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <span class="nav-back">‹</span>
+      <div class="nav-title">工作通知</div>
+    </div>
+    <div class="ding-context">粮巴巴鸡窝 · 刚刚</div>
+    <div class="at-line">@用户运营 预混料下单吨数超过10吨，请核实养殖数据</div>
+    <div class="list">
+      <div class="card" id="auditCard">
+        <div class="card-head">
+          <div class="card-title">预混料下单吨数超过10吨，核实养殖数据</div>
+          <span class="tag" id="statusTag">待核实</span>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">客户信息</div>
+          <div class="row">
+            <div class="label">客户名称</div>
+            <div class="value">济南璟元商贸有限公司</div>
+          </div>
+          <div class="row">
+            <div class="label">客户类型</div>
+            <div class="value">养殖户</div>
+          </div>
+          <div class="row">
+            <div class="label">养殖类型</div>
+            <div class="value">鸡</div>
+          </div>
+          <div class="row">
+            <div class="label">养殖规模</div>
+            <div class="value emphasize" id="scaleValue">80000羽</div>
+          </div>
+          <div class="row">
+            <div class="label">是否白条客户</div>
+            <div class="value">否</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">订单信息</div>
+          <div class="row">
+            <div class="label">订单编号</div>
+            <div class="value">JWTH202609050042</div>
+          </div>
+          <div class="row">
+            <div class="label">商品名称</div>
+            <div class="value">源耀蛋鸡育雏前期配合饲料（40kg包装）</div>
+          </div>
+          <div class="row">
+            <div class="label">付款类型</div>
+            <div class="value">货到付款</div>
+          </div>
+          <div class="row">
+            <div class="label">合同金额</div>
+            <div class="value">¥ 56,160.00</div>
+          </div>
+          <div class="row">
+            <div class="label">合同包数</div>
+            <div class="value">300 包</div>
+          </div>
+          <div class="row">
+            <div class="label">下单吨数</div>
+            <div class="value emphasize">15 吨</div>
+          </div>
+          <div class="row">
+            <div class="label">下单时间</div>
+            <div class="value">2026-09-05 09:18:22</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">业务员信息</div>
+          <div class="row">
+            <div class="label">业务员</div>
+            <div class="value">彭建园</div>
+          </div>
+          <div class="row">
+            <div class="label">站台</div>
+            <div class="value">黄冈站</div>
+          </div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button type="button" class="btn-reject" id="btnReject">数据有误</button>
+          <button type="button" class="btn-pass" id="btnPass">核实通过</button>
+        </div>
+
+        <div class="revise-panel" id="revisePanel">
+          <div class="revise-title">重新填写养殖规模</div>
+          <div class="revise-hint">当前档案规模有误，请填写正确养殖规模后提交</div>
+          <div class="revise-field">
+            <label>养殖规模</label>
+            <div class="revise-input-wrap">
+              <input type="number" id="scaleInput" inputmode="numeric" min="1" step="1" placeholder="请输入正确规模" />
+              <span class="unit">羽</span>
+            </div>
+          </div>
+          <div class="revise-err" id="scaleErr">请填写大于 0 的整数养殖规模</div>
+          <div class="revise-actions">
+            <button type="button" class="btn-ghost" id="btnCancelRevise">取消</button>
+            <button type="button" class="btn-primary-outline" id="btnSubmitRevise">提交</button>
+          </div>
+        </div>
+
+        <div class="result-tip" id="resultTip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>钉钉卡片说明（对接用）</h3>
+    <ul>
+      <li>对象：用户运营核对养殖规模</li>
+      <li>触发：预混料下单吨数 &gt; 10 吨（与东哥吨位审核并行/联动，待确认）</li>
+      <li>标题：预混料下单吨数超过10吨，核实养殖数据</li>
+      <li>字段与吨位审核卡片一致：客户信息 / 订单信息 / 业务员信息</li>
+      <li>操作：【数据有误】【核实通过】</li>
+      <li>【数据有误】：须在卡片内<strong>重新填写养殖规模</strong>后提交；提交后回写客户档案规模，并通知业务员修正</li>
+      <li>【核实通过】：无需改规模，直接完结为「已核实」</li>
+    </ul>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    function toast(msg) {
+      const el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+    }
+
+    function formatScale(n) {
+      return Number(n).toLocaleString("zh-CN") + "羽";
+    }
+
+    function showRevise() {
+      $("#actions").style.display = "none";
+      $("#revisePanel").classList.add("show");
+      $("#scaleErr").classList.remove("show");
+      const cur = ($("#scaleValue").textContent || "").replace(/[^\d]/g, "");
+      $("#scaleInput").value = cur || "";
+      $("#scaleInput").focus();
+      $("#scaleInput").select();
+    }
+
+    function hideRevise() {
+      $("#revisePanel").classList.remove("show");
+      $("#actions").style.display = "flex";
+      $("#scaleErr").classList.remove("show");
+    }
+
+    function finishPass() {
+      const tag = $("#statusTag");
+      tag.textContent = "已核实";
+      tag.className = "tag done";
+      $("#actions").style.display = "none";
+      $("#revisePanel").classList.remove("show");
+      const tip = $("#resultTip");
+      tip.textContent = "养殖数据已核实通过";
+      tip.className = "result-tip show ok";
+      toast("核实通过");
+    }
+
+    function finishRejectWithScale(scaleNum) {
+      $("#scaleValue").textContent = formatScale(scaleNum);
+      const tag = $("#statusTag");
+      tag.textContent = "数据有误";
+      tag.className = "tag reject";
+      $("#actions").style.display = "none";
+      $("#revisePanel").classList.remove("show");
+      const tip = $("#resultTip");
+      tip.textContent = "已更正养殖规模为 " + formatScale(scaleNum) + "，并通知业务员跟进";
+      tip.className = "result-tip show no";
+      toast("已提交更正规模");
+    }
+
+    $("#btnPass").addEventListener("click", finishPass);
+    $("#btnReject").addEventListener("click", showRevise);
+    $("#btnCancelRevise").addEventListener("click", hideRevise);
+    $("#btnSubmitRevise").addEventListener("click", () => {
+      const raw = ($("#scaleInput").value || "").trim();
+      const n = Number(raw);
+      if (!raw || !Number.isFinite(n) || n <= 0 || !Number.isInteger(n)) {
+        $("#scaleErr").classList.add("show");
+        $("#scaleInput").focus();
+        return;
+      }
+      $("#scaleErr").classList.remove("show");
+      finishRejectWithScale(n);
+    });
+    $("#scaleInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("#btnSubmitRevise").click();
+    });
+  </script>
+</body>
+</html>

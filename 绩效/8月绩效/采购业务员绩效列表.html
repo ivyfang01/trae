@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>采购业务员绩效列表</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#fff;
+  color:#333;
+  font-size:14px;
+}
+.page{max-width:750px;margin:0 auto;min-height:100vh;background:#fff;padding-bottom:56px}
+.top-tabs{
+  display:flex;justify-content:center;gap:56px;
+  border-bottom:1px solid #eee;background:#fff;
+  padding-top:12px;
+}
+.top-tab{
+  position:relative;border:none;background:none;font-size:16px;color:#333;
+  padding:0 4px 12px;cursor:pointer;
+}
+.top-tab.active{color:#1890ff;font-weight:600}
+.top-tab.active::after{
+  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:28px;height:3px;border-radius:2px;background:#1890ff;
+}
+.content{padding:12px 12px 0}
+.seg{
+  display:inline-flex;border:1px solid #d9d9d9;border-radius:4px;overflow:hidden;margin-bottom:12px;
+}
+.seg button{
+  border:none;background:#fff;color:#333;font-size:14px;padding:6px 14px;cursor:pointer;line-height:1.2;
+}
+.seg button + button{border-left:1px solid #d9d9d9}
+.seg button.active{background:#1890ff;color:#fff}
+.stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;
+}
+#panel-提成 .stats{
+  grid-template-columns:1fr 1fr;margin-bottom:8px;
+}
+.stat{
+  background:#f5f5f5;border-radius:4px;padding:10px 8px;text-align:left;
+}
+.stat .lab{font-size:12px;color:#999;margin-bottom:6px}
+.stat .val{font-size:18px;font-weight:700;color:#333;line-height:1.2}
+.stat-card{
+  background:#fff;border:1px solid #e8e8e8;border-radius:6px;padding:12px 10px;text-align:left;
+}
+.stat-card .lab{font-size:12px;color:#999;margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.stat-card .val{font-size:22px;font-weight:700;color:#333;line-height:1.2}
+.info-i{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;border-radius:50%;border:1px solid #bbb;
+  font-size:10px;color:#999;line-height:1;
+}
+.comm-bar{
+  background:#f5f5f5;border-radius:4px;padding:10px 12px;
+  font-size:13px;color:#333;margin-bottom:12px;
+}
+.page-head{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;padding:12px 16px 4px;font-size:17px;font-weight:600;
+}
+.page-head .back{
+  position:absolute;left:12px;border:none;background:none;
+  font-size:22px;color:#333;cursor:pointer;line-height:1;
+}
+.filters{display:flex;gap:8px;margin-bottom:8px}
+.date-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;color:#bfbfbf;font-size:13px;background:#fff;
+}
+.date-box .icon{color:#999;font-size:14px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;padding:0 10px;gap:6px;background:#fff;
+}
+.search-box input{
+  border:none;outline:none;width:100%;font-size:13px;color:#333;background:transparent;
+}
+.search-box input::placeholder{color:#bfbfbf}
+.search-btn{
+  height:36px;padding:0 16px;border:none;border-radius:4px;
+  background:#1890ff;color:#fff;font-size:14px;cursor:pointer;white-space:nowrap;
+}
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:860px;border-collapse:collapse;table-layout:fixed}
+thead th{
+  background:#1890ff;color:#fff;font-size:13px;font-weight:600;
+  padding:10px 6px;text-align:center;
+}
+thead th:first-child{text-align:left;padding-left:10px}
+tbody td{
+  font-size:12px;color:#333;padding:10px 6px;text-align:center;
+  border-bottom:1px solid #f0f0f0;vertical-align:middle;word-break:break-all;
+}
+tbody td:first-child{text-align:left;padding-left:10px}
+tbody tr:nth-child(even){background:#fafafa}
+.order-link{color:#1890ff;text-decoration:none}
+.footer{
+  position:fixed;left:0;right:0;bottom:0;
+  background:#fff;border-top:1px solid #f0f0f0;
+  text-align:center;padding:14px 12px;color:#666;font-size:14px;
+}
+.footer-inner{max-width:750px;margin:0 auto}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-head">
+    <button class="back" type="button" onclick="history.back()">‹</button>
+    绩效详情
+  </div>
+  <div class="top-tabs">
+    <button class="top-tab active" data-main="绩效">绩效</button>
+    <button class="top-tab" data-main="提成">提成</button>
+  </div>
+
+  <div class="content" id="panel-绩效">
+    <div class="seg">
+      <button class="active" data-cat="远月销售量">远月销售量</button>
+      <button data-cat="远月采购量">远月采购量</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="lab" id="s-ton-lab">远月销量</div><div class="val" id="s-ton">11432.882</div></div>
+      <div class="stat"><div class="lab" id="s-rate-lab">远月销量完成率</div><div class="val" id="s-rate">31.76%</div></div>
+    </div>
+
+    <div class="filters">
+      <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+      <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <span>🔍</span>
+        <input id="kw" type="search" placeholder="请输入供应商名称或者合同编号" />
+      </div>
+      <button class="search-btn" id="btnSearch">搜索</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:14%">供应商名称</th>
+            <th style="width:9%" id="th-ton">远月销售吨数</th>
+            <th style="width:15%" id="th-time">远月合同生效时间</th>
+            <th style="width:18%">采购合同编号</th>
+            <th style="width:18%" id="th-no">远月合同编号</th>
+            <th style="width:10%">采购员</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="content hidden" id="panel-提成">
+    <div class="stats">
+      <div class="stat-card"><div class="lab">20000吨以内吨数</div><div class="val" id="c-ton-in">14155.975</div></div>
+      <div class="stat-card"><div class="lab">20000吨以上吨数</div><div class="val" id="c-ton-out">0</div></div>
+    </div>
+    <div class="comm-bar" id="c-bar">豆粕提成：0</div>
+
+    <div class="filters">
+      <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+      <div class="date-box"><span>请选择</span><span class="icon">📅</span></div>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <span>🔍</span>
+        <input id="kw-comm" type="search" placeholder="请输入供应商名称或者提货单编号" />
+      </div>
+      <button class="search-btn" id="btnSearchComm">搜索</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:13%">供应商名称</th>
+            <th style="width:11%">提货吨数（吨）</th>
+            <th style="width:12%">结算时间</th>
+            <th style="width:16%">采购合同编号</th>
+            <th style="width:16%">提货单编号</th>
+            <th style="width:8%">业务</th>
+            <th style="width:16%">转合同</th>
+            <th style="width:8%">采购员</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-comm"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer"><div class="footer-inner">总计：<span id="total">11942.027</span>吨</div></div>
+
+<script>
+const ROWS_SALE = [
+  {name:"上海东临润丰",ton:35,time:"2026-08-14",contractNo:"CGHT202608120003",no:"DYGYL202608120003",salesman:"方伟萍"},
+  {name:"天津万源",ton:36,time:"2026-08-14",contractNo:"CGHT202608120002",no:"DYGYL202608120002",salesman:"方伟萍"},
+  {name:"天津京粮",ton:35,time:"2026-08-14",contractNo:"CGHT202608120001",no:"DYGYL202608120001",salesman:"方伟萍"},
+  {name:"浙江东耀",ton:35,time:"2026-08-14",contractNo:"CGHT202608110010",no:"DYGYL202608110010",salesman:"方伟萍"},
+  {name:"秦皇岛金海",ton:36,time:"2026-08-14",contractNo:"CGHT202608110009",no:"DYGYL202608110009",salesman:"方伟萍"},
+  {name:"河北嘉好",ton:35,time:"2026-08-14",contractNo:"CGHT202608110008",no:"DYGYL202608110008",salesman:"方伟萍"},
+  {name:"河北国贸",ton:28.311,time:"2026-08-14",contractNo:"CGHT202608110007",no:"DYGYL202608110007",salesman:"方伟萍"},
+  {name:"中纺粮油",ton:36,time:"2026-08-13",contractNo:"CGHT202608110006",no:"DYGYL202608110006",salesman:"方伟萍"},
+  {name:"九三集团",ton:35,time:"2026-08-13",contractNo:"CGHT202608110005",no:"DYGYL202608110005",salesman:"方伟萍"},
+  {name:"渤海实业",ton:34.5,time:"2026-08-13",contractNo:"CGHT202608110004",no:"DYGYL202608110004",salesman:"方伟萍"},
+  {name:"益海嘉里",ton:36,time:"2026-08-12",contractNo:"CGHT202608110003",no:"DYGYL202608110003",salesman:"方伟萍"},
+  {name:"中粮东海",ton:35,time:"2026-08-12",contractNo:"CGHT202608110002",no:"DYGYL202608110002",salesman:"方伟萍"}
+];
+const ROWS_PURCHASE = [
+  {name:"秦皇岛金海",ton:720,time:"2026-08-18",contractNo:"CGHT202608180001",no:"YYCG202608180001",salesman:"张轩铭"},
+  {name:"河北嘉好",ton:680,time:"2026-08-18",contractNo:"CGHT202608180002",no:"YYCG202608180002",salesman:"张轩铭"},
+  {name:"河北国贸",ton:650,time:"2026-08-17",contractNo:"CGHT202608170001",no:"YYCG202608170001",salesman:"张轩铭"},
+  {name:"中纺粮油",ton:710.5,time:"2026-08-17",contractNo:"CGHT202608170002",no:"YYCG202608170002",salesman:"张轩铭"},
+  {name:"九三集团",ton:690,time:"2026-08-16",contractNo:"CGHT202608160001",no:"YYCG202608160001",salesman:"张轩铭"},
+  {name:"渤海实业",ton:640,time:"2026-08-16",contractNo:"CGHT202608160002",no:"YYCG202608160002",salesman:"张轩铭"},
+  {name:"益海嘉里",ton:700,time:"2026-08-15",contractNo:"CGHT202608150001",no:"YYCG202608150001",salesman:"张轩铭"},
+  {name:"中粮东海",ton:660,time:"2026-08-15",contractNo:"CGHT202608150002",no:"YYCG202608150002",salesman:"张轩铭"},
+  {name:"上海东临润丰",ton:580,time:"2026-08-14",contractNo:"CGHT202608140001",no:"YYCG202608140001",salesman:"张轩铭"},
+  {name:"天津万源",ton:620,time:"2026-08-14",contractNo:"CGHT202608140002",no:"YYCG202608140002",salesman:"张轩铭"},
+  {name:"天津京粮",ton:700,time:"2026-08-13",contractNo:"CGHT202608130001",no:"YYCG202608130001",salesman:"张轩铭"},
+  {name:"浙江东耀",ton:650,time:"2026-08-12",contractNo:"CGHT202608120001",no:"YYCG202608120001",salesman:"张轩铭"}
+];
+
+let cat = "远月销售量";
+let keyword = "";
+
+function currentRows(){
+  const base = cat === "远月销售量" ? ROWS_SALE : ROWS_PURCHASE;
+  const q = keyword.trim();
+  if(!q) return base;
+  return base.filter(r => r.name.includes(q) || r.no.includes(q) || (r.contractNo || "").includes(q));
+}
+
+function render(){
+  const isSale = cat === "远月销售量";
+  document.getElementById("th-ton").textContent = isSale ? "远月销售吨数" : "远月采购吨数";
+  document.getElementById("th-time").textContent = isSale ? "远月合同生效时间" : "采购合同创建时间";
+  document.getElementById("th-no").textContent = "远月合同编号";
+  document.getElementById("th-no").style.display = isSale ? "" : "none";
+  document.getElementById("s-ton-lab").textContent = isSale ? "远月销量" : "远月采购量";
+  document.getElementById("s-rate-lab").textContent = isSale ? "远月销量完成率" : "远月采购量完成率";
+
+  const rows = currentRows();
+  document.getElementById("tbody").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${r.ton}</td>
+      <td>${String(r.time || "").split(" ")[0]}</td>
+      <td>${r.contractNo || "—"}</td>
+      ${isSale ? `<td><a class="order-link" href="javascript:void(0)">${r.no}</a></td>` : ""}
+      <td>${r.salesman || "—"}</td>
+    </tr>
+  `).join("");
+  const sum = rows.reduce((s,r)=>s+Number(r.ton),0);
+  if(isSale){
+    document.getElementById("total").textContent = keyword ? sum.toFixed(3).replace(/\.?0+$/,"") : "11942.027";
+    document.getElementById("s-ton").textContent = "11432.882";
+    document.getElementById("s-rate").textContent = "31.76%";
+  }else{
+    document.getElementById("total").textContent = keyword ? sum.toFixed(3).replace(/\.?0+$/,"") : "8200.5";
+    document.getElementById("s-ton").textContent = "8200.50";
+    document.getElementById("s-rate").textContent = "27.33%";
+  }
+}
+
+const ROWS_COMM_MEAL = [
+  {name:"秦皇岛金海",ton:28.254,settle:"2026-08-18",contractNo:"CGHT202608140361",no:"DYGYL20260814DYT361",biz:"大宗",transfer:"采购合同方伟萍转给张三",buyer:"张轩铭"},
+  {name:"河北嘉好",ton:20,settle:"2026-08-18",contractNo:"CGHT202608140360",no:"DYGYL20260814DYT360",biz:"大宗",transfer:"销售合同李四转给王五",buyer:"张轩铭"},
+  {name:"河北国贸",ton:35,settle:"2026-08-18",contractNo:"CGHT202608140359",no:"DYGYL20260814DYT359",biz:"大宗",transfer:"采购合同方伟萍转给张三",buyer:"张轩铭"},
+  {name:"中纺粮油",ton:35.721,settle:"2026-08-18",contractNo:"CGHT202608140357",no:"DYGYL20260814DYT357",biz:"大宗",transfer:"采购合同方伟萍转给张三",buyer:"张轩铭"},
+  {name:"九三集团",ton:36,settle:"2026-08-17",contractNo:"CGHT202608140356",no:"DYGYL20260814DYT356",biz:"大宗",transfer:"销售合同李四转给王五",buyer:"张轩铭"},
+  {name:"渤海实业",ton:34.5,settle:"2026-08-17",contractNo:"CGHT202608140355",no:"DYGYL20260814DYT355",biz:"大宗",transfer:"采购合同方伟萍转给张三",buyer:"张轩铭"}
+];
+
+let commKeyword = "";
+let mainTab = "绩效";
+
+function currentCommRows(){
+  const q = commKeyword.trim();
+  if(!q) return ROWS_COMM_MEAL;
+  return ROWS_COMM_MEAL.filter(r => r.name.includes(q) || r.no.includes(q) || (r.contractNo || "").includes(q));
+}
+
+function renderComm(){
+  const rows = currentCommRows();
+  document.getElementById("tbody-comm").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${r.ton}</td>
+      <td>${r.settle}</td>
+      <td>${r.contractNo || "—"}</td>
+      <td><a class="order-link" href="javascript:void(0)">${r.no}</a></td>
+      <td>${r.biz}</td>
+      <td>${r.transfer || "—"}</td>
+      <td>${r.buyer}</td>
+    </tr>
+  `).join("");
+  document.getElementById("c-ton-in").textContent = "14155.975";
+  document.getElementById("c-ton-out").textContent = "0";
+  document.getElementById("c-bar").textContent = "豆粕提成：0";
+}
+
+function syncFooter(){
+  document.querySelector(".footer").style.display = mainTab === "绩效" ? "block" : "none";
+}
+
+document.querySelectorAll(".top-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".top-tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    mainTab = btn.dataset.main;
+    document.getElementById("panel-绩效").classList.toggle("hidden", mainTab!=="绩效");
+    document.getElementById("panel-提成").classList.toggle("hidden", mainTab!=="提成");
+    syncFooter();
+    if(mainTab === "提成") renderComm();
+  });
+});
+
+document.getElementById("btnSearchComm").addEventListener("click",()=>{
+  commKeyword = document.getElementById("kw-comm").value || "";
+  renderComm();
+});
+document.getElementById("kw-comm").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    commKeyword = e.target.value || "";
+    renderComm();
+  }
+});
+
+render();
+renderComm();
+syncFooter();
+
+if(location.search.indexOf("tab=%E6%8F%90%E6%88%90") !== -1 || location.search.indexOf("tab=提成") !== -1){
+  document.querySelector('.top-tab[data-main="提成"]').click();
+}
+if(location.search.indexOf("cat=%E8%BF%9C%E6%9C%88%E9%87%87%E8%B4%AD%E9%87%8F") !== -1 || location.search.indexOf("cat=远月采购量") !== -1){
+  const btn = document.querySelector('#panel-绩效 .seg button[data-cat="远月采购量"]');
+  if(btn) btn.click();
+}
+
+document.querySelectorAll("#panel-绩效 .seg button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#panel-绩效 .seg button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    cat = btn.dataset.cat;
+    render();
+  });
+});
+
+document.getElementById("btnSearch").addEventListener("click",()=>{
+  keyword = document.getElementById("kw").value || "";
+  render();
+});
+document.getElementById("kw").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    keyword = e.target.value || "";
+    render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>

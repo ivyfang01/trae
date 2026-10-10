@@ -79,6 +79,43 @@
             color: #fa8c16;
         }
 
+        .status-pending-gray {
+            background: #f5f5f5;
+            color: #666;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .detail-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .detail-head .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-list .info-row {
+            margin-bottom: 12px;
+        }
+
+        .detail-list .info-label {
+            color: #333;
+            min-width: 110px;
+            flex-shrink: 0;
+        }
+
+        .detail-list .info-value {
+            text-align: left;
+            color: #333;
+        }
+
         /* Content */
         .content {
             padding: 16px;
@@ -100,6 +137,14 @@
             background: #fafafa;
         }
 
+        .info-box-plain {
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 16px;
+            background: transparent;
+        }
+
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -115,6 +160,26 @@
         .info-label {
             color: #666;
             min-width: 100px;
+        }
+
+        .info-row-with-tip {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 2px;
+        }
+
+        .info-row-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .info-row-with-tip .field-tip {
+            display: block;
+            text-align: right;
+            margin: 0;
+            line-height: 1.4;
         }
 
         .info-value {
@@ -149,10 +214,27 @@
             display: block;
         }
 
+        .form-group.form-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .form-group.form-row .form-label {
+            min-width: 100px;
+            margin-bottom: 0;
+            padding-top: 10px;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .form-group.form-row .form-input {
+            flex: 1;
+        }
+
         .field-tip {
             font-size: 12px;
             color: #999;
-            margin-left: 8px;
             font-weight: normal;
         }
 
@@ -221,16 +303,17 @@
             border-radius: 6px;
             font-size: 15px;
             cursor: pointer;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #1890ff;
             background: #fff;
-            color: #333;
+            color: #1890ff;
             text-align: center;
             transition: all 0.2s;
         }
 
         .btn:hover {
-            border-color: #1890ff;
-            color: #1890ff;
+            border-color: #096dd9;
+            color: #096dd9;
+            background: #e6f7ff;
         }
 
         .btn-primary {
@@ -244,24 +327,20 @@
             color: #fff;
         }
 
-        .btn-danger {
-            border-color: #ff4d4f;
-            color: #ff4d4f;
-        }
-
-        .btn-danger:hover {
-            background: #ff4d4f;
+        .btn-danger,
+        .btn-success,
+        .btn-outline-danger {
+            background: #1890ff;
             color: #fff;
+            border-color: #1890ff;
         }
 
-        .btn-success {
-            border-color: #52c41a;
-            color: #52c41a;
-        }
-
-        .btn-success:hover {
-            background: #52c41a;
+        .btn-danger:hover,
+        .btn-success:hover,
+        .btn-outline-danger:hover {
+            background: #096dd9;
             color: #fff;
+            border-color: #096dd9;
         }
 
         /* Section */
@@ -360,6 +439,93 @@
         .result-title.approved {
             color: #52c41a;
         }
+
+        /* 审批人提醒 */
+        .remind-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .remind-line {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 4px;
+        }
+
+        .reject-panel {
+            padding: 0 16px 8px;
+        }
+
+        .confirm-mask {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .confirm-mask.show {
+            display: flex;
+        }
+
+        .confirm-dialog {
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 16px 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+        }
+
+        .confirm-dialog .confirm-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .confirm-dialog .confirm-desc {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .confirm-dialog .confirm-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .confirm-dialog .confirm-actions .btn {
+            flex: 1;
+        }
+
+        .toast-msg {
+            display: none;
+            position: absolute;
+            left: 50%;
+            bottom: 100px;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,.78);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 60;
+            white-space: nowrap;
+        }
+
+        .toast-msg.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -373,7 +539,7 @@
         <div class="nav-dot" onclick="showScreen(5)">5</div>
         <div class="nav-dot" onclick="showScreen(6)">6</div>
         <div class="nav-dot" onclick="showScreen(7)">7</div>
-         <div class="nav-dot" onclick="showScreen(8)">7</div>
+        <div class="nav-dot" onclick="showScreen(8)">8</div>
     </div>
 
     <div class="mobile-container">
@@ -385,13 +551,13 @@
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </div>
-                <h1 class="header-title">重要提醒</h1>
+                <h1 class="header-title">任务异常提醒</h1>
             </div>
             <div class="content">
                 <div class="section">
-                    <div class="section-title">今日里程扣减提醒</div>
+                    <div class="section-title">昨日任务异常提醒</div>
                     <p style="font-size: 14px; color: #666; line-height: 1.8;">
-                        原因：未完成今日任务计划的80%，按公司要求扣减今日里程。如有异议，可申诉。
+                        原因：日度任务未完成80%以上，按公司要求扣减当天拜访里程数和住宿费。如有异议，可申诉。
                     </p>
                 </div>
             </div>
@@ -411,11 +577,11 @@
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </div>
-                <h1 class="header-title">里程异常查看</h1>
+                <h1 class="header-title">任务异常详情</h1>
             </div>
             <div class="content">
                 <p class="warning-text">
-                    今天任务完成度未达到80%，今日里程不报销。
+                    昨日任务未完成80%以上，里程数和住宿费不报销。
                 </p>
                 <div class="info-box">
                     <div class="info-row">
@@ -446,14 +612,22 @@
                         <span class="info-label">实际里程</span>
                         <span class="info-value" style="color: #1c1313; font-weight: 600;">100公里</span>
                     </div>
-                    <div class="info-row">
+                    <!-- <div class="info-row">
                         <span class="info-label">扣减里程</span>
                         <span class="info-value" style="color: #1c1313; font-weight: 600;">100公里</span>
+                    </div> -->
+                    <div class="info-row">
+                        <span class="info-label">住宿费</span>
+                        <span class="info-value" style="color: #1c1313; font-weight: 600;">100元</span>
                     </div>
+                    <!-- <div class="info-row">
+                        <span class="info-label">扣减住宿费</span>
+                        <span class="info-value" style="color: #1c1313; font-weight: 600;">100元</span>
+                    </div> -->
                 </div>
                  
             <div class="btn-row1">
-                <button class="btn btn-danger" onclick="alert('已确认退回')">确认退回</button>
+                <button class="btn btn-danger" id="btn-abandon">放弃申诉</button>
                 <button class="btn" onclick="showScreen(3)">申诉</button>
             </div>
     </div> 
@@ -468,48 +642,187 @@
                    <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </div>
-            <h1 class="header-title">里程申诉</h1>
+            <h1 class="header-title">差旅异常申诉</h1>
         </div>
         <div class="content">
-            <div class="form-group">
-                <label class="form-label">里程发生日期</label>
-                    <label class="form-label">2026-09-09</label>
-                 <div class="input-with-unit">
-                        <!-- <input type="text" class="form-input" value="1000" style="width: 80px;"> -->
-                        <!-- <span class="unit-text">年月日</span> -->
-                 </div>
-                <div class="form-group">
-                <label class="form-label">申诉公里数</label>
-                <div class="input-with-unit">
-                    <!-- <input type="text" class="form-input" value="1000" style="width: 80px;"> -->
-                    <span style="font-size: 14px;">100公里</span>
+            <div class="info-box info-box-plain">
+                <div class="info-row">
+                    <span class="info-label">差旅发生日期</span>
+                    <span class="info-value">2026-09-09</span>
+                </div>
+                <div class="info-row info-row-with-tip">
+                    <div class="info-row-main">
+                        <span class="info-label">申诉公里数</span>
+                        <span class="info-value">100公里</span>
+                    </div>
                     <span class="field-tip">根据实际有效里程数计算</span>
                 </div>
-                <!-- <div class="form-group">
-                <label class="form-label">申诉里程</label>
-                <div class="input-with-unit">
-                    <input type="text" class="form-input" value="1000" style="width: 80px;">
-                    <span class="unit-text">公里</span>
-                </div> -->
+                <div class="info-row info-row-with-tip">
+                    <div class="info-row-main">
+                        <span class="info-label">申诉住宿费</span>
+                        <span class="info-value">100元</span>
+                    </div>
+                    <span class="field-tip">根据实际有效住宿费计算</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">原因说明：</label>
+            <div class="form-group form-row">
+                <label class="form-label">原因说明</label>
                 <textarea class="form-input" placeholder="请输入申诉原因"></textarea>
             </div>
         </div>
         <div class="btn-row1">
             <button class="btn" onclick="showScreen(1)">取消</button>
-            <button class="btn btn-primary" onclick="showScreen(4)">提交</button>
+            <button class="btn btn-primary" onclick="showScreen(6)">提交</button>
         </div>
     </div>
-    </div>
 
- 
-
-        <!-- Screen 4: 差旅异常申诉审批详情 -->
-        <div class="screen active" id="screen4">
+<!-- Screen 4: 审批详情 -->
+        <div class="screen" id="screen4">
             <div class="header">
-                <div class="back-btn" onclick="showScreen(1)">
+                <div class="back-btn" onclick="showScreen(7)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </div>
+                <h1 class="header-title">差旅异常申诉审批详情</h1>
+            </div>
+            <div class="content">
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="info-label">异常原因</span>
+                        <span class="info-value">任务未完成80%以上</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉人</span>
+                        <span class="info-value">张三</span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">申请时间</span>
+                        <span class="info-value">2026-09-09 10:00:00</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">关联任务</span>
+                        <span class="info-value">6月1号任务完成</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">进度</span>
+                        <span class="info-value">30%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">计划拜访客户</span>
+                        <span class="info-value">张三、李四、王五</span>
+                    </div>
+                     <div class="info-row">
+                        <span class="info-label">实际拜访客户</span>
+                        <span class="info-value">张三、李四</span>
+                    </div>         
+                      <div class="info-row">
+                        <span class="info-label">申诉原因</span>
+                        <span class="info-value">XXX</span>
+                    </div>                                 
+
+                      <div class="info-row">
+                        <span class="info-label">申诉差旅费</span>
+                        <span class="info-value">XXX元</span>
+                    </div>    
+                      <div class="info-row">
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">XXX公里</span>
+                    </div>                      
+                </div>
+
+           
+            </div>
+            <div class="reject-panel" id="reject-panel" style="display:none">
+                <div class="form-group">
+                    <label class="form-label">驳回原因 <span style="color:#ff4d4f">*</span></label>
+                    <textarea class="form-input" id="reject-reason" placeholder="请填写驳回原因"></textarea>
+                    <div class="field-tip" id="reject-tip" style="display:none;color:#ff4d4f;margin-top:6px">请填写驳回原因后再提交</div>
+                </div>
+                <div class="btn-row1" style="padding:0;border:none;margin-top:0">
+                    <button type="button" class="btn" id="reject-cancel">取消</button>
+                    <button type="button" class="btn btn-primary" id="reject-confirm">确认驳回</button>
+                </div>
+            </div>
+            <div class="btn-row1" id="approve-actions">
+                <button type="button" class="btn btn-danger" id="btn-reject">驳回</button>
+                <button type="button" class="btn btn-success" onclick="showScreen(5)">通过</button>
+            </div>
+        </div>
+
+
+
+        <!-- Screen 5: 异常申诉结果通知 -->
+        <div class="screen" id="screen5">
+            <div class="header">
+                <div class="back-btn" onclick="showScreen(4)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </div>
+                <h1 class="header-title">异常申诉结果通知</h1>
+            </div>
+            <div class="content">
+                <div class="result-box rejected">
+                    <div class="result-title rejected">差旅异常申诉驳回</div>
+                    <div class="info-row">
+                        <span class="info-label">驳回原因：</span>
+                        <span class="info-value" id="result-reject-reason">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉住宿费</span>
+                        <span class="info-value">1000元 </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">100公里 </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">关联任务</span>
+                        <span class="info-value">6月1号拜访任务</span>
+                    </div>                    
+                    <div class="info-row">
+                        <span class="info-label">审核时间</span>
+                        <span class="info-value">2026-09-09 10:00:00 </span>
+                    </div> 
+                    <div class="info-row">
+                        <span class="info-label">审核人</span>
+                        <span class="info-value">张三 </span>
+                    </div>                   
+                </div>
+                <div class="result-box approved">
+                    <div class="result-title approved">里程申诉通过</div>
+                    <div class="info-row">
+                        <span class="info-label">申诉住宿费</span>
+                        <span class="info-value">1000元 </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">100公里 </span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">关联任务</span>
+                        <span class="info-value">6月1号拜访任务</span>
+                    </div>  
+                    <div class="info-row">
+                        <span class="info-label">审核时间</span>
+                        <span class="info-value">2026-09-09 10:00:00 </span>
+                    </div> 
+                    <div class="info-row">
+                        <span class="info-label">审核人</span>
+                        <span class="info-value">张三 </span>
+                    </div>                   
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Screen 6: 审批人收到提醒 -->
+        <div class="screen" id="screen6">
+            <div class="header">
+                <div class="back-btn" onclick="showScreen(3)">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -517,61 +830,46 @@
                 <h1 class="header-title">差旅异常申诉审批</h1>
             </div>
             <div class="content">
-                <div class="info-box">
-                    <div class="info-row">
-                        <span class="info-label">异常原因</span>
-                        <span class="info-value">当天或住宿第二天无有效拜访记录</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">申诉金额</span>
-                        <span class="info-value">1000元</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">原因说明</span>
-                        <span class="info-value">XXX</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">任务标题</span>
-                        <span class="info-value">4.27-5.3拜访计划</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">入住城市</span>
-                        <span class="info-value">上海</span>
-                    </div>
-                </div>
-                <div class="footer-spacing"></div>
+                <div class="remind-title">有新的差旅异常申诉，请您审批</div>
+                <div class="remind-line">申请人：方伟萍</div>
+                <div class="remind-line">申请里程：1000公里</div>
+                <div class="remind-line">申请住宿费：1000元</div>
+                <div class="remind-line">关联任务：6月1号拜访任务</div>
             </div>
             <div class="btn-row1">
-                <button class="btn btn-danger" onclick="showScreen(1)">驳回</button>
-                <button class="btn btn-success" onclick="showScreen(1)">通过</button>
+                <button class="btn btn-outline-danger" onclick="showScreen(7)">查看详情</button>
             </div>
         </div>
 
 
-        <!-- Screen 5: 审核列表 -->
-        <div class="screen" id="screen5">
+        <!-- Screen 7: 审核列表 -->
+        <div class="screen" id="screen7">
             <div class="header">
-                <div class="back-btn" onclick="showScreen(4)">
+                <div class="back-btn" onclick="showScreen(6)">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </div>
-                <h1 class="header-title">审核列表</h1>
+                <h1 class="header-title">差旅异常申诉审批</h1>
                 <span class="status-badge status-pending">审核中</span>
             </div>
             <div class="content">
                 <div class="section">
-                    <div class="section-title">差旅异常申诉审批</div>
+                    <!-- <div class="section-title">差旅异常申诉审批</div> -->
                     <div class="info-row">
                         <span class="info-label">异常原因</span>
-                        <span class="info-value">当天或住宿第二天无有效拜访记录</span>
+                        <span class="info-value">任务未完成100%</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">申诉金额</span>
+                        <span class="info-label">申诉住宿费</span>
                         <span class="info-value">1000元</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">原因说明</span>
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">100公里</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉原因</span>
                         <span class="info-value">XXX</span>
                     </div>
                     <div class="info-row">
@@ -598,130 +896,118 @@
                         <span class="info-label">入住城市</span>
                         <span class="info-value">上海</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">实际消费金额</span>
-                        <span class="info-value">2500元</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">需退回金额</span>
-                        <span class="info-value">1000元</span>
-                    </div>
+
                     <div class="info-row">
                         <span class="info-label">申请人</span>
                         <span class="info-value">方伟萍</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">申请时间</span>
-                        <span class="info-value">2025-09-09</span>
+                        <span class="info-value">2025-09-09 10:00:00</span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Screen 6: 审批详情 -->
-        <div class="screen" id="screen6">
-            <div class="header">
-                <div class="back-btn" onclick="showScreen(5)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </div>
-                <h1 class="header-title">审批详情</h1>
-            </div>
-            <div class="content">
-                <div class="info-box">
-                    <div class="info-row">
-                        <span class="info-label">异常原因</span>
-                        <span class="info-value">任务完成度未达到80%<</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">申诉人</span>
-                        <span class="info-value">张三</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">申请时间</span>
-                        <span class="info-value">2026-09-09 10:00:00</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">关联任务</span>
-                        <span class="info-value">6月1号任务完成30%</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">计划拜访客户</span>
-                        <span class="info-value">张三、李四、王五</span>
-                    </div>
-                     <div class="info-row">
-                        <span class="info-label">实际拜访客户</span>
-                        <span class="info-value">张三、李四</span>
-                    </div>         
-                      <div class="info-row">
-                        <span class="info-label">申诉原因</span>
-                        <span class="info-value">XXX</span>
-                    </div>                                 
-
-                      <div class="info-row">
-                        <span class="info-label">实际里程</span>
-                        <span class="info-value">XXX公里</span>
-                    </div>    
-                      <div class="info-row">
-                        <span class="info-label">申诉里程</span>
-                        <span class="info-value">XXX公里</span>
-                    </div>                      
-                </div>
-
-           
             </div>
             <div class="btn-row1">
-                <button class="btn btn-danger" onclick="showScreen(7)">驳回</button>
-                <button class="btn btn-success" onclick="showScreen(7)">通过</button>
+                <button type="button" class="btn btn-primary" onclick="showScreen(8)">查看详情</button>
             </div>
         </div>
 
 
-
-        <!-- Screen 7: 结果通知 -->
-        <div class="screen" id="screen7">
+        <!-- Screen 8: 申诉明细 -->
+        <div class="screen" id="screen8">
             <div class="header">
-                <div class="back-btn" onclick="showScreen(5)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+                <div class="back-btn" onclick="showScreen(7)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </div>
-                <h1 class="header-title">结果通知</h1>
+                <h1 class="header-title">申诉明细</h1>
             </div>
             <div class="content">
-                <div class="result-box rejected">
-                    <div class="result-title rejected">里程申诉驳回</div>
-                    <div class="info-row">
-                        <span class="info-label">驳回原因：</span>
-                        <span class="info-value">不通过ddd</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">申请里程</span>
-                        <span class="info-value">1000元 </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">关联任务</span>
-                        <span class="info-value">6月1号拜访任务</span>
-                    </div>                    
+                <div class="detail-head">
+                    <div class="detail-title">差旅异常申诉审批</div>
+                    <span class="status-pending-gray">审核中</span>
                 </div>
-                <div class="result-box approved">
-                    <div class="result-title approved">里程申诉通过</div>
+                <div class="detail-list">
                     <div class="info-row">
-                        <span class="info-label">申请里程</span>
-                        <span class="info-value">1000公里</span>
+                        <span class="info-label">异常原因</span>
+                        <span class="info-value">任务未完成80%</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">关联任务</span>
-                        <span class="info-value">6月1号拜访任务</span>
-                    </div>                      
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">100公里</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉住宿费</span>
+                        <span class="info-value">1000元</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">原因说明</span>
+                        <span class="info-value">XXX</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">任务标题</span>
+                        <span class="info-value">4.27-5.3拜访计划</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">进度</span>
+                        <span class="info-value">30%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">任务时间</span>
+                        <span class="info-value">2026-04-27-2026-04-28</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">客户名单</span>
+                        <span class="info-value">张三 共10个 <a class="view-link">查看客户列表</a></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">拜访客户名单</span>
+                        <span class="info-value">李四 共3个 <a class="view-link">查看客户列表</a></span>
+                    </div>
+                    <!-- <div class="info-row">
+                        <span class="info-label">申诉里程</span>
+                        <span class="info-value">100公里</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申诉住宿费</span>
+                        <span class="info-value">1000元</span>
+                    </div> -->
+                    <div class="info-row">
+                        <span class="info-label">申请人</span>
+                        <span class="info-value">方伟萍</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">申请时间</span>
+                        <span class="info-value">2025-09-09 10：00：00</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">审核人</span>
+                        <span class="info-value">张三</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">审核时间</span>
+                        <span class="info-value">2025-09-09 10：00：00</span>
+                    </div>
                 </div>
+            </div>
+            <div class="btn-row1">
+                <button type="button" class="btn btn-primary" onclick="showScreen(7)">返回</button>
             </div>
         </div>
 
 
+        <div class="confirm-mask" id="abandon-mask">
+            <div class="confirm-dialog">
+                <div class="confirm-title">确认放弃申诉？</div>
+                <div class="confirm-desc">放弃后将按系统扣减结果执行，不可恢复。</div>
+                <div class="confirm-actions">
+                    <button type="button" class="btn" id="abandon-cancel">取消</button>
+                    <button type="button" class="btn btn-primary" id="abandon-ok">确认放弃</button>
+                </div>
+            </div>
+        </div>
+        <div class="toast-msg" id="toast-msg"></div>
     </div>
 
 
@@ -746,7 +1032,72 @@
             if (activeDot) {
                 activeDot.classList.add('active');
             }
+
+            // 离开审批页时收起驳回面板
+            if (num !== 4) {
+                resetRejectPanel();
+            }
         }
+
+        function resetRejectPanel() {
+            var panel = document.getElementById('reject-panel');
+            var actions = document.getElementById('approve-actions');
+            var tip = document.getElementById('reject-tip');
+            var reason = document.getElementById('reject-reason');
+            if (!panel) return;
+            panel.style.display = 'none';
+            if (actions) actions.style.display = 'flex';
+            if (tip) tip.style.display = 'none';
+            if (reason) reason.value = '';
+        }
+
+        document.getElementById('btn-reject').addEventListener('click', function () {
+            document.getElementById('reject-panel').style.display = 'block';
+            document.getElementById('approve-actions').style.display = 'none';
+            document.getElementById('reject-reason').focus();
+        });
+
+        document.getElementById('reject-cancel').addEventListener('click', function () {
+            resetRejectPanel();
+        });
+
+        document.getElementById('reject-confirm').addEventListener('click', function () {
+            var reason = document.getElementById('reject-reason').value.trim();
+            var tip = document.getElementById('reject-tip');
+            if (!reason) {
+                tip.style.display = 'block';
+                document.getElementById('reject-reason').focus();
+                return;
+            }
+            tip.style.display = 'none';
+            document.getElementById('result-reject-reason').textContent = reason;
+            showScreen(5);
+        });
+
+        document.getElementById('btn-abandon').addEventListener('click', function () {
+            document.getElementById('abandon-mask').classList.add('show');
+        });
+
+        document.getElementById('abandon-cancel').addEventListener('click', function () {
+            document.getElementById('abandon-mask').classList.remove('show');
+        });
+
+        document.getElementById('abandon-mask').addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+
+        document.getElementById('abandon-ok').addEventListener('click', function () {
+            document.getElementById('abandon-mask').classList.remove('show');
+            var toast = document.getElementById('toast-msg');
+            toast.textContent = '已放弃申诉';
+            toast.classList.add('show');
+            setTimeout(function () {
+                toast.classList.remove('show');
+                showScreen(1);
+            }, 1200);
+        });
     </script>
 </body>
 </html>

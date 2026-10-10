@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>客户档案 · 白条档案</title>
+<style>
+:root{
+  --blue:#1677ff;
+  --text:#1d2129;
+  --text-secondary:#4e5969;
+  --text-muted:#86909c;
+  --bg-page:#f2f3f5;
+  --bg-card:#ffffff;
+  --bg-blue-light:#e8f3ff;
+  --border:#f0f0f0;
+  --border-light:#e5e6eb;
+  --orange:#fa8c16;
+  --orange-bg:#fff7e6;
+  --green:#00b42a;
+  --red:#f53f3f;
+  --radius-card:12px;
+  --radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#e8e8e8;color:var(--text);font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.demo{
+  background:#1f1f1f;color:#fff;padding:8px 12px;font-size:12px;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center
+}
+.demo span{opacity:.75}
+.demo button{border:0;border-radius:4px;padding:5px 10px;font-size:12px;background:#444;color:#fff;cursor:pointer}
+.demo button.active{background:var(--blue)}
+.page{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg-page);padding-bottom:80px}
+.nav{
+  background:var(--bg-card);padding:12px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:10
+}
+.nav .back{border:none;background:none;font-size:22px;cursor:pointer;line-height:1;width:24px;color:var(--text)}
+.nav .title{font-size:17px;font-weight:600;flex:1;text-align:center;margin-right:28px}
+.tab-scroll{
+  background:var(--bg-card);padding:10px 12px 12px;overflow-x:auto;white-space:nowrap;
+  border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch
+}
+.tab-scroll::-webkit-scrollbar{display:none}
+.pill-tabs{display:inline-flex;gap:8px}
+.pill{
+  border:1px solid var(--blue);background:#fff;color:var(--blue);
+  border-radius:16px;padding:6px 12px;font-size:13px;cursor:pointer;line-height:1.2
+}
+.pill.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.panel{display:none;padding:12px}
+.panel.on{display:block}
+.info-card{
+  background:var(--bg-card);border-radius:var(--radius-card);padding:14px 16px;margin-bottom:10px
+}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.info-item{font-size:13px;line-height:1.5}
+.info-item .k{color:var(--text-muted)}
+.info-item .v{color:var(--text);margin-left:2px;word-break:break-all}
+.acct-card{
+  border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fff7f0
+}
+.acct-card.muted{background:#f7f8fa}
+.acct-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.acct-hd .t{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--text)}
+.acct-hd .bar{width:3px;height:14px;border-radius:2px;background:var(--orange)}
+.acct-card.muted .bar{background:#c9cdd4}
+.badge{font-size:12px;padding:1px 8px;border-radius:4px;background:var(--orange-bg);color:var(--orange)}
+.acct-row{font-size:13px;line-height:1.8;color:var(--text)}
+.acct-row .k{color:var(--text-muted)}
+.acct-row .ok{color:var(--green)}
+.link{border:none;background:none;color:var(--blue);font-size:13px;cursor:pointer;padding:0;margin-left:6px}
+.expand{border:none;background:none;color:var(--text-muted);font-size:13px;cursor:pointer}
+.sec-title{font-size:14px;font-weight:600;margin:14px 0 10px;color:var(--text)}
+.sec-title .req{color:var(--red);margin-right:2px}
+.upload-row{display:flex;gap:10px}
+.thumb{
+  flex:1;min-height:110px;border:1px dashed #d9d9d9;border-radius:8px;background:#fafafa;
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-muted);text-align:center;padding:8px
+}
+.foot{
+  position:fixed;left:0;right:0;bottom:0;background:#fff;padding:10px 16px 16px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.04);z-index:11
+}
+.foot .inner{max-width:430px;margin:0 auto}
+.btn-edit{
+  width:100%;height:44px;border:none;border-radius:8px;background:var(--blue);color:#fff;
+  font-size:16px;font-weight:600;cursor:pointer
+}
+.empty{
+  background:var(--bg-card);border-radius:var(--radius-card);padding:48px 20px;
+  text-align:center;color:var(--text-muted);font-size:14px;line-height:1.7
+}
+.empty .ico{font-size:36px;margin-bottom:10px;opacity:.35}
+.bt-card{
+  background:var(--bg-card);border-radius:var(--radius-card);padding:14px 16px;margin-bottom:10px
+}
+.bt-title{font-size:15px;font-weight:600;margin-bottom:12px;padding-left:8px;border-left:3px solid var(--blue)}
+.kv{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.kv:last-child{border-bottom:none}
+.kv .lab{color:var(--text-muted);font-size:13px;flex-shrink:0}
+.kv .val{flex:1;text-align:right;font-size:13px;color:var(--text);word-break:break-all}
+.kv .val.ok{color:var(--green)}
+.kv .val.warn{color:var(--orange)}
+.kv .val.err{color:var(--red)}
+.kv .right{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:1}
+.btn-fix{
+  border:1px solid var(--blue);background:#fff;color:var(--blue);
+  border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;white-space:nowrap
+}
+.placeholder-panel{
+  background:var(--bg-card);border-radius:var(--radius-card);padding:40px 16px;
+  text-align:center;color:var(--text-muted);font-size:13px
+}
+.detail-page .card{background:var(--bg-card);margin:10px 12px;border-radius:var(--radius-card);padding:14px 14px 10px}
+.detail-page .sec{font-size:15px;font-weight:600;margin:0 0 12px;padding-left:8px;border-left:3px solid var(--blue);line-height:1.3}
+.detail-page .sec-tip{font-size:11px;color:var(--text-muted);font-weight:400;margin-left:6px}
+.detail-page .kv{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)}
+.detail-page .kv:last-child{border-bottom:none}
+.detail-page .lab{color:var(--text-muted);font-size:13px;flex-shrink:0;max-width:42%;line-height:1.45}
+.detail-page .val{flex:1;text-align:right;font-size:13px;color:var(--text);word-break:break-all;line-height:1.45}
+.detail-page .val.ok{color:var(--green)}
+.detail-page .val.warn{color:var(--orange)}
+.detail-page .val.err{color:var(--red)}
+.detail-page .val.muted{color:var(--text-muted)}
+.detail-page .check-stack{display:flex;flex-direction:column;gap:8px}
+.detail-page .check-box{border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.6;background:#f7f8fa}
+.detail-page .check-box.ok{background:#e8ffea}
+.detail-page .check-box.bad{background:#ffece8}
+.detail-page .check-box.blue{background:var(--bg-blue-light)}
+.detail-page .file-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 8px}
+.detail-page .file{
+  border:1px solid var(--border-light);border-radius:var(--radius-sm);min-height:76px;padding:10px 8px;
+  background:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;font-size:12px;color:var(--text-secondary);line-height:1.4;gap:4px
+}
+.detail-page .file.ok{border-color:#91caff;background:var(--bg-blue-light);color:var(--blue)}
+.detail-page .sub{font-size:13px;font-weight:600;color:var(--text-secondary);margin:12px 0 6px}
+.detail-page .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;background:var(--bg-blue-light);color:var(--blue);margin-left:4px}
+.detail-page .tag.ok{background:#e8ffea;color:var(--green)}
+.detail-page .tag.warn{background:#fff7e6;color:var(--orange)}
+.detail-page .tag.err{background:#ffece8;color:var(--red)}
+.detail-page .tag.muted{background:#f5f5f5;color:#999}
+.detail-page .bank-item{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-page .bank-item:last-child{border-bottom:none}
+.detail-page .bank-item .name{font-weight:600;min-width:72px}
+.detail-page .log-item{position:relative;padding:0 0 14px 16px;border-left:2px solid #f0f0f0}
+.detail-page .log-item:last-child{padding-bottom:0;border-left-color:transparent}
+.detail-page .log-item::before{content:"";position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:#c9cdd4}
+.detail-page .log-item.done::before{background:var(--blue)}
+.detail-page .log-item.cur::before{background:var(--green);box-shadow:0 0 0 3px rgba(0,180,42,.2)}
+.detail-page .log-t{font-size:13px;font-weight:600}
+.detail-page .log-d{font-size:12px;color:var(--text-muted);margin-top:2px}
+.detail-page .empty-tip{font-size:13px;color:var(--text-muted);padding:2px 0 8px;line-height:1.6}
+.detail-page .nav .title{text-align:center;margin-right:28px;flex:1}
+.req{color:var(--red);margin-right:2px}
+</style>
+</head>
+<body>
+<div class="demo">
+  <span>演示</span>
+  <button type="button" class="active" data-bt="none">未申请白条</button>
+  <button type="button" data-bt="pass">已申请·资料齐全</button>
+  <button type="button" data-bt="miss">已申请·资料缺失</button>
+  <button type="button" data-bt="reject">已申请·驳回</button>
+  <button type="button" data-jump="detail">查看详情</button>
+</div>
+
+<div class="page" id="archiveMain">
+  <div class="nav">
+    <button class="back" type="button" aria-label="返回">‹</button>
+    <div class="title">客户档案</div>
+  </div>
+
+  <div class="tab-scroll">
+    <div class="pill-tabs" id="pillTabs">
+      <button type="button" class="pill" data-tab="opp">机会点</button>
+      <button type="button" class="pill" data-tab="trade">交易配置</button>
+      <button type="button" class="pill" data-tab="addr">地址管理</button>
+      <button type="button" class="pill" data-tab="bank">银行资质</button>
+      <button type="button" class="pill active" data-tab="baitiao">白条档案</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-opp"><div class="placeholder-panel">机会点（示意）</div></div>
+  <div class="panel" id="panel-trade"><div class="placeholder-panel">交易配置（示意）</div></div>
+  <div class="panel" id="panel-addr"><div class="placeholder-panel">地址管理（示意）</div></div>
+
+  <div class="panel" id="panel-bank">
+    <div class="info-card">
+      <div class="info-grid">
+        <div class="info-item"><span class="k">主体名称：</span><span class="v">桑姣婧</span></div>
+        <div class="info-item"><span class="k">主体id：</span><span class="v">22468</span></div>
+        <div class="info-item"><span class="k">资质类型：</span><span class="v">个人</span></div>
+        <div class="info-item"><span class="k">角色类型：</span><span class="v">买家</span></div>
+        <div class="info-item"><span class="k">认证状态：</span><span class="v">已认证</span></div>
+        <div class="info-item"><span class="k">平安银行签约状态：</span><span class="v">已开通</span></div>
+      </div>
+    </div>
+    <div class="acct-card">
+      <div class="acct-hd">
+        <div class="t"><span class="bar"></span>余额账户（上海银行提供服务）</div>
+        <span class="badge">启用</span>
+      </div>
+      <div class="acct-row"><span class="k">账户名称：</span>粮巴巴科技（浙江）有限公司<button class="link" type="button">复制</button></div>
+      <div class="acct-row"><span class="k">银行账号：</span>03006435814100002750</div>
+      <div class="acct-row"><span class="k">开户行：</span>上海银行股份有限公司</div>
+      <div class="acct-row"><span class="k">开通状态：</span><span class="ok">已开通</span></div>
+      <div class="acct-row"><span class="k">绑卡状态：</span><span class="ok">已绑卡</span></div>
+    </div>
+    <div class="acct-card muted">
+      <div class="acct-hd">
+        <div class="t"><span class="bar"></span>余额账户（锡商银行提供服务）</div>
+        <button class="expand" type="button">展开 ▾</button>
+      </div>
+    </div>
+    <div class="sec-title"><span class="req">*</span>完善资料</div>
+    <div class="upload-row">
+      <div class="thumb">身份证人像面</div>
+      <div class="thumb">身份证国徽面</div>
+    </div>
+  </div>
+
+  <div class="panel on" id="panel-baitiao">
+    <div id="btEmpty" class="empty" style="display:none">
+      <div class="ico">📄</div>
+      <div>客户未申请白条</div>
+    </div>
+    <div id="btContent" class="bt-card" style="display:none">
+      <div class="bt-title">白条档案</div>
+      <div class="kv">
+        <div class="lab">客户姓名</div>
+        <div class="val" id="btName">桑姣婧</div>
+      </div>
+      <div class="kv">
+        <div class="lab">白条开通状态</div>
+        <div class="val" id="btStatus">—</div>
+      </div>
+      <div class="kv" id="btRejectRow">
+        <div class="lab">驳回原因</div>
+        <div class="val err" id="btReject">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">白条银行</div>
+        <div class="val" id="btBank">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">白条额度</div>
+        <div class="val" id="btQuota">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">可用额度</div>
+        <div class="val" id="btAvail">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">初审资料</div>
+        <div class="right">
+          <span class="val" id="btFirst">齐全</span>
+          <button class="btn-fix" type="button" id="btnFixFirst" style="display:none" onclick="goFix('初审')">去补齐</button>
+        </div>
+      </div>
+      <div class="kv">
+        <div class="lab">正式进件资料</div>
+        <div class="right">
+          <span class="val" id="btSecond">齐全</span>
+          <button class="btn-fix" type="button" id="btnFixSecond" style="display:none" onclick="goFix('正式进件')">去补齐</button>
+        </div>
+      </div>
+      <div class="kv">
+        <div class="lab">业务员申请资料</div>
+        <div class="right">
+          <span class="val" id="btSales">齐全</span>
+          <button class="btn-fix" type="button" id="btnFixSales" style="display:none" onclick="goFix('业务员')">去补齐</button>
+        </div>
+      </div>
+      <div class="kv">
+        <div class="lab">担保资料</div>
+        <div class="right">
+          <span class="val" id="btGuarantee">齐全</span>
+          <button class="btn-fix" type="button" id="btnFixGuarantee" style="display:none" onclick="goFix('担保')">去补齐</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="pageFoot">
+    <div class="inner">
+      <button class="btn-edit" type="button" id="btnEdit">编辑</button>
+    </div>
+  </div>
+</div>
+
+<div class="page detail-page" id="detailPage" style="display:none">
+  <div class="nav">
+    <button class="back" type="button" onclick="closeDetailPage()" aria-label="返回">‹</button>
+    <div class="title" id="detailNavTitle">白条申请详情</div>
+  </div>
+  <div id="detailBody" style="padding-bottom:24px"></div>
+</div>
+
+<script>
+let btMode="none"; // none | pass | miss | reject
+const DEMO={
+  none:null,
+  pass:{name:"桑姣婧", status:"白条已开通", statusClass:"ok", bank:"上海银行", quota:"50万", avail:"32万", reject:"", first:"齐全", second:"齐全", sales:"齐全", guarantee:"齐全"},
+  miss:{name:"桑姣婧", status:"正式进件审核中", statusClass:"warn", bank:"上海银行、锡商银行", quota:"80万", avail:"—", reject:"", first:"齐全", second:"齐全", sales:"缺失3项", guarantee:"缺失2项"},
+  reject:{name:"桑姣婧", status:"初审驳回", statusClass:"err", bank:"—", quota:"—", avail:"—", reject:"征信逾期金额偏高，暂不符合白条准入条件", first:"齐全", second:"—", sales:"—", guarantee:"—"}
+};
+
+document.querySelectorAll(".demo button[data-bt]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".demo button[data-bt]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    btMode=btn.dataset.bt;
+    // 若当前在详情页，切换演示态后刷新详情
+    if(document.getElementById("detailPage").style.display==="block"){
+      if(btMode==="none"){
+        closeDetailPage();
+        switchTab("baitiao");
+        renderBaitiao();
+      }else{
+        openDetailPage(btMode, DEMO[btMode]?.name||"");
+      }
+      return;
+    }
+    switchTab("baitiao");
+    renderBaitiao();
+  });
+});
+document.querySelector(".demo button[data-jump='detail']")?.addEventListener("click",()=>{
+  if(btMode==="none"){
+    // 默认打开「资料齐全」详情，便于演示
+    const passBtn=document.querySelector('.demo button[data-bt="pass"]');
+    if(passBtn){
+      document.querySelectorAll(".demo button[data-bt]").forEach(b=>b.classList.remove("active"));
+      passBtn.classList.add("active");
+      btMode="pass";
+      renderBaitiao();
+    }
+  }
+  openDetailPage(btMode, DEMO[btMode]?.name||"");
+});
+
+document.querySelectorAll("#pillTabs .pill").forEach(btn=>{
+  btn.addEventListener("click",()=>switchTab(btn.dataset.tab));
+});
+
+function switchTab(tab){
+  document.querySelectorAll("#pillTabs .pill").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  ["opp","trade","addr","bank","baitiao"].forEach(id=>{
+    document.getElementById("panel-"+id).classList.toggle("on", id===tab);
+  });
+  const foot=document.getElementById("pageFoot");
+  const edit=document.getElementById("btnEdit");
+  if(tab==="bank"){
+    foot.style.display="";
+    edit.textContent="编辑";
+  }else if(tab==="baitiao"){
+    foot.style.display=btMode==="none"?"none":"";
+    edit.textContent=btMode==="none"?"编辑":"查看详情";
+  }else{
+    foot.style.display="none";
+  }
+}
+
+function setDocStatus(el, btn, status){
+  el.textContent=status;
+  const missing=String(status||"").startsWith("缺失");
+  const empty=status==="—"||status===""||status==null;
+  if(status==="齐全") el.className="val ok";
+  else if(missing) el.className="val err";
+  else el.className="val";
+  if(!btn) return;
+  if(missing){
+    btn.style.display="";
+    btn.textContent="去补齐";
+  }else if(status==="齐全"){
+    btn.style.display="";
+    btn.textContent="修改资料";
+  }else if(empty){
+    btn.style.display="";
+    btn.textContent="去补充";
+  }else{
+    btn.style.display="none";
+  }
+}
+
+function renderBaitiao(){
+  const empty=document.getElementById("btEmpty");
+  const content=document.getElementById("btContent");
+  const data=DEMO[btMode];
+  if(!data){
+    empty.style.display="";
+    content.style.display="none";
+    document.getElementById("pageFoot").style.display="none";
+    return;
+  }
+  empty.style.display="none";
+  content.style.display="";
+  document.getElementById("btName").textContent=data.name;
+  const st=document.getElementById("btStatus");
+  st.textContent=data.status;
+  st.className="val "+data.statusClass;
+  document.getElementById("btBank").textContent=data.bank||"—";
+  document.getElementById("btQuota").textContent=data.quota||"—";
+  document.getElementById("btAvail").textContent=data.avail||"—";
+  const rejectRow=document.getElementById("btRejectRow");
+  const reject=document.getElementById("btReject");
+  if(data.reject){
+    rejectRow.style.display="";
+    reject.textContent=data.reject;
+  }else{
+    rejectRow.style.display="none";
+    reject.textContent="—";
+  }
+  setDocStatus(document.getElementById("btFirst"), document.getElementById("btnFixFirst"), data.first);
+  setDocStatus(document.getElementById("btSecond"), document.getElementById("btnFixSecond"), data.second);
+  setDocStatus(document.getElementById("btSales"), document.getElementById("btnFixSales"), data.sales);
+  setDocStatus(document.getElementById("btGuarantee"), document.getElementById("btnFixGuarantee"), data.guarantee);
+  if(document.getElementById("panel-baitiao").classList.contains("on")){
+    document.getElementById("pageFoot").style.display="";
+    document.getElementById("btnEdit").textContent="查看详情";
+  }
+}
+
+function goPage(file, params){
+  const dir=location.href.replace(/[^/\\]*$/,"");
+  const q=new URLSearchParams(params||{});
+  location.href=dir+encodeURIComponent(file)+(q.toString()?"?"+q.toString():"");
+}
+function goFix(type){
+  const cust=DEMO[btMode]?.name||"";
+  if(type==="初审"){
+    // 客户三要素 / 初审资料上传页
+    goPage("步骤1_客户初审三步流程.html",{from:"档案",step:"1",phase:"form"});
+    return;
+  }
+  if(type==="正式进件"){
+    // 客户正式进件资料补充页
+    goPage("步骤1_客户初审三步流程.html",{from:"档案",step:"2",phase:"form"});
+    return;
+  }
+  if(type==="业务员"){
+    // 业务员申请资料填写页
+    goPage("业务端_申请资料填写.html",{from:"档案",cust});
+    return;
+  }
+  if(type==="担保"){
+    // 客户担保人补充资料页
+    goPage("步骤1_客户初审三步流程.html",{from:"档案",step:"3",phase:"form"});
+    return;
+  }
+}
+
+document.getElementById("btnEdit").addEventListener("click",()=>{
+  const tab=[...document.querySelectorAll("#pillTabs .pill")].find(b=>b.classList.contains("active"))?.dataset.tab;
+  if(tab==="baitiao"){
+    if(btMode==="none"){alert("客户未申请白条，暂无详情");return}
+    const name=DEMO[btMode]?.name||"";
+    openDetailPage(btMode, name);
+  }else{
+    alert("编辑银行资质");
+  }
+});
+
+function openDetailPage(mode, cust){
+  document.getElementById("archiveMain").style.display="none";
+  document.getElementById("pageFoot").style.display="none";
+  document.getElementById("detailPage").style.display="block";
+  const t=buildDetailData(mode, cust);
+  document.getElementById("detailNavTitle").textContent="查看 · "+t.name;
+  document.getElementById("detailBody").innerHTML=renderDetailHtml(t);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeDetailPage(){
+  document.getElementById("detailPage").style.display="none";
+  document.getElementById("archiveMain").style.display="";
+  switchTab("baitiao");
+}
+function dCls(v){
+  if(["齐全","通过","已收到","已上传","是","白条已开通"].includes(v)) return "ok";
+  if(["缺失","拒绝","未收到","初审驳回","补充中"].includes(v)||String(v||"").startsWith("缺失")) return "err";
+  if(["审核中","正式进件审核中","审批中"].includes(v)) return "warn";
+  if(v==="—"||v===""||v==null) return "muted";
+  return "";
+}
+function dCheck(v){
+  if(v==="齐全"||v==="通过"||v==="已收到") return "ok";
+  if(v==="缺失"||v==="拒绝"||v==="补充中"||v==="未收到"||v==="—"||String(v||"").startsWith("缺失")) return "bad";
+  return "blue";
+}
+function dKv(lab,val,req){
+  return `<div class="kv"><div class="lab">${req?'<span class="req">*</span>':''}${lab}</div><div class="val ${dCls(val)}">${val??"—"}</div></div>`;
+}
+function dFile(name,ok){
+  return `<div class="file ${ok?"ok":""}"><div>${ok?"✓":"+"}</div><div>${name}</div></div>`;
+}
+function dTag(v){return `<span class="tag ${dCls(v)||"muted"}">${v||"—"}</span>`}
+function buildDetailData(mode, cust){
+  const base={
+    pass:{
+      name:"桑姣婧", custId:"C20260910009", stage:"白条已开通", sales:"朱震", mobile:"13812348001",
+      subject:"桑姣婧养殖场", subjectType:"个人", custType:"养殖户", fullPrice:false, esign:"齐全", ai:"通过",
+      aiDetail:"影像清晰；主体一致；银行审批通过，白条已开通。", gateTip:"初审已通过，可正式进件",
+      files:["营业执照","法人身份证正面","法人身份证反面"],
+      formal:{status:"齐全", tier:"≥30万", product:"预混料", fullPrice:false, subjectKind:"个人", breedType:"禽类",
+        flow:{channels:["银行","微信"], mailOk:true, pwds:{银行:"已填",微信:"已填"}},
+        baihang:{needed:false, ok:false}, controller:{needed:true, name:"桑姣婧", creditOk:true},
+        files:[{name:"近3个月经营场地水电费账单",ok:true},{name:"最近一次养殖资产买卖合同/首付款凭证",ok:true},{name:"经营场地权属证明",ok:true}]},
+      salesApp:{status:"齐全", product:"预混料", tier:"≥30万", sy:"50万", xs:"0万", breed:"蛋鸡", scale:"2万羽", years:"7年",
+        reason:"信誉结算良好，平台合作15次", tplFields:[["每月豆粕玉米需求","35吨"],["是否绑定销售预混料","是"]],
+        photos:["厂房大门","仓库","养殖区域"], crm:"2026-09-08 09:10 · 朱震 · 实地拜访",
+        dd:[["申请人姓名","桑姣婧"],["手机号","138****8001"],["申请人是否为实控人","是"]]},
+      bank:{syAmt:"500000", syPush:"已推送", syResult:"通过", xsAmt:"", xsPush:"未推送", xsResult:"—"},
+      credit:{overdue:0,badLoan:0,settled:3}, trade:{months:5,tons:20,amt:150000,days:7},
+      timeline:[{t:"初审通过",d:"2026-09-08 16:00",s:"done"},{t:"正式进件审核通过",d:"2026-09-09 10:00",s:"done"},{t:"白条已开通",d:"2026-09-10 09:30",s:"cur"}]
+    },
+    miss:{
+      name:"桑姣婧", custId:"C20260915004", stage:"正式进件审核中", sales:"朱震", mobile:"13812348001",
+      subject:"桑姣婧养殖场", subjectType:"企业", custType:"养殖户", fullPrice:true, esign:"齐全", ai:"通过",
+      aiDetail:"初审已通过，正式进件资料待金融审核。", gateTip:"初审已通过，可正式进件",
+      files:["营业执照","法人身份证正面","法人身份证反面"],
+      formal:{status:"齐全", tier:"≥30万", product:"全价料", fullPrice:true, subjectKind:"企业", breedType:"禽类",
+        flow:{channels:["微信","支付宝"], mailOk:true, pwds:{微信:"已填",支付宝:"已填"}},
+        baihang:{needed:true, ok:true}, controller:{needed:true, name:"桑姣婧", creditOk:true},
+        files:[{name:"近3个月经营场地水电费账单",ok:true},{name:"最近一次养殖资产买卖合同/首付款凭证",ok:true},{name:"经营场地权属证明",ok:true}]},
+      salesApp:{status:"缺失3项", product:"全价料", tier:"≥30万", sy:"50万", xs:"30万", breed:"蛋鸡", scale:"3万羽", years:"6年",
+        reason:"信誉结算良好，平台合作12次", tplFields:[["全价料每月吨数","40吨"]],
+        photos:["厂房大门","仓库"], crm:"2026-09-15 09:20 · 朱震 · 实地拜访",
+        dd:[["申请人姓名","桑姣婧"],["手机号","138****8001"]]},
+      bank:{syAmt:"500000", syPush:"未推送", syResult:"—", xsAmt:"300000", xsPush:"未推送", xsResult:"—"},
+      credit:{overdue:0,badLoan:0,settled:2}, trade:{months:4,tons:18,amt:120000,days:5},
+      timeline:[{t:"初审通过",d:"2026-09-14 18:00",s:"done"},{t:"正式进件审核中",d:"—",s:"cur"}]
+    },
+    reject:{
+      name:"桑姣婧", custId:"C20260915007", stage:"初审驳回", sales:"朱震", mobile:"13812348001",
+      subject:"桑姣婧养殖场", subjectType:"个人", custType:"养殖户", fullPrice:false, esign:"齐全", ai:"通过",
+      aiDetail:"人审驳回：征信逾期金额偏高。", gateTip:"初审未通过前不可正式进件",
+      reject:"征信逾期金额偏高，暂不符合白条准入条件",
+      files:["营业执照","法人身份证正面","法人身份证反面"], formal:null, salesApp:null,
+      bank:{syAmt:"", syPush:"未推送", syResult:"—", xsAmt:"", xsPush:"未推送", xsResult:"—"},
+      credit:{overdue:3,badLoan:1,settled:1}, trade:{months:3,tons:10,amt:80000,days:20},
+      timeline:[{t:"客户提交初审资料",d:"2026-09-12 15:20",s:"done"},{t:"初审驳回",d:"2026-09-12 16:10 · 征信逾期偏高",s:"cur"}]
+    }
+  };
+  const t=Object.assign({}, base[mode]||base.pass);
+  if(cust) t.name=cust;
+  return t;
+}
+function renderDetailHtml(t){
+  const isChu=["初审驳回","初审待审核","初审资料上传中"].includes(t.stage);
+  const formalVal=t.formal?(t.formal.status||"齐全"):"暂未提交";
+  const salesVal=t.salesApp?(t.salesApp.status||"—"):"暂未提交";
+  const has=n=>(t.files||[]).some(f=>f.includes(n.replace("法人",""))||f===n);
+  const f=t.formal;
+  let formalHtml="";
+  if(!f){
+    formalHtml=`<div class="card"><div class="sec">客户正式进件资料</div><div class="empty-tip">${isChu?"初审通过后方可补充正式进件资料":"暂未提交正式进件资料"}</div></div>`;
+  }else{
+    const flow=f.flow||{};
+    const channels=(flow.channels||[]).join("、")||"—";
+    const pwd=(flow.channels||[]).map(ch=>`${ch}：${(flow.pwds&&flow.pwds[ch])||"未填"}`).join("；")||"—";
+    const mailFiles=[];
+    (flow.channels||[]).forEach(ch=>mailFiles.push({name:flow.mailOk?`${ch}经营性流水（邮箱解析）.pdf`:`${ch}经营性流水（邮箱未收到）`, ok:!!flow.mailOk}));
+    if(f.baihang&&f.baihang.needed) mailFiles.push({name:f.baihang.ok?"百行征信报告（邮箱解析）.pdf":"百行征信报告（邮箱未收到）", ok:!!f.baihang.ok});
+    if(f.controller&&f.controller.needed) mailFiles.push({name:f.controller.creditOk?"实控人近1月人行征信（邮箱解析）.pdf":"实控人近1月人行征信（邮箱未收到）", ok:!!f.controller.creditOk});
+    const ups=(f.files||[]).map(x=>dFile(x.name,!!x.ok)).join("");
+    const mails=mailFiles.map(x=>dFile(x.name,x.ok)).join("");
+    formalHtml=`<div class="card"><div class="sec">客户正式进件资料<span class="sec-tip">状态：${f.status}</span></div>
+      ${dKv("额度档位",f.tier,true)}${dKv("产品类型",f.product)}${dKv("是否全价料白条",f.fullPrice?"是":"否",true)}
+      ${dKv("经营性流水来源",channels,true)}${dKv("流水解压密码",pwd,true)}
+      <div class="sub">正式进件附件（含邮箱解析：流水 / 百行 / 实控人征信）</div><div class="file-grid">${mails}${ups}</div></div>`;
+  }
+  let salesHtml="";
+  if(!t.salesApp){
+    salesHtml=`<div class="card"><div class="sec">业务员申请资料</div><div class="empty-tip">暂未提交业务员申请资料</div></div>`;
+  }else{
+    const s=t.salesApp;
+    salesHtml=`<div class="card"><div class="sec">业务员申请资料<span class="sec-tip">状态：${s.status}</span></div>
+      ${dKv("白条产品类型",s.product)}${dKv("额度档位",s.tier)}${dKv("上海银行额度",s.sy)}${dKv("锡商银行额度",s.xs)}
+      ${dKv("养殖种类",s.breed)}${dKv("养殖数量",s.scale)}${dKv("申请原因",s.reason)}
+      <div class="sub">现场照片</div><div class="file-grid">${(s.photos||[]).map(n=>dFile(n,true)).join("")}</div>
+      ${dKv("CRM拜访记录",s.crm)}</div>`;
+  }
+  const b=t.bank||{}, c=t.credit||{}, tr=t.trade||{};
+  const logs=(t.timeline||[]).map(x=>`<div class="log-item ${x.s||""}"><div class="log-t">${x.t}</div><div class="log-d">${x.d||"—"}</div></div>`).join("");
+  const aiExtra=isChu?"":`<div class="check-box ${dCheck(formalVal)}">客户正式进件资料：<b>${formalVal}</b></div>
+      <div class="check-box ${dCheck(salesVal)}">业务员申请资料：<b>${salesVal}</b></div>`;
+  return `
+    <div class="card"><div class="sec">资料与 AI 识别</div><div class="check-stack">
+      <div class="check-box ${dCheck(t.esign)}">初审资料：<b>${t.esign}</b></div>${aiExtra}
+      <div class="check-box ${dCheck(t.ai)}">AI审核结果和建议：<b>${t.ai}</b>${t.aiDetail?`<br>${t.aiDetail}`:""}${t.gateTip?`<br><span style="color:#86909c">${t.gateTip}</span>`:""}</div>
+      ${t.reject?`<div class="check-box bad">驳回原因：<b>${t.reject}</b></div>`:""}
+    </div></div>
+    <div class="card"><div class="sec">平台客户信息</div>
+      ${dKv("手机号",t.mobile,true)}${dKv("客户姓名",t.name,true)}${dKv("业务员",t.sales)}${dKv("平台审核状态",t.stage)}
+    </div>
+    <div class="card"><div class="sec">融资主体信息</div>
+      ${dKv("融资主体名称",t.subject,true)}${dKv("法人手机号",t.mobile,true)}${dKv("全价料白条",t.fullPrice?"是":"否")}${dKv("进件门槛",t.gateTip)}
+    </div>
+    <div class="card"><div class="sec">初审附件<span class="sec-tip">营业执照、法人身份证正反面、法人征信报告</span></div>
+      <div class="file-grid">${dFile("营业执照",has("营业执照"))}${dFile("法人身份证正面",has("身份证正面")||has("法人身份证正面"))}${dFile("法人身份证反面",has("身份证反面")||has("法人身份证反面"))}${dFile("法人征信报告",has("征信")||has("法人征信")||has("人行征信")||t.esign==="齐全"||(t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||"")))}</div>
+    </div>
+    ${formalHtml}${salesHtml}
+    <div class="card"><div class="sec">征信信息</div>${dKv("逾期笔数",c.overdue??0,true)}${dKv("不良贷款笔数",c.badLoan??0,true)}${dKv("已结清贷款笔数",c.settled??0,true)}</div>
+    <div class="card"><div class="sec">交易信息</div>${dKv("近6月累计交易月数",tr.months??0,true)}${dKv("近6月月均交易吨数",tr.tons??0,true)}${dKv("近6月月均交易金额(元)",tr.amt??0,true)}</div>
+    <div class="card"><div class="sec">推送银行</div>
+      <div class="bank-item"><span class="name">上海银行</span><span>${b.syAmt?b.syAmt+"元":"—"}</span>${dTag(b.syPush)}${dTag(b.syResult)}</div>
+      <div class="bank-item"><span class="name">锡商银行</span><span>${b.xsAmt?b.xsAmt+"元":"—"}</span>${dTag(b.xsPush)}${dTag(b.xsResult)}</div>
+    </div>
+    <div class="card"><div class="sec">操作日志</div><div class="log">${logs||`<div class="empty-tip">暂无操作记录</div>`}</div></div>`;
+}
+
+renderBaitiao();
+switchTab("baitiao");
+</script>
+</body>
+</html>

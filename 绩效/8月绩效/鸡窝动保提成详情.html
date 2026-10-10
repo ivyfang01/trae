@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>鸡窝动保提成详情</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#fff;color:#333;font-size:14px;
+}
+.page{max-width:750px;margin:0 auto;min-height:100vh;background:#fff;padding-bottom:56px}
+.page-head{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;padding:12px 16px 4px;font-size:17px;font-weight:600;
+}
+.page-head .back{
+  position:absolute;left:12px;border:none;background:none;
+  font-size:22px;color:#333;cursor:pointer;line-height:1;
+}
+.top-tabs{
+  display:flex;justify-content:center;gap:40px;
+  border-bottom:1px solid #eee;background:#fff;padding-top:12px;
+}
+.top-tab{
+  position:relative;border:none;background:none;font-size:15px;color:#333;
+  padding:0 4px 12px;cursor:pointer;
+}
+.top-tab.active{color:#1890ff;font-weight:600}
+.top-tab.active::after{
+  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:28px;height:3px;border-radius:2px;background:#1890ff;
+}
+.content{padding:12px 12px 0}
+.seg{
+  display:inline-flex;border:1px solid #d9d9d9;border-radius:4px;overflow:hidden;margin-bottom:12px;
+}
+.seg button{
+  border:none;background:#fff;color:#333;font-size:14px;padding:6px 14px;cursor:pointer;line-height:1.2;
+}
+.seg button + button{border-left:1px solid #d9d9d9}
+.seg button.active{background:#1890ff;color:#fff}
+.incentive-row{
+  display:flex;align-items:baseline;gap:6px;
+  padding:10px 12px;margin-bottom:12px;
+  background:#f2f3f5;
+  border-radius:4px;
+  font-size:14px;line-height:1.5;
+  color:#4e5969;
+}
+.incentive-row .lab{color:#4e5969;flex-shrink:0}
+.incentive-row .val{color:#4e5969;word-break:break-all}
+.filters{display:flex;gap:8px;margin-bottom:8px}
+.date-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;color:#bfbfbf;font-size:13px;background:#fff;
+}
+.date-box .icon{color:#999;font-size:14px}
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-box{
+  flex:1;height:36px;border:1px solid #d9d9d9;border-radius:4px;
+  display:flex;align-items:center;padding:0 10px;gap:6px;background:#fff;
+}
+.search-box input{
+  border:none;outline:none;width:100%;font-size:13px;color:#333;background:transparent;
+}
+.search-box input::placeholder{color:#bfbfbf}
+.search-btn{
+  height:36px;padding:0 16px;border:none;border-radius:4px;
+  background:#1890ff;color:#fff;font-size:14px;cursor:pointer;white-space:nowrap;
+}
+.filter-seg{margin-bottom:12px}
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:1180px;border-collapse:collapse;table-layout:fixed}
+thead th{
+  background:#1890ff;color:#fff;font-size:13px;font-weight:600;
+  padding:10px 6px;text-align:center;white-space:nowrap;
+}
+thead th:first-child{text-align:left;padding-left:10px}
+tbody td{
+  font-size:12px;color:#333;padding:10px 6px;text-align:center;
+  border-bottom:1px solid #f0f0f0;vertical-align:middle;word-break:break-all;
+}
+tbody td:first-child{text-align:left;padding-left:10px}
+tbody tr:nth-child(even){background:#fafafa}
+.order-link{color:#1890ff;text-decoration:none}
+.tag{
+  display:inline-block;font-size:11px;padding:1px 6px;border-radius:2px;white-space:nowrap;
+}
+.tag-ok{color:#52c41a;background:#f6ffed;border:1px solid #b7eb8f}
+.tag-warn{color:#fa8c16;background:#fff7e6;border:1px solid #ffd591}
+.tag-muted{color:#999;background:#fafafa;border:1px solid #d9d9d9}
+.tag-no{color:#ff4d4f;background:#fff2f0;border:1px solid #ffccc7}
+.footer{
+  position:fixed;left:0;right:0;bottom:0;
+  background:#fff;border-top:1px solid #f0f0f0;
+  text-align:center;padding:14px 12px;color:#666;font-size:14px;
+}
+.footer-inner{max-width:750px;margin:0 auto}
+.placeholder{
+  padding:40px 16px;text-align:center;color:#999;font-size:14px;
+}
+.hidden{display:none!important}
+.tip{
+  margin:-4px 0 12px;font-size:12px;color:#999;line-height:1.6;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-head">
+    <button class="back" type="button" onclick="history.back()">‹</button>
+    动保提成详情
+  </div>
+  <div class="top-tabs">
+    <button class="top-tab" data-main="绩效">绩效</button>
+    <button class="top-tab active" data-main="提成">提成</button>
+    <button class="top-tab" data-main="站台单吨利润">站台单吨利润</button>
+  </div>
+
+  <div class="content" id="panel-提成">
+    <div class="seg" id="comm-seg">
+      <button data-comm-cat="豆粕">豆粕</button>
+      <button data-comm-cat="玉米">玉米</button>
+      <button data-comm-cat="预混料">预混料</button>
+      <button class="active" data-comm-cat="动保">动保</button>
+    </div>
+
+    <div id="animal-block">
+      <div class="incentive-row">
+        <span class="lab">激励提成:</span>
+        <span class="val" id="s-order-amt">1600 = 2000 × 0.5 + 1000 × 0.6</span>
+      </div>
+
+      <div class="filters">
+        <div class="date-box"><span>2026-08-01</span><span class="icon">📅</span></div>
+        <div class="date-box"><span>2026-08-31</span><span class="icon">📅</span></div>
+      </div>
+      <div class="search-row">
+        <div class="search-box">
+          <span>🔍</span>
+          <input id="kw" type="search" placeholder="请输入客户名称或有赞订单号" />
+        </div>
+        <button class="search-btn" id="btnSearch" type="button">搜索</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:10%">客户名称</th>
+              <th style="width:16%">提成金额</th>
+              <th style="width:10%">订单金额</th>
+              <th style="width:14%">确认收货时间</th>
+              <th style="width:18%">有赞订单号</th>
+              <th style="width:14%">商品名称</th>
+              <th style="width:10%">支付方式</th>
+              <th style="width:8%">分销类型</th>
+              <th style="width:8%">销售</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="placeholder hidden" id="other-block">暂无数据</div>
+  </div>
+
+  <div class="content hidden" id="panel-绩效">
+    <div class="placeholder">绩效明细请从鸡窝绩效列表进入</div>
+  </div>
+  <div class="content hidden" id="panel-站台单吨利润">
+    <div class="placeholder">暂无站台单吨利润数据</div>
+  </div>
+</div>
+
+<div class="footer" id="footer">
+  <div class="footer-inner">本月动保提成：<span id="total">386.40元（已发放）· 暂不发放 698.00元</span></div>
+</div>
+
+<script>
+const ROWS = [
+  {name:"闫铁柱",comm:"159.60=799*2%*1",amount:799,time:"2026-08-26 21:09:14",orderNo:"E2026082612345678",goodsName:"动保消毒液 5L",pay:"微信支付",status:"已发放",dist:"直销",sales:"朱震"},
+  {name:"王凤柱",comm:"7.60=38*2%*1",amount:38,time:"2026-08-25 18:20:33",orderNo:"E2026082511223344",goodsName:"碘伏消毒液 1L",pay:"微信支付",status:"已发放",dist:"直销",sales:"朱震"},
+  {name:"张伟",comm:"41.40=1380*3%*1",amount:1380,time:"2026-08-22 15:08:02",orderNo:"E2026082210099887",goodsName:"禽用多维 1kg",pay:"组合支付",status:"已发放",dist:"直销",sales:"朱震"},
+  {name:"李明",comm:"178.20=594*3%*1",amount:594,time:"2026-08-18 11:42:19",orderNo:"E2026081807766554",goodsName:"球虫净 500ml",pay:"微信支付",status:"已发放",dist:"分销",sales:"朱震"},
+  {name:"赵磊",comm:"0.00=698*2%*0",amount:698,time:"2026-08-16 09:15:44",orderNo:"E2026081605544332",goodsName:"消毒粉 20kg",pay:"储值卡支付",status:"暂不发放",dist:"直销",sales:"朱震"},
+  {name:"刘洋",comm:"-38.00=1900*2%*1",amount:-190,time:"2026-08-10 14:05:47",orderNo:"E2026081003322110",goodsName:"动保消毒液 5L",pay:"微信支付",status:"退款扣减",dist:"直销",sales:"朱震"},
+  {name:"党闯",comm:"38.00=1900*2%*1",amount:1900,time:"2026-08-10 10:30:12",orderNo:"E2026081003322110",goodsName:"动保消毒液 5L",pay:"微信支付",status:"已发放",dist:"直销",sales:"朱震"}
+];
+
+let mainTab = "提成";
+let commCat = "动保";
+let keyword = "";
+
+function parseComm(str){
+  const m = String(str).match(/^(-?[\d.]+)=/);
+  return m ? Number(m[1]) : 0;
+}
+
+function currentRows(){
+  let rows = ROWS.slice();
+  const q = keyword.trim();
+  if(q) rows = rows.filter(r => r.name.includes(q) || r.orderNo.includes(q));
+  return rows;
+}
+
+function render(){
+  const isAnimal = commCat === "动保";
+  document.getElementById("animal-block").classList.toggle("hidden", !isAnimal);
+  document.getElementById("other-block").classList.toggle("hidden", isAnimal);
+  document.getElementById("footer").style.display = (mainTab === "提成" && isAnimal) ? "block" : "none";
+  if(!isAnimal) return;
+
+  const rows = currentRows();
+  document.getElementById("tbody").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${r.comm}</td>
+      <td>${r.amount < 0 ? Math.abs(r.amount) : r.amount}</td>
+      <td>${r.time}</td>
+      <td><a class="order-link" href="javascript:void(0)">${r.orderNo}</a></td>
+      <td>${r.goodsName}</td>
+      <td>${r.pay}</td>
+      <td>${r.dist}</td>
+      <td>${r.sales}</td>
+    </tr>
+  `).join("");
+
+  const paid = rows.filter(r => r.status === "已发放").reduce((s,r)=>s+parseComm(r.comm),0);
+  const pending = rows.filter(r => r.status === "暂不发放").reduce((s,r)=>s+r.amount,0);
+  const refund = rows.filter(r => r.status === "退款扣减").reduce((s,r)=>s+parseComm(r.comm),0);
+  document.getElementById("total").textContent = keyword
+    ? `${(paid + refund).toFixed(2)}元 · 暂不发放 ${pending.toFixed(2)}元`
+    : "386.40元（已发放）· 暂不发放 698.00元";
+}
+
+document.querySelectorAll(".top-tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".top-tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    mainTab = btn.dataset.main;
+    document.getElementById("panel-提成").classList.toggle("hidden", mainTab!=="提成");
+    document.getElementById("panel-绩效").classList.toggle("hidden", mainTab!=="绩效");
+    document.getElementById("panel-站台单吨利润").classList.toggle("hidden", mainTab!=="站台单吨利润");
+    render();
+  });
+});
+
+document.querySelectorAll("#comm-seg button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    if(btn.dataset.commCat !== "动保"){
+      if(btn.dataset.commCat === "预混料") location.href = "./鸡窝预混料提成详情.html";
+      else location.href = "./鸡窝绩效列表.html";
+      return;
+    }
+    document.querySelectorAll("#comm-seg button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    commCat = btn.dataset.commCat;
+    render();
+  });
+});
+
+function doSearch(){
+  keyword = document.getElementById("kw").value || "";
+  render();
+}
+document.getElementById("btnSearch").addEventListener("click", doSearch);
+document.getElementById("kw").addEventListener("keydown",e=>{
+  if(e.key==="Enter") doSearch();
+});
+
+render();
+</script>
+</body>
+</html>

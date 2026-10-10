@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>定位授权 · 客户端/业务端原型</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#e8e8e8;color:#333;font-size:14px}
+.demo-bar{position:sticky;top:0;z-index:100;background:#1f1f1f;color:#fff;padding:10px 12px;font-size:12px}
+.demo-bar .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.demo-bar label{opacity:.85;margin-right:4px}
+.demo-bar button,.demo-bar .chip{
+  border:0;border-radius:4px;padding:6px 10px;font-size:12px;background:#444;color:#fff;cursor:pointer
+}
+.demo-bar button.active{background:#1677ff}
+.demo-bar .chip.on{background:#52c41a}
+.demo-bar .chip.off{background:#ff4d4f}
+.demo-bar .hint{margin-top:8px;opacity:.75;line-height:1.5}
+.phone{max-width:390px;margin:12px auto 24px;background:#f5f5f5;min-height:720px;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.12);position:relative}
+.nav{height:46px;background:#fff;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #eee;font-size:16px;font-weight:600;position:relative}
+.nav .back{position:absolute;left:12px;color:#1677ff;font-size:14px;font-weight:400;cursor:pointer}
+.role{position:absolute;right:12px;font-size:11px;color:#999;font-weight:400}
+.page{padding:12px;padding-bottom:88px;min-height:674px}
+.card{background:#fff;border-radius:8px;padding:14px;margin-bottom:10px}
+.card h3{font-size:15px;margin-bottom:10px}
+.form-item{margin-bottom:12px}
+.form-item label{display:block;font-size:12px;color:#666;margin-bottom:6px}
+.form-item input,.form-item select{width:100%;height:40px;border:1px solid #d9d9d9;border-radius:6px;padding:0 10px;font-size:14px}
+.meta{font-size:12px;color:#999;line-height:1.6}
+.list-item{background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer}
+.list-item .t{font-weight:600;margin-bottom:4px}
+.list-item .s{font-size:12px;color:#999}
+.tag{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;background:#e6f4ff;color:#1677ff;margin-left:6px}
+.footer{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #eee;padding:10px 12px}
+.btn{width:100%;height:44px;border:0;border-radius:8px;background:#1677ff;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.btn:disabled{background:#bbb;cursor:not-allowed}
+.btn-ghost{background:#fff;border:1px solid #d9d9d9;color:#333}
+.mask{position:absolute;inset:46px 0 0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:20}
+.mask.on{display:flex}
+.sheet{background:#fff;border-radius:12px 12px 0 0;padding:20px 16px 24px;width:100%}
+.sheet h4{font-size:17px;margin-bottom:8px}
+.sheet p{font-size:13px;color:#666;line-height:1.7;margin-bottom:16px}
+.sheet .gps{font-size:12px;color:#52c41a;background:#f6ffed;padding:8px 10px;border-radius:6px;margin-bottom:12px;display:none}
+.sheet .actions{display:flex;flex-direction:column;gap:8px}
+.toast{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);background:rgba(0,0,0,.78);color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;display:none;z-index:30;max-width:80%;text-align:center}
+.empty-block{text-align:center;padding:48px 20px;color:#999}
+.empty-block b{display:block;color:#333;margin-bottom:8px;font-size:15px}
+</style>
+</head>
+<body>
+<div class="demo-bar">
+  <div><b>GPS 定位授权原型</b> · 环节 ∧ 平台 ∧ 区域 ∧ 客户 四维判定</div>
+  <div class="row">
+    <label>本页环节</label>
+    <span id="stageChip" class="chip on">下单：开</span>
+    <label>平台</label>
+    <button type="button" class="active" data-plat="app" onclick="setPlat(this)">APP</button>
+    <button type="button" data-plat="wap" onclick="setPlat(this)">WAP</button>
+    <button type="button" data-plat="pc" onclick="setPlat(this)">PC</button>
+    <button type="button" id="btnPlatOn" class="chip on" onclick="togglePlatOn()">平台强制：开</button>
+  </div>
+  <div class="row">
+    <label>区域</label>
+    <button type="button" class="active" data-region="华东" onclick="setRegion(this)">华东</button>
+    <button type="button" data-region="甘宁" onclick="setRegion(this)">甘宁</button>
+    <button type="button" data-region="晋陕" onclick="setRegion(this)">晋陕</button>
+    <button type="button" id="btnRegionExempt" class="chip on" onclick="toggleRegionExempt()">区域名单含甘宁：是</button>
+  </div>
+  <div class="row">
+    <label>客户</label>
+    <button type="button" id="btnWl" class="chip off" onclick="toggleWl()">非白名单</button>
+    <label>角色</label>
+    <button type="button" class="active" data-role="customer" onclick="setRole(this)">客户</button>
+    <button type="button" data-role="sales" onclick="setRole(this)">业务代操作</button>
+  </div>
+  <div class="row">
+    <label>页面</label>
+    <button type="button" class="active" data-page="register" onclick="setPage(this)">注册</button>
+    <button type="button" data-page="order" onclick="setPage(this)">下单</button>
+    <button type="button" data-page="pickup" onclick="setPage(this)">申请提货</button>
+    <button type="button" data-page="cashier" onclick="setPage(this)">收银台</button>
+    <button type="button" data-page="contract_list" onclick="setPage(this)">合同列表</button>
+    <button type="button" data-page="contract_detail" onclick="setPage(this)">合同详情</button>
+    <button type="button" data-page="pickup_list" onclick="setPage(this)">提货单列表</button>
+    <button type="button" data-page="pickup_detail" onclick="setPage(this)">提货单详情</button>
+  </div>
+  <div class="row">
+    <label>环节开关</label>
+    <button type="button" class="chip on" data-stage-key="register" onclick="toggleStage(this)">注册开</button>
+    <button type="button" class="chip on" data-stage-key="order" onclick="toggleStage(this)">下单开</button>
+    <button type="button" class="chip on" data-stage-key="pickup" onclick="toggleStage(this)">提货开</button>
+    <button type="button" class="chip on" data-stage-key="pay" onclick="toggleStage(this)">付款开</button>
+  </div>
+  <div class="hint" id="sceneHint"></div>
+</div>
+
+<div class="phone">
+  <div class="nav">
+    <span class="back" onclick="toast('返回（原型）')">返回</span>
+    <span id="navTitle">客户注册</span>
+    <span class="role" id="navRole">客户</span>
+  </div>
+  <div class="page" id="pageBody"></div>
+  <div class="footer" id="pageFoot"></div>
+
+  <div class="mask" id="mask">
+    <div class="sheet">
+      <h4>需要开启位置权限</h4>
+      <p id="authCopy">为保障交易安全，需开启位置权限后才能继续。授权后将采集当前经纬度用于风控核验。</p>
+      <div class="gps" id="gpsBox">已获取定位：31.2304, 121.4737 · 精度 25m</div>
+      <div class="actions">
+        <button class="btn" type="button" onclick="grantLoc()">开启定位</button>
+        <button class="btn btn-ghost" type="button" id="btnSkip" onclick="skipLoc()" style="display:none">暂不开启</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const PAGES = {
+  register:{title:"客户注册", submit:"提交注册", kind:"form", stage:"register"},
+  order:{title:"确认下单", submit:"提交订单", kind:"form", stage:"order"},
+  pickup:{title:"申请提货", submit:"提交提货申请", kind:"form", stage:"pickup"},
+  cashier:{title:"收银台", submit:"立即支付", kind:"form", stage:"pay"},
+  contract_list:{title:"合同列表", submit:null, kind:"list", detail:"contract_detail", stage:"order"},
+  contract_detail:{title:"合同详情", submit:null, kind:"detail", stage:"order"},
+  pickup_list:{title:"提货单列表", submit:null, kind:"list", detail:"pickup_detail", stage:"pickup"},
+  pickup_detail:{title:"提货单详情", submit:null, kind:"detail", stage:"pickup"}
+};
+const STAGE_LABEL={register:"注册",order:"下单",pickup:"提货",pay:"付款"};
+
+let state = {
+  stages:{register:true, order:true, pickup:true, pay:true},
+  platformOn:true,
+  platform:"app",
+  region:"华东",
+  regionExemptGanning:true, // 演示：甘宁已加入区域名单 → 不强制
+  whitelist:false,
+  role:"customer",
+  page:"register",
+  hasGps:false,
+  denied:false
+};
+
+function toast(m){
+  const el=document.getElementById("toast");
+  el.textContent=m; el.style.display="block";
+  clearTimeout(toast._t); toast._t=setTimeout(()=>el.style.display="none",1800);
+}
+function currentStage(){ return PAGES[state.page].stage; }
+function regionExempt(){
+  return state.regionExemptGanning && state.region==="甘宁";
+}
+/** 是否需要强制 GPS（白名单仍弹可选） */
+function forceRequired(){
+  const stageOn=!!state.stages[currentStage()];
+  return stageOn && state.platformOn && !regionExempt() && !state.whitelist;
+}
+function authApplicable(){
+  // 环节关 / 平台关 / 区域不开通 → 完全不走授权
+  const stageOn=!!state.stages[currentStage()];
+  if(!stageOn || !state.platformOn || regionExempt()) return false;
+  return true; // 含白名单：仍可弹可选
+}
+function updateHint(){
+  const st=STAGE_LABEL[currentStage()];
+  const chip=document.getElementById("stageChip");
+  const on=!!state.stages[currentStage()];
+  chip.textContent=`${st}：${on?"开":"关"}`;
+  chip.className="chip "+(on?"on":"off");
+  const h=document.getElementById("sceneHint");
+  if(!state.stages[currentStage()]) h.textContent=`环节「${st}」关闭：本页不触发强制 GPS。`;
+  else if(!state.platformOn) h.textContent=`平台「${state.platform.toUpperCase()}」关闭强制：本页不触发。`;
+  else if(regionExempt()) h.textContent=`「甘宁」已在区域名单：不强制，可不授权（也可自愿授权）。`;
+  else if(state.whitelist) h.textContent="客户在白名单：可拒权并继续。";
+  else h.textContent="四维均命中强制：必须授权，否则不可访问/操作。";
+}
+function toggleStage(btn){
+  const k=btn.dataset.stageKey;
+  state.stages[k]=!state.stages[k];
+  const on=state.stages[k];
+  btn.textContent=STAGE_LABEL[k]+(on?"开":"关");
+  btn.className="chip "+(on?"on":"off");
+  state.denied=false; updateHint(); render();
+}
+function setPlat(btn){
+  document.querySelectorAll("[data-plat]").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active"); state.platform=btn.dataset.plat; render();
+}
+function togglePlatOn(){
+  state.platformOn=!state.platformOn;
+  const b=document.getElementById("btnPlatOn");
+  b.textContent="平台强制："+(state.platformOn?"开":"关");
+  b.className="chip "+(state.platformOn?"on":"off");
+  state.denied=false; updateHint(); render();
+}
+function setRegion(btn){
+  document.querySelectorAll("[data-region]").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active"); state.region=btn.dataset.region; state.denied=false; updateHint(); render();
+}
+function toggleRegionExempt(){
+  state.regionExemptGanning=!state.regionExemptGanning;
+  const b=document.getElementById("btnRegionExempt");
+  b.textContent="区域名单含甘宁："+(state.regionExemptGanning?"是":"否");
+  b.className="chip "+(state.regionExemptGanning?"on":"off");
+  state.denied=false; updateHint(); render();
+}
+function toggleWl(){
+  state.whitelist=!state.whitelist;
+  const b=document.getElementById("btnWl");
+  b.textContent=state.whitelist?"白名单":"非白名单";
+  b.className="chip "+(state.whitelist?"on":"off");
+  state.denied=false; updateHint(); render();
+}
+function setRole(btn){
+  document.querySelectorAll("[data-role]").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  state.role=btn.dataset.role;
+  document.getElementById("navRole").textContent=state.role==="sales"?"业务员":"客户";
+  render();
+}
+function setPage(btn){
+  document.querySelectorAll("[data-page]").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  state.page=btn.dataset.page;
+  // 切页重置「本页会话定位」演示：仅演示进入门禁，保留 hasGps 更贴近真实会话
+  render();
+}
+
+function needGate(){
+  if(!authApplicable()) return false;
+  if(state.hasGps) return false;
+  if(state.whitelist && state.denied) return false;
+  return true;
+}
+function canSkip(){ return authApplicable() && state.whitelist; }
+function isBlocked(){
+  return forceRequired() && !state.hasGps;
+}
+function locStatusText(){
+  if(!authApplicable()) return "本页不强制（环节/平台/区域配置）";
+  if(state.hasGps) return "已授权并采集";
+  if(state.whitelist && state.denied) return "白名单拒权（可继续）";
+  return "待授权";
+}
+
+function renderForm(p){
+  const roleTip=state.role==="sales"?"（业务代操作，采集业务员端 GPS）":"";
+  const fields={
+    register:`<div class="form-item"><label>客户名称</label><input value="尚兆立养殖场" /></div>
+      <div class="form-item"><label>手机号</label><input value="138****5678" /></div>`,
+    order:`<div class="form-item"><label>商品</label><input value="预混料 40kg × 10" disabled /></div>
+      <div class="form-item"><label>收货地址</label><input value="江苏省常州市..." /></div>`,
+    pickup:`<div class="form-item"><label>提货仓库</label><select><option>常州仓</option><option>徐州仓</option></select></div>
+      <div class="form-item"><label>提货数量</label><input value="5 吨" /></div>`,
+    cashier:`<div class="card" style="margin:0 0 12px;background:#f6ffed"><div class="t">应付金额</div><div style="font-size:28px;font-weight:700;color:#52c41a;margin-top:6px">¥12,800.00</div></div>
+      <div class="form-item"><label>支付方式</label><select><option>企业余额</option><option>银行转账</option></select></div>`
+  };
+  return `<div class="card"><h3>${p.title}${roleTip}</h3>${fields[state.page]||""}
+    <div class="meta">区域：${state.region} · 平台：${state.platform.toUpperCase()}<br>定位状态：${locStatusText()}</div>
+  </div>`;
+}
+function renderList(p){
+  const name=state.page.includes("contract")?"购销合同":"提货单";
+  return `<div class="meta" style="margin-bottom:8px">定位状态：${locStatusText()}</div>
+    <div class="list-item" onclick="goDetail('${p.detail}')"><div class="t">${name}-20260911001<span class="tag">进行中</span></div><div class="s">客户：尚兆立养殖场 · 2026-09-11</div></div>
+    <div class="list-item" onclick="goDetail('${p.detail}')"><div class="t">${name}-20260910008<span class="tag">已完成</span></div><div class="s">客户：党闯合作社 · 2026-09-10</div></div>`;
+}
+function renderDetail(){
+  return `<div class="card"><h3>${PAGES[state.page].title}</h3>
+    <div class="meta">单号：20260911001<br>客户：尚兆立养殖场<br>区域：${state.region}<br>状态：进行中<br>定位：${state.hasGps?"31.2304, 121.4737":"—"}</div>
+  </div>`;
+}
+
+function goDetail(page){
+  if(isBlocked()){ showMask(); toast("请先开启定位"); return; }
+  const btn=document.querySelector(`[data-page="${page}"]`);
+  if(btn) setPage(btn);
+}
+
+function showMask(){
+  const mask=document.getElementById("mask");
+  mask.classList.add("on");
+  document.getElementById("btnSkip").style.display=canSkip()?"block":"none";
+  document.getElementById("authCopy").textContent=canSkip()
+    ?"建议开启位置权限以便风控核验。您在白名单内，可选择「暂不开启」继续使用。"
+    :"为保障交易安全，需开启位置权限后才能继续。请点击「开启定位」授权。";
+  document.getElementById("gpsBox").style.display="none";
+}
+function hideMask(){ document.getElementById("mask").classList.remove("on"); }
+
+function grantLoc(){
+  state.hasGps=true; state.denied=false;
+  document.getElementById("gpsBox").style.display="block";
+  setTimeout(()=>{ hideMask(); render(); toast("定位授权成功，已埋点上报"); },400);
+}
+function skipLoc(){
+  if(!canSkip()){ toast("非白名单客户必须授权"); return; }
+  state.denied=true; state.hasGps=false;
+  hideMask(); render(); toast("已跳过定位（白名单）");
+}
+
+function onSubmit(){
+  if(!authApplicable()){ toast("提交成功（本页不强制定位）"); return; }
+  if(state.hasGps){ toast("提交成功，已携带经纬度"); return; }
+  if(state.whitelist){ toast("提交成功（白名单无坐标）"); return; }
+  showMask(); toast("提交前需先授权定位");
+}
+
+function render(){
+  const p=PAGES[state.page];
+  document.getElementById("navTitle").textContent=
+    (state.role==="sales" && ["order","pickup"].includes(state.page)?"代":"")+p.title;
+  let body="";
+  if(p.kind==="form") body=renderForm(p);
+  else if(p.kind==="list") body=renderList(p);
+  else body=renderDetail();
+
+  const foot=document.getElementById("pageFoot");
+  if(p.submit){
+    foot.style.display="block";
+    foot.innerHTML=`<button class="btn" type="button" id="submitBtn" onclick="onSubmit()">${state.role==="sales"&&["order","pickup"].includes(state.page)?"代"+p.submit:p.submit}</button>`;
+  }else{
+    foot.style.display="none";
+    foot.innerHTML="";
+  }
+
+  const mustBlock = isBlocked();
+  const askOptional = needGate() && state.whitelist;
+
+  if(mustBlock || askOptional){
+    document.getElementById("pageBody").innerHTML=body;
+    if(mustBlock){
+      document.getElementById("pageBody").innerHTML=`<div class="empty-block"><b>页面已锁定</b>开启位置权限后可继续访问「${p.title}」</div>`+body;
+      const btn=document.getElementById("submitBtn"); if(btn) btn.disabled=true;
+    }
+    showMask();
+  }else{
+    document.getElementById("pageBody").innerHTML=body;
+    hideMask();
+  }
+  updateHint();
+}
+
+render();
+</script>
+</body>
+</html>

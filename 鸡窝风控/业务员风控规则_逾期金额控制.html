@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>交易风控规则配置 · 业务员 · 逾期金额</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      min-height: 100vh;
+      padding: 16px 24px 32px;
+    }
+    .page {
+      background: #fff;
+      border-radius: 2px;
+      min-height: calc(100vh - 48px);
+      padding: 16px 24px 24px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* 筛选 */
+    .filter {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 16px 0 12px;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-item label { color: rgba(0,0,0,.85); white-space: nowrap; }
+    .select, .input {
+      height: 32px;
+      padding: 4px 11px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      font-size: 14px;
+      font-family: inherit;
+      color: rgba(0,0,0,.85);
+      background: #fff;
+      outline: none;
+      min-width: 180px;
+    }
+    .select:hover, .input:hover { border-color: #40a9ff; }
+    .select:focus, .input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,.2); }
+    .select.placeholder { color: rgba(0,0,0,.25); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+      padding: 0 15px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn:hover { color: #40a9ff; border-color: #40a9ff; }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; color: #fff; }
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: #1890ff;
+      padding: 0 4px;
+      height: auto;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .btn-link:hover { color: #40a9ff; }
+    .btn-link + .btn-link { margin-left: 8px; }
+
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin: 8px 0 12px;
+    }
+
+    /* Tab */
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 16px;
+    }
+    .tabs {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+    .tab {
+      position: relative;
+      padding: 12px 0;
+      color: rgba(0,0,0,.65);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .tab:hover { color: #1890ff; }
+    .tab.active { color: #1890ff; font-weight: 500; }
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: #1890ff;
+    }
+    .tabs-row .btn-add {
+      flex-shrink: 0;
+      margin-bottom: 6px;
+    }
+
+    /* 表格 */
+    .table-wrap { overflow-x: auto; margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; min-width: 960px; }
+    th, td {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      color: rgba(0,0,0,.85);
+      font-weight: 500;
+      background: #fafafa;
+      white-space: nowrap;
+    }
+    td { color: rgba(0,0,0,.65); }
+    tr:hover td { background: #fafafa; }
+    .col-new {
+      background: #fff7e6 !important;
+      color: #d46b08;
+      font-weight: 500;
+    }
+    th.col-new { background: #fff7e6 !important; }
+    .tag-new {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 0 6px;
+      font-size: 12px;
+      line-height: 20px;
+      border-radius: 2px;
+      background: #fff7e6;
+      border: 1px solid #ffd591;
+      color: #d46b08;
+      font-weight: 400;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      color: rgba(0,0,0,.65);
+      font-size: 14px;
+    }
+    .page-btn {
+      min-width: 32px;
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .page-btn.active {
+      border-color: #1890ff;
+      color: #1890ff;
+    }
+    .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* 弹窗 */
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .mask.show { display: flex; }
+    .modal {
+      width: 520px;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 2px;
+      box-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.08);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .modal-close {
+      border: none;
+      background: none;
+      font-size: 16px;
+      color: rgba(0,0,0,.45);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover { color: rgba(0,0,0,.85); }
+    .modal-bd {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-ft {
+      padding: 10px 16px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-label {
+      width: 120px;
+      flex-shrink: 0;
+      text-align: right;
+      padding-right: 12px;
+      line-height: 32px;
+      color: rgba(0,0,0,.85);
+    }
+    .form-label .req {
+      color: #ff4d4f;
+      margin-right: 2px;
+      font-family: SimSun, sans-serif;
+    }
+    .form-ctrl {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      min-height: 32px;
+    }
+    .form-ctrl .input { flex: 1; min-width: 160px; max-width: 280px; }
+    .form-ctrl .unit { color: rgba(0,0,0,.65); }
+    .form-ctrl .input.readonly {
+      background: #f5f5f5;
+      color: rgba(0,0,0,.65);
+      cursor: not-allowed;
+    }
+    .radio, .checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      line-height: 32px;
+    }
+    .radio input, .checkbox input {
+      width: 16px;
+      height: 16px;
+      accent-color: #1890ff;
+      cursor: pointer;
+    }
+    .checkbox.is-disabled {
+      cursor: default;
+      color: rgba(0,0,0,.45);
+    }
+    .checkbox.is-disabled input { cursor: default; }
+    .hint {
+      width: 100%;
+      font-size: 12px;
+      color: rgba(0,0,0,.45);
+      line-height: 1.5;
+      margin-top: -4px;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 80px;
+      transform: translateX(-50%);
+      z-index: 2000;
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+
+    .demo-note {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #e6f7ff;
+      border: 1px solid #91d5ff;
+      border-radius: 2px;
+      font-size: 13px;
+      color: #096dd9;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-title">交易风控规则配置</div>
+
+    <div class="tabs-row">
+      <div class="tabs">
+        <button type="button" class="tab" data-tab="buyer">买家</button>
+        <button type="button" class="tab active" data-tab="sales">业务员</button>
+      </div>
+      <button type="button" class="btn btn-primary btn-add" id="btnAdd">+ 新增</button>
+    </div>
+
+    <div class="filter">
+      <div class="filter-item">
+        <label>业务员</label>
+        <select class="select placeholder" id="filterSales">
+          <option value="">请选择</option>
+          <option value="彭建园">彭建园</option>
+          <option value="李庆兰">李庆兰</option>
+          <option value="周旭">周旭</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary" id="btnSearch">查询</button>
+      <button type="button" class="btn" id="btnReset">重置</button>
+    </div>
+
+    <div class="table-wrap" id="panel-sales">
+      <table>
+        <thead>
+          <tr>
+            <th>业务员名字</th>
+            <th>更新时间</th>
+            <th>豆粕/玉米额度</th>
+            <th>预混料额度</th>
+            <th class="col-new">豆粕/玉米逾期金额</th>
+            <th class="col-new">预混料逾期金额</th>
+            <th>更新人</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="pagination">
+        <button type="button" class="page-btn" disabled>‹</button>
+        <button type="button" class="page-btn active">1</button>
+        <button type="button" class="page-btn">2</button>
+        <button type="button" class="page-btn">›</button>
+        <span>10 条/页</span>
+      </div>
+    </div>
+
+    <div class="hidden" id="panel-buyer" style="padding:48px;text-align:center;color:rgba(0,0,0,.45)">
+      买家规则配置（现网，本原型不展开）
+    </div>
+  </div>
+
+  <!-- 新增业务员规则 -->
+  <div class="mask" id="maskAdd">
+    <div class="modal">
+      <div class="modal-hd">
+        <span>新增业务员规则</span>
+        <button type="button" class="modal-close" data-close="maskAdd">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-row">
+          <div class="form-label">业务员类型</div>
+          <div class="form-ctrl">
+            <label class="radio"><input type="radio" name="addType" value="新业务员" checked /> 新业务员</label>
+            <label class="radio"><input type="radio" name="addType" value="老业务员" /> 老业务员</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label"><span class="req">*</span>交易品类</div>
+          <div class="form-ctrl">
+            <label class="checkbox"><input type="checkbox" id="addCatSoy" /> 豆粕/玉米</label>
+            <label class="checkbox"><input type="checkbox" id="addCatPremix" checked /> 预混料</label>
+          </div>
+        </div>
+        <div class="form-row hidden" id="addRowSoy">
+          <div class="form-label"><span class="req">*</span>豆粕/玉米限额</div>
+          <div class="form-ctrl">
+            <input class="input" id="addLimitSoy" type="number" placeholder="请输入" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row hidden" id="addRowOverdueSoy">
+          <div class="form-label">豆粕/玉米逾期金额</div>
+          <div class="form-ctrl">
+            <input class="input" id="addOverdueSoy" type="number" placeholder="请输入逾期金额上限" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row" id="addRowPremix">
+          <div class="form-label"><span class="req">*</span>预混料限额</div>
+          <div class="form-ctrl">
+            <input class="input" id="addLimitPremix" type="number" value="60000" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row" id="addRowOverduePremix">
+          <div class="form-label">预混料逾期金额</div>
+          <div class="form-ctrl">
+            <input class="input" id="addOverduePremix" type="number" placeholder="请输入逾期金额上限" value="50000" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn" data-close="maskAdd">取消</button>
+        <button type="button" class="btn btn-primary" id="btnAddSubmit">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑 -->
+  <div class="mask" id="maskEdit">
+    <div class="modal">
+      <div class="modal-hd">
+        <span>编辑</span>
+        <button type="button" class="modal-close" data-close="maskEdit">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-row">
+          <div class="form-label"><span class="req">*</span>业务员</div>
+          <div class="form-ctrl">
+            <input class="input readonly" id="editName" type="text" readonly />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label"><span class="req">*</span>交易品类</div>
+          <div class="form-ctrl">
+            <label class="checkbox"><input type="checkbox" id="editCatSoy" /> 豆粕/玉米</label>
+            <label class="checkbox"><input type="checkbox" id="editCatPremix" checked /> 预混料</label>
+          </div>
+        </div>
+        <div class="form-row hidden" id="editRowSoy">
+          <div class="form-label"><span class="req">*</span>豆粕/玉米限额</div>
+          <div class="form-ctrl">
+            <input class="input" id="editLimitSoy" type="number" placeholder="请输入" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row hidden" id="editRowOverdueSoy">
+          <div class="form-label">豆粕/玉米逾期金额</div>
+          <div class="form-ctrl">
+            <input class="input" id="editOverdueSoy" type="number" placeholder="请输入逾期金额上限" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row" id="editRowPremix">
+          <div class="form-label"><span class="req">*</span>预混料限额</div>
+          <div class="form-ctrl">
+            <input class="input" id="editLimitPremix" type="number" value="60000" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+        <div class="form-row" id="editRowOverduePremix">
+          <div class="form-label">预混料逾期金额</div>
+          <div class="form-ctrl">
+            <input class="input" id="editOverduePremix" type="number" placeholder="请输入逾期金额上限" />
+            <span class="unit">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn" data-close="maskEdit">取消</button>
+        <button type="button" class="btn btn-primary" id="btnEditSubmit">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看 -->
+  <div class="mask" id="maskView">
+    <div class="modal">
+      <div class="modal-hd">
+        <span>查看</span>
+        <button type="button" class="modal-close" data-close="maskView">×</button>
+      </div>
+      <div class="modal-bd" id="viewBody"></div>
+      <div class="modal-ft">
+        <button type="button" class="btn btn-primary" data-close="maskView">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const ROWS = [
+      { name: "彭建园", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "50000", updater: "系统" },
+      { name: "李庆兰", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "50000", updater: "系统" },
+      { name: "周旭", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "80000", updater: "系统" },
+      { name: "张国庆", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "50000", updater: "系统" },
+      { name: "李金龙", time: "2026-09-03 23:30:01", soy: "200000", premix: "60000", overdueSoy: "100000", overduePremix: "30000", updater: "系统" },
+      { name: "陈德超", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "50000", updater: "系统" },
+      { name: "王玉东", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "100000", updater: "系统" },
+      { name: "刘军伟", time: "2026-09-03 23:30:01", soy: "-", premix: "60000", overdueSoy: "-", overduePremix: "50000", updater: "系统" }
+    ];
+
+    let editIndex = -1;
+    const $ = (s, el = document) => el.querySelector(s);
+    const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+    function toast(msg) {
+      const el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function fmt(v) {
+      return v === "-" || v === "" || v == null ? "-" : String(v);
+    }
+
+    function renderTable(list) {
+      const tb = $("#tbody");
+      tb.innerHTML = list.map((r) => `
+        <tr data-i="${ROWS.indexOf(r)}">
+          <td>${r.name}${r.isBulk ? ' <span class="tag-new">全量</span>' : ""}</td>
+          <td>${r.time}</td>
+          <td>${fmt(r.soy)}</td>
+          <td>${fmt(r.premix)}</td>
+          <td class="col-new">${fmt(r.overdueSoy)}</td>
+          <td class="col-new">${fmt(r.overduePremix)}</td>
+          <td>${r.updater}</td>
+          <td>
+            <button type="button" class="btn-link" data-act="view">查看</button>
+            <button type="button" class="btn-link" data-act="edit">编辑</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function openMask(id) {
+      $("#" + id).classList.add("show");
+    }
+    function closeMask(id) {
+      $("#" + id).classList.remove("show");
+    }
+
+    function syncCatRows(prefix) {
+      const soy = $("#" + prefix + "CatSoy").checked;
+      const premix = $("#" + prefix + "CatPremix").checked;
+      $("#" + prefix + "RowSoy").classList.toggle("hidden", !soy);
+      $("#" + prefix + "RowOverdueSoy").classList.toggle("hidden", !soy);
+      $("#" + prefix + "RowPremix").classList.toggle("hidden", !premix);
+      $("#" + prefix + "RowOverduePremix").classList.toggle("hidden", !premix);
+    }
+
+    // Tab
+    $$(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        $$(".tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const isSales = tab.dataset.tab === "sales";
+        $("#panel-sales").classList.toggle("hidden", !isSales);
+        $("#panel-buyer").classList.toggle("hidden", isSales);
+      });
+    });
+
+    // 筛选
+    $("#btnSearch").addEventListener("click", () => {
+      const v = $("#filterSales").value;
+      renderTable(v ? ROWS.filter((r) => r.name === v) : ROWS);
+    });
+    $("#btnReset").addEventListener("click", () => {
+      $("#filterSales").value = "";
+      renderTable(ROWS);
+    });
+
+    // 新增
+    $("#btnAdd").addEventListener("click", () => {
+      $("#addCatSoy").checked = false;
+      $("#addCatPremix").checked = true;
+      $("#addLimitSoy").value = "";
+      $("#addLimitPremix").value = "60000";
+      $("#addOverdueSoy").value = "";
+      $("#addOverduePremix").value = "50000";
+      $$('input[name="addType"]')[0].checked = true;
+      syncCatRows("add");
+      openMask("maskAdd");
+    });
+    $("#addCatSoy").addEventListener("change", () => syncCatRows("add"));
+    $("#addCatPremix").addEventListener("change", () => syncCatRows("add"));
+    $("#btnAddSubmit").addEventListener("click", () => {
+      const type = $$('input[name="addType"]:checked')[0].value;
+      const soyOn = $("#addCatSoy").checked;
+      const premixOn = $("#addCatPremix").checked;
+      if (!soyOn && !premixOn) {
+        toast("请至少选择一个交易品类");
+        return;
+      }
+      if (soyOn && !$("#addLimitSoy").value.trim()) {
+        toast("请填写豆粕/玉米限额");
+        return;
+      }
+      if (premixOn && !$("#addLimitPremix").value.trim()) {
+        toast("请填写预混料限额");
+        return;
+      }
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const time = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const exist = ROWS.findIndex((r) => r.name === type);
+      const row = {
+        name: type,
+        time,
+        soy: soyOn ? $("#addLimitSoy").value.trim() : "-",
+        premix: premixOn ? $("#addLimitPremix").value.trim() : "-",
+        overdueSoy: soyOn && $("#addOverdueSoy").value.trim() ? $("#addOverdueSoy").value.trim() : "-",
+        overduePremix: premixOn && $("#addOverduePremix").value.trim() ? $("#addOverduePremix").value.trim() : "-",
+        updater: "当前用户",
+        isBulk: true
+      };
+      if (exist >= 0) ROWS[exist] = row;
+      else ROWS.unshift(row);
+      renderTable(ROWS);
+      closeMask("maskAdd");
+      toast("提交成功");
+    });
+
+    // 列表操作
+    $("#tbody").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      const tr = btn.closest("tr");
+      const i = Number(tr.dataset.i);
+      const row = ROWS[i];
+      if (btn.dataset.act === "view") {
+        const hasSoy = row.soy !== "-" && row.soy !== "";
+        const hasPremix = row.premix !== "-" && row.premix !== "";
+        const typeText = row.isBulk ? row.name : (row.type || "新业务员");
+        const nameText = row.isBulk ? "-" : row.name;
+        const overdueSoyVal = hasSoy && row.overdueSoy !== "-" ? row.overdueSoy : "";
+        const overduePremixVal = hasPremix && row.overduePremix !== "-" ? row.overduePremix : "";
+        $("#viewBody").innerHTML = `
+          <div class="form-row">
+            <div class="form-label">业务员类型</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${typeText}" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">业务员</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${nameText}" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">交易品类</div>
+            <div class="form-ctrl">
+              <label class="checkbox is-disabled"><input type="checkbox" disabled ${hasSoy ? "checked" : ""} /> 豆粕/玉米</label>
+              <label class="checkbox is-disabled"><input type="checkbox" disabled ${hasPremix ? "checked" : ""} /> 预混料</label>
+            </div>
+          </div>
+          ${hasSoy ? `
+          <div class="form-row">
+            <div class="form-label">豆粕/玉米限额</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${row.soy}" /><span class="unit">元</span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">豆粕/玉米逾期金额</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${overdueSoyVal}" placeholder="未配置" /><span class="unit">元</span></div>
+          </div>` : ""}
+          ${hasPremix ? `
+          <div class="form-row">
+            <div class="form-label">预混料限额</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${row.premix}" /><span class="unit">元</span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">预混料逾期金额</div>
+            <div class="form-ctrl"><input class="input readonly" type="text" readonly value="${overduePremixVal}" placeholder="未配置" /><span class="unit">元</span></div>
+          </div>` : ""}
+        `;
+        openMask("maskView");
+      }
+      if (btn.dataset.act === "edit") {
+        editIndex = i;
+        $("#editName").value = row.name;
+        const hasSoy = row.soy !== "-" && row.soy !== "";
+        const hasPremix = row.premix !== "-" && row.premix !== "";
+        $("#editCatSoy").checked = hasSoy;
+        $("#editCatPremix").checked = hasPremix || !hasSoy;
+        $("#editLimitSoy").value = hasSoy ? row.soy : "";
+        $("#editLimitPremix").value = hasPremix ? row.premix : "60000";
+        $("#editOverdueSoy").value = hasSoy && row.overdueSoy !== "-" ? row.overdueSoy : "";
+        $("#editOverduePremix").value = hasPremix && row.overduePremix !== "-" ? row.overduePremix : "50000";
+        syncCatRows("edit");
+        openMask("maskEdit");
+      }
+    });
+
+    $("#editCatSoy").addEventListener("change", () => syncCatRows("edit"));
+    $("#editCatPremix").addEventListener("change", () => syncCatRows("edit"));
+    $("#btnEditSubmit").addEventListener("click", () => {
+      if (editIndex < 0) return;
+      const soyOn = $("#editCatSoy").checked;
+      const premixOn = $("#editCatPremix").checked;
+      if (!soyOn && !premixOn) {
+        toast("请至少选择一个交易品类");
+        return;
+      }
+      if (soyOn && !$("#editLimitSoy").value.trim()) {
+        toast("请填写豆粕/玉米限额");
+        return;
+      }
+      if (premixOn && !$("#editLimitPremix").value.trim()) {
+        toast("请填写预混料限额");
+        return;
+      }
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const time = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const row = ROWS[editIndex];
+      row.soy = soyOn ? $("#editLimitSoy").value.trim() : "-";
+      row.premix = premixOn ? $("#editLimitPremix").value.trim() : "-";
+      row.overdueSoy = soyOn && $("#editOverdueSoy").value.trim() ? $("#editOverdueSoy").value.trim() : "-";
+      row.overduePremix = premixOn && $("#editOverduePremix").value.trim() ? $("#editOverduePremix").value.trim() : "-";
+      row.time = time;
+      row.updater = "当前用户";
+      renderTable(ROWS);
+      closeMask("maskEdit");
+      toast("提交成功");
+    });
+
+    // 关闭
+    $$("[data-close]").forEach((el) => {
+      el.addEventListener("click", () => closeMask(el.dataset.close));
+    });
+    $$(".mask").forEach((mask) => {
+      mask.addEventListener("click", (e) => {
+        if (e.target === mask) mask.classList.remove("show");
+      });
+    });
+
+    renderTable(ROWS);
+    syncCatRows("add");
+  </script>
+</body>
+</html>

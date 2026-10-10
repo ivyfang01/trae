@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 养殖数据有误通知业务员</title>
+  <style>
+    :root {
+      --danger: #ff4d4f;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute; left: 0; height: 44px; padding: 0 12px;
+      display: flex; align-items: center; color: #333; font-size: 20px;
+    }
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+    .at-line {
+      margin: 0 12px 8px;
+      font-size: 13px;
+      color: var(--primary);
+      line-height: 1.5;
+    }
+    .list { padding: 0 12px 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .tag {
+      font-size: 12px;
+      color: var(--danger);
+      background: #fff1f0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .row:last-child { margin-bottom: 0; }
+    .row .label {
+      width: 100px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.reason { color: var(--danger); }
+    .row .value.emphasize { color: #d4380d; font-weight: 600; }
+    .row .value.strike { color: var(--label); text-decoration: line-through; }
+
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .spec h3 { font-size: 14px; color: #222; margin-bottom: 8px; }
+    .spec h4 { font-size: 13px; color: #222; margin: 12px 0 6px; }
+    .spec ul { padding-left: 18px; }
+    .spec li { margin-bottom: 4px; }
+    .tpl {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #333;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <span class="nav-back">‹</span>
+      <div class="nav-title">工作通知</div>
+    </div>
+    <div class="ding-context">粮巴巴鸡窝 · 刚刚</div>
+    <div class="at-line">@彭建园 客户养殖数据核实为「数据有误」，请查看更正后的养殖规模</div>
+    <div class="list">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">养殖数据核实驳回通知</div>
+          <span class="tag">数据有误</span>
+        </div>
+        <div class="row">
+          <div class="label">提货单编号</div>
+          <div class="value">JWTH202609050042</div>
+        </div>
+        <div class="row">
+          <div class="label">客户名称</div>
+          <div class="value">济南璟元商贸有限公司</div>
+        </div>
+        <div class="row">
+          <div class="label">商品名称</div>
+          <div class="value">源耀蛋鸡育雏前期配合饲料（40kg包装）</div>
+        </div>
+        <div class="row">
+          <div class="label">下单吨数</div>
+          <div class="value">15 吨</div>
+        </div>
+        <div class="row">
+          <div class="label">原养殖规模</div>
+          <div class="value strike">80,000羽</div>
+        </div>
+        <div class="row">
+          <div class="label">更正后规模</div>
+          <div class="value emphasize">50,000羽</div>
+        </div>
+        <div class="row">
+          <div class="label">核实人</div>
+          <div class="value">用户运营</div>
+        </div>
+        <div class="row">
+          <div class="label">核实时间</div>
+          <div class="value">2026-09-05 15:01:33</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>消息模板（对接用）</h3>
+    <ul>
+      <li>触发：用户运营在「核实养殖数据」卡片点击【数据有误】并提交更正后的养殖规模</li>
+      <li>接收人：对应提货单业务员（工作通知）</li>
+      <li>卡片标题：养殖数据核实驳回通知</li>
+      <li>状态标签：数据有误</li>
+    </ul>
+
+    <h4>1）群/工作通知一句话（@业务员）</h4>
+    <div class="tpl">@{业务员姓名} 客户【{客户名称}】养殖数据核实为「数据有误」，更正后养殖规模为 {更正后规模}羽，请查看并重新申请提货</div>
+
+    <h4>2）卡片字段模板</h4>
+    <div class="tpl">标题：养殖数据核实驳回通知
+状态：数据有误
+
+提货单编号：{提货单号}
+客户名称：{客户名称}
+商品名称：{商品名称}
+下单吨数：{吨数} 吨
+原养殖规模：{原规模}羽
+更正后规模：{更正后规模}羽
+核实人：用户运营（或具体操作人姓名）
+核实时间：{yyyy-MM-dd HH:mm:ss}</div>
+
+    <h4>3）说明</h4>
+    <div class="tpl">卡片不再展示「驳回原因」字段；更正说明通过「原养殖规模 / 更正后规模」对比体现。</div>
+  </div>
+</body>
+</html>

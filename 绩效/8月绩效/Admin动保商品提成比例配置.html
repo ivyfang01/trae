@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>动保商品提成比例配置 · Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      padding: 24px;
+    }
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      min-height: calc(100vh - 48px);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 14px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .page-hd h1 { font-size: 16px; font-weight: 600; }
+    .page-hd .sub {
+      font-size: 13px;
+      color: rgba(0,0,0,.45);
+    }
+    .page-bd { padding: 16px 24px 28px; }
+
+    .tip {
+      padding: 12px 14px;
+      background: #e6f7ff;
+      border: 1px solid #91d5ff;
+      border-radius: 2px;
+      font-size: 13px;
+      color: rgba(0,0,0,.65);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .tip strong { color: #096dd9; }
+    .tip ul { margin: 6px 0 0 18px; }
+    .tip li { margin-bottom: 2px; }
+
+    .biz-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+    .biz-tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      color: rgba(0,0,0,.65);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      user-select: none;
+    }
+    .biz-tab:hover { color: #1890ff; }
+    .biz-tab.active {
+      color: #1890ff;
+      font-weight: 500;
+      border-bottom-color: #1890ff;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      margin-bottom: 16px;
+    }
+    .toolbar label { color: rgba(0,0,0,.45); font-size: 13px; }
+    .toolbar select,
+    .toolbar input[type="text"] {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    .toolbar input[type="text"] { min-width: 220px; }
+    .toolbar select { min-width: 120px; }
+    .toolbar select:focus,
+    .toolbar input:focus { border-color: #40a9ff; }
+    .toolbar .spacer { flex: 1; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 15px;
+      font-size: 14px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn:hover { color: #40a9ff; border-color: #40a9ff; }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; color: #fff; }
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: #1890ff;
+      height: auto;
+      padding: 0 6px;
+    }
+    .btn-link:hover { color: #40a9ff; }
+    .btn-link.danger { color: #ff4d4f; }
+    .btn-link.danger:hover { color: #ff7875; }
+
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+    th, td {
+      border: 1px solid #f0f0f0;
+      padding: 12px 12px;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    th {
+      background: #fafafa;
+      font-weight: 500;
+      color: rgba(0,0,0,.85);
+      white-space: nowrap;
+    }
+    td.num {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+    .rate {
+      font-weight: 600;
+      color: #1890ff;
+    }
+    .tag {
+      display: inline-block;
+      height: 22px;
+      line-height: 20px;
+      padding: 0 8px;
+      font-size: 12px;
+      border-radius: 2px;
+      border: 1px solid transparent;
+    }
+    .tag-jw { background: #f6ffed; border-color: #b7eb8f; color: #389e0d; }
+    .tag-dz { background: #fff7e6; border-color: #ffd591; color: #d48806; }
+    .tag-on { background: #e6f7ff; border-color: #91d5ff; color: #096dd9; }
+    .tag-off { background: #f5f5f5; border-color: #d9d9d9; color: rgba(0,0,0,.45); }
+    .muted { color: rgba(0,0,0,.45); font-size: 12px; }
+    .empty {
+      padding: 48px;
+      text-align: center;
+      color: rgba(0,0,0,.45);
+    }
+    .ops { white-space: nowrap; }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: rgba(0,0,0,.65);
+    }
+    .pagination .total { margin-right: auto; }
+    .pagination .pages {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pagination .pg-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .pagination .pg-btn:hover:not(:disabled):not(.active) {
+      color: #1890ff;
+      border-color: #1890ff;
+    }
+    .pagination .pg-btn.active {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .pagination .pg-btn:disabled {
+      color: rgba(0,0,0,.25);
+      cursor: not-allowed;
+      background: #f5f5f5;
+    }
+    .pagination select {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+
+    .modal-mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-mask.show { display: flex; }
+    .modal {
+      width: 480px;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .modal-hd .x {
+      border: none;
+      background: none;
+      font-size: 18px;
+      color: rgba(0,0,0,.45);
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-bd { padding: 20px 24px 8px; }
+    .form-item { margin-bottom: 16px; }
+    .form-item label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: rgba(0,0,0,.85);
+    }
+    .form-item .req { color: #ff4d4f; margin-right: 2px; }
+    .form-item input,
+    .form-item select {
+      width: 100%;
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-item input:focus,
+    .form-item select:focus { border-color: #40a9ff; }
+    .form-item .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: rgba(0,0,0,.45);
+      line-height: 1.5;
+    }
+    .form-item .unit-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-item .unit-wrap input { flex: 1; }
+    .form-item .unit { color: rgba(0,0,0,.45); white-space: nowrap; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .dist-card {
+      max-width: 480px;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      padding: 20px 24px;
+      background: #fafafa;
+    }
+    .dist-card .title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .dist-card .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .modal-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px 24px 16px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 4px;
+      font-size: 14px;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>动保商品提成比例配置</h1>
+    </div>
+    <div class="page-bd">
+      <div class="biz-tabs" id="bizTabs">
+        <div class="biz-tab active" data-panel="direct">直销配置</div>
+        <div class="biz-tab" data-panel="dist">分销配置</div>
+      </div>
+
+      <div class="panel active" id="panel-direct">
+        <div class="toolbar">
+          <label>商品</label>
+          <input type="text" id="kw" placeholder="商品类型spuid / 商品ID / 商品名称" />
+          <button type="button" class="btn btn-primary" id="btnSearch">查询</button>
+          <button type="button" class="btn" id="btnReset">重置</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-primary" id="btnAdd">新增商品提成配置</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:14%">商品类型spuid</th>
+                <th style="width:14%">商品ID</th>
+                <th style="width:26%">商品名称</th>
+                <th style="width:16%">鸡窝提成比例</th>
+                <th style="width:16%">大宗提成比例</th>
+                <th style="width:14%">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination">
+          <span class="total" id="pageTotal">共 0 条</span>
+          <select id="pageSize">
+            <option value="10" selected>10 条/页</option>
+            <option value="20">20 条/页</option>
+            <option value="50">50 条/页</option>
+          </select>
+          <div class="pages" id="pageBtns"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-dist">
+        <div class="dist-card">
+          <div class="title">团长佣金比例</div>
+          <div class="form-item" style="margin-bottom:0">
+            <label><span class="req">*</span>团长佣金配置比例</label>
+            <div class="unit-wrap">
+              <input type="number" id="distRate" min="0" max="100" step="0.01" value="20" />
+              <span class="unit">%</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-primary" id="btnSaveDist">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <div class="modal-hd">
+        <span id="modalTitle">新增商品提成配置</span>
+        <button type="button" class="x" id="modalClose">×</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-item">
+          <label><span class="req">*</span>商品类型spuid</label>
+          <input type="text" id="f-spuId" placeholder="请输入商品类型spuid" />
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>商品ID</label>
+          <input type="text" id="f-goodsId" placeholder="有赞商品ID，如 SP10021" />
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>商品名称</label>
+          <input type="text" id="f-goodsName" placeholder="请输入商品名称" />
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>鸡窝提成比例</label>
+          <div class="unit-wrap">
+            <input type="number" id="f-jwRate" min="0" max="100" step="0.01" placeholder="如 2" />
+            <span class="unit">%</span>
+          </div>
+        </div>
+        <div class="form-item">
+          <label><span class="req">*</span>大宗提成比例</label>
+          <div class="unit-wrap">
+            <input type="number" id="f-dzRate" min="0" max="100" step="0.01" placeholder="如 1.5" />
+            <span class="unit">%</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn" id="modalCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="modalSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var list = [
+      { id: 1, spuId: "SPU10021", goodsId: "SP10021", goodsName: "动保消毒液 5L", jwRate: 2, dzRate: 1.5 },
+      { id: 2, spuId: "SPU10035", goodsId: "SP10035", goodsName: "禽用多维 1kg", jwRate: 3, dzRate: 2 },
+      { id: 3, spuId: "SPU10088", goodsId: "SP10088", goodsName: "球虫净 500ml", jwRate: 2.5, dzRate: 1.8 },
+      { id: 4, spuId: "SPU10102", goodsId: "SP10102", goodsName: "消毒粉 20kg", jwRate: 2, dzRate: 1.2 },
+      { id: 5, spuId: "SPU10110", goodsId: "SP10110", goodsName: "碘伏消毒液 1L", jwRate: 2.2, dzRate: 1.4 },
+      { id: 6, spuId: "SPU10118", goodsId: "SP10118", goodsName: "电解多维 500g", jwRate: 2.8, dzRate: 1.6 },
+      { id: 7, spuId: "SPU10125", goodsId: "SP10125", goodsName: "黄芪多糖口服液", jwRate: 3.2, dzRate: 2.1 },
+      { id: 8, spuId: "SPU10133", goodsId: "SP10133", goodsName: "氟苯尼考溶液", jwRate: 2.6, dzRate: 1.7 },
+      { id: 9, spuId: "SPU10140", goodsId: "SP10140", goodsName: "氨基维他 1kg", jwRate: 2.4, dzRate: 1.5 },
+      { id: 10, spuId: "SPU10148", goodsId: "SP10148", goodsName: "过硫酸氢钾复合物", jwRate: 1.8, dzRate: 1.1 },
+      { id: 11, spuId: "SPU10155", goodsId: "SP10155", goodsName: "恩诺沙星溶液", jwRate: 2.9, dzRate: 1.9 },
+      { id: 12, spuId: "SPU10162", goodsId: "SP10162", goodsName: "复合益生菌", jwRate: 3.5, dzRate: 2.2 },
+      { id: 13, spuId: "SPU10170", goodsId: "SP10170", goodsName: "戊二醛癸甲溴铵", jwRate: 2.1, dzRate: 1.3 },
+      { id: 14, spuId: "SPU10178", goodsId: "SP10178", goodsName: "维生素AD3E", jwRate: 2.7, dzRate: 1.8 },
+      { id: 15, spuId: "SPU10185", goodsId: "SP10185", goodsName: "硫酸黏菌素预混剂", jwRate: 2.3, dzRate: 1.4 }
+    ];
+    var nextId = 16;
+    var editId = null;
+    var page = 1;
+    var pageSize = 10;
+
+    function toast(msg) {
+      var el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+    }
+
+    function fmtRate(v) {
+      if (v === null || v === undefined || v === "") return '<span class="muted">--</span>';
+      return '<span class="rate">' + Number(v).toFixed(2) + "%</span>";
+    }
+
+    function filtered() {
+      var kw = document.getElementById("kw").value.trim().toLowerCase();
+      return list.filter(function (r) {
+        if (!kw) return true;
+        return (r.spuId || "").toLowerCase().indexOf(kw) >= 0 ||
+          r.goodsId.toLowerCase().indexOf(kw) >= 0 ||
+          r.goodsName.toLowerCase().indexOf(kw) >= 0;
+      });
+    }
+
+    function renderPagination(total) {
+      var totalPages = Math.max(1, Math.ceil(total / pageSize));
+      if (page > totalPages) page = totalPages;
+      document.getElementById("pageTotal").textContent = "共 " + total + " 条";
+
+      var html = "";
+      html += '<button type="button" class="pg-btn" data-page="prev"' + (page <= 1 ? " disabled" : "") + ">上一页</button>";
+      for (var i = 1; i <= totalPages; i++) {
+        if (totalPages > 7 && Math.abs(i - page) > 2 && i !== 1 && i !== totalPages) {
+          if (i === 2 || i === totalPages - 1) html += '<span class="muted">…</span>';
+          continue;
+        }
+        html += '<button type="button" class="pg-btn' + (i === page ? " active" : "") + '" data-page="' + i + '">' + i + "</button>";
+      }
+      html += '<button type="button" class="pg-btn" data-page="next"' + (page >= totalPages ? " disabled" : "") + ">下一页</button>";
+      document.getElementById("pageBtns").innerHTML = html;
+    }
+
+    function render() {
+      var rows = filtered();
+      var total = rows.length;
+      var totalPages = Math.max(1, Math.ceil(total / pageSize));
+      if (page > totalPages) page = totalPages;
+      var start = (page - 1) * pageSize;
+      var pageRows = rows.slice(start, start + pageSize);
+      var tbody = document.getElementById("tbody");
+
+      if (!total) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">暂无配置，请点击「新增商品提成配置」</td></tr>';
+        renderPagination(0);
+        return;
+      }
+
+      tbody.innerHTML = pageRows.map(function (r) {
+        return (
+          "<tr>" +
+          "<td class=\"num\">" + (r.spuId || "—") + "</td>" +
+          "<td class=\"num\">" + r.goodsId + "</td>" +
+          "<td>" + r.goodsName + "</td>" +
+          "<td class=\"num\">" + fmtRate(r.jwRate) + "</td>" +
+          "<td class=\"num\">" + fmtRate(r.dzRate) + "</td>" +
+          "<td class=\"ops\">" +
+            "<button type=\"button\" class=\"btn btn-link\" data-act=\"edit\" data-id=\"" + r.id + "\">编辑</button>" +
+          "</td>" +
+          "</tr>"
+        );
+      }).join("");
+      renderPagination(total);
+    }
+
+    function openModal(row) {
+      editId = row ? row.id : null;
+      document.getElementById("modalTitle").textContent = row ? "编辑商品提成配置" : "新增商品提成配置";
+      document.getElementById("f-spuId").value = row ? (row.spuId || "") : "";
+      document.getElementById("f-goodsId").value = row ? row.goodsId : "";
+      document.getElementById("f-goodsName").value = row ? row.goodsName : "";
+      document.getElementById("f-jwRate").value = row ? row.jwRate : "";
+      document.getElementById("f-dzRate").value = row ? row.dzRate : "";
+      document.getElementById("f-spuId").disabled = !!row;
+      document.getElementById("f-goodsId").disabled = !!row;
+      document.getElementById("modalMask").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("modalMask").classList.remove("show");
+      editId = null;
+    }
+
+    function validRate(v) {
+      return !isNaN(v) && v >= 0 && v <= 100;
+    }
+
+    document.getElementById("bizTabs").addEventListener("click", function (e) {
+      var tab = e.target.closest(".biz-tab");
+      if (!tab) return;
+      document.querySelectorAll(".biz-tab").forEach(function (t) { t.classList.remove("active"); });
+      tab.classList.add("active");
+      var panel = tab.dataset.panel;
+      document.getElementById("panel-direct").classList.toggle("active", panel === "direct");
+      document.getElementById("panel-dist").classList.toggle("active", panel === "dist");
+    });
+
+    document.getElementById("btnSaveDist").addEventListener("click", function () {
+      var rate = parseFloat(document.getElementById("distRate").value);
+      if (isNaN(rate) || rate < 0 || rate > 100) {
+        toast("团长佣金比例需在 0~100 之间");
+        return;
+      }
+      toast("分销配置已保存：" + rate.toFixed(2) + "%");
+    });
+
+    document.getElementById("btnSearch").addEventListener("click", function () {
+      page = 1;
+      render();
+    });
+    document.getElementById("btnReset").addEventListener("click", function () {
+      document.getElementById("kw").value = "";
+      page = 1;
+      render();
+    });
+    document.getElementById("pageSize").addEventListener("change", function () {
+      pageSize = Number(this.value) || 10;
+      page = 1;
+      render();
+    });
+    document.getElementById("pageBtns").addEventListener("click", function (e) {
+      var btn = e.target.closest(".pg-btn");
+      if (!btn || btn.disabled) return;
+      var totalPages = Math.max(1, Math.ceil(filtered().length / pageSize));
+      var p = btn.dataset.page;
+      if (p === "prev") page = Math.max(1, page - 1);
+      else if (p === "next") page = Math.min(totalPages, page + 1);
+      else page = Number(p);
+      render();
+    });
+    document.getElementById("btnAdd").addEventListener("click", function () { openModal(null); });
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalCancel").addEventListener("click", closeModal);
+
+    document.getElementById("modalMask").addEventListener("click", function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById("modalSave").addEventListener("click", function () {
+      var spuId = document.getElementById("f-spuId").value.trim();
+      var goodsId = document.getElementById("f-goodsId").value.trim();
+      var goodsName = document.getElementById("f-goodsName").value.trim();
+      var jwRate = parseFloat(document.getElementById("f-jwRate").value);
+      var dzRate = parseFloat(document.getElementById("f-dzRate").value);
+
+      if (!spuId) { toast("请填写商品类型spuid"); return; }
+      if (!goodsId) { toast("请填写商品ID"); return; }
+      if (!goodsName) { toast("请填写商品名称"); return; }
+      if (!validRate(jwRate)) { toast("鸡窝提成比例需在 0~100 之间"); return; }
+      if (!validRate(dzRate)) { toast("大宗提成比例需在 0~100 之间"); return; }
+
+      var dup = list.find(function (r) {
+        return (r.goodsId === goodsId || r.spuId === spuId) && r.id !== editId;
+      });
+      if (dup) { toast("该商品类型spuid或商品ID已存在配置"); return; }
+
+      if (editId) {
+        var row = list.find(function (r) { return r.id === editId; });
+        row.goodsName = goodsName;
+        row.jwRate = jwRate;
+        row.dzRate = dzRate;
+        toast("保存成功");
+      } else {
+        list.unshift({
+          id: nextId++,
+          spuId: spuId,
+          goodsId: goodsId,
+          goodsName: goodsName,
+          jwRate: jwRate,
+          dzRate: dzRate
+        });
+        toast("新增成功");
+        page = 1;
+      }
+      closeModal();
+      render();
+    });
+
+    document.getElementById("tbody").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      var id = Number(btn.dataset.id);
+      var row = list.find(function (r) { return r.id === id; });
+      if (!row) return;
+
+      if (btn.dataset.act === "edit") {
+        openModal(row);
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

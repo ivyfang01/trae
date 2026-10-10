@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>提货列表 · 待审核</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #e8e8e8;
+      color: #333;
+      font-size: 14px;
+    }
+    .phone {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #f2f3f5;
+      padding-bottom: 24px;
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .nav .close {
+      position: absolute;
+      left: 12px;
+      border: 0;
+      background: none;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .tabs-main {
+      display: flex;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tabs-main .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 15px;
+      color: #666;
+      position: relative;
+    }
+    .tabs-main .tab.active {
+      color: #1890ff;
+      font-weight: 600;
+    }
+    .tabs-main .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: #1890ff;
+      border-radius: 1px;
+    }
+
+    .sub-bar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 0 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cats {
+      display: flex;
+      gap: 22px;
+      flex: 1;
+    }
+    .cats .cat {
+      padding: 12px 0 10px;
+      font-size: 14px;
+      color: #666;
+      position: relative;
+      cursor: pointer;
+    }
+    .cats .cat.active {
+      color: #ff6a00;
+      font-weight: 600;
+    }
+    .cats .cat.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: #ff6a00;
+    }
+    .filter-name {
+      font-size: 13px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .filter-name::after { content: "▾"; font-size: 10px; color: #999; }
+
+    .status-bar {
+      display: flex;
+      gap: 16px;
+      padding: 10px 14px 0;
+      background: #fff;
+      margin-bottom: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .status-bar span {
+      font-size: 14px;
+      color: #999;
+      cursor: pointer;
+      padding-bottom: 10px;
+      position: relative;
+    }
+    .status-bar span.active {
+      color: #ff6a00;
+      font-weight: 600;
+    }
+    .status-bar span.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: #ff6a00;
+    }
+
+    .list { padding: 0 10px 16px; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 14px 12px;
+      margin-bottom: 10px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .prod-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.45;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .prod-title .doc {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      border: 1.5px solid #bbb;
+      border-radius: 2px;
+      position: relative;
+    }
+    .prod-title .doc::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      top: 4px;
+      height: 1.5px;
+      background: #bbb;
+      box-shadow: 0 3px 0 #bbb, 0 6px 0 #bbb;
+    }
+    .status-block {
+      flex-shrink: 0;
+      text-align: right;
+      max-width: 42%;
+    }
+    .status-main {
+      font-size: 14px;
+      color: #ff6a00;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .status-sub {
+      font-size: 12px;
+      color: #ff6a00;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .tag-over {
+      display: inline-block;
+      margin: -4px 0 10px 20px;
+      padding: 1px 8px;
+      font-size: 12px;
+      color: #ff6a00;
+      background: #fff7e6;
+      border-radius: 2px;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 7px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .row.pair {
+      gap: 8px;
+    }
+    .row.pair .cell {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+    }
+    .row .lab {
+      color: #999;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .row .val {
+      color: #333;
+      flex: 1;
+      min-width: 0;
+      word-break: break-all;
+    }
+    .row .copy {
+      color: #1890ff;
+      margin-left: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card-ft {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f5f5f5;
+      flex-wrap: wrap;
+    }
+    .btn {
+      min-width: 72px;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-fwd {
+      border: 1px solid #91d5ff;
+      background: #fff;
+      color: #1890ff;
+    }
+    .btn-orange {
+      border: 1px solid #ffb366;
+      background: #fff;
+      color: #ff6a00;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="nav">
+      <button type="button" class="close" aria-label="关闭">×</button>
+      客户详情
+    </div>
+
+    <div class="tabs-main">
+      <div class="tab">基本信息</div>
+      <div class="tab">报价</div>
+      <div class="tab active">合同</div>
+      <div class="tab">提货</div>
+    </div>
+
+    <div class="sub-bar">
+      <div class="cats">
+        <div class="cat">豆粕</div>
+        <div class="cat">玉米</div>
+        <div class="cat active">预混料</div>
+        <div class="cat">鸡蛋</div>
+      </div>
+      <div class="filter-name">郭雷</div>
+    </div>
+
+    <div class="status-bar">
+      <span>待商家确认</span>
+      <span>待付款</span>
+      <span class="active">进行中</span>
+      <span>已完成</span>
+      <span>已取消</span>
+    </div>
+
+    <div class="list">
+      <!-- 5–10吨：待赵璐审核 -->
+      <div class="card">
+        <div class="card-head">
+          <div class="prod-title">
+            <span class="doc" aria-hidden="true"></span>
+            <span>源耀蛋鸡育雏前期配合饲料（40kg包装）</span>
+          </div>
+          <div class="status-block">
+            <div class="status-main">待审核</div>
+            <div class="status-sub">（待赵璐审核）</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="lab">订单编号：</span>
+          <span class="val">WHL20260903JWFYYM37101</span>
+          <span class="copy">复制</span>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">产品分类：</span><span class="val">预混料</span></div>
+          <div class="cell"><span class="lab">订单数量：</span><span class="val">200包（8吨）</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">提货日期：</span><span class="val">2026.09.03-09.04</span></div>
+          <div class="cell"><span class="lab">剩余可提数量：</span><span class="val">200包</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">剩余订金：</span><span class="val">¥ 0.00</span></div>
+          <div class="cell"><span class="lab">预混料工厂：</span><span class="val">源耀饲料（黄冈）有限公司</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">结算方式：</span><span class="val">货到付款</span></div>
+          <div class="cell"><span class="lab">客户：</span><span class="val">郭雷</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">业务归属：</span><span class="val">王园康</span></div>
+          <div class="cell"><span class="lab">是否需要配方：</span><span class="val">无需确认配方</span></div>
+        </div>
+        <div class="card-ft">
+          <button type="button" class="btn btn-orange">帮用户取消</button>
+          <button type="button" class="btn btn-orange">帮用户提货</button>
+          <button type="button" class="btn btn-fwd">转发</button>
+        </div>
+      </div>
+
+      <!-- >10吨：待东哥审核 -->
+      <div class="card">
+        <div class="card-head">
+          <div class="prod-title">
+            <span class="doc" aria-hidden="true"></span>
+            <span>源耀蛋鸡育雏前期配合饲料（40kg包装）</span>
+          </div>
+          <div class="status-block">
+            <div class="status-main">待审核</div>
+            <div class="status-sub">（待东哥审核）</div>
+          </div>
+        </div>
+        <div class="row">
+          <span class="lab">订单编号：</span>
+          <span class="val">WHL20260905JWFYYM37108</span>
+          <span class="copy">复制</span>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">产品分类：</span><span class="val">预混料</span></div>
+          <div class="cell"><span class="lab">订单数量：</span><span class="val">300包（12吨）</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">提货日期：</span><span class="val">2026.09.05-09.06</span></div>
+          <div class="cell"><span class="lab">剩余可提数量：</span><span class="val">300包</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">剩余订金：</span><span class="val">¥ 0.00</span></div>
+          <div class="cell"><span class="lab">预混料工厂：</span><span class="val">源耀饲料（黄冈）有限公司</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">结算方式：</span><span class="val">货到付款</span></div>
+          <div class="cell"><span class="lab">客户：</span><span class="val">郭雷</span></div>
+        </div>
+        <div class="row pair">
+          <div class="cell"><span class="lab">业务归属：</span><span class="val">王园康</span></div>
+          <div class="cell"><span class="lab">是否需要配方：</span><span class="val">无需确认配方</span></div>
+        </div>
+        <div class="card-ft">
+          <button type="button" class="btn btn-orange">帮用户取消</button>
+          <button type="button" class="btn btn-orange">帮用户提货</button>
+          <button type="button" class="btn btn-fwd">转发</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

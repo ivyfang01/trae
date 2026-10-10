@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>豆粕干线物流订单 · 列表原型</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      font-size: 13px;
+      min-height: 100vh;
+    }
+    .page { padding: 16px 20px 40px; max-width: 1440px; margin: 0 auto; }
+    .page-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #1f1f1f;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px 16px 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px 16px;
+    }
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .field label {
+      flex-shrink: 0;
+      width: 108px;
+      text-align: right;
+      color: #666;
+      white-space: nowrap;
+    }
+    .field label .new {
+      color: #fa8c16;
+      font-size: 11px;
+      margin-left: 2px;
+    }
+    .field input,
+    .field select {
+      flex: 1;
+      min-width: 0;
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      padding: 0 8px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: #333;
+    }
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: #40a9ff;
+      box-shadow: 0 0 0 2px rgba(24,144,255,.15);
+    }
+    .field.highlight select {
+      border-color: #ffa940;
+      background: #fffbe6;
+    }
+    .range {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .range input { flex: 1; }
+    .range .sep { color: #999; }
+    .range .unit { color: #999; flex-shrink: 0; }
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 0 4px;
+    }
+    .btn {
+      height: 32px;
+      padding: 0 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #333;
+    }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn:hover { opacity: .92; }
+
+    .list-panel {
+      background: #fff;
+      border-radius: 4px;
+      padding: 0 0 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .tabs-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tabs { display: flex; gap: 0; overflow-x: auto; }
+    .tab {
+      padding: 14px 16px;
+      color: #666;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab.active {
+      color: #1890ff;
+      font-weight: 500;
+      border-bottom-color: #1890ff;
+    }
+    .tab .n { margin-left: 2px; }
+    .export-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    .export-btns .btn { color: #1890ff; border-color: #91d5ff; }
+
+    .table-wrap { overflow-x: auto; padding: 0 8px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    th {
+      color: #666;
+      font-weight: 500;
+      background: #fafafa;
+      position: sticky;
+      top: 0;
+    }
+    td a {
+      color: #1890ff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    td a:hover { text-decoration: underline; }
+    .ops a { margin-right: 10px; }
+    .ops a:last-child { margin-right: 0; }
+    .ops .op-done {
+      color: #999;
+      cursor: default;
+      pointer-events: none;
+    }
+    .ops .op-done:hover { text-decoration: none; }
+    .muted { color: #999; }
+    .tag-ok {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 2px;
+      background: #f6ffed;
+      color: #389e0d;
+      font-size: 12px;
+    }
+    @media (max-width: 1100px) {
+      .filter-grid { grid-template-columns: repeat(2, 1fr); }
+      .field label { width: 96px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1 class="page-title">豆粕干线物流订单</h1>
+
+    <div class="panel">
+      <div class="filter-grid">
+        <div class="field">
+          <label>司机姓名</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>司机手机号</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>司机主体id</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>物流订单号</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+
+        <div class="field">
+          <label>提货单号</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>装货地点</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>卸货地点</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>客户名称</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+
+        <div class="field">
+          <label>发货单号</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>车牌号</label>
+          <input type="text" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>提货单生成时间</label>
+          <div class="range">
+            <input type="text" placeholder="开始日期" />
+            <span class="sep">→</span>
+            <input type="text" placeholder="结束日期" />
+          </div>
+        </div>
+        <div class="field">
+          <label>物流单生成时间</label>
+          <div class="range">
+            <input type="text" placeholder="开始日期" />
+            <span class="sep">→</span>
+            <input type="text" placeholder="结束日期" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>站台</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>已上传</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>结算方式</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>是否二票制</label>
+          <select><option>全部</option></select>
+        </div>
+
+        <div class="field">
+          <label>发货类型</label>
+          <select><option>全部</option><option>大宗</option></select>
+        </div>
+        <div class="field">
+          <label>供应模式</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>业务类型</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field highlight">
+          <label>大宗业务类型<span class="new">新</span></label>
+          <select id="bizTypeFilter">
+            <option value="">全部</option>
+            <option value="豆粕寄售" selected>豆粕寄售</option>
+            <option value="非寄售">非寄售</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>单据类型</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>业务员</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>物流类型</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>发票</label>
+          <select><option>全部</option></select>
+        </div>
+
+        <div class="field">
+          <label>业务员是否确认</label>
+          <select><option>全部</option></select>
+        </div>
+        <div class="field">
+          <label>物流距离</label>
+          <div class="range">
+            <input type="text" placeholder="min" />
+            <span class="sep">-</span>
+            <input type="text" placeholder="max" />
+            <span class="unit">km</span>
+          </div>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button type="button" class="btn btn-primary" id="btnSearch">查询</button>
+        <button type="button" class="btn" id="btnReset">重置</button>
+      </div>
+    </div>
+
+    <div class="list-panel" style="margin-top:12px;">
+      <div class="tabs-bar">
+        <div class="tabs">
+          <div class="tab">待派单<span class="n">(6)</span></div>
+          <div class="tab">待接单<span class="n">(179)</span></div>
+          <div class="tab active">已接单<span class="n">(225)</span></div>
+          <div class="tab">待结算<span class="n">(310)</span></div>
+          <div class="tab">已完成<span class="n">(29348)</span></div>
+          <div class="tab">已关闭<span class="n">(3720)</span></div>
+        </div>
+        <div class="export-btns">
+          <button type="button" class="btn">导出详情</button>
+          <button type="button" class="btn">导出全部物流单</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>装货状态</th>
+              <th>物流订单号</th>
+              <th>发货单号</th>
+              <th>提货单号</th>
+              <th>是否寄售</th>
+              <th>是否货到付款</th>
+              <th>粮点</th>
+              <th>发货类型</th>
+              <th>货物</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var ALL_ROWS = [
+      {
+        loadStatus: "待司机点击装货",
+        orderNo: "LBBWLSP20260831216",
+        shipNo: "--",
+        pickupNo: "DYGYL20260831DYT1024",
+        consign: "是",
+        cod: "否",
+        site: "泰州汇福",
+        shipType: "大宗",
+        bizType: "豆粕寄售",
+        goods: "豆粕 50kg 43% 34吨",
+        loadingAudit: "pending"
+      },
+      {
+        loadStatus: "待司机点击装货",
+        orderNo: "LBBWLSP20260831215",
+        shipNo: "--",
+        pickupNo: "DYGYL20260831DYT1023",
+        consign: "是",
+        cod: "否",
+        site: "泰州汇福",
+        shipType: "大宗",
+        bizType: "豆粕寄售",
+        goods: "豆粕 50kg 43% 34吨",
+        loadingAudit: "rejected"
+      },
+      {
+        loadStatus: "待司机点击装货",
+        orderNo: "LBBWLSP20260831214",
+        shipNo: "SH20260831001",
+        pickupNo: "DYGYL20260831DYT1022",
+        consign: "否",
+        cod: "是",
+        site: "天津中粮",
+        shipType: "大宗",
+        bizType: "非寄售",
+        goods: "豆粕 50kg 43% 34吨",
+        loadingAudit: null
+      },
+      {
+        loadStatus: "待司机点击装货",
+        orderNo: "LBBWLSP20260831213",
+        shipNo: "--",
+        pickupNo: "DYGYL20260831DYT1021",
+        consign: "否",
+        cod: "否",
+        site: "泰兴邦基",
+        shipType: "大宗",
+        bizType: "非寄售",
+        goods: "豆粕 50kg 43% 35吨",
+        loadingAudit: null
+      },
+      {
+        loadStatus: "待司机点击卸货",
+        orderNo: "LBBWLSP20260831198",
+        shipNo: "--",
+        pickupNo: "DYGYL20260830DYT0988",
+        consign: "是",
+        cod: "否",
+        site: "泰州汇福",
+        shipType: "大宗",
+        bizType: "豆粕寄售",
+        goods: "豆粕 50kg 43% 32吨",
+        loadingAudit: "audited"
+      }
+    ];
+
+    function render(rows) {
+      var html = rows.map(function (r) {
+        var statusHtml = r.loadStatus;
+        var ops = '<a href="#">修改信息</a><a href="#">GPS定位(4)</a><a href="#">GPS轨迹</a>';
+        if (r.bizType === "豆粕寄售") {
+          if (r.loadingAudit === "audited") {
+            ops = '<a class="op-done" href="javascript:void(0)">装货磅单已审核</a>' + ops;
+          } else if (r.loadingAudit === "pending" || r.loadingAudit === "rejected") {
+            ops = '<a href="装货磅单审核.html">装货磅单审核</a>' + ops;
+          }
+        }
+        return (
+          "<tr>" +
+          "<td>" + statusHtml + "</td>" +
+          '<td><a href="#">' + r.orderNo + "</a></td>" +
+          "<td>" + (r.shipNo === "--" ? '<span class="muted">--</span>' : r.shipNo) + "</td>" +
+          '<td><a href="#">' + r.pickupNo + "</a></td>" +
+          "<td>" + r.consign + "</td>" +
+          "<td>" + r.cod + "</td>" +
+          "<td>" + r.site + "</td>" +
+          "<td>" + r.shipType + "</td>" +
+          "<td>" + r.goods + "</td>" +
+          '<td class="ops">' + ops + "</td>" +
+          "</tr>"
+        );
+      }).join("");
+      document.getElementById("tbody").innerHTML = html ||
+        '<tr><td colspan="10" class="muted" style="text-align:center;padding:32px;">暂无数据</td></tr>';
+    }
+
+    function applyFilter() {
+      var v = document.getElementById("bizTypeFilter").value;
+      var rows = ALL_ROWS.filter(function (r) { return !v || r.bizType === v; });
+      render(rows);
+    }
+
+    document.getElementById("btnSearch").addEventListener("click", applyFilter);
+    document.getElementById("btnReset").addEventListener("click", function () {
+      document.getElementById("bizTypeFilter").value = "";
+      render(ALL_ROWS);
+    });
+
+    document.querySelectorAll(".tab").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        document.querySelectorAll(".tab").forEach(function (t) { t.classList.remove("active"); });
+        tab.classList.add("active");
+      });
+    });
+
+    applyFilter();
+  </script>
+</body>
+</html>

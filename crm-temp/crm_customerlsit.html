@@ -333,34 +333,72 @@
             color: #1d2129;
         }
 
-        /* 机会点 */
+        /* 机会点 + 诊断工单（两栏同行） */
         .opportunity-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 16px;
             margin-bottom: 10px;
             font-size: 13px;
+            color: #4e5969;
+            line-height: 1.6;
         }
-
-        .opportunity-label {
+        .opportunity-label,
+        .opportunity-row .info-label {
             color: #86909c;
         }
-
         .opportunity-link {
             color: #1677ff;
             cursor: pointer;
             text-decoration: underline;
         }
-
-        /* 照片和记录 */
-        .links-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
+        .opportunity-row .diag-link {
+            color: #1677ff;
+            text-decoration: none;
+        }
+        .opportunity-row .diag-status {
+            display: inline;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: #1677ff;
+            font-size: 13px;
+            font-weight: 400;
+            text-decoration: none;
         }
 
-        .link-text {
+        /* 照片、记录、诊断工单 */
+        .links-row {
+            margin-bottom: 12px;
+        }
+        .links-left {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .link-text,
+        a.diag-create {
             font-size: 13px;
             color: #1677ff;
             cursor: pointer;
             text-decoration: underline;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+        a.diag-create:active,
+        .link-text:active {
+            opacity: 0.75;
+        }
+        .diag-create-disabled {
+            font-size: 13px;
+            color: #c0c4cc;
+            cursor: not-allowed;
+            text-decoration: underline;
+            white-space: nowrap;
+            font-weight: 400;
+            pointer-events: none;
+            user-select: none;
         }
 
         /* 操作按钮 */
@@ -402,6 +440,27 @@
         .action-phone svg { color: #52c41a; }
         .action-nav svg { color: #fa8c16; }
         .action-write svg { color: #1677ff; }
+
+        /* 诊断工单按钮 / 诊断中状态 */
+        .diag-link {
+            color: #1677ff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .diag-link:active {
+            opacity: 0.75;
+        }
+        .diag-status {
+            color: #1677ff;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .diag-status:active {
+            opacity: 0.75;
+        }
 
         /* 被遮挡的部分（模拟截图底部） */
         .card-bottom-mask {
@@ -539,7 +598,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
-                    <span class="customer-name">粮巴巴</span>
+                    <span class="customer-name">张三</span>
                 </div>
                 <span class="customer-assign">业务归属：向仁兵</span>
             </div>
@@ -562,13 +621,22 @@
             </div>
 
             <div class="opportunity-row">
-                <span class="opportunity-label">机会点：</span>
-                <span class="opportunity-link">添加机会点</span>
+                <div class="info-item">
+                    <span class="opportunity-label">机会点：</span>
+                    <span class="opportunity-link">添加机会点</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">诊断工单：</span>
+                    <a class="diag-link" href="../养殖技术服务工具/技术服务需求接单_原型.html?from=crm&customer=%E5%BC%A0%E4%B8%89&screen=sales-list">2026-08-04</a>
+                </div>
             </div>
 
             <div class="links-row">
-                <span class="link-text">查看门头照片</span>
-                <span class="link-text">查看拜访记录</span>
+                <div class="links-left">
+                    <span class="link-text">查看门头照片</span>
+                    <span class="link-text">查看拜访记录</span>
+                    <a class="diag-create" href="#" data-customer="张三" target="_top" role="link" onclick="openCreateDiagOrder('张三'); return false;">创建诊断工单</a>
+                </div>
             </div>
 
             <div class="actions-row">
@@ -633,13 +701,22 @@
             </div>
 
             <div class="opportunity-row">
-                <span class="opportunity-label">机会点：</span>
-                <span class="opportunity-link">添加机会点</span>
+                <div class="info-item">
+                    <span class="opportunity-label">机会点：</span>
+                    <span class="opportunity-link">添加机会点</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">诊断工单：</span>
+                    <a class="diag-status" href="../养殖技术服务工具/技术服务需求接单_原型.html?from=crm&customer=%E5%91%A8%E5%8D%AB%E5%85%B5&screen=sales-list">诊断中</a>
+                </div>
             </div>
 
             <div class="links-row">
-                <span class="link-text">查看门头照片</span>
-                <span class="link-text">查看拜访记录</span>
+                <div class="links-left">
+                    <span class="link-text">查看门头照片</span>
+                    <span class="link-text">查看拜访记录</span>
+                    <span class="diag-create-disabled" aria-disabled="true" title="已有诊断中工单，暂不可创建">创建诊断工单</span>
+                </div>
             </div>
 
             <div class="actions-row">
@@ -695,11 +772,49 @@
                 <div class="info-item"><span class="info-label">客户类型：</span><span class="info-value">次终端</span></div>
                 <div class="info-item"><span class="info-label">养殖规模：</span><span class="info-value">0</span></div>
             </div>
+
+            <div class="opportunity-row">
+                <div class="info-item">
+                    <span class="opportunity-label">机会点：</span>
+                    <span class="opportunity-link">添加机会点</span>
+                </div>
+            </div>
+
+            <div class="links-row">
+                <div class="links-left">
+                    <span class="link-text">查看门头照片</span>
+                    <span class="link-text">查看拜访记录</span>
+                    <a class="diag-create" href="#" data-customer="王笑笑" target="_top" role="link" onclick="openCreateDiagOrder('王笑笑'); return false;">创建诊断工单</a>
+                </div>
+            </div>
         </div>
 
     </div>
 
-    <div class="annotation">已添加「白条逾期」标签</div>
+    <div class="annotation">有工单=日期+创建 · 诊断中=创建置灰不可点 · 未创建=可创建</div>
+
+    <script>
+      function buildCreateDiagOrderUrl(customer) {
+        var url = new URL("../养殖技术服务工具/技术服务需求接单_原型.html", window.location.href);
+        url.searchParams.set("from", "crm");
+        url.searchParams.set("screen", "sales-submit");
+        url.searchParams.set("customer", customer || "");
+        return url.href;
+      }
+
+      function openCreateDiagOrder(customer) {
+        window.location.assign(buildCreateDiagOrderUrl(customer));
+      }
+
+      document.querySelectorAll("a.diag-create").forEach(function (el) {
+        var customer = el.getAttribute("data-customer") || "";
+        el.href = buildCreateDiagOrderUrl(customer);
+        el.addEventListener("click", function (e) {
+          e.preventDefault();
+          openCreateDiagOrder(customer);
+        });
+      });
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>交易风控规则配置</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      line-height: 1.5715;
+      min-height: 100vh;
+      padding: 16px 24px 32px;
+    }
+    .page {
+      background: #fff;
+      border-radius: 2px;
+      min-height: calc(100vh - 48px);
+      padding: 16px 24px 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .page-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .page-hd h1 {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+      padding: 0 15px;
+      border-radius: 2px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn:hover { color: #40a9ff; border-color: #40a9ff; }
+    .btn-primary {
+      background: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; color: #fff; }
+    .btn-link {
+      border: none;
+      background: transparent;
+      color: #1890ff;
+      padding: 0 4px;
+      height: auto;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-link:hover { color: #40a9ff; }
+    .btn-link + .btn-link { margin-left: 8px; }
+    .btn-danger-text {
+      border: none;
+      background: transparent;
+      color: #ff4d4f;
+      padding: 0;
+      height: auto;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-danger-text:hover { color: #ff7875; }
+    .btn-dashed {
+      border-style: dashed;
+      color: #1890ff;
+      border-color: #1890ff;
+      background: #fff;
+    }
+    .btn-dashed:hover { color: #40a9ff; border-color: #40a9ff; }
+
+    .tabs {
+      display: flex;
+      gap: 32px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+    .tab {
+      position: relative;
+      padding: 12px 0;
+      color: rgba(0,0,0,.65);
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .tab:hover { color: #1890ff; }
+    .tab.active {
+      color: #1890ff;
+      font-weight: 500;
+    }
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: #1890ff;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 16px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      color: rgba(0,0,0,.85);
+      font-weight: 500;
+      background: #fafafa;
+    }
+    td { color: rgba(0,0,0,.65); }
+    tr:hover td { background: #fafafa; }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      color: rgba(0,0,0,.65);
+      font-size: 14px;
+    }
+    .pagination select,
+    .pagination input {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    .pagination select { min-width: 96px; }
+    .pagination input { width: 40px; text-align: center; }
+    .page-btns { display: inline-flex; gap: 4px; }
+    .page-btn {
+      min-width: 32px;
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      border-radius: 2px;
+      cursor: pointer;
+      color: rgba(0,0,0,.65);
+      font-family: inherit;
+    }
+    .page-btn.active {
+      color: #1890ff;
+      border-color: #1890ff;
+    }
+    .page-btn:disabled {
+      color: rgba(0,0,0,.25);
+      cursor: not-allowed;
+    }
+
+    /* Modal */
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+    .mask.show { display: flex; }
+    .modal {
+      width: 720px;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 2px;
+      box-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 48px);
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .modal-hd h2 { font-size: 16px; font-weight: 500; }
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      color: rgba(0,0,0,.45);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover { color: rgba(0,0,0,.85); }
+    .modal-bd { padding: 24px; overflow: auto; }
+    .modal-ft {
+      padding: 10px 16px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .form-item { margin-bottom: 24px; }
+    .form-label { display: block; margin-bottom: 8px; color: rgba(0,0,0,.85); }
+    .form-label .req { color: #ff4d4f; margin-right: 4px; font-family: SimSun, sans-serif; }
+    .select, .input {
+      height: 32px;
+      border: 1px solid #d9d9d9;
+      border-radius: 2px;
+      padding: 0 11px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      background: #fff;
+      color: rgba(0,0,0,.85);
+    }
+    .select:focus, .input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,.2); }
+    .select { min-width: 120px; cursor: pointer; }
+    .select:disabled {
+      background: #f5f5f5;
+      color: rgba(0,0,0,.65);
+      cursor: not-allowed;
+    }
+    .input { width: 100px; }
+    .input-wrap { display: inline-flex; align-items: center; gap: 6px; }
+    .unit { color: rgba(0,0,0,.45); white-space: nowrap; }
+    .rule-block-label { font-weight: 500; margin-bottom: 12px; }
+    .rule-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+    .rule-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+    }
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: rgba(0,0,0,.45);
+      line-height: 1.6;
+    }
+    .view-banner {
+      margin: -8px -24px 20px;
+      padding: 12px 24px;
+      background: #e6f7ff;
+      color: rgba(0,0,0,.85);
+      font-size: 14px;
+    }
+    .view-banner strong { color: #1890ff; font-weight: 500; }
+    .view-section { margin-bottom: 24px; }
+    .view-section:last-child { margin-bottom: 0; }
+    .view-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: rgba(0,0,0,.85);
+    }
+    .view-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #f0f0f0;
+    }
+    .view-table th,
+    .view-table td {
+      padding: 12px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .view-table th {
+      background: #fafafa;
+      font-weight: 500;
+      color: rgba(0,0,0,.85);
+      white-space: nowrap;
+    }
+    .view-table td {
+      color: rgba(0,0,0,.65);
+      background: #fff;
+    }
+    .view-table tr:last-child td { border-bottom: none; }
+    .view-table .muted { color: rgba(0,0,0,.25); }
+    .log-content { white-space: pre-line; line-height: 1.7; }
+    .modal-view { width: 860px; max-width: calc(100vw - 48px); }
+    .view-rules {
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 2px;
+      padding: 12px 16px;
+      line-height: 1.8;
+      color: rgba(0,0,0,.65);
+    }
+    .toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #b7eb8f;
+      box-shadow: 0 3px 6px -4px rgba(0,0,0,.12);
+      padding: 10px 16px;
+      border-radius: 2px;
+      color: rgba(0,0,0,.85);
+      display: none;
+      z-index: 1100;
+      font-size: 14px;
+    }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-hd">
+      <h1>交易风控规则配置</h1>
+      <button class="btn btn-primary" id="btnOpen">+ 新增</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="buyer">买家</button>
+      <button class="tab" data-tab="sales">业务员</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>业务类型</th>
+          <th>风控类型</th>
+          <th>创建时间</th>
+          <th>更新时间</th>
+          <th>更新人</th>
+          <th style="width:120px">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div class="pagination">
+      <span id="totalText">共 3 条</span>
+      <select id="pageSize">
+        <option>10条/页</option>
+        <option>20条/页</option>
+        <option>50条/页</option>
+      </select>
+      <div class="page-btns">
+        <button class="page-btn" disabled>‹</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn" disabled>›</button>
+      </div>
+      <span>前往</span>
+      <input value="1" />
+      <span>页</span>
+    </div>
+  </div>
+
+  <!-- 新增 / 编辑 -->
+  <div class="mask" id="mask">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-hd">
+        <h2 id="modalTitle">新增</h2>
+        <button class="modal-close" id="btnClose" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-bd">
+        <div class="form-item">
+          <label class="form-label"><span class="req">*</span>业务类型</label>
+          <select class="select" id="bizType" style="min-width:200px">
+            <option value="jiwo" selected>鸡窝</option>
+          </select>
+        </div>
+        <div class="form-item" style="margin-bottom:0">
+          <div class="rule-block-label">风控规则</div>
+          <button type="button" class="btn btn-dashed" id="btnAddRule">+ 添加规则</button>
+          <div class="rule-list" id="ruleList"></div>
+          <p class="hint">可添加多条规则；「差款单数」类目固定为鸡窝-预混料，不可改选。</p>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn" id="btnCancel">取消</button>
+        <button class="btn btn-primary" id="btnSubmit">提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 查看 -->
+  <div class="mask" id="viewMask">
+    <div class="modal modal-view" role="dialog" aria-modal="true">
+      <div class="modal-hd">
+        <h2>查看</h2>
+        <button class="modal-close" id="btnViewClose" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-bd">
+        <div class="view-banner">业务类型：<strong id="viewBiz">鸡窝</strong></div>
+
+        <div class="view-section">
+          <div class="view-section-title">风控规则</div>
+          <table class="view-table">
+            <thead>
+              <tr>
+                <th style="width:56px">序号</th>
+                <th style="width:100px">品类</th>
+                <th>逻辑</th>
+                <th style="width:160px">更新时间</th>
+                <th style="width:88px">更新人</th>
+              </tr>
+            </thead>
+            <tbody id="viewRuleBody"></tbody>
+          </table>
+        </div>
+
+        <div class="view-section">
+          <div class="view-section-title">操作日志</div>
+          <table class="view-table">
+            <thead>
+              <tr>
+                <th style="width:88px">操作类型</th>
+                <th style="width:160px">操作时间</th>
+                <th style="width:88px">操作人</th>
+                <th>操作内容</th>
+              </tr>
+            </thead>
+            <tbody id="viewLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn" id="btnViewOk">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DEBT_SUB = {
+      period: [
+        { value: "gt7", label: "超过7天" },
+        { value: "gt15", label: "超过15天" },
+        { value: "gt30", label: "超过30天" },
+      ],
+      amount: [
+        { value: "gt1000", label: "超过1000元" },
+        { value: "gt5000", label: "超过5000元" },
+        { value: "gt10000", label: "超过10000元" },
+      ],
+      overdue: [
+        { value: "yes", label: "是" },
+        { value: "no", label: "否" },
+      ],
+    };
+    const OP_OPTIONS = [
+      { value: "gt", label: "大于" },
+      { value: "gte", label: "大于等于" },
+      { value: "lt", label: "小于" },
+      { value: "eq", label: "等于" },
+    ];
+
+    let currentTab = "buyer";
+    let editIndex = -1;
+    let rules = [];
+
+    const data = {
+      buyer: [
+        {
+          biz: "鸡窝",
+          createTime: "2026-08-13 14:21:18",
+          updateTime: "2026-09-03 11:30:33",
+          updater: "管理员",
+          rules: [
+            { dim: "diff_order_count", sub: "jiwo_premix", op: "gt", value: "2" },
+          ],
+          logs: [
+            {
+              type: "编辑",
+              time: "2026-09-03 11:30:33",
+              operator: "管理员",
+              content: "规则1：品类[预混料] 差款单数大于2次",
+            },
+            {
+              type: "新增",
+              time: "2026-08-13 14:21:18",
+              operator: "张敏",
+              content: "规则1：品类[预混料] 差款单数大于2次",
+            },
+          ],
+        },
+        {
+          biz: "鸡窝",
+          createTime: "2026-04-07 14:00:32",
+          updateTime: "2026-09-03 11:30:33",
+          updater: "管理员",
+          rules: [
+            { dim: "baitiao", sub: "yes", op: "gt", value: "0" },
+            { dim: "diff_amount", sub: "jiwo_premix", op: "gt", value: "3000" },
+          ],
+          logs: [
+            {
+              type: "编辑",
+              time: "2026-09-03 11:30:33",
+              operator: "管理员",
+              content: "规则1：品类[--] 白条逾期未还大于0\n规则2：品类[预混料] 差款金额大于3000元",
+            },
+            {
+              type: "新增",
+              time: "2026-04-07 14:00:32",
+              operator: "陈琪",
+              content: "规则1：品类[--] 白条逾期未还大于0",
+            },
+          ],
+        },
+        {
+          biz: "鸡窝",
+          createTime: "2026-03-19 16:52:16",
+          updateTime: "2026-03-19 16:52:16",
+          updater: "杜小倩",
+          rules: [
+            { dim: "baitiao", sub: "yes", op: "gt", value: "0" },
+          ],
+          logs: [
+            {
+              type: "新增",
+              time: "2026-03-19 16:52:16",
+              operator: "杜小倩",
+              content: "规则1：品类[--] 白条逾期未还大于0",
+            },
+          ],
+        },
+      ],
+      sales: [],
+    };
+
+    const mask = document.getElementById("mask");
+    const viewMask = document.getElementById("viewMask");
+    const ruleList = document.getElementById("ruleList");
+    const tableBody = document.getElementById("tableBody");
+    const toast = document.getElementById("toast");
+    const modalTitle = document.getElementById("modalTitle");
+
+    function uid() {
+      return "r_" + Math.random().toString(36).slice(2, 9);
+    }
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+    function nowStr() {
+      const n = new Date();
+      const p = (x) => String(x).padStart(2, "0");
+      return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())} ${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+    }
+    function makeRule(dim) {
+      return {
+        id: uid(),
+        dim: dim || "diff_order_count",
+        sub: dim === "diff_order_count" ? "jiwo_premix" : "",
+        op: "gt",
+        value: "",
+      };
+    }
+    function dimLabel(dim) {
+      return {
+        debt_period: "欠款周期",
+        debt_amount: "欠款金额",
+        baitiao: "白条逾期",
+        diff_order_count: "差款单数",
+        diff_amount: "差款金额",
+      }[dim] || dim;
+    }
+    function opLabel(op) {
+      return (OP_OPTIONS.find((o) => o.value === op) || {}).label || op;
+    }
+    function categoryLabel(rule) {
+      if (rule.dim === "diff_order_count" || rule.dim === "diff_amount" || rule.sub === "jiwo_premix") {
+        return "预混料";
+      }
+      return "--";
+    }
+    function logicText(rule) {
+      const op = opLabel(rule.op);
+      if (rule.dim === "diff_order_count") {
+        return `差款单数${op}${rule.value || "—"}次`;
+      }
+      if (rule.dim === "diff_amount") {
+        return `差款金额${op}${rule.value || "—"}元`;
+      }
+      if (rule.dim === "baitiao") {
+        return `白条逾期未还${op}${rule.value === "" || rule.value == null ? "0" : rule.value}`;
+      }
+      if (rule.dim === "debt_period") {
+        return `欠款周期${op}${rule.value || "—"}天`;
+      }
+      if (rule.dim === "debt_amount") {
+        return `欠款金额${op}${rule.value || "—"}元`;
+      }
+      return ruleText(rule);
+    }
+    function buildLogContent(ruleList) {
+      return (ruleList || [])
+        .map((r, i) => `规则${i + 1}：品类[${categoryLabel(r)}] ${logicText(r)}`)
+        .join("\n");
+    }
+    function riskTypeText(ruleList) {
+      const labels = [];
+      (ruleList || []).forEach((r) => {
+        const lab = dimLabel(r.dim);
+        if (lab && !labels.includes(lab)) labels.push(lab);
+      });
+      return labels.join("、") || "—";
+    }
+
+    function ruleText(rule) {
+      if (rule.dim === "diff_order_count") {
+        return `差款单数｜鸡窝-预混料｜${opLabel(rule.op)}｜${rule.value || "—"} 次`;
+      }
+      if (rule.dim === "diff_amount") {
+        return `差款金额｜鸡窝-预混料｜${opLabel(rule.op)}｜${rule.value || "—"} 元`;
+      }
+      const subMap = {
+        period: Object.fromEntries(DEBT_SUB.period.map((x) => [x.value, x.label])),
+        amount: Object.fromEntries(DEBT_SUB.amount.map((x) => [x.value, x.label])),
+        overdue: Object.fromEntries(DEBT_SUB.overdue.map((x) => [x.value, x.label])),
+      };
+      const key = rule.dim === "debt_period" ? "period" : rule.dim === "debt_amount" ? "amount" : "overdue";
+      const sub = subMap[key][rule.sub] || "未选";
+      if (rule.dim === "baitiao") return `${dimLabel(rule.dim)}｜${sub}`;
+      const unit = rule.dim === "debt_amount" ? "元" : "天";
+      return `${dimLabel(rule.dim)}｜${sub}｜${opLabel(rule.op)}｜${rule.value || "—"} ${unit}`;
+    }
+
+    function renderTable() {
+      const list = data[currentTab] || [];
+      document.getElementById("totalText").textContent = `共 ${list.length} 条`;
+      if (!list.length) {
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(0,0,0,.25);padding:48px 0">暂无数据</td></tr>`;
+        return;
+      }
+      tableBody.innerHTML = list.map((row, i) => `
+        <tr>
+          <td>${row.biz}</td>
+          <td>${row.riskType || riskTypeText(row.rules)}</td>
+          <td>${row.createTime}</td>
+          <td>${row.updateTime}</td>
+          <td>${row.updater}</td>
+          <td>
+            <button class="btn-link" onclick="viewRow(${i})">查看</button>
+            <button class="btn-link" onclick="editRow(${i})">编辑</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderRules() {
+      ruleList.innerHTML = "";
+      rules.forEach((rule) => {
+        const row = document.createElement("div");
+        row.className = "rule-row";
+
+        const dimSel = document.createElement("select");
+        dimSel.className = "select";
+        dimSel.innerHTML = `
+          <option value="debt_period">欠款周期</option>
+          <option value="debt_amount">欠款金额</option>
+          <option value="baitiao">白条逾期</option>
+          <option value="diff_order_count">差款单数</option>
+        `;
+        dimSel.value = rule.dim;
+        dimSel.addEventListener("change", () => {
+          rule.dim = dimSel.value;
+          rule.sub = rule.dim === "diff_order_count" ? "jiwo_premix" : "";
+          rule.op = "gt";
+          rule.value = "";
+          renderRules();
+        });
+        row.appendChild(dimSel);
+
+        if (rule.dim === "diff_order_count") {
+          const catSel = document.createElement("select");
+          catSel.className = "select";
+          catSel.disabled = true;
+          catSel.title = "固定类目，不可修改";
+          catSel.innerHTML = `<option value="jiwo_premix" selected>鸡窝-预混料</option>`;
+          rule.sub = "jiwo_premix";
+          row.appendChild(catSel);
+
+          const opSel = document.createElement("select");
+          opSel.className = "select";
+          opSel.style.minWidth = "90px";
+          OP_OPTIONS.forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o.value;
+            opt.textContent = o.label;
+            opSel.appendChild(opt);
+          });
+          opSel.value = rule.op || "gt";
+          opSel.addEventListener("change", () => { rule.op = opSel.value; });
+          row.appendChild(opSel);
+
+          const wrap = document.createElement("div");
+          wrap.className = "input-wrap";
+          const input = document.createElement("input");
+          input.className = "input";
+          input.type = "number";
+          input.min = "0";
+          input.step = "1";
+          input.placeholder = "数值";
+          input.value = rule.value;
+          input.addEventListener("input", () => { rule.value = input.value; });
+          const unit = document.createElement("span");
+          unit.className = "unit";
+          unit.textContent = "次";
+          wrap.appendChild(input);
+          wrap.appendChild(unit);
+          row.appendChild(wrap);
+        } else {
+          const subSel = document.createElement("select");
+          subSel.className = "select";
+          subSel.style.minWidth = "140px";
+          const mapKey = rule.dim === "debt_period" ? "period" : rule.dim === "debt_amount" ? "amount" : "overdue";
+          const placeholder = document.createElement("option");
+          placeholder.value = "";
+          placeholder.textContent = "请先选择欠款类型";
+          subSel.appendChild(placeholder);
+          (DEBT_SUB[mapKey] || []).forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o.value;
+            opt.textContent = o.label;
+            subSel.appendChild(opt);
+          });
+          subSel.value = rule.sub || "";
+          subSel.addEventListener("change", () => { rule.sub = subSel.value; });
+          row.appendChild(subSel);
+
+          if (rule.dim !== "baitiao") {
+            const opSel = document.createElement("select");
+            opSel.className = "select";
+            opSel.style.minWidth = "90px";
+            OP_OPTIONS.forEach((o) => {
+              const opt = document.createElement("option");
+              opt.value = o.value;
+              opt.textContent = o.label;
+              opSel.appendChild(opt);
+            });
+            opSel.value = rule.op || "gt";
+            opSel.addEventListener("change", () => { rule.op = opSel.value; });
+            row.appendChild(opSel);
+
+            const wrap = document.createElement("div");
+            wrap.className = "input-wrap";
+            const input = document.createElement("input");
+            input.className = "input";
+            input.type = "number";
+            input.placeholder = "数值";
+            input.value = rule.value;
+            input.addEventListener("input", () => { rule.value = input.value; });
+            const unit = document.createElement("span");
+            unit.className = "unit";
+            unit.textContent = rule.dim === "debt_amount" ? "元" : "天";
+            wrap.appendChild(input);
+            wrap.appendChild(unit);
+            row.appendChild(wrap);
+          }
+        }
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "btn-danger-text";
+        del.innerHTML = "🗑 删除";
+        del.addEventListener("click", () => {
+          rules = rules.filter((r) => r.id !== rule.id);
+          renderRules();
+        });
+        row.appendChild(del);
+        ruleList.appendChild(row);
+      });
+    }
+
+    function openModal(title) {
+      modalTitle.textContent = title || "新增";
+      renderRules();
+      mask.classList.add("show");
+    }
+    function closeModal() {
+      mask.classList.remove("show");
+      editIndex = -1;
+    }
+
+    window.viewRow = function (i) {
+      const row = data[currentTab][i];
+      document.getElementById("viewBiz").textContent = row.biz;
+
+      const ruleBody = document.getElementById("viewRuleBody");
+      const rules = row.rules || [];
+      if (!rules.length) {
+        ruleBody.innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center">暂无规则</td></tr>`;
+      } else {
+        ruleBody.innerHTML = rules.map((r, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${categoryLabel(r) === "--" ? '<span class="muted">--</span>' : categoryLabel(r)}</td>
+            <td>${logicText(r)}</td>
+            <td>${row.updateTime}</td>
+            <td>${row.updater}</td>
+          </tr>
+        `).join("");
+      }
+
+      const logBody = document.getElementById("viewLogBody");
+      const logs = row.logs && row.logs.length
+        ? row.logs
+        : [{
+            type: "新增",
+            time: row.createTime,
+            operator: row.updater,
+            content: buildLogContent(rules),
+          }];
+      logBody.innerHTML = logs.map((log) => `
+        <tr>
+          <td>${log.type}</td>
+          <td>${log.time}</td>
+          <td>${log.operator}</td>
+          <td><div class="log-content">${log.content}</div></td>
+        </tr>
+      `).join("");
+
+      viewMask.classList.add("show");
+    };
+    window.editRow = function (i) {
+      editIndex = i;
+      const row = data[currentTab][i];
+      document.getElementById("bizType").value = "jiwo";
+      rules = (row.rules || []).map((r) => ({ ...r, id: uid() }));
+      if (!rules.length) rules = [makeRule("diff_order_count")];
+      openModal("编辑");
+    };
+
+    function submit() {
+      if (!rules.length) {
+        showToast("请至少添加一条风控规则");
+        return;
+      }
+      for (const r of rules) {
+        if (r.dim === "diff_order_count") {
+          if (r.value === "" || Number(r.value) < 0) {
+            showToast("请填写差款单数数值");
+            return;
+          }
+        } else if (r.dim === "baitiao") {
+          if (!r.sub) {
+            showToast("请选择白条逾期选项");
+            return;
+          }
+        } else if (!r.sub) {
+          showToast("请完善欠款类规则的二级选项");
+          return;
+        }
+      }
+
+      const t = nowStr();
+      const payload = {
+        biz: "鸡窝",
+        riskType: riskTypeText(rules),
+        createTime: editIndex >= 0 ? data[currentTab][editIndex].createTime : t,
+        updateTime: t,
+        updater: "当前用户",
+        rules: rules.map(({ dim, sub, op, value }) => ({ dim, sub, op, value })),
+        logs: [
+          {
+            type: editIndex >= 0 ? "编辑" : "新增",
+            time: t,
+            operator: "当前用户",
+            content: buildLogContent(rules),
+          },
+          ...(editIndex >= 0 ? (data[currentTab][editIndex].logs || []) : []),
+        ],
+      };
+
+      if (editIndex >= 0) {
+        data[currentTab][editIndex] = payload;
+      } else {
+        data[currentTab].unshift(payload);
+      }
+      renderTable();
+      closeModal();
+      showToast("提交成功");
+    }
+
+    document.getElementById("btnOpen").addEventListener("click", () => {
+      editIndex = -1;
+      rules = [makeRule("diff_order_count")];
+      openModal("新增");
+    });
+    document.getElementById("btnClose").addEventListener("click", closeModal);
+    document.getElementById("btnCancel").addEventListener("click", closeModal);
+    document.getElementById("btnAddRule").addEventListener("click", () => {
+      rules.push(makeRule("diff_order_count"));
+      renderRules();
+    });
+    document.getElementById("btnSubmit").addEventListener("click", submit);
+    mask.addEventListener("click", (e) => { if (e.target === mask) closeModal(); });
+
+    document.getElementById("btnViewClose").addEventListener("click", () => viewMask.classList.remove("show"));
+    document.getElementById("btnViewOk").addEventListener("click", () => viewMask.classList.remove("show"));
+    viewMask.addEventListener("click", (e) => { if (e.target === viewMask) viewMask.classList.remove("show"); });
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentTab = tab.dataset.tab;
+        renderTable();
+      });
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>

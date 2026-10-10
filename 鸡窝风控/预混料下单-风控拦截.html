@@ -1,0 +1,406 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>预混料下单 · 风控拦截</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: #f0f0f0;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* 原型场景切换 */
+    .demo-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #1f1f1f;
+      color: #fff;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    .demo-bar .title { margin-bottom: 8px; opacity: .85; }
+    .demo-bar .btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .demo-bar button {
+      border: 0;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 12px;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+    }
+    .demo-bar button.active { background: #ff6a00; }
+
+    .phone {
+      max-width: 390px;
+      margin: 0 auto;
+      background: #f5f5f5;
+      min-height: calc(100vh - 88px);
+      padding-bottom: 88px;
+      position: relative;
+    }
+
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .nav .back {
+      position: absolute;
+      left: 12px;
+      font-size: 22px;
+      line-height: 1;
+      color: #333;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .card {
+      background: #fff;
+      margin-top: 8px;
+      padding: 14px 16px;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .tag-ship {
+      background: #ff6a00;
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .price-text { font-size: 15px; }
+    .price-text em {
+      font-style: normal;
+      color: #ff4d00;
+      font-weight: 700;
+    }
+
+    .lock-tip {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .lock-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 0;
+      font-size: 14px;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+    .lock-opt input { margin-top: 3px; accent-color: #ff6a00; }
+
+    .qty-row, .sum-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 15px;
+    }
+    .qty-row .right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qty-row input {
+      width: 72px;
+      height: 32px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 15px;
+    }
+    .money { color: #ff4d00; font-weight: 700; }
+    .note {
+      background: #f7f7f7;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .note a { color: #1890ff; text-decoration: none; }
+
+    .sec-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .info-row {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .info-row .lab {
+      color: #999;
+      width: 72px;
+      flex-shrink: 0;
+    }
+    .info-row .val { color: #333; flex: 1; }
+
+    .footer {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 100%;
+      max-width: 390px;
+      background: #fff;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      box-shadow: 0 -2px 8px rgba(0,0,0,.06);
+      z-index: 20;
+    }
+    .btn-pay {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 24px;
+      background: linear-gradient(90deg, #ff8a00, #ff5a00);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* 遮罩 + 提醒弹窗（对齐现网「提醒」样式） */
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+    .mask.show { display: flex; }
+    .alert {
+      width: 100%;
+      max-width: 300px;
+      background: #fff;
+      border-radius: 16px;
+      text-align: center;
+      padding: 28px 22px 20px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.12);
+    }
+    .alert-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    .alert-msg {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      text-align: center;
+      padding: 0 4px;
+    }
+    .alert-btn {
+      width: 100%;
+      height: 46px;
+      border: 0;
+      border-radius: 23px;
+      background: #ff6a00;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .alert-btn:active { opacity: .92; }
+  </style>
+</head>
+<body>
+  <div class="demo-bar">
+    <div class="title">原型演示 · 点击底部「支付定金」触发对应风控</div>
+    <div class="btns">
+      <button type="button" class="active" data-scene="ok">正常下单</button>
+      <button type="button" data-scene="diff">差款单数拦截</button>
+      <button type="button" data-scene="overdue">逾期金额拦截</button>
+      <button type="button" data-scene="both">双规则命中</button>
+      <button type="button" data-scene="tonAudit">货到付款吨位审核</button>
+      <button type="button" data-scene="noBaiTiao">非养殖户无白条</button>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="nav">
+      <button type="button" class="back" aria-label="关闭">×</button>
+      预混料下单
+    </div>
+
+    <div class="card">
+      <div class="price-row">
+        <span class="tag-ship">汽运</span>
+        <span class="price-text">送达价：<em>¥ 0.6</em> 元/包</span>
+      </div>
+      <div class="lock-tip">还未到最晚提货日，请选择锁价方式：</div>
+      <label class="lock-opt">
+        <input type="radio" name="lock" />
+        <span>锁定当前价格（0.6 元/包- 汽运）</span>
+      </label>
+      <label class="lock-opt">
+        <input type="radio" name="lock" checked />
+        <span>不锁定当前价格，按提货日当天价格为购买价格</span>
+      </label>
+    </div>
+
+    <div class="card">
+      <div class="qty-row">
+        <span>预定数量</span>
+        <div class="right">
+          <input id="qty" type="number" value="100" min="1" />
+          <span>包</span>
+        </div>
+      </div>
+      <div class="sum-row">
+        <span>合计</span>
+        <span class="money" id="total">¥ 60.00元</span>
+      </div>
+      <div class="sum-row">
+        <span>应付定金</span>
+        <span class="money">¥ 1.00元</span>
+      </div>
+      <div class="note">
+        订金支付给商家，提货前付清货款，订金将抵扣相应货款，未提货部分订金可退。<a href="javascript:;">查看详情</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">其他信息</div>
+      <div class="info-row"><div class="lab">购买信息</div><div class="val">穆座什</div></div>
+      <div class="info-row"><div class="lab">发货方式</div><div class="val">汽车运输</div></div>
+      <div class="info-row"><div class="lab">提货日期</div><div class="val">2026.03.04 ~ 2026.04.30</div></div>
+      <div class="info-row"><div class="lab">提货地址</div><div class="val">上海市黄浦区外滩街道中山东一路12号外滩12号</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button type="button" class="btn-pay" id="btnPay">支付定金</button>
+  </div>
+
+  <div class="mask" id="maskAlert">
+    <div class="alert">
+      <div class="alert-title">提醒</div>
+      <div class="alert-msg" id="alertMsg"></div>
+      <button type="button" class="alert-btn" id="alertBtn">我知道了</button>
+    </div>
+  </div>
+
+  <script>
+    const SCENES = {
+      ok: {
+        label: "正常下单",
+        onPay() {
+          showAlert("订单提交成功", "我知道了");
+        }
+      },
+      diff: {
+        label: "差款单数拦截",
+        onPay() {
+          showAlert(
+            "预混料差款单数大于2单，不能下单，请先处理差款订单后再下单",
+            "我知道了"
+          );
+        }
+      },
+      overdue: {
+        label: "逾期金额拦截",
+        onPay() {
+          showAlert(
+            "当前业务员预混料逾期金额已经超过30000元，不能下单，请先催收回款或联系订单运营调整",
+            "我知道了"
+          );
+        }
+      },
+      both: {
+        label: "双规则命中",
+        onPay() {
+          showAlert(
+            "当前客户鸡窝-预混料差款单数已超过风控限制，不能下单，请先处理差款订单后再试",
+            "我知道了"
+          );
+        }
+      },
+      tonAudit: {
+        label: "货到付款吨位审核",
+        onPay() {
+          showAlert(
+            "订单已提交。本次货到付款吨数需审核（提货单状态：待审核），审核通过后再进行买家确认提货或匹配库存",
+            "我知道了"
+          );
+        }
+      },
+      noBaiTiao: {
+        label: "非养殖户无白条",
+        onPay() {
+          showAlert(
+            "货到付款的预混料订单需要开通生效中的白条才可下单",
+            "我知道了"
+          );
+        }
+      }
+    };
+
+    let scene = "ok";
+    const $ = (s) => document.querySelector(s);
+
+    function showAlert(msg, btnText) {
+      $("#alertMsg").textContent = msg;
+      $("#alertBtn").textContent = btnText || "我知道了";
+      $("#maskAlert").classList.add("show");
+    }
+
+    function closeAlert() {
+      $("#maskAlert").classList.remove("show");
+    }
+
+    document.querySelectorAll(".demo-bar button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".demo-bar button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        scene = btn.dataset.scene;
+      });
+    });
+
+    $("#btnPay").addEventListener("click", () => {
+      SCENES[scene].onPay();
+    });
+
+    $("#alertBtn").addEventListener("click", closeAlert);
+    $("#maskAlert").addEventListener("click", (e) => {
+      if (e.target.id === "maskAlert") closeAlert();
+    });
+
+    $("#qty").addEventListener("input", () => {
+      const n = Number($("#qty").value) || 0;
+      $("#total").textContent = "¥ " + (n * 0.6).toFixed(2) + "元";
+    });
+  </script>
+</body>
+</html>

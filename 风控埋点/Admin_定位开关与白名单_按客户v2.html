@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · 定位授权配置（按客户 v2 草案）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;font-size:14px}
+.page{max-width:1080px;margin:0 auto;min-height:100vh;padding-bottom:40px}
+.nav{background:#001529;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+.nav h1{font-size:16px;font-weight:600}
+.nav .sub{font-size:12px;opacity:.75;margin-top:2px}
+.wrap{padding:16px}
+.card{background:#fff;border-radius:8px;padding:16px 18px;margin-bottom:12px}
+.card h2{font-size:15px;margin-bottom:8px;padding-left:8px;border-left:3px solid #1677ff}
+.card .sub-desc{font-size:12px;color:#999;margin:0 0 14px 11px;line-height:1.6}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;vertical-align:middle}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#bfbfbf;border-radius:22px;transition:.2s}
+.slider:before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:#1677ff}
+.switch input:checked+.slider:before{transform:translateX(18px)}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:10px}
+.tag.on{background:#f6ffed;color:#52c41a}
+.tag.off{background:#fff1f0;color:#ff4d4f}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+input{height:36px;border:1px solid #d9d9d9;border-radius:4px;padding:0 10px;font-size:13px;outline:none}
+input:focus{border-color:#1677ff}
+.btn{border:none;border-radius:4px;padding:0 14px;height:36px;font-size:13px;cursor:pointer}
+.btn-primary{background:#1677ff;color:#fff}
+.btn-default{background:#fff;border:1px solid #d9d9d9;color:#333}
+.btn-danger{background:#fff;border:1px solid #ff4d4f;color:#ff4d4f}
+.ops{display:inline-flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+table th:last-child,table td:last-child{text-align:right;white-space:nowrap}
+table{width:100%;border-collapse:collapse}
+th{background:#fafafa;text-align:left;padding:10px 12px;font-size:13px;color:#666;border-bottom:1px solid #f0f0f0;font-weight:600}
+td{padding:12px;border-bottom:1px solid #f5f5f5;font-size:13px;vertical-align:middle}
+.cfg-table td:last-child,.cfg-table th:last-child{text-align:right;width:120px}
+.global-card .row{align-items:flex-start}
+.global-card .desc{font-size:13px;color:#666;line-height:1.7;margin:4px 0 10px 11px}
+.global-ctrl{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:4px;min-width:72px}
+.global-ctrl .tag{font-size:13px;padding:0;background:none;border-radius:0}
+.tabs{display:flex;gap:0;border-bottom:1px solid #f0f0f0;margin-bottom:14px}
+.tabs button{border:0;background:none;padding:10px 16px;font-size:14px;color:#666;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.active{color:#1677ff;font-weight:600;border-bottom-color:#1677ff}
+.panel{display:none}.panel.on{display:block}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+.modal.on{display:flex}
+.modal-box{background:#fff;border-radius:4px;width:min(920px,96vw);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 8px 28px rgba(0,0,0,.15)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #f0f0f0}
+.modal-hd h3{font-size:16px;font-weight:600}
+.modal-hd .x{border:0;background:none;font-size:18px;color:#999;cursor:pointer}
+.modal-bd{padding:16px 20px;overflow:auto;flex:1}
+.modal-ft{padding:12px 20px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:8px}
+.search-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-bottom:14px}
+.search-bar .field{display:flex;align-items:center;gap:8px}
+.search-bar .field label{font-size:13px;white-space:nowrap}
+.search-bar .field input{width:180px}
+.pick-table{border:1px solid #f0f0f0;overflow:auto}
+.pick-table tr:hover td{background:#fafafa}
+.pick-table tr.selected td{background:#e6f4ff}
+.pick-table input[type=radio]{accent-color:#1677ff;width:16px;height:16px}
+.pager{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px;font-size:13px;color:#666}
+.pager .pg{min-width:28px;height:28px;border:1px solid #d9d9d9;background:#fff;border-radius:2px;cursor:pointer}
+.pager .pg.active{background:#1677ff;border-color:#1677ff;color:#fff}
+.pager .pg:disabled{opacity:.4;cursor:not-allowed}
+.pager input{width:40px;height:28px;text-align:center;padding:0;min-width:0}
+.plat-tags{display:flex;flex-wrap:wrap;gap:6px}
+.plat-tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:4px;background:#f0f5ff;color:#1677ff;border:1px solid #d6e4ff}
+.draft-banner{background:#fff7e6;border:1px solid #ffd591;color:#ad6800;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.form-row{display:flex;align-items:flex-start;margin-bottom:20px;gap:12px}
+.form-row .form-label{width:96px;flex-shrink:0;text-align:right;line-height:32px;font-size:14px;color:#333;padding-top:0}
+.form-row .form-label .req{color:#ff4d4f;margin-right:4px}
+.form-row .form-ctrl{flex:1;min-width:0;position:relative}
+.form-row .form-ctrl>input[type=text]{width:100%;height:32px;border:1px solid #d9d9d9;border-radius:2px;padding:0 11px;font-size:14px}
+.form-row .form-ctrl>input[type=text]:focus{border-color:#1677ff;box-shadow:0 0 0 2px rgba(22,119,255,.1)}
+.ac-drop{position:absolute;left:0;right:0;top:34px;z-index:30;background:#fff;border:1px solid #f0f0f0;border-radius:2px;box-shadow:0 6px 16px rgba(0,0,0,.08);max-height:240px;overflow:auto;display:none}
+.ac-drop.on{display:block}
+.ac-drop .ac-item{padding:8px 12px;font-size:14px;color:#333;cursor:pointer;line-height:1.5}
+.ac-drop .ac-item:hover,.ac-drop .ac-item.active{background:#f5f5f5}
+.ac-drop .ac-empty{padding:12px;font-size:13px;color:#999;text-align:center}
+.plat-checks{display:flex;flex-wrap:wrap;gap:12px 24px;padding-top:6px;min-height:32px;align-items:center}
+.plat-checks label{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;user-select:none;color:#333}
+.plat-checks input{width:16px;height:16px;accent-color:#1677ff;margin:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav">
+    <div>
+      <h1>风控埋点 · 定位授权配置</h1>
+      <div class="sub">按环节 / 区域 / 平台端 / 客户维度配置是否强制获取 GPS · 按客户 v2 草案（确认后再覆盖正式版）</div>
+    </div>
+    <div style="font-size:13px;opacity:.85">运营：张敏</div>
+  </div>
+  <div class="wrap">
+    <div class="draft-banner">本页为「按客户」白名单新逻辑草案：添加客户后还需多选适用平台（企微、粮巴巴客户端）。现有正式版文件未改动，确认通过后再覆盖。</div>
+    <div class="card global-card">
+      <div class="row">
+        <div style="flex:1;min-width:240px">
+          <h2>全局定位授权开关</h2>
+          <div class="desc">
+            开关打开：覆盖页启用定位授权（非白名单必须授权；白名单可拒权继续）。<br>
+            开关关闭：不弹授权、不拦截、可不采集经纬度。
+          </div>
+          <div class="meta" id="meta-global" style="font-size:12px;color:#999;margin-left:11px">最近修改：张敏 · 2026-09-11 10:20 · 由关闭改为开启</div>
+        </div>
+        <div class="global-ctrl">
+          <span class="tag on" id="globalStatus">已启用</span>
+          <label class="switch"><input type="checkbox" id="globalSwitch" checked onchange="toggleGlobal(this)"/><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs" id="tabs">
+        <button type="button" data-tab="stage">按环节</button>
+        <button type="button" data-tab="region">按区域</button>
+        <button type="button" data-tab="platform">按平台端</button>
+        <button type="button" class="active" data-tab="customer">按客户</button>
+      </div>
+
+      <!-- 环节 -->
+      <div class="panel" id="panel-stage">
+        <table class="cfg-table">
+          <thead><tr><th>环节</th><th>覆盖说明</th><th>强制获取 GPS</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>注册</td>
+              <td>客户注册页</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="stage" data-key="register"/><span class="slider"></span></label></td>
+            </tr>
+            <tr>
+              <td>下单</td>
+              <td>豆粕、玉米、预混料下单页面</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="stage" data-key="order" checked/><span class="slider"></span></label></td>
+            </tr>
+            <tr>
+              <td>提货</td>
+              <td>豆粕、玉米、预混料申请提货页面</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="stage" data-key="pickup" checked/><span class="slider"></span></label></td>
+            </tr>
+            <tr>
+              <td>付款</td>
+              <td>大宗选择白条支付弹窗、鸡窝收银台</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="stage" data-key="pay" checked/><span class="slider"></span></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 区域名单（样式对齐客户白名单） -->
+      <div class="panel" id="panel-region">
+        <div class="sub-desc">加入名单的区域：强制授权。未加入名单的区域：不强制授权（可不授权，也可自愿授权）。</div>
+        <div class="toolbar">
+          <input id="kwRegion" placeholder="搜索区域名称" oninput="regionPage=1;renderRegionTable()" style="min-width:240px" />
+          <button class="btn btn-primary" type="button" onclick="openAddRegion()">添加区域</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>区域</th><th>添加人</th><th>添加时间</th><th>操作</th></tr>
+          </thead>
+          <tbody id="regionTbody"></tbody>
+        </table>
+        <div class="pager">
+          <span id="regionTotal">共 0 条</span>
+          <button class="pg" type="button" id="regionPrev" onclick="changeRegionPage(-1)">‹</button>
+          <button class="pg active" type="button" id="regionPgNum">1</button>
+          <button class="pg" type="button" id="regionNext" onclick="changeRegionPage(1)">›</button>
+          <span>前往</span>
+          <input id="regionJump" value="1" onkeydown="if(event.key==='Enter')jumpRegionPage()" />
+          <span>页</span>
+        </div>
+      </div>
+
+      <!-- 平台 -->
+      <div class="panel" id="panel-platform">
+        <div class="sub-desc">某端关闭后，该端所有环节均不强制获取 GPS。</div>
+        <table class="cfg-table">
+          <thead><tr><th>平台端</th><th>强制获取 GPS</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>PC 端</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="platform" data-key="pc" checked onchange="touchMeta('platform')"/><span class="slider"></span></label></td>
+            </tr>
+            <tr>
+              <td>WAP 端</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="platform" data-key="wap" checked onchange="touchMeta('platform')"/><span class="slider"></span></label></td>
+            </tr>
+            <tr>
+              <td>APP 端</td>
+              <td><label class="switch"><input type="checkbox" data-cfg="platform" data-key="app" checked onchange="touchMeta('platform')"/><span class="slider"></span></label></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="meta" id="meta-platform" style="margin-top:10px;font-size:12px;color:#999">最近修改：—</div>
+      </div>
+
+      <!-- 客户白名单 v2：客户 + 平台多选 -->
+      <div class="panel on" id="panel-customer">
+        <div class="toolbar">
+          <input id="kw" placeholder="搜索客户名称 / 手机号 / 客户ID / 平台" oninput="listPage=1;renderTable()" style="min-width:240px" />
+          <button class="btn btn-primary" type="button" onclick="openAdd()">添加白名单</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>客户</th><th>客户ID</th><th>手机号</th><th>适用平台</th><th>添加人</th><th>添加时间</th><th>操作</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="pager">
+          <span id="listTotal">共 0 条</span>
+          <button class="pg" type="button" id="listPrev" onclick="changeListPage(-1)">‹</button>
+          <button class="pg active" type="button" id="listPgNum">1</button>
+          <button class="pg" type="button" id="listNext" onclick="changeListPage(1)">›</button>
+          <span>前往</span>
+          <input id="listJump" value="1" onkeydown="if(event.key==='Enter')jumpListPage()" />
+          <span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box" style="width:min(520px,96vw)">
+    <div class="modal-hd">
+      <h3 id="modalTitle">添加白名单客户</h3>
+      <button class="x" type="button" onclick="closeAdd()">×</button>
+    </div>
+    <div class="modal-bd" style="padding:24px 24px 8px">
+      <div class="form-row">
+        <div class="form-label"><span class="req">*</span>选择客户</div>
+        <div class="form-ctrl">
+          <input type="text" id="qName" placeholder="请输入客户名称" autocomplete="off"
+            oninput="onCustInput()" onfocus="onCustFocus()" />
+          <div class="ac-drop" id="acDrop"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label"><span class="req">*</span>适用平台</div>
+        <div class="form-ctrl">
+          <div class="plat-checks" id="platChecks">
+            <label><input type="checkbox" name="plat" value="企微" />企微</label>
+            <label><input type="checkbox" name="plat" value="粮巴巴客户端" />粮巴巴客户端</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" type="button" onclick="closeAdd()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="confirmSave()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modalRegion">
+  <div class="modal-box" style="width:min(640px,96vw)">
+    <div class="modal-hd">
+      <h3>添加区域</h3>
+      <button class="x" type="button" onclick="closeAddRegion()">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="search-bar">
+        <div class="field"><label>区域名称</label><input id="qRegion" placeholder="请输入" /></div>
+        <button class="btn btn-primary" type="button" onclick="doSearchRegion()">搜索</button>
+      </div>
+      <div class="pick-table">
+        <table>
+          <thead>
+            <tr><th style="width:44px"></th><th>区域</th></tr>
+          </thead>
+          <tbody id="pickRegionBody"></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span id="pickRegionTotal">共 0 条</span>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" type="button" onclick="closeAddRegion()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="confirmAddRegion()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const REGION_CATALOG=[
+  {key:"ganning", name:"甘宁", desc:"甘肃 / 宁夏"},
+  {key:"jinshan", name:"晋陕", desc:"山西 / 陕西"},
+  {key:"heiji", name:"黑吉", desc:"黑龙江 / 吉林"},
+  {key:"mengxi", name:"蒙西", desc:"内蒙古西部"},
+  {key:"huabei", name:"华北", desc:"京津冀等"},
+  {key:"huadong", name:"华东", desc:"江浙沪皖等"}
+];
+
+/** 已配置区域名单 = 强制 GPS */
+let regionList=[
+  {key:"ganning", name:"甘宁", desc:"甘肃 / 宁夏", by:"张敏", time:"2026-09-14 10:00"}
+];
+
+const PLATFORM_OPTS=["企微","粮巴巴客户端"];
+
+let list=[
+  {id:"100086", name:"尚兆立养殖场", role:"买家", mobile:"13812345678", region:"华东", platforms:["企微","粮巴巴客户端"], by:"张敏", time:"2026-09-10 09:12"},
+  {id:"100092", name:"华东养殖合作社", role:"买家", mobile:"13900001122", region:"华东", platforms:["粮巴巴客户端"], by:"李华", time:"2026-09-09 16:40"},
+  {id:"100093", name:"兰州某某养殖", role:"买家", mobile:"13711112222", region:"甘宁", platforms:["企微"], by:"张敏", time:"2026-09-08 11:00"}
+];
+
+const CATALOG=[
+  {id:"100001", role:"买家", name:"张三", mobile:"13812345678", region:"华东"},
+  {id:"100002", role:"买家", name:"张三丰", mobile:"13900001111", region:"华北"},
+  {id:"100003", role:"买家", name:"银川养殖场", mobile:"13700002222", region:"甘宁"},
+  {id:"100004", role:"买家", name:"西安合作社", mobile:"13600003333", region:"晋陕"},
+  {id:"100005", role:"买家", name:"长春牧场", mobile:"13500004444", region:"黑吉"},
+  {id:"100006", role:"买家", name:"赵六饲料店", mobile:"13400005555", region:"华东"},
+  {id:"100007", role:"买家", name:"呼市养殖", mobile:"13300006666", region:"蒙西"},
+  {id:"100008", role:"买家", name:"孙八牧场", mobile:"13200007777", region:"华北"},
+  {id:"100009", role:"买家", name:"周九蛋鸡场", mobile:"13100008888", region:"晋陕"},
+  {id:"100010", role:"买家", name:"吴十水产", mobile:"13000009999", region:"华东"},
+  {id:"100011", role:"买家", name:"兰州蛋鸡", mobile:"12900001111", region:"甘宁"},
+  {id:"100012", role:"买家", name:"哈尔滨养殖", mobile:"12800001212", region:"黑吉"}
+];
+
+let pickFiltered=[];
+let pickRegionFiltered=[...REGION_CATALOG];
+let listPage=1, regionPage=1, selectedId=null, selectedRegionKey=null;
+/** null=添加；有值=正在编辑的原客户 id */
+let editingId=null;
+const pageSize=10;
+
+function nowStr(){
+  const now=new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+}
+function touchMeta(which){
+  const el=document.getElementById("meta-"+which);
+  if(el) el.textContent=`最近修改：张敏 · ${nowStr()}`;
+}
+function toggleGlobal(input){
+  const on=!!input.checked;
+  const st=document.getElementById("globalStatus");
+  st.textContent=on?"已启用":"已关闭";
+  st.className="tag "+(on?"on":"off");
+  document.getElementById("meta-global").textContent=`最近修改：张敏 · ${nowStr()} · 由${on?"关闭改为开启":"开启改为关闭"}`;
+}
+
+document.querySelectorAll("#tabs button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+    document.getElementById("panel-"+btn.dataset.tab).classList.add("on");
+  });
+});
+
+function filteredRegionList(){
+  const kw=(document.getElementById("kwRegion").value||"").trim();
+  return regionList.filter(x=>!kw||x.name.includes(kw)||(x.desc||"").includes(kw));
+}
+function renderRegionTable(){
+  const rowsAll=filteredRegionList();
+  const total=rowsAll.length;
+  const pages=Math.max(1, Math.ceil(total/pageSize));
+  if(regionPage>pages) regionPage=pages;
+  const rows=rowsAll.slice((regionPage-1)*pageSize, regionPage*pageSize);
+  document.getElementById("regionTotal").textContent=`共 ${total} 条`;
+  document.getElementById("regionPgNum").textContent=String(regionPage);
+  document.getElementById("regionPrev").disabled=regionPage<=1;
+  document.getElementById("regionNext").disabled=regionPage>=pages;
+  document.getElementById("regionJump").value=String(regionPage);
+  document.getElementById("regionTbody").innerHTML=rows.map(x=>`
+    <tr>
+      <td>${x.name}</td><td>${x.by}</td><td>${x.time}</td>
+      <td><button class="btn btn-danger" type="button" onclick="removeRegion('${x.key}')">移除</button></td>
+    </tr>`).join("")||`<tr><td colspan="4" style="text-align:center;color:#999;padding:28px">暂无配置区域（未配置区域均不强制授权）</td></tr>`;
+}
+function changeRegionPage(d){
+  const pages=Math.max(1, Math.ceil(filteredRegionList().length/pageSize));
+  regionPage=Math.min(pages, Math.max(1, regionPage+d));
+  renderRegionTable();
+}
+function jumpRegionPage(){
+  const pages=Math.max(1, Math.ceil(filteredRegionList().length/pageSize));
+  regionPage=Math.min(pages, Math.max(1, parseInt(document.getElementById("regionJump").value,10)||1));
+  renderRegionTable();
+}
+function openAddRegion(){
+  document.getElementById("qRegion").value="";
+  selectedRegionKey=null;
+  pickRegionFiltered=[...REGION_CATALOG];
+  renderPickRegion();
+  document.getElementById("modalRegion").classList.add("on");
+}
+function closeAddRegion(){document.getElementById("modalRegion").classList.remove("on")}
+function doSearchRegion(){
+  const n=(document.getElementById("qRegion").value||"").trim();
+  pickRegionFiltered=REGION_CATALOG.filter(x=>!n||x.name.includes(n)||(x.desc||"").includes(n));
+  selectedRegionKey=null;
+  renderPickRegion();
+}
+function renderPickRegion(){
+  document.getElementById("pickRegionTotal").textContent=`共 ${pickRegionFiltered.length} 条`;
+  document.getElementById("pickRegionBody").innerHTML=pickRegionFiltered.map(x=>`
+    <tr class="${selectedRegionKey===x.key?"selected":""}" onclick="selectRegionRow('${x.key}')">
+      <td><input type="radio" name="pickRegion" ${selectedRegionKey===x.key?"checked":""} onclick="event.stopPropagation();selectRegionRow('${x.key}')"/></td>
+      <td>${x.name}</td>
+    </tr>`).join("")||`<tr><td colspan="2" style="text-align:center;color:#999;padding:32px">暂无数据</td></tr>`;
+}
+function selectRegionRow(key){selectedRegionKey=key;renderPickRegion()}
+function confirmAddRegion(){
+  if(!selectedRegionKey){alert("请先选择一个区域");return}
+  if(regionList.some(x=>x.key===selectedRegionKey)){alert("该区域已在名单中");return}
+  const r=REGION_CATALOG.find(x=>x.key===selectedRegionKey); if(!r) return;
+  regionList.unshift({key:r.key,name:r.name,desc:r.desc,by:"张敏",time:nowStr()});
+  regionPage=1; closeAddRegion(); renderRegionTable();
+}
+function removeRegion(key){
+  if(!confirm("确认移出区域名单？移出后该区域将不再强制授权。")) return;
+  regionList=regionList.filter(x=>x.key!==key); renderRegionTable();
+}
+
+function platTagsHtml(platforms){
+  const arr=Array.isArray(platforms)?platforms:[];
+  if(!arr.length) return "—";
+  return `<div class="plat-tags">${arr.map(p=>`<span class="plat-tag">${p}</span>`).join("")}</div>`;
+}
+function selectedPlatforms(){
+  return [...document.querySelectorAll('#platChecks input[name="plat"]:checked')].map(el=>el.value);
+}
+function resetPlatformChecks(selected){
+  const set=new Set(Array.isArray(selected)?selected:[]);
+  document.querySelectorAll('#platChecks input[name="plat"]').forEach(el=>{
+    el.checked=set.has(el.value);
+  });
+}
+function findCustSource(id){
+  return CATALOG.find(x=>x.id===id) || list.find(x=>x.id===id) || null;
+}
+function fillCustInput(c){
+  if(!c){ document.getElementById("qName").value=""; return; }
+  document.getElementById("qName").value=`${c.name} / ${c.mobile||"—"} / id:${c.id}`;
+}
+function filteredList(){
+  const kw=(document.getElementById("kw").value||"").trim();
+  return list.filter(x=>{
+    if(!kw) return true;
+    const plat=(x.platforms||[]).join(" ");
+    return [x.name,x.id,x.mobile,x.region,plat].some(v=>(v||"").includes(kw));
+  });
+}
+function renderTable(){
+  const rowsAll=filteredList();
+  const total=rowsAll.length;
+  const pages=Math.max(1, Math.ceil(total/pageSize));
+  if(listPage>pages) listPage=pages;
+  const rows=rowsAll.slice((listPage-1)*pageSize, listPage*pageSize);
+  document.getElementById("listTotal").textContent=`共 ${total} 条`;
+  document.getElementById("listPgNum").textContent=String(listPage);
+  document.getElementById("listPrev").disabled=listPage<=1;
+  document.getElementById("listNext").disabled=listPage>=pages;
+  document.getElementById("listJump").value=String(listPage);
+  document.getElementById("tbody").innerHTML=rows.map(x=>`
+    <tr>
+      <td>${x.name}</td><td>${x.id}</td><td>${x.mobile||"—"}</td>
+      <td>${platTagsHtml(x.platforms)}</td>
+      <td>${x.by}</td><td>${x.time}</td>
+      <td>
+        <div class="ops">
+          <button class="btn btn-default" type="button" onclick="openEdit('${x.id}')">编辑</button>
+          <button class="btn btn-danger" type="button" onclick="removeRow('${x.id}')">移除</button>
+        </div>
+      </td>
+    </tr>`).join("")||`<tr><td colspan="7" style="text-align:center;color:#999;padding:28px">暂无白名单客户</td></tr>`;
+}
+function changeListPage(d){
+  const pages=Math.max(1, Math.ceil(filteredList().length/pageSize));
+  listPage=Math.min(pages, Math.max(1, listPage+d));
+  renderTable();
+}
+function jumpListPage(){
+  const pages=Math.max(1, Math.ceil(filteredList().length/pageSize));
+  listPage=Math.min(pages, Math.max(1, parseInt(document.getElementById("listJump").value,10)||1));
+  renderTable();
+}
+
+function openAdd(){
+  editingId=null;
+  selectedId=null;
+  pickFiltered=[];
+  document.getElementById("modalTitle").textContent="添加白名单客户";
+  const q=document.getElementById("qName");
+  q.value="";
+  q.readOnly=false;
+  q.style.background="";
+  q.style.color="";
+  q.style.cursor="";
+  resetPlatformChecks();
+  hideAcDrop();
+  document.getElementById("modal").classList.add("on");
+}
+function openEdit(id){
+  const row=list.find(x=>x.id===id);
+  if(!row) return;
+  editingId=id;
+  selectedId=id;
+  pickFiltered=[];
+  document.getElementById("modalTitle").textContent="编辑白名单客户";
+  fillCustInput(row);
+  const q=document.getElementById("qName");
+  q.readOnly=true;
+  q.style.background="#f5f5f5";
+  q.style.color="#8c8c8c";
+  q.style.cursor="not-allowed";
+  resetPlatformChecks(row.platforms||[]);
+  hideAcDrop();
+  document.getElementById("modal").classList.add("on");
+}
+function closeAdd(){
+  hideAcDrop();
+  editingId=null;
+  selectedId=null;
+  const q=document.getElementById("qName");
+  q.readOnly=false;
+  q.style.background="";
+  q.style.color="";
+  q.style.cursor="";
+  document.getElementById("modal").classList.remove("on");
+}
+function hideAcDrop(){
+  const drop=document.getElementById("acDrop");
+  if(drop){ drop.classList.remove("on"); drop.innerHTML=""; }
+}
+function filterCatalog(kw){
+  const n=(kw||"").trim();
+  if(!n) return [];
+  const seen=new Set();
+  const rows=[];
+  [...CATALOG, ...list].forEach(x=>{
+    if(seen.has(x.id)) return;
+    if(x.name.includes(n)||String(x.id).includes(n)||(x.mobile||"").includes(n)){
+      seen.add(x.id);
+      rows.push(x);
+    }
+  });
+  return rows;
+}
+function onCustFocus(){
+  if(editingId || document.getElementById("qName").readOnly) return;
+  const kw=document.getElementById("qName").value||"";
+  if((kw||"").trim()) renderAcDrop(filterCatalog(kw));
+}
+function onCustInput(){
+  if(editingId || document.getElementById("qName").readOnly) return;
+  const kw=document.getElementById("qName").value||"";
+  const prev=selectedId?findCustSource(selectedId):null;
+  if(prev && kw!==`${prev.name} / ${prev.mobile||"—"} / id:${prev.id}` && kw!==prev.name){
+    selectedId=null;
+  }
+  const rows=filterCatalog(kw);
+  pickFiltered=rows;
+  renderAcDrop(rows);
+}
+function renderAcDrop(rows){
+  const drop=document.getElementById("acDrop");
+  if(!rows.length){
+    const kw=(document.getElementById("qName").value||"").trim();
+    if(!kw){ hideAcDrop(); return; }
+    drop.innerHTML=`<div class="ac-empty">暂无匹配客户</div>`;
+    drop.classList.add("on");
+    return;
+  }
+  drop.innerHTML=rows.map((x,i)=>`
+    <div class="ac-item${i===0?" active":""}" onmousedown="event.preventDefault();selectCust('${x.id}')">
+      ${x.name} / ${x.mobile} / id:${x.id}
+    </div>`).join("");
+  drop.classList.add("on");
+}
+function selectCust(id){
+  const c=findCustSource(id); if(!c) return;
+  selectedId=c.id;
+  fillCustInput(c);
+  hideAcDrop();
+}
+function confirmSave(){
+  if(!selectedId){alert("请选择客户");return}
+  const platforms=selectedPlatforms();
+  if(!platforms.length){alert("请至少选择一个适用平台");return}
+  const plats=PLATFORM_OPTS.filter(p=>platforms.includes(p));
+  if(editingId){
+    const idx=list.findIndex(x=>x.id===editingId);
+    if(idx<0) return;
+    list[idx]={
+      ...list[idx],
+      platforms:plats,
+      by:"张敏",
+      time:nowStr()
+    };
+    closeAdd();
+    renderTable();
+    return;
+  }
+  if(list.some(x=>x.id===selectedId)){alert("该客户已在白名单中");return}
+  const c=findCustSource(selectedId); if(!c) return;
+  list.unshift({
+    id:c.id,name:c.name,role:c.role||"买家",mobile:c.mobile||"",region:c.region||"",
+    platforms:plats,
+    by:"张敏",time:nowStr()
+  });
+  listPage=1; closeAdd(); renderTable();
+}
+function removeRow(id){
+  if(!confirm("确认移出白名单？")) return;
+  list=list.filter(x=>x.id!==id); renderTable();
+}
+
+document.getElementById("modal").addEventListener("click",e=>{
+  if(e.target.id==="modal") closeAdd();
+  else if(!e.target.closest(".form-ctrl")) hideAcDrop();
+});
+document.getElementById("modalRegion").addEventListener("click",e=>{if(e.target.id==="modalRegion")closeAddRegion()});
+renderRegionTable();
+renderTable();
+touchMeta("platform");
+</script>
+</body>
+</html>

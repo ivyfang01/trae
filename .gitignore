@@ -12,3 +12,11 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Temp / archives / likely PII exports
+_tmp_*/
+_tmp_*
+*.zip
+*客户信息*.xlsx
+*erp邮箱*
+*养户档案*

@@ -1,0 +1,497 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 预混料货到付款吨位待审核</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --danger: #ff4d4f;
+      --ok: #52c41a;
+      --ok-bg: #f6ffed;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute; left: 0; height: 44px; padding: 0 12px;
+      display: flex; align-items: center; color: #333; font-size: 20px;
+    }
+    .ding-context {
+      padding: 12px 12px 8px;
+      color: var(--label);
+      font-size: 12px;
+    }
+    .at-line {
+      margin: 0 12px 8px;
+      font-size: 13px;
+      color: var(--primary);
+      line-height: 1.5;
+    }
+    .list { padding: 0 12px 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title { font-size: 15px; font-weight: 600; color: #222; }
+    .tag {
+      font-size: 12px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .tag.done {
+      color: var(--ok);
+      background: var(--ok-bg);
+    }
+    .tag.reject {
+      color: var(--danger);
+      background: #fff1f0;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .row:last-of-type { margin-bottom: 0; }
+    .row .label {
+      width: 112px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.emphasize {
+      color: var(--warn);
+      font-weight: 600;
+    }
+    .row .value.at {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .row .value.ok-text {
+      color: var(--ok);
+      font-weight: 600;
+    }
+    .sec {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line);
+    }
+    .sec:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .sec-label {
+      font-size: 12px;
+      color: #8c8c8c;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .sec .row:last-child { margin-bottom: 0; }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .actions button {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-reject {
+      border: 1px solid #ffccc7;
+      background: #fff;
+      color: var(--danger);
+    }
+    .btn-pass {
+      border: none;
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-pass:active, .btn-reject:active { opacity: .85; }
+    .actions.done-state { display: none; }
+    .result-tip {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      text-align: center;
+      color: var(--label);
+    }
+    .result-tip.show { display: block; }
+    .result-tip.ok { color: var(--ok); }
+    .result-tip.no { color: var(--danger); }
+
+    .demo-bar {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 12px;
+      align-items: center;
+    }
+    .demo-bar select {
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .spec h3 { font-size: 14px; color: #222; margin-bottom: 8px; }
+    .spec ul { padding-left: 18px; }
+    .spec li { margin-bottom: 4px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="demo-bar">
+      <span>演示场景</span>
+      <select id="scene">
+        <option value="mid" selected>5–10吨 · 养殖户 · @赵璐</option>
+        <option value="high">大于10吨 · 养殖户 · @东哥</option>
+        <option value="midDealer">5–10吨 · 次终端 · @赵璐</option>
+        <option value="highDealer">大于10吨 · 次终端 · @东哥</option>
+      </select>
+    </div>
+    <div class="nav">
+      <span class="nav-back">‹</span>
+      <div class="nav-title">工作通知</div>
+    </div>
+    <div class="ding-context">粮巴巴鸡窝 · 刚刚</div>
+    <div class="at-line" id="atLine">@赵璐 预混料申请提货吨数超过5吨，请尽快审核</div>
+    <div class="list">
+      <div class="card" id="auditCard">
+        <div class="card-head">
+          <div class="card-title" id="cardTitle">预混料申请提货吨数超过5吨审核</div>
+          <span class="tag" id="statusTag">待审核</span>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">客户信息</div>
+          <div class="row">
+            <div class="label">客户名称</div>
+            <div class="value">济南璟元商贸有限公司</div>
+          </div>
+          <div class="row">
+            <div class="label">客户类型</div>
+            <div class="value" id="vCustomerType">养殖户</div>
+          </div>
+          <div class="row" id="rowFarmType">
+            <div class="label">养殖类型</div>
+            <div class="value" id="vFarmType">鸡</div>
+          </div>
+          <div class="row" id="rowFarmScale">
+            <div class="label">养殖规模</div>
+            <div class="value" id="vScale">50000羽</div>
+          </div>
+          <div class="row">
+            <div class="label">是否白条客户</div>
+            <div class="value" id="vBaiTiao">是</div>
+          </div>
+          <div class="row" id="rowMaxCredit">
+            <div class="label">平台最高可用额度</div>
+            <div class="value emphasize" id="vMaxCredit">¥ 200,000.00</div>
+          </div>
+          <div class="row" id="rowCurCredit">
+            <div class="label">当前可用额度</div>
+            <div class="value emphasize" id="vCurCredit">¥ 86,500.00</div>
+          </div>
+          <div class="row" id="rowFarmCheck" style="display:none">
+            <div class="label">养殖数据核对</div>
+            <div class="value ok-text" id="vFarmCheck">已经核实一致</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">订单信息</div>
+          <div class="row">
+            <div class="label">提货单号</div>
+            <div class="value" id="vOrderNo">JWTH202609050018</div>
+          </div>
+          <div class="row">
+            <div class="label">商品名称</div>
+            <div class="value">源耀蛋鸡育雏前期配合饲料（40kg包装）</div>
+          </div>
+          <div class="row">
+            <div class="label">付款类型</div>
+            <div class="value">货到付款</div>
+          </div>
+          <div class="row">
+            <div class="label">合同金额</div>
+            <div class="value" id="vAmount">¥ 37,440.00</div>
+          </div>
+          <div class="row">
+            <div class="label">合同包数</div>
+            <div class="value" id="vBags">200 包</div>
+          </div>
+          <div class="row">
+            <div class="label">下单吨数</div>
+            <div class="value emphasize" id="vTon">8.5 吨</div>
+          </div>
+          <div class="row">
+            <div class="label">下单时间</div>
+            <div class="value">2026-09-05 09:18:22</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-label">业务员信息</div>
+          <div class="row">
+            <div class="label">业务员</div>
+            <div class="value">彭建园</div>
+          </div>
+          <div class="row">
+            <div class="label">站台</div>
+            <div class="value">黄冈站</div>
+          </div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button type="button" class="btn-reject" id="btnReject">拒绝</button>
+          <button type="button" class="btn-pass" id="btnPass">通过</button>
+        </div>
+        <div class="result-tip" id="resultTip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>钉钉卡片说明（对接用）</h3>
+    <ul>
+      <li>触发：预混料 + 货到付款 + 鸡窝业务员下单，且吨数 ≥ 5 吨</li>
+      <li>5 吨 ≤ 吨数 ≤ 10 吨：审核群消息 @赵璐</li>
+      <li>吨数 &gt; 10 吨：审核群消息 @东哥；卡片增加「养殖数据核对：已经核实一致」（用户运营核实后再推东哥）</li>
+      <li>若「是否白条客户」=是：额外展示「平台最高可用额度」「当前可用额度」；=否时不展示（赵璐/东哥卡片相同）</li>
+      <li>客户类型=养殖户：展示养殖类型、养殖规模；客户类型=次终端：不展示养殖类型、养殖规模（也不展示养殖数据核对）</li>
+      <li>提货单状态：待审核；通过后走买家确认提货 / 匹配库存</li>
+      <li>卡片操作：【通过】【拒绝】（也可改为仅提醒 + 跳转审核页，研发选型）</li>
+    </ul>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SCENES = {
+      mid: {
+        at: "@赵璐 预混料申请提货吨数超过5吨，请尽快审核",
+        title: "预混料申请提货吨数超过5吨审核",
+        customerType: "养殖户",
+        showFarm: true,
+        farmType: "鸡",
+        ton: "8.5 吨",
+        orderNo: "JWTH202609050018",
+        amount: "¥ 37,440.00",
+        bags: "200 包",
+        scale: "50000羽",
+        baiTiao: true,
+        maxCredit: "¥ 200,000.00",
+        curCredit: "¥ 86,500.00",
+        showFarmCheck: false
+      },
+      high: {
+        at: "@东哥 预混料申请提货吨数超过10吨，请尽快审核",
+        title: "预混料申请提货吨数超过10吨审核",
+        customerType: "养殖户",
+        showFarm: true,
+        farmType: "鸡",
+        ton: "15 吨",
+        orderNo: "JWTH202609050042",
+        amount: "¥ 56,160.00",
+        bags: "300 包",
+        scale: "80000羽",
+        baiTiao: true,
+        maxCredit: "¥ 200,000.00",
+        curCredit: "¥ 86,500.00",
+        showFarmCheck: true,
+        farmCheck: "已经核实一致"
+      },
+      midDealer: {
+        at: "@赵璐 预混料申请提货吨数超过5吨，请尽快审核",
+        title: "预混料申请提货吨数超过5吨审核",
+        customerType: "次终端",
+        showFarm: false,
+        ton: "7.2 吨",
+        orderNo: "JWTH202609050061",
+        amount: "¥ 31,680.00",
+        bags: "180 包",
+        baiTiao: true,
+        maxCredit: "¥ 150,000.00",
+        curCredit: "¥ 62,000.00",
+        showFarmCheck: false
+      },
+      highDealer: {
+        at: "@东哥 预混料申请提货吨数超过10吨，请尽快审核",
+        title: "预混料申请提货吨数超过10吨审核",
+        customerType: "次终端",
+        showFarm: false,
+        ton: "12 吨",
+        orderNo: "JWTH202609050078",
+        amount: "¥ 48,000.00",
+        bags: "240 包",
+        baiTiao: false,
+        showFarmCheck: false
+      }
+    };
+
+    const $ = (s) => document.querySelector(s);
+    function toast(msg) {
+      const el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+    }
+
+    function applyScene(key) {
+      const s = SCENES[key];
+      $("#atLine").textContent = s.at;
+      $("#cardTitle").textContent = s.title;
+      $("#vTon").textContent = s.ton;
+      $("#vOrderNo").textContent = s.orderNo;
+      $("#vAmount").textContent = s.amount;
+      $("#vBags").textContent = s.bags;
+      $("#vCustomerType").textContent = s.customerType;
+
+      const showFarm = !!s.showFarm;
+      $("#rowFarmType").style.display = showFarm ? "flex" : "none";
+      $("#rowFarmScale").style.display = showFarm ? "flex" : "none";
+      if (showFarm) {
+        $("#vFarmType").textContent = s.farmType || "";
+        $("#vScale").textContent = s.scale || "";
+      }
+
+      $("#vBaiTiao").textContent = s.baiTiao ? "是" : "否";
+      const showCredit = !!s.baiTiao;
+      $("#rowMaxCredit").style.display = showCredit ? "flex" : "none";
+      $("#rowCurCredit").style.display = showCredit ? "flex" : "none";
+      if (showCredit) {
+        $("#vMaxCredit").textContent = s.maxCredit;
+        $("#vCurCredit").textContent = s.curCredit;
+      }
+      const row = $("#rowFarmCheck");
+      row.style.display = s.showFarmCheck ? "flex" : "none";
+      if (s.showFarmCheck) $("#vFarmCheck").textContent = s.farmCheck;
+      resetCard();
+    }
+
+    function resetCard() {
+      const tag = $("#statusTag");
+      tag.textContent = "待审核";
+      tag.className = "tag";
+      $("#actions").style.display = "flex";
+      const tip = $("#resultTip");
+      tip.className = "result-tip";
+      tip.textContent = "";
+    }
+
+    function finish(pass) {
+      const tag = $("#statusTag");
+      tag.textContent = pass ? "已通过" : "已拒绝";
+      tag.className = pass ? "tag done" : "tag reject";
+      $("#actions").style.display = "none";
+      const tip = $("#resultTip");
+      tip.textContent = pass
+        ? "审核已通过，可继续买家确认提货 / 匹配库存"
+        : "审核已拒绝，请按现网驳回策略处理";
+      tip.className = "result-tip show " + (pass ? "ok" : "no");
+      toast(pass ? "审核通过" : "已拒绝");
+    }
+
+    $("#scene").addEventListener("change", (e) => applyScene(e.target.value));
+    $("#btnPass").addEventListener("click", () => finish(true));
+    $("#btnReject").addEventListener("click", () => finish(false));
+    applyScene("mid");
+  </script>
+</body>
+</html>

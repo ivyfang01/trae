@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>装货磅单审核</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      font-size: 14px;
+      min-height: 100vh;
+      padding: 24px 20px 48px;
+    }
+    .modal {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
+      overflow: hidden;
+    }
+    .modal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .hd-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-title { font-size: 16px; font-weight: 600; color: #1f1f1f; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 12px;
+      line-height: 20px;
+    }
+    .tag-pink { background: #fff1f0; color: #cf1322; }
+    .tag-blue { background: #e6f4ff; color: #1677ff; }
+    .close {
+      width: 28px; height: 28px;
+      border: none; background: transparent;
+      font-size: 20px; color: #999; cursor: pointer; line-height: 1;
+    }
+    .close:hover { color: #666; }
+    .modal-bd { padding: 16px 20px 8px; }
+    .sec-title {
+      position: relative;
+      padding-left: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f1f1f;
+      margin: 8px 0 12px;
+    }
+    .sec-title::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 3px;
+      width: 3px; height: 14px;
+      background: #1677ff;
+      border-radius: 1px;
+    }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 20px;
+    }
+    .info-table th,
+    .info-table td {
+      border: 1px solid #f0f0f0;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+    .info-table th {
+      width: 120px;
+      background: #fafafa;
+      color: #666;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .loading-block {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      align-items: stretch;
+    }
+    .thumb {
+      width: 140px;
+      height: 180px;
+      flex-shrink: 0;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background:
+        linear-gradient(135deg, #f5f5f5 25%, #ebebeb 25%, #ebebeb 50%, #f5f5f5 50%, #f5f5f5 75%, #ebebeb 75%);
+      background-size: 16px 16px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .thumb::after {
+      content: "点击预览";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.35);
+      color: #fff;
+      font-size: 13px;
+    }
+    .loading-fields { flex: 1; min-width: 0; }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 0;
+    }
+    .cell {
+      display: flex;
+      border-right: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 42px;
+    }
+    .cell:nth-child(3n) { border-right: none; }
+    .cell .k {
+      width: 100px;
+      flex-shrink: 0;
+      background: #fafafa;
+      color: #666;
+      padding: 10px 8px;
+      font-size: 13px;
+      border-right: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+    }
+    .cell .v {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+    }
+    .warn {
+      margin: 12px 0 8px;
+      padding: 10px 12px;
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 4px;
+      color: #ad6800;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .warn .ico {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #faad14;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 8px;
+    }
+    .log-table th,
+    .log-table td {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 13px;
+    }
+    .log-table th {
+      background: #fafafa;
+      color: #666;
+      font-weight: 500;
+    }
+    .modal-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 20px 20px;
+      border-top: 1px solid #f0f0f0;
+      background: #fff;
+    }
+    .btn {
+      height: 36px;
+      padding: 0 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      color: #333;
+    }
+    .btn-primary {
+      background: #1677ff;
+      border-color: #1677ff;
+      color: #fff;
+    }
+    .btn-danger {
+      background: #fff;
+      border-color: #ff4d4f;
+      color: #ff4d4f;
+    }
+    .btn:hover { opacity: .92; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .mask {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .mask.show { display: flex; }
+    .dialog {
+      width: 420px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .dialog-hd {
+      padding: 16px 20px 8px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .dialog-bd { padding: 8px 20px 16px; }
+    .dialog-bd label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .dialog-bd .req { color: #ff4d4f; margin-right: 2px; }
+    .dialog-bd textarea {
+      width: 100%;
+      min-height: 96px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+    }
+    .dialog-bd textarea:focus { border-color: #1677ff; }
+    .dialog-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 20px 16px;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+    .status-bar {
+      margin: 0 20px 0;
+      padding: 10px 12px;
+      background: #f6ffed;
+      border: 1px solid #b7eb8f;
+      border-radius: 4px;
+      color: #389e0d;
+      font-size: 13px;
+      display: none;
+    }
+    .status-bar.reject {
+      background: #fff2f0;
+      border-color: #ffccc7;
+      color: #cf1322;
+      display: block;
+    }
+    .status-bar.pass {
+      display: block;
+    }
+    @media (max-width: 720px) {
+      .loading-block { flex-direction: column; }
+      .field-grid { grid-template-columns: 1fr; }
+      .cell { border-right: none; }
+      .cell .k { width: 110px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="hd-left">
+        <span class="modal-title">装货磅单审核</span>
+        <span class="tag tag-pink">提货单发车</span>
+        <span class="tag tag-blue">物流单号：LBBWLSP20260829112</span>
+      </div>
+      <button type="button" class="close" onclick="history.back()" title="关闭">×</button>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+
+    <div class="modal-bd">
+      <div class="sec-title">司机信息</div>
+      <table class="info-table">
+        <tr>
+          <th>运输承运商</th>
+          <td colspan="3">邢台顺铭物流有限公司</td>
+        </tr>
+        <tr>
+          <th>司机姓名</th>
+          <td>卢浩</td>
+          <th>司机手机号</th>
+          <td>13963801013</td>
+        </tr>
+        <tr>
+          <th>车牌号</th>
+          <td colspan="3">鲁FEY082</td>
+        </tr>
+      </table>
+
+      <div class="sec-title">装卸货信息</div>
+      <div style="font-size:13px;color:#666;margin:-4px 0 10px;">装货信息</div>
+      <div class="loading-block">
+        <div class="thumb" title="磅单预览" onclick="toastMsg('打开磅单预览（原型）')"></div>
+        <div class="loading-fields">
+          <div class="field-grid">
+            <div class="cell"><div class="k">装货毛重</div><div class="v">46.36吨</div></div>
+            <div class="cell"><div class="k">装货皮重</div><div class="v">16.34吨</div></div>
+            <div class="cell"><div class="k">装货净重</div><div class="v">29.972吨</div></div>
+            <div class="cell"><div class="k">包装方式</div><div class="v">50kg</div></div>
+            <div class="cell"><div class="k">袋数</div><div class="v">600袋</div></div>
+            <div class="cell"><div class="k">备注</div><div class="v">--</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="warn">
+        <span class="ico">!</span>
+        <span>上传的装货磅单包数不一致，请确认后提交（提货单包数：0包）</span>
+      </div>
+
+      <div class="sec-title">操作记录</div>
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>阶段</th>
+            <th>操作设备</th>
+            <th>操作人</th>
+            <th>操作时间</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="logBody">
+          <tr>
+            <td>1</td>
+            <td>派车</td>
+            <td>运营后台</td>
+            <td>周悦鑫</td>
+            <td>2026-08-29 14:26:02</td>
+            <td>/</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>接单</td>
+            <td>司机端APP</td>
+            <td>卢浩</td>
+            <td>2026-08-29 14:33:17</td>
+            <td>/</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>上传磅单</td>
+            <td>司机端APP</td>
+            <td>卢浩</td>
+            <td>2026-08-29 20:23:05</td>
+            <td>/</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>卸货磅单</td>
+            <td>司机端APP</td>
+            <td>卢浩</td>
+            <td>2026-08-30 14:24:48</td>
+            <td>/</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>提交审核</td>
+            <td>运营后台</td>
+            <td>刘悦悦</td>
+            <td>2026-08-31 08:28:43</td>
+            <td>/</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-ft" id="actionBar">
+      <button type="button" class="btn" onclick="history.back()">取消</button>
+      <button type="button" class="btn btn-danger" id="btnReject">审核拒绝</button>
+      <button type="button" class="btn btn-primary" id="btnPass">审核通过</button>
+    </div>
+  </div>
+
+  <div class="mask" id="rejectMask">
+    <div class="dialog">
+      <div class="dialog-hd">审核拒绝</div>
+      <div class="dialog-bd">
+        <label><span class="req">*</span>拒绝原因</label>
+        <textarea id="rejectReason" maxlength="200" placeholder="请填写拒绝原因"></textarea>
+      </div>
+      <div class="dialog-ft">
+        <button type="button" class="btn" id="rejectCancel">取消</button>
+        <button type="button" class="btn btn-danger" id="rejectConfirm">确认拒绝</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var auditDone = false;
+    var logIndex = 5;
+
+    function toastMsg(msg) {
+      var el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastMsg._t);
+      toastMsg._t = setTimeout(function () { el.classList.remove("show"); }, 1800);
+    }
+
+    function nowStr() {
+      var d = new Date();
+      function p(n) { return n < 10 ? "0" + n : "" + n; }
+      return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " +
+        p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+    }
+
+    function appendLog(stage, remark) {
+      logIndex += 1;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td>" + logIndex + "</td>" +
+        "<td>" + stage + "</td>" +
+        "<td>运营后台</td>" +
+        "<td>刘悦悦</td>" +
+        "<td>" + nowStr() + "</td>" +
+        "<td>" + (remark || "/") + "</td>";
+      document.getElementById("logBody").appendChild(tr);
+    }
+
+    function finishAudit(pass, reason) {
+      auditDone = true;
+      document.getElementById("btnPass").disabled = true;
+      document.getElementById("btnReject").disabled = true;
+      var bar = document.getElementById("statusBar");
+      if (pass) {
+        bar.className = "status-bar pass";
+        bar.textContent = "装货磅单已审核通过，已同步确认状态给订单侧";
+        appendLog("装货磅单审核通过", "/");
+        toastMsg("审核通过");
+      } else {
+        bar.className = "status-bar reject";
+        bar.textContent = "装货磅单已拒绝：" + reason + "（列表仍显示「装货磅单审核」入口，可再次审核）";
+        appendLog("装货磅单审核拒绝", reason);
+        toastMsg("已拒绝，可再次审核");
+      }
+    }
+
+    document.getElementById("btnPass").addEventListener("click", function () {
+      if (auditDone) return;
+      if (!confirm("确认审核通过？通过后将同步装货磅单给订单侧。")) return;
+      finishAudit(true);
+    });
+
+    document.getElementById("btnReject").addEventListener("click", function () {
+      if (auditDone) return;
+      document.getElementById("rejectReason").value = "";
+      document.getElementById("rejectMask").classList.add("show");
+    });
+
+    document.getElementById("rejectCancel").addEventListener("click", function () {
+      document.getElementById("rejectMask").classList.remove("show");
+    });
+
+    document.getElementById("rejectConfirm").addEventListener("click", function () {
+      var reason = document.getElementById("rejectReason").value.trim();
+      if (!reason) {
+        toastMsg("请填写拒绝原因");
+        return;
+      }
+      document.getElementById("rejectMask").classList.remove("show");
+      finishAudit(false, reason);
+    });
+
+    document.getElementById("rejectMask").addEventListener("click", function (e) {
+      if (e.target === this) this.classList.remove("show");
+    });
+  </script>
+</body>
+</html>

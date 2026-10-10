@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · 鸡蛋物流单详情 · 开始卸货</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      font-size: 14px;
+    }
+    .topbar {
+      height: 48px;
+      background: #001529;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-weight: 600;
+    }
+    .wrap { max-width: 1100px; margin: 16px auto; padding: 0 16px 40px; }
+    .crumb { color: #8c8c8c; font-size: 13px; margin-bottom: 12px; }
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .card h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 140px 1fr 140px 1fr;
+      gap: 10px 8px;
+      align-items: start;
+    }
+    .lab { color: #8c8c8c; }
+    .val { color: #262626; word-break: break-all; }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #e6f4ff;
+      color: #1677ff;
+      font-size: 12px;
+    }
+    .ops { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 4px;
+      border: 1px solid #d9d9d9;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .btn-primary {
+      border: none;
+      background: #1677ff;
+      color: #fff;
+    }
+    .btn-primary:disabled {
+      background: #91caff;
+      cursor: not-allowed;
+    }
+    .timeline td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 13px;
+    }
+    .timeline th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #fafafa;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .mask.show { display: flex; }
+    .modal {
+      width: 440px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px 20px 16px;
+    }
+    .modal h4 { font-size: 16px; margin-bottom: 12px; }
+    .modal p { font-size: 13px; color: #595959; margin-bottom: 12px; line-height: 1.6; }
+    .opt {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border: 1px solid #f0f0f0;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .opt.active { border-color: #1677ff; background: #f0f5ff; }
+    .opt input { margin-top: 3px; }
+    .opt .t { font-size: 14px; color: #262626; }
+    .opt .d { font-size: 12px; color: #8c8c8c; margin-top: 4px; }
+    .modal-ft {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 20%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; }
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #8c8c8c;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">Admin · 鸡蛋物流</div>
+  <div class="wrap">
+    <div class="crumb">鸡蛋物流订单 / 物流单详情 / JDWL202609080018</div>
+
+    <div class="card">
+      <h3>基本信息</h3>
+      <div class="grid">
+        <div class="lab">物流单号</div><div class="val">JDWL202609080018</div>
+        <div class="lab">状态</div><div class="val"><span class="status" id="orderStatus">运输中（已装货）</span></div>
+        <div class="lab">司机</div><div class="val">李师傅 · 138****2210</div>
+        <div class="lab">派单员</div><div class="val">张三</div>
+        <div class="lab">装货地址</div><div class="val">湖北咸宁市通城县某某禽业园</div>
+        <div class="lab">卸货地址</div><div class="val" id="unloadAddr">河南郑州某某农贸市场（经纬度：113.665412, 34.757975）</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>履约节点</h3>
+      <table class="timeline" width="100%" cellspacing="0">
+        <thead>
+          <tr><th>节点</th><th>时间</th><th>操作端</th><th>经纬度</th></tr>
+        </thead>
+        <tbody id="timelineBody">
+          <tr><td>开始接单</td><td>2026-09-08 08:12:05</td><td>司机端</td><td>114.3221, 29.2456</td></tr>
+          <tr><td>开始装货</td><td>2026-09-08 09:05:33</td><td>司机端</td><td>114.3228, 29.2461</td></tr>
+          <tr id="rowUnload" style="display:none"><td>开始卸货</td><td id="unloadTime">—</td><td id="unloadFrom">—</td><td id="unloadGeo">—</td></tr>
+        </tbody>
+      </table>
+      <div class="hint">派单员可在司机未操作时，于 Admin / 钉钉后台代点「开始卸货」。</div>
+    </div>
+
+    <div class="card">
+      <h3>操作</h3>
+      <div class="ops">
+        <button type="button" class="btn btn-primary" id="btnStartUnload">开始卸货</button>
+        <button type="button" class="btn">查看轨迹</button>
+        <button type="button" class="btn">返回列表</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mask" id="mask">
+    <div class="modal">
+      <h4>确认开始卸货</h4>
+      <p>确认后将记录「开始卸货」时间。请选择经纬度取值方式：</p>
+      <label class="opt active" data-mode="addr">
+        <input type="radio" name="geo" value="addr" checked />
+        <div>
+          <div class="t">使用卸货地址经纬度</div>
+          <div class="d">取值卸货地址上维护的经纬度：113.665412, 34.757975</div>
+        </div>
+      </label>
+      <label class="opt" data-mode="none">
+        <input type="radio" name="geo" value="none" />
+        <div>
+          <div class="t">不取经纬度</div>
+          <div class="d">仅记录开始卸货时间与操作人，经纬度留空</div>
+        </div>
+      </label>
+      <div class="modal-ft">
+        <button type="button" class="btn" id="btnCancel">取消</button>
+        <button type="button" class="btn btn-primary" id="btnConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    function toast(msg) {
+      const el = $("#toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 1600);
+    }
+    function nowStr() {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    }
+
+    document.querySelectorAll(".opt").forEach((el) => {
+      el.addEventListener("click", () => {
+        document.querySelectorAll(".opt").forEach((o) => o.classList.remove("active"));
+        el.classList.add("active");
+        el.querySelector("input").checked = true;
+      });
+    });
+
+    $("#btnStartUnload").addEventListener("click", () => $("#mask").classList.add("show"));
+    $("#btnCancel").addEventListener("click", () => $("#mask").classList.remove("show"));
+    $("#mask").addEventListener("click", (e) => {
+      if (e.target.id === "mask") $("#mask").classList.remove("show");
+    });
+    $("#btnConfirm").addEventListener("click", () => {
+      const mode = document.querySelector('input[name="geo"]:checked').value;
+      $("#rowUnload").style.display = "table-row";
+      $("#unloadTime").textContent = nowStr();
+      $("#unloadFrom").textContent = "Admin（派单员张三）";
+      $("#unloadGeo").textContent = mode === "addr" ? "113.665412, 34.757975（卸货地址）" : "—（未取经纬度）";
+      $("#orderStatus").textContent = "运输中（已开始卸货）";
+      $("#btnStartUnload").disabled = true;
+      $("#btnStartUnload").textContent = "已开始卸货";
+      $("#mask").classList.remove("show");
+      toast(mode === "addr" ? "已开始卸货（已写入卸货地址经纬度）" : "已开始卸货（未取经纬度）");
+    });
+  </script>
+</body>
+</html>

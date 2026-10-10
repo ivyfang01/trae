@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>业务端 · 担保资料</title>
+<style>
+:root{
+  --blue:#1677ff;
+  --text:#1d2129;
+  --text-secondary:#4e5969;
+  --text-muted:#86909c;
+  --bg-page:#f2f3f5;
+  --bg-card:#ffffff;
+  --bg-blue-light:#e8f3ff;
+  --border:#f0f0f0;
+  --border-light:#e5e6eb;
+  --red:#f53f3f;
+  --radius-card:12px;
+  --radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#e8e8e8;color:var(--text);font-size:14px;
+}
+.page{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg-page);padding-bottom:88px}
+.nav{
+  background:var(--bg-card);padding:12px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)
+}
+.nav .back{border:none;background:none;font-size:22px;cursor:pointer;width:24px;color:var(--text)}
+.nav .title{font-size:17px;font-weight:600;flex:1;text-align:center;margin-right:28px}
+.card{background:var(--bg-card);margin:10px 12px;border-radius:var(--radius-card);padding:14px}
+.sec{font-size:15px;font-weight:600;margin-bottom:12px;padding-left:8px;border-left:3px solid var(--blue)}
+.form-item{margin-bottom:14px}
+.form-item:last-child{margin-bottom:0}
+.form-item label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+.form-item label .req{color:var(--red);margin-right:2px}
+.form-item input{
+  width:100%;height:40px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:0 10px;font-size:14px;outline:none;background:#fff;color:var(--text)
+}
+.form-item input:focus{border-color:var(--blue)}
+.hint{font-size:12px;color:var(--text-muted);margin-top:4px;line-height:1.5}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg label{
+  flex:0 1 auto;height:36px;padding:0 12px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text-secondary);white-space:nowrap
+}
+.seg input{display:none}
+.seg label:has(input:checked){border-color:var(--blue);background:var(--bg-blue-light);color:var(--blue);font-weight:600}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upload{
+  border:1px dashed var(--border-light);border-radius:var(--radius-sm);min-height:88px;padding:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;background:#fafafa;cursor:pointer;text-align:center;font-size:12px;color:var(--text-muted)
+}
+.upload.done{border-color:#91caff;background:var(--bg-blue-light);color:var(--blue)}
+.upload .plus{font-size:22px;line-height:1;color:#c9cdd4}
+.upload.done .plus{color:var(--blue)}
+.foot{
+  position:fixed;left:0;right:0;bottom:0;background:#fff;padding:10px 16px 16px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.04);z-index:11
+}
+.foot .inner{max-width:430px;margin:0 auto;display:flex;gap:10px}
+.btn{border:none;border-radius:var(--radius-sm);padding:12px;font-size:15px;cursor:pointer;font-weight:600;flex:1}
+.btn-default{background:#fff;border:1px solid var(--border-light);color:var(--text)}
+.btn-primary{background:var(--blue);color:#fff}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav">
+    <button class="back" type="button" onclick="goBack()" aria-label="返回">‹</button>
+    <div class="title">担保资料</div>
+  </div>
+
+  <div class="card" id="cardCtrl">
+    <div class="sec">实控人资料</div>
+    <div class="form-item">
+      <label><span class="req">*</span>身份证正反面</label>
+      <div class="upload-grid">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>身份证人像面</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>身份证国徽面</div>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>实名手机号</label>
+      <input id="ctrlMobile" type="tel" maxlength="11" placeholder="请输入实名手机号" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>和法人关系</label>
+      <div class="seg">
+        <label><input type="radio" name="relLegal" value="本人" />本人</label>
+        <label><input type="radio" name="relLegal" value="配偶" />配偶</label>
+        <label><input type="radio" name="relLegal" value="父母" />父母</label>
+        <label><input type="radio" name="relLegal" value="子女" />子女</label>
+        <label><input type="radio" name="relLegal" value="其他" />其他</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="cardAsset">
+    <div class="sec">资产证明</div>
+    <div class="hint" style="margin:-4px 0 12px">行驶证、房产证等</div>
+    <div class="form-item">
+      <label><span class="req">*</span>行驶证</label>
+      <div class="upload-grid">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>行驶证正本</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>行驶证副本</div>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>房产证</label>
+      <div class="upload-grid">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>房产证首页</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>房产证内页</div>
+      </div>
+    </div>
+    <div class="form-item">
+      <label>其他资产证明</label>
+      <div class="upload-grid one" style="grid-template-columns:1fr">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>其他资产证明</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">紧急联系人</div>
+    <div class="form-item">
+      <label><span class="req">*</span>紧急联系人姓名</label>
+      <input id="emName" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>紧急联系人手机号</label>
+      <input id="emMobile" type="tel" maxlength="11" placeholder="请输入" />
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="inner">
+      <button class="btn btn-default" type="button" onclick="saveDraft()">保存</button>
+      <button class="btn btn-primary" type="button" onclick="submitGuarantee()">提交担保资料</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function goBack(){
+  if(history.length>1) history.back();
+  else location.href="业务端_客户档案_白条档案.html";
+}
+function saveDraft(){ alert("已保存"); }
+function submitGuarantee(){
+  const idDone=[...document.querySelectorAll("#cardCtrl .upload.done")].length;
+  if(idDone<2){alert("请上传实控人身份证正反面");return}
+  if(!document.getElementById("ctrlMobile").value.trim()){alert("请填写实名手机号");return}
+  if(!document.querySelector('input[name="relLegal"]:checked')){alert("请选择和法人关系");return}
+  const assetDone=[...document.querySelectorAll("#cardAsset .upload.done")].length;
+  if(assetDone<1){alert("请至少上传一项资产证明（行驶证/房产证等）");return}
+  if(!document.getElementById("emName").value.trim()){alert("请填写紧急联系人姓名");return}
+  if(!document.getElementById("emMobile").value.trim()){alert("请填写紧急联系人手机号");return}
+  alert("担保资料已提交");
+  goBack();
+}
+</script>
+</body>
+</html>

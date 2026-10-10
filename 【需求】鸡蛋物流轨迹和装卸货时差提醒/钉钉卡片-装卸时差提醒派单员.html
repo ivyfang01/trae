@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>钉钉卡片 · 鸡蛋物流装卸时差提醒派单员</title>
+  <style>
+    :root {
+      --warn: #fa8c16;
+      --warn-bg: #fff7e6;
+      --danger: #ff4d4f;
+      --primary: #1677ff;
+      --bg: #f2f3f5;
+      --card: #ffffff;
+      --text: #333333;
+      --label: #8c8c8c;
+      --line: #f0f0f0;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      background: #dcdcdc;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .phone {
+      width: 375px;
+      min-height: 812px;
+      margin: 24px auto;
+      background: var(--bg);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      overflow: hidden;
+      padding-bottom: calc(24px + var(--safe-bottom));
+    }
+    .demo-bar {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 12px;
+      align-items: center;
+    }
+    .demo-bar select {
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+    }
+    .nav {
+      height: 44px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+    }
+    .nav-title { font-size: 17px; font-weight: 600; }
+    .nav-back {
+      position: absolute; left: 0; height: 44px; padding: 0 12px;
+      display: flex; align-items: center; color: #333; font-size: 20px;
+    }
+    .ding-context { padding: 12px 12px 8px; color: var(--label); font-size: 12px; }
+    .at-line {
+      margin: 0 12px 8px;
+      font-size: 13px;
+      color: var(--primary);
+      line-height: 1.5;
+    }
+    .list { padding: 0 12px 16px; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .tag {
+      font-size: 12px;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .row:last-child { margin-bottom: 0; }
+    .row .label {
+      width: 100px;
+      flex-shrink: 0;
+      color: var(--label);
+    }
+    .row .value {
+      flex: 1;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .row .value.warn { color: #d46b08; font-weight: 600; }
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .actions button {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+    }
+    .spec {
+      margin: 16px auto 32px;
+      width: 375px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    }
+    .spec h3 { font-size: 14px; color: #222; margin-bottom: 8px; }
+    .spec ul { padding-left: 18px; }
+    .spec li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="demo-bar">
+      <span>提醒类型</span>
+      <select id="scene">
+        <option value="fast15">接单→卸货 ≤15分钟</option>
+        <option value="over12">装货后超12小时未卸货</option>
+      </select>
+    </div>
+    <div class="nav">
+      <span class="nav-back">‹</span>
+      <div class="nav-title">工作通知</div>
+    </div>
+    <div class="ding-context">粮巴巴鸡蛋物流 · 刚刚</div>
+    <div class="at-line" id="atLine">@派单员张三 鸡蛋物流单装卸时差异常，请关注</div>
+    <div class="list">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title" id="cardTitle">接单至开始卸货间隔过短提醒</div>
+          <span class="tag" id="statusTag">待关注</span>
+        </div>
+        <div class="row">
+          <div class="label">物流单号</div>
+          <div class="value" id="vOrderNo">JDWL202609080018</div>
+        </div>
+        <div class="row">
+          <div class="label">司机</div>
+          <div class="value">李师傅 138****2210</div>
+        </div>
+        <div class="row">
+          <div class="label">装货地址</div>
+          <div class="value">湖北咸宁市通城县某某禽业园</div>
+        </div>
+        <div class="row">
+          <div class="label">卸货地址</div>
+          <div class="value">河南郑州某某农贸市场</div>
+        </div>
+        <div class="row">
+          <div class="label" id="labT1">开始接单时间</div>
+          <div class="value" id="vT1">2026-09-08 08:12:05</div>
+        </div>
+        <div class="row">
+          <div class="label" id="labT2">开始卸货时间</div>
+          <div class="value" id="vT2">2026-09-08 08:24:18</div>
+        </div>
+        <div class="row">
+          <div class="label">时差</div>
+          <div class="value warn" id="vDiff">12 分钟（阈值 ≤15 分钟）</div>
+        </div>
+        <div class="row">
+          <div class="label">提醒原因</div>
+          <div class="value" id="vReason">开始接单到开始卸货间隔过短，请核实是否真实履约 / 是否误点</div>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnDetail">查看物流单</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>提醒规则（对接用）</h3>
+    <ul>
+      <li>品类：鸡蛋物流订单</li>
+      <li>接收人：该单派单员（钉钉工作通知 @）</li>
+      <li>规则1：开始接单时间 → 开始卸货时间 间隔 ≤15 分钟 → 即时提醒</li>
+      <li>规则2：开始装货后满 12 小时仍未点击开始卸货 → 提醒（建议同单同规则限频 1 次）</li>
+      <li>卡片操作：【查看物流单】跳转 Admin / 钉钉物流详情</li>
+    </ul>
+  </div>
+
+  <script>
+    const SCENES = {
+      fast15: {
+        at: "@派单员张三 鸡蛋物流单接单至卸货间隔过短，请关注",
+        title: "接单至开始卸货间隔过短提醒",
+        orderNo: "JDWL202609080018",
+        labT1: "开始接单时间",
+        labT2: "开始卸货时间",
+        t1: "2026-09-08 08:12:05",
+        t2: "2026-09-08 08:24:18",
+        diff: "12 分钟（阈值 ≤15 分钟）",
+        reason: "开始接单到开始卸货间隔过短，请核实是否真实履约 / 是否误点"
+      },
+      over12: {
+        at: "@派单员张三 鸡蛋物流单装货后超12小时未开始卸货，请跟进",
+        title: "装货后超时未开始卸货提醒",
+        orderNo: "JDWL202609070033",
+        labT1: "开始装货时间",
+        labT2: "当前时间",
+        t1: "2026-09-07 18:20:00",
+        t2: "2026-09-08 06:20:00",
+        diff: "已超过 12 小时仍未开始卸货",
+        reason: "司机已开始装货，超过12小时仍未点击开始卸货，请联系司机确认在途/卸货进度"
+      }
+    };
+    const $ = (s) => document.querySelector(s);
+    function apply(key) {
+      const s = SCENES[key];
+      $("#atLine").textContent = s.at;
+      $("#cardTitle").textContent = s.title;
+      $("#vOrderNo").textContent = s.orderNo;
+      $("#labT1").textContent = s.labT1;
+      $("#labT2").textContent = s.labT2;
+      $("#vT1").textContent = s.t1;
+      $("#vT2").textContent = s.t2;
+      $("#vDiff").textContent = s.diff;
+      $("#vReason").textContent = s.reason;
+    }
+    $("#scene").addEventListener("change", (e) => apply(e.target.value));
+    $("#btnDetail").addEventListener("click", () => alert("原型：跳转鸡蛋物流单详情"));
+    apply("fast15");
+  </script>
+</body>
+</html>
