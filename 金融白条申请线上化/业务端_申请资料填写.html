@@ -106,6 +106,30 @@ body{
       <label><span class="req">*</span>客户名称</label>
       <input id="custName" value="桑姣婧" readonly style="background:#f7f8fa" />
     </div>
+    <div id="breedBlock">
+      <div class="form-item">
+        <label>养殖种类<span class="hint" style="display:inline;margin-left:6px">来自养殖档案</span></label>
+        <input id="breed" value="蛋鸡" readonly style="background:#f7f8fa" />
+      </div>
+      <div class="row2">
+        <div class="form-item">
+          <label>养殖数量<span class="hint" style="display:inline;margin-left:6px">来自客户档案</span></label>
+          <input id="breedQty" value="2.5万羽" readonly style="background:#f7f8fa" />
+        </div>
+        <div class="form-item">
+          <label>鸡龄 / 规模补充</label>
+          <input id="breedExtra" placeholder="鸡龄、年出栏等" />
+        </div>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>从事行业年限</label>
+      <div class="unit"><input id="years" type="number" placeholder="请输入" /><span>年</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">白条申请</div>
     <div class="form-item">
       <label><span class="req">*</span>白条产品类型</label>
       <div class="seg" id="tplSeg">
@@ -133,26 +157,6 @@ body{
     <div class="form-item" id="noSyReason" style="display:none">
       <label><span class="req">*</span>不申请上海银行原因</label>
       <input id="noSyText" placeholder="上银额度为0时必填" />
-    </div>
-    <div id="breedBlock">
-      <div class="form-item">
-        <label>养殖种类<span class="hint" style="display:inline;margin-left:6px">来自养殖档案</span></label>
-        <input id="breed" value="蛋鸡" readonly style="background:#f7f8fa" />
-      </div>
-      <div class="row2">
-        <div class="form-item">
-          <label>养殖数量<span class="hint" style="display:inline;margin-left:6px">来自客户档案</span></label>
-          <input id="breedQty" value="2.5万羽" readonly style="background:#f7f8fa" />
-        </div>
-        <div class="form-item">
-          <label>鸡龄 / 规模补充</label>
-          <input id="breedExtra" placeholder="鸡龄、年出栏等" />
-        </div>
-      </div>
-    </div>
-    <div class="form-item">
-      <label><span class="req">*</span>从事行业年限</label>
-      <div class="unit"><input id="years" type="number" placeholder="请输入" /><span>年</span></div>
     </div>
     <div class="form-item">
       <label><span class="req">*</span>申请原因</label>
