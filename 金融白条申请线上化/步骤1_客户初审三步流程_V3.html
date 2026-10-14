@@ -320,7 +320,6 @@ body{
 }
 .btn-inline:disabled{opacity:.45;cursor:not-allowed}
 .dash{height:8px;background:#f7f7f7;margin:6px 0}
-.warn-foot{text-align:center;font-size:12px;color:var(--red);padding:4px 16px 8px}
 .modal-mask{
   display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.45);
   align-items:center;justify-content:center;padding:24px
@@ -575,7 +574,6 @@ body{
 <body>
 <div class="demo">
   <span>演示</span>
-  <button type="button" data-jump="bank-home" class="active-bank">银行白条首页</button>
   <button type="button" data-demo="esign-fail">三要素失败</button>
   <button type="button" data-demo="esign-pass">三要素通过</button>
   <button type="button" data-pbc="0" class="active-pbc">无人行账号→注册</button>
@@ -587,7 +585,8 @@ body{
   <button type="button" data-jump="credit-success">法人征信报告上传成功</button>
   <button type="button" data-demo="pass">AI通过→人审</button>
   <button type="button" data-demo="reject">AI/人审拒绝</button>
-  <button type="button" data-demo="manual-pass">人审通过</button>
+  <button type="button" data-demo="manual-pass">人审通过-尽调前</button>
+  <button type="button" data-demo="manual-pass-dd">人审通过-尽调后</button>
   <button type="button" data-jump="resupply">正式进件资料补充</button>
   <button type="button" data-flow="0">流水未收到</button>
   <button type="button" data-flow="1" class="active-flow">流水已收到</button>
@@ -999,7 +998,6 @@ body{
     </div>
 
     <div class="tip red" id="esignFailTip" style="display:none" hidden></div>
-    <div class="warn-foot">* 请上传清晰原件，勿多次提交错误信息</div>
     </div>
 
     <!-- 下载上传后：审核结果页（仅展示审核结果） -->
@@ -1079,7 +1077,8 @@ body{
             <div class="lab">审核时间</div>
             <div class="ctrl"><span class="val" id="manualPassTime">2026-09-16 18:56:22</span></div>
           </div>
-          <div class="tip" style="margin:12px 0 0">提醒：初审已通过，后续业务员会联系您补充资料，进行额度评估</div>
+          <div class="tip" id="manualPassTipBefore" style="margin:12px 0 0">提醒：初审已通过，后续业务员会联系您补充资料，进行额度评估</div>
+          <div class="tip" id="manualPassTipAfter" style="margin:12px 0 0;display:none">提醒：初审已通过，业务员已经提交客户尽调资料，请尽快补充白条开通的资料</div>
         </div>
       </div>
     </div>
@@ -1279,7 +1278,7 @@ body{
           <div class="ctrl">
             <div class="file-row">
               <a href="javascript:;" class="file-link" id="creditSuccessFileLink" data-file="征信报告.pdf" onclick="downloadCreditFile('creditSuccessFileLink');return false;">已上传-征信报告</a>
-              <button type="button" class="file-dl" onclick="downloadCreditFile('creditSuccessFileLink')">下载</button>
+              <button type="button" class="file-dl" onclick="downloadCreditFile('creditSuccessFileLink')" style="display:none">下载</button>
             </div>
           </div>
         </div>
@@ -1324,6 +1323,16 @@ body{
           </div>
         </div>
       </div>
+      <div class="field">
+        <div class="lab"><span class="req">*</span>白条产品类型</div>
+        <div class="ctrl">
+          <div class="seg">
+            <label><input type="radio" name="resupplyProduct" value="预混料" checked onchange="syncResupplyDocs()" />预混料</label>
+            <label><input type="radio" name="resupplyProduct" value="全价料" onchange="syncResupplyDocs()" />全价料</label>
+            <label><input type="radio" name="resupplyProduct" value="大宗" onchange="syncResupplyDocs()" />大宗白条</label>
+          </div>
+        </div>
+      </div>
       <div class="field" id="subjectTypeField" style="display:none">
         <div class="lab"><span class="req">*</span>主体类型</div>
         <div class="ctrl">
@@ -1339,6 +1348,40 @@ body{
 
     <div class="block" id="resupplyDocs">
       <!-- 动态渲染必传资料 -->
+    </div>
+
+    <div class="block" id="resupplyBaihangWrap" style="display:none">
+      <div class="sec">百行征信报告</div>
+      <div class="field" style="border-bottom:0;padding-top:4px">
+        <div class="lab"><span class="req">*</span>百行征信报告提交方式</div>
+        <div class="ctrl">
+          <div class="seg">
+            <label><input type="radio" name="resupplyBaihangWay" value="upload" checked onchange="syncResupplyBaihangWay()" />上传图片</label>
+            <label><input type="radio" name="resupplyBaihangWay" value="email" onchange="syncResupplyBaihangWay()" />已发送邮箱</label>
+          </div>
+          <div class="field-hint" id="resupplyBaihangInboxHint" style="display:none">收件箱：jinrong@shyuanyao.com</div>
+        </div>
+      </div>
+      <div id="resupplyBaihangUploadBox">
+        <div class="upload-grid one">
+          <div class="upload" data-up="resupply-baihang" id="upResupplyBaihang" onclick="this.classList.toggle('done')">
+            <div class="cam" aria-hidden="true"></div>
+            <div class="hint">点击上传百行征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span></div>
+          </div>
+        </div>
+      </div>
+      <div id="resupplyBaihangEmailBox" style="display:none">
+        <div class="field" style="border-bottom:0;padding-top:4px">
+          <div class="lab">收取状态</div>
+          <div class="ctrl">
+            <div class="baihang-row">
+              <span class="val wait" id="resupplyBaihangStatus">检测中…</span>
+              <button type="button" class="btn-recheck" id="resupplyBaihangRecheck" hidden onclick="startResupplyBaihangCheck()">再次查询</button>
+            </div>
+            <div class="field-hint">系统自动检测百行征信报告收取状态，无需客户上传</div>
+          </div>
+        </div>
+      </div>
     </div>
 
       <div class="block" id="controllerCreditBox" style="display:none">
@@ -1361,18 +1404,29 @@ body{
             <div class="lab"><span class="req">*</span>身份证号码</div>
             <div class="ctrl"><input id="controllerIdNo" maxlength="18" placeholder="请输入实控人身份证号码" /></div>
           </div>
-          <div class="field" style="border-bottom:0">
+          <div class="field">
             <div class="lab"><span class="req">*</span>手机号</div>
             <div class="ctrl"><input id="controllerMobile" type="tel" maxlength="11" placeholder="请输入实控人手机号" /></div>
           </div>
-        </div>
-        <div id="controllerPbcUploadWrap" style="display:none">
-          <div class="up-label" style="margin-top:12px"><span class="req">*</span>实控人近1个月人行征信报告</div>
-          <div class="field-hint" style="margin:0 0 8px">任意银行APP下载</div>
-          <div class="upload-grid one">
-            <div class="upload" id="upControllerPbc" data-req="1" onclick="toggleControllerPbc(this)">
-              <div class="cam" aria-hidden="true"></div>
-              <div class="hint">点击上传法人征信报告</div>
+          <div id="controllerPbcUploadWrap" style="display:none">
+            <div class="field" style="border-bottom:0;padding-top:8px">
+              <div class="lab"><span class="req">*</span>实控人征信报告提交方式</div>
+              <div class="ctrl">
+                <div class="seg">
+                  <label><input type="radio" name="actualControllerCreditWay" value="upload" checked onchange="syncActualControllerCreditWay()" />已有征信上传</label>
+                  <label><input type="radio" name="actualControllerCreditWay" value="pbc" onchange="syncActualControllerCreditWay()" />去人行征信中心获取</label>
+                </div>
+              </div>
+            </div>
+            <div id="actualControllerCreditUploadBox" style="margin-top:8px">
+              <div class="field-hint" style="margin:0 0 8px">近1个月人行征信报告，任意银行APP下载</div>
+              <div class="upload-grid one">
+                <div class="upload" id="upControllerPbc" data-req="1" onclick="pickActualControllerCreditFile(this)">
+                  <div class="cam" aria-hidden="true"></div>
+                  <div class="hint">点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span></div>
+                </div>
+              </div>
+              <input type="file" id="actualControllerCreditFileInput" accept=".pdf,image/*,.jpg,.jpeg,.png,.webp,.gif" style="display:none" onchange="onActualControllerCreditFileChange(this)" />
             </div>
           </div>
         </div>
@@ -1381,12 +1435,12 @@ body{
     <!-- 实控人征信上传成功 -->
     <div id="controllerCreditSuccessPage" style="display:none">
       <div class="block">
-        <div class="sec">法人征信报告上传成功</div>
+        <div class="sec">实控人征信报告上传成功</div>
         <div class="field" style="border-bottom:0">
-          <div class="lab">法人征信报告</div>
+          <div class="lab">实控人征信报告</div>
           <div class="ctrl">
             <div class="file-row">
-              <a href="javascript:;" class="file-link" id="controllerSuccessFileLink" data-file="法人征信报告.pdf" onclick="downloadCreditFile('controllerSuccessFileLink');return false;">已上传-法人征信报告</a>
+              <a href="javascript:;" class="file-link" id="controllerSuccessFileLink" data-file="实控人征信报告.pdf" onclick="downloadCreditFile('controllerSuccessFileLink');return false;">已上传-实控人征信报告</a>
               <button type="button" class="file-dl" onclick="downloadCreditFile('controllerSuccessFileLink')">下载</button>
             </div>
           </div>
@@ -1709,6 +1763,7 @@ let demoMode="pass";
 let hasPbcAccount=false; // 前置步骤校验：是否已有人行征信中心账号
 let baihangWillReceive=false; // 演示：查验百行是否已收到
 let baihangOk=false;
+let resupplyBaihangOk=false; // 正式进件·全价料百行是否已收到/已上传就绪
 let flowWillReceive=true; // 演示：查验流水邮箱是否已收到（默认已收到，便于进入征信）
 let flowEmailOk=false;
 let chuShenPhase="form"; // form | credit | result（初审：资料页 / 征信 / 审核结果）
@@ -1730,6 +1785,7 @@ let flowChannelDraft=[];
 let controllerInfoReady=false; // 非实控人时：已填写姓名/身份证/手机号，进入征信上传
 let controllerCreditOk=false; // 实控人征信已上传成功
 let manualDone=false, manualPass=false, manualBusy=false;
+let salesDdSubmitted=false; // 业务员是否已提交尽调（人审通过后才可进正式补件）
 let rpaBusy=false, aiBusy=false;
 let creditMode="reg"; // reg | login，由 hasPbcAccount 决定
 let creditNoticeAgreed=false; // 告知协议是否已同意
@@ -1826,8 +1882,79 @@ function onCreditAgreeChange(el){
 }
 
 function syncCreditMobile(){
-  const m=(document.getElementById("legalMobile").value||"").trim();
-  document.getElementById("creditMobile").value=m;
+  const fromController=creditEntry==="resupply";
+  const srcId=fromController?"controllerMobile":"legalMobile";
+  const m=(document.getElementById(srcId)?.value||"").trim();
+  const el=document.getElementById("creditMobile");
+  if(el) el.value=m;
+}
+function getActualControllerCreditWay(){
+  return document.querySelector('input[name="actualControllerCreditWay"]:checked')?.value||"upload";
+}
+function syncActualControllerCreditWay(){
+  const way=getActualControllerCreditWay();
+  const up=document.getElementById("actualControllerCreditUploadBox");
+  if(up) up.style.display=way==="upload"?"":"none";
+  if(way==="pbc"){
+    const upload=document.getElementById("upControllerPbc");
+    if(upload){
+      upload.classList.remove("done");
+      const hint=upload.querySelector(".hint");
+      if(hint) hint.innerHTML='点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span>';
+    }
+    const inp=document.getElementById("actualControllerCreditFileInput");
+    if(inp) inp.value="";
+  }
+  renderFooter();
+}
+function pickActualControllerCreditFile(el){
+  if(getActualControllerCreditWay()!=="upload") return;
+  const inp=document.getElementById("actualControllerCreditFileInput");
+  if(!inp){ el.classList.toggle("done"); renderFooter(); return; }
+  inp.click();
+}
+function onActualControllerCreditFileChange(inp){
+  const file=inp.files&&inp.files[0];
+  const up=document.getElementById("upControllerPbc");
+  if(!up) return;
+  if(!file){ up.classList.remove("done"); renderFooter(); return; }
+  const okType=/pdf|image\//i.test(file.type) || /\.(pdf|jpg|jpeg|png|webp|gif)$/i.test(file.name);
+  if(!okType){
+    alert("仅支持上传 PDF 或图片文件");
+    inp.value="";
+    up.classList.remove("done");
+    renderFooter();
+    return;
+  }
+  up.classList.add("done");
+  const hint=up.querySelector(".hint");
+  if(hint) hint.innerHTML="已上传："+file.name+'<br><span style="font-size:12px;color:#999">点击可重新选择</span>';
+  renderFooter();
+}
+function isActualControllerCreditUploadReady(){
+  if(getActualControllerCreditWay()!=="upload") return true;
+  return !!document.getElementById("upControllerPbc")?.classList.contains("done");
+}
+function enterActualControllerCreditFlow(){
+  creditEntry="resupply";
+  resupplyPhase="credit";
+  creditAuthed=false; firstCreditOk=false; creditApplied=false; creditOk=false;
+  creditNoticeAgreed=hasPbcAccount;
+  applyCreditRoute();
+  syncCreditMobile();
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(creditMode==="reg" && !creditNoticeAgreed){
+    setTimeout(()=>openAgreeNoticeModal(), 120);
+  }
+}
+function finishActualControllerCreditFlow(){
+  controllerInfoReady=true;
+  controllerCreditOk=true;
+  creditEntry="chushen";
+  resupplyPhase="form";
+  render();
+  showControllerCreditSuccessPage();
 }
 
 function sendSms(){
@@ -1863,7 +1990,11 @@ document.querySelectorAll(".demo button[data-demo]").forEach(btn=>{
       return;
     }
     if(demoMode==="manual-pass"){
-      openManualResultDemoPage(true);
+      openManualResultDemoPage(true,false);
+      return;
+    }
+    if(demoMode==="manual-pass-dd"){
+      openManualResultDemoPage(true,true);
       return;
     }
     if(demoMode==="esign-fail"){
@@ -1914,7 +2045,7 @@ document.querySelectorAll(".demo button[data-jump]").forEach(btn=>{
     if(btn.dataset.jump==="formal-pass") openFormalReviewDemoPage("pass","上海银行");
     if(btn.dataset.jump==="formal-pass-xs") openFormalReviewDemoPage("pass","锡商银行");
     if(btn.dataset.jump==="baitiao-opened") openFormalReviewDemoPage("opened");
-    if(btn.dataset.jump==="resupply"){ step=2; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; render(); }
+    if(btn.dataset.jump==="resupply"){ step=2; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; salesDdSubmitted=true; manualDone=true; manualPass=true; render(); }
     if(btn.dataset.jump==="guarantor") openGuarantorDemoPage("form");
     if(btn.dataset.jump==="guar-review") openGuarantorDemoPage("pending");
     if(btn.dataset.jump==="guar-pass") openGuarantorDemoPage("pass");
@@ -1950,6 +2081,7 @@ document.querySelectorAll(".demo button[data-baihang]").forEach(btn=>{
     btn.classList.add("active-baihang");
     baihangWillReceive=btn.dataset.baihang==="1";
     if(isFullPrice() && getBaihangWay()==="email") startBaihangCheck();
+    if(isResupplyFullPrice() && getResupplyBaihangWay()==="email") startResupplyBaihangCheck();
   });
 });
 
@@ -2467,7 +2599,7 @@ function openCreditResultDemoPage(pass){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function openManualResultDemoPage(pass){
+function openManualResultDemoPage(pass, ddSubmitted){
   ensureDemoIdentity();
   closeRegLoginSmsModal();
   step=1;
@@ -2483,8 +2615,9 @@ function openManualResultDemoPage(pass){
   manualBusy=false;
   manualDone=true;
   manualPass=!!pass;
+  salesDdSubmitted=!!pass && !!ddSubmitted;
   rpaBusy=false;
-  demoMode=pass?"manual-pass":"reject";
+  demoMode=pass?(salesDdSubmitted?"manual-pass-dd":"manual-pass"):"reject";
   applyCreditRoute();
   const name=(document.getElementById("legalName").value||"").trim()||"党闯";
   const fileName="个人征信报告_"+name+".pdf";
@@ -2539,12 +2672,16 @@ function syncResultBlocks(){
       const pad=n=>String(n).padStart(2,"0");
       el.textContent=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     }
+    const tipBefore=document.getElementById("manualPassTipBefore");
+    const tipAfter=document.getElementById("manualPassTipAfter");
+    if(tipBefore) tipBefore.style.display=salesDdSubmitted?"none":"";
+    if(tipAfter) tipAfter.style.display=salesDdSubmitted?"":"none";
   }
 }
 
 function resetDemoFlow(){
   hideBankHome();
-  step=1; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; esignOk=false; creditAuthed=false; firstCreditOk=false; creditApplied=false; creditOk=false; creditNoticeAgreed=false; aiDone=false; aiPass=false; aiBusy=false; manualDone=false; manualPass=false; manualBusy=false; rpaBusy=false; controllerInfoReady=false; controllerCreditOk=false;
+  step=1; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; esignOk=false; creditAuthed=false; firstCreditOk=false; creditApplied=false; creditOk=false; creditNoticeAgreed=false; aiDone=false; aiPass=false; aiBusy=false; manualDone=false; manualPass=false; manualBusy=false; salesDdSubmitted=false; rpaBusy=false; controllerInfoReady=false; controllerCreditOk=false;
   baihangOk=false;
   flowEmailOk=false;
   flowChannelSelected=[];
@@ -2718,6 +2855,97 @@ function getIsRanch(){
 function getSubjectKind(){
   return document.querySelector('input[name="subjectKind"]:checked')?.value||"个人";
 }
+function getResupplyProduct(){
+  return document.querySelector('input[name="resupplyProduct"]:checked')?.value||"预混料";
+}
+function isResupplyFullPrice(){
+  return getResupplyProduct()==="全价料";
+}
+function getResupplyBaihangWay(){
+  return document.querySelector('input[name="resupplyBaihangWay"]:checked')?.value||"upload";
+}
+function syncResupplyBaihangWay(){
+  const way=getResupplyBaihangWay();
+  const up=document.getElementById("resupplyBaihangUploadBox");
+  const em=document.getElementById("resupplyBaihangEmailBox");
+  const inboxHint=document.getElementById("resupplyBaihangInboxHint");
+  if(up) up.style.display=way==="upload"?"":"none";
+  if(em) em.style.display=way==="email"?"":"none";
+  if(inboxHint) inboxHint.style.display=way==="email"?"":"none";
+  if(way==="upload"){
+    resupplyBaihangOk=false;
+    clearTimeout(startResupplyBaihangCheck._timer);
+  }else{
+    document.getElementById("upResupplyBaihang")?.classList.remove("done");
+    if(isResupplyFullPrice()) startResupplyBaihangCheck();
+  }
+}
+function syncResupplyBaihang(){
+  const wrap=document.getElementById("resupplyBaihangWrap");
+  const yes=isResupplyFullPrice();
+  if(wrap) wrap.style.display=yes?"":"none";
+  if(!yes){
+    document.getElementById("upResupplyBaihang")?.classList.remove("done");
+    resupplyBaihangOk=false;
+    clearTimeout(startResupplyBaihangCheck._timer);
+  }else{
+    syncResupplyBaihangWay();
+  }
+}
+function renderResupplyBaihangStatus(state){
+  const el=document.getElementById("resupplyBaihangStatus");
+  const recheck=document.getElementById("resupplyBaihangRecheck");
+  if(!el) return;
+  el.classList.remove("ok","no","wait");
+  if(state==="ok"){
+    el.classList.add("ok");
+    el.textContent="已收到";
+    el.style.color="var(--green)";
+    if(recheck) recheck.hidden=true;
+  }else if(state==="no"){
+    el.classList.add("no");
+    el.textContent="未收到";
+    el.style.color="var(--red)";
+    if(recheck) recheck.hidden=false;
+  }else{
+    el.classList.add("wait");
+    el.textContent="检测中…";
+    el.style.color="var(--orange)";
+    if(recheck) recheck.hidden=true;
+  }
+}
+function startResupplyBaihangCheck(){
+  resupplyBaihangOk=false;
+  renderResupplyBaihangStatus("wait");
+  clearTimeout(startResupplyBaihangCheck._timer);
+  startResupplyBaihangCheck._timer=setTimeout(()=>{
+    resupplyBaihangOk=!!baihangWillReceive;
+    renderResupplyBaihangStatus(resupplyBaihangOk?"ok":"no");
+  },900);
+}
+function isResupplyBaihangReady(){
+  if(!isResupplyFullPrice()) return true;
+  if(getResupplyBaihangWay()==="upload"){
+    return !!document.getElementById("upResupplyBaihang")?.classList.contains("done");
+  }
+  return !!resupplyBaihangOk;
+}
+function verifyResupplyBaihang(){
+  return new Promise(resolve=>{
+    if(!isResupplyFullPrice()){ resolve(true); return; }
+    if(getResupplyBaihangWay()==="upload"){
+      resolve(isResupplyBaihangReady());
+      return;
+    }
+    renderResupplyBaihangStatus("wait");
+    clearTimeout(startResupplyBaihangCheck._timer);
+    startResupplyBaihangCheck._timer=setTimeout(()=>{
+      resupplyBaihangOk=!!baihangWillReceive;
+      renderResupplyBaihangStatus(resupplyBaihangOk?"ok":"no");
+      resolve(resupplyBaihangOk);
+    },700);
+  });
+}
 
 function buildResupplyDocList(){
   const ge30=getQuotaTier()==="ge30";
@@ -2755,6 +2983,7 @@ function syncResupplyDocs(){
   if(!wrap) return;
   const ge30=getQuotaTier()==="ge30";
   document.getElementById("subjectTypeField").style.display=ge30?"flex":"none";
+  syncResupplyBaihang();
   syncControllerCreditBox();
   const prevDone={};
   wrap.querySelectorAll(".upload[data-up]").forEach(el=>{
@@ -2886,9 +3115,12 @@ function syncResupplyFormVisibility(){
   const meta=document.getElementById("resupplyMetaBlock");
   const dash=document.getElementById("resupplyDash");
   const docs=document.getElementById("resupplyDocs");
+  const baihang=document.getElementById("resupplyBaihangWrap");
   if(meta) meta.style.display=successOnly?"none":"";
   if(dash) dash.style.display=successOnly?"none":"";
   if(docs) docs.style.display=successOnly?"none":"";
+  if(baihang && successOnly) baihang.style.display="none";
+  else if(!successOnly) syncResupplyBaihang();
 }
 function syncControllerCreditBox(){
   const box=document.getElementById("controllerCreditBox");
@@ -2948,14 +3180,21 @@ function syncControllerUpload(){
     if(infoWrap) infoWrap.style.display="none";
     if(wrap) wrap.style.display="none";
     const up=document.getElementById("upControllerPbc");
-    if(up) up.classList.remove("done");
+    if(up){
+      up.classList.remove("done");
+      const hint=up.querySelector(".hint");
+      if(hint) hint.innerHTML='点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span>';
+    }
+    const inp=document.getElementById("actualControllerCreditFileInput");
+    if(inp) inp.value="";
     ["controllerName","controllerIdNo","controllerMobile"].forEach(id=>{
       const el=document.getElementById(id);
       if(el) el.value="";
     });
   }else{
     if(infoWrap) infoWrap.style.display="";
-    if(wrap) wrap.style.display=controllerInfoReady && !controllerCreditOk?"":"none";
+    if(wrap) wrap.style.display=controllerCreditOk?"none":"";
+    if(!controllerCreditOk) syncActualControllerCreditWay();
   }
   renderFooter();
 }
@@ -2978,22 +3217,11 @@ function validateControllerInfo(){
   if(isLegalController()) return "";
   const idErr=validateControllerIdentity();
   if(idErr) return idErr;
-  if(!controllerInfoReady) return "请先获取法人征信报告";
   if(!controllerCreditOk){
-    const up=document.getElementById("upControllerPbc");
-    if(up && !up.classList.contains("done")) return "请上传实控人近1个月人行征信报告";
+    if(getActualControllerCreditWay()==="pbc") return "请先去人行征信中心获取实控人征信报告";
+    if(!isActualControllerCreditUploadReady()) return "请上传实控人征信报告";
   }
   return "";
-}
-
-function toggleControllerPbc(el){
-  el.classList.toggle("done");
-  if(el.classList.contains("done")){
-    showControllerCreditSuccessPage();
-  }else{
-    controllerCreditOk=false;
-    renderFooter();
-  }
 }
 
 function verifyFlowEmail(){
@@ -3053,11 +3281,15 @@ function confirmFlowChannelSheet(){
   syncFlowUnzipPasswords();
 }
 function validateResupplyDocs(){
+  if(!document.querySelector('input[name="resupplyProduct"]:checked')) return "请选择白条产品类型";
   if(!flowChannelSelected.length) return "请选择近1年经营性流水来源";
   const pwdErr=validateFlowUnzipPasswords();
   if(pwdErr) return pwdErr;
   const miss=[...document.querySelectorAll("#resupplyDocs .upload[data-req='1']")].filter(el=>!el.classList.contains("done"));
   if(miss.length) return "请上传其余必填正式进件资料";
+  if(isResupplyFullPrice() && !isResupplyBaihangReady()){
+    return getResupplyBaihangWay()==="email"?"百行征信报告邮箱未收到，请确认已发送后再次查询":"请上传百行征信报告";
+  }
   if(getQuotaTier()==="ge30"){
     const ctrlErr=validateControllerInfo();
     if(ctrlErr) return ctrlErr;
@@ -3299,8 +3531,8 @@ function closeRegLoginSmsModal(){
   document.getElementById("regLoginSmsModal").classList.remove("on");
 }
 function sendRegLoginSms(){
-  const mobile=(document.getElementById("creditMobile").value||document.getElementById("legalMobile").value||"").trim();
-  if(!/^1\d{10}$/.test(mobile)){alert("请先确认法人实名手机号");return}
+  const mobile=(document.getElementById("creditMobile").value||document.getElementById(creditEntry==="resupply"?"controllerMobile":"legalMobile").value||"").trim();
+  if(!/^1\d{10}$/.test(mobile)){alert(creditEntry==="resupply"?"请先确认实控人手机号":"请先确认法人实名手机号");return}
   const btn=document.getElementById("btnRegLoginSms");
   let left=60;
   btn.disabled=true;
@@ -3342,21 +3574,28 @@ function runDownload(){
   setTimeout(()=>{
     creditOk=true;
     rpaBusy=false;
-    controllerInfoReady=false;
-    controllerCreditOk=false;
-    aiDone=false;
-    aiPass=false;
-    aiBusy=false;
-    manualDone=false;
-    manualPass=false;
-    manualBusy=false;
-    const name=(document.getElementById("legalName").value||"").trim()||"客户";
+    if(creditEntry!=="resupply"){
+      controllerInfoReady=false;
+      controllerCreditOk=false;
+      aiDone=false;
+      aiPass=false;
+      aiBusy=false;
+      manualDone=false;
+      manualPass=false;
+      manualBusy=false;
+    }
+    const isActual=creditEntry==="resupply";
+    const name=(document.getElementById(isActual?"controllerName":"legalName")?.value||"").trim()||(isActual?"实控人":"客户");
     const fileName=name+"征信报告.pdf";
     const label="已上传-"+name+"征信报告";
     document.getElementById("creditFileLink").dataset.file=fileName;
     document.getElementById("creditFileLink").textContent="已上传 "+fileName;
     const successLink=document.getElementById("creditSuccessFileLink");
     if(successLink){ successLink.dataset.file=fileName; successLink.textContent=label; }
+    const successSec=document.querySelector("#creditSuccessPage .sec");
+    const successLab=document.querySelector("#creditSuccessPage .lab");
+    if(successSec) successSec.textContent=(isActual?"实控人":"法人")+"征信报告上传成功";
+    if(successLab) successLab.textContent=(isActual?"实控人":"法人")+"征信报告";
     document.getElementById("creditDownloadPage").style.display="none";
     document.getElementById("btnDownload").disabled=false;
     document.getElementById("btnDownload").textContent="下载征信并上传";
@@ -3460,14 +3699,47 @@ function render(){
   }
   if(step===2){
     const title=document.querySelector(".nav .title");
-    document.getElementById("chuShenCreditBox").style.display="none";
-    if(resupplyPhase==="review"){
+    if(resupplyPhase==="credit"){
+      // 人行流程 UI 挂在 panel-1，临时切显；步骤条仍停在第 2 步
+      document.getElementById("panel-2").classList.remove("on");
+      document.getElementById("panel-1").classList.add("on");
+      document.getElementById("chuShenFormBox").style.display="none";
+      document.getElementById("creditResultPage").style.display="none";
+      if(title) title.textContent="实控人征信";
+      document.getElementById("chuShenCreditBox").style.display="";
+      syncCreditMobile();
+      applyCreditRoute();
+      syncCreditAuthPages();
+      document.getElementById("creditDlBox").style.display=(creditAuthed && !creditApplied)?"block":"none";
+      if(creditAuthed && !creditApplied){
+        const firstBox=document.getElementById("firstCreditBox");
+        const applyBox=document.getElementById("applyCreditBox");
+        if(firstBox) firstBox.style.display=firstCreditOk?"none":"block";
+        if(applyBox) applyBox.style.display=firstCreditOk?"block":"none";
+      }
+      document.getElementById("creditDownloadPage").style.display=(creditAuthed && creditApplied && !creditOk)?"block":"none";
+      document.getElementById("creditSuccessPage").style.display=(creditAuthed && creditApplied && creditOk)?"block":"none";
+      if(creditAuthed && creditApplied && creditOk){
+        const name=(document.getElementById("controllerName")?.value||"").trim()||"实控人";
+        const successLink=document.getElementById("creditSuccessFileLink");
+        const successSec=document.querySelector("#creditSuccessPage .sec");
+        const successLab=document.querySelector("#creditSuccessPage .lab");
+        if(successSec) successSec.textContent="实控人征信报告上传成功";
+        if(successLab) successLab.textContent="实控人征信报告";
+        if(successLink){
+          successLink.dataset.file=name+"征信报告.pdf";
+          successLink.textContent="已上传-"+name+"征信报告";
+        }
+      }
+    }else if(resupplyPhase==="review"){
+      document.getElementById("chuShenCreditBox").style.display="none";
       if(title) title.textContent=formalReviewStatus==="opened"?"白条已开通":"正式进件审核";
       document.getElementById("resupplyFormBox").style.display="none";
       document.getElementById("resupplyCreditBox").style.display="";
       document.getElementById("formalReviewPage").style.display="block";
       syncFormalReviewBlocks();
     }else{
+      document.getElementById("chuShenCreditBox").style.display="none";
       if(title) title.textContent="正式进件资料补充";
       document.getElementById("resupplyFormBox").style.display="";
       document.getElementById("resupplyCreditBox").style.display="none";
@@ -3509,13 +3781,7 @@ function renderFooter(){
     if(save) save.style.display="";
     next.style.display="";
     next.disabled=false;
-    if(fromArchive){
-      next.textContent="提交初审资料";
-    }else if(getControllerCreditWay()==="pbc"){
-      next.textContent="下一步，下载法人征信报告";
-    }else{
-      next.textContent="提交";
-    }
+    next.textContent=fromArchive?"提交初审资料":"提交";
     return;
   }
   if(step===1 && chuShenPhase==="result"){
@@ -3534,8 +3800,19 @@ function renderFooter(){
     next.style.display="";
     next.disabled=false;
     if(manualDone){
-      if(manualPass) next.textContent="去补充正式进件资料";
-      else next.textContent="修改资料";
+      if(manualPass){
+        if(salesDdSubmitted){
+          next.style.display="";
+          next.disabled=false;
+          next.textContent="去补充正式进件资料";
+        }else{
+          next.style.display="none";
+        }
+      }else{
+        next.style.display="";
+        next.disabled=false;
+        next.textContent="修改资料";
+      }
       return;
     }
     if(aiDone && aiPass){
@@ -3572,17 +3849,39 @@ function renderFooter(){
     return;
   }
   if(step===2 && resupplyPhase==="form"){
+    if(save) save.style.display="";
     next.style.display="";
     next.disabled=false;
     if(fromArchive){
       next.textContent="提交正式进件资料";
-    }else if(getQuotaTier()==="ge30" && !isLegalController() && !controllerInfoReady){
-      next.textContent="下一步，下载法人征信报告";
     }else if(getQuotaTier()==="ge30" && !isLegalController() && !controllerCreditOk){
-      next.textContent="请上传法人征信报告";
+      next.textContent=getActualControllerCreditWay()==="pbc"?"去下载实控人征信报告":"提交";
     }else{
-      next.textContent="提交正式进件资料";
+      next.textContent="提交";
     }
+    return;
+  }
+  if(step===2 && resupplyPhase==="credit"){
+    if(save) save.style.display="none";
+    if(!creditAuthed){
+      next.style.display="";
+      next.textContent=creditMode==="reg"?"注册":"登录";
+      next.disabled=(creditMode==="reg" && !creditNoticeAgreed);
+      return;
+    }
+    if(rpaBusy){
+      next.style.display="";
+      next.disabled=true;
+      next.textContent="征信下载中…";
+      return;
+    }
+    if(creditOk){
+      next.style.display="";
+      next.disabled=false;
+      next.textContent="完成，返回正式进件";
+      return;
+    }
+    next.style.display="none";
     return;
   }
   if(step===2 && resupplyPhase==="review"){
@@ -3643,7 +3942,7 @@ function go(d){
         creditNoticeAgreed=hasPbcAccount; // 仅注册路径需要告知协议
         controllerInfoReady=false; controllerCreditOk=false;
         aiDone=false; aiPass=false; aiBusy=false;
-        manualDone=false; manualPass=false; manualBusy=false;
+        manualDone=false; manualPass=false; manualBusy=false; salesDdSubmitted=false;
         applyCreditRoute();
         render();
         window.scrollTo({top:0,behavior:"smooth"});
@@ -3668,7 +3967,7 @@ function go(d){
       // 法人征信完成后进入初审审核结果；实控人信息在正式进件页
       chuShenPhase="result";
       aiDone=false; aiPass=false; aiBusy=false;
-      manualDone=false; manualPass=false; manualBusy=false;
+      manualDone=false; manualPass=false; manualBusy=false; salesDdSubmitted=false;
       render();
       startAiReview();
       return;
@@ -3680,10 +3979,12 @@ function go(d){
         if(!manualPass){
           chuShenPhase="form";
           manualDone=false; manualPass=false; manualBusy=false;
+          salesDdSubmitted=false;
           aiDone=false; aiPass=false; aiBusy=false;
           creditOk=false; creditApplied=false; creditAuthed=false; firstCreditOk=false; render();
           return;
         }
+        if(!salesDdSubmitted) return;
         step=2; chuShenPhase="form"; resupplyPhase="form"; render();
         return;
       }
@@ -3697,19 +3998,16 @@ function go(d){
     }
     if(step===2 && resupplyPhase==="form"){
       if(getQuotaTier()==="ge30" && !isLegalController()){
-        if(!controllerInfoReady){
-          const idErr=validateControllerIdentity();
-          if(idErr){ alert(idErr); return; }
-          controllerInfoReady=true;
-          syncControllerUpload();
-          renderFooter();
-          window.scrollTo({top:document.getElementById("controllerPbcUploadWrap")?.offsetTop||0,behavior:"smooth"});
-          return;
-        }
+        const idErr=validateControllerIdentity();
+        if(idErr){ alert(idErr); return; }
+        controllerInfoReady=true;
         if(!controllerCreditOk){
-          const up=document.getElementById("upControllerPbc");
-          if(up && !up.classList.contains("done")){
-            alert("请上传实控人近1个月人行征信报告");
+          if(getActualControllerCreditWay()==="pbc"){
+            enterActualControllerCreditFlow();
+            return;
+          }
+          if(!isActualControllerCreditUploadReady()){
+            alert("请上传实控人征信报告");
             return;
           }
           showControllerCreditSuccessPage();
@@ -3728,9 +4026,37 @@ function go(d){
           showFlowMissModal();
           return;
         }
+        if(isResupplyFullPrice() && getResupplyBaihangWay()==="email"){
+          nextBtn.textContent="核验百行征信中…";
+          return verifyResupplyBaihang().then(bhOk=>{
+            if(!bhOk){
+              nextBtn.disabled=false;
+              renderFooter();
+              alert("百行征信报告邮箱未收到，请确认已发送至 jinrong@shyuanyao.com 后再次查询");
+              return;
+            }
+            nextBtn.disabled=false;
+            proceedResupplyNext(fromArchive);
+          });
+        }
         nextBtn.disabled=false;
         proceedResupplyNext(fromArchive);
       });
+      return;
+    }
+    if(step===2 && resupplyPhase==="credit"){
+      if(!creditAuthed){
+        if(creditMode==="reg" && !creditNoticeAgreed){ openAgreeNoticeModal(); return; }
+        runCreditAuth();
+        return;
+      }
+      if(!creditApplied){
+        if(!firstCreditOk){ submitFirstCredit(); return; }
+        submitCreditApply();
+        return;
+      }
+      if(!creditOk){ runDownload(); return; }
+      finishActualControllerCreditFlow();
       return;
     }
     if(step===2 && resupplyPhase==="review"){

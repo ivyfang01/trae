@@ -91,6 +91,59 @@ body{
 .btn{border:none;border-radius:var(--radius-sm);padding:12px;font-size:15px;cursor:pointer;font-weight:600;flex:1}
 .btn-default{background:#fff;border:1px solid var(--border-light);color:var(--text)}
 .btn-primary{background:var(--blue);color:#fff}
+.partner-card{
+  border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:10px 12px;margin-bottom:10px;background:#fafafa
+}
+.partner-card .partner-hd{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px
+}
+.partner-card .partner-hd span{font-size:13px;font-weight:600;color:var(--text-secondary)}
+.partner-card .partner-del{
+  border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0
+}
+.btn-add-partner{
+  position:relative;z-index:2;display:block;width:100%;height:40px;
+  border:1px dashed var(--border-light);border-radius:var(--radius-sm);
+  background:#fff;color:var(--blue);font-size:14px;cursor:pointer;font-weight:600;
+  pointer-events:auto;-webkit-tap-highlight-color:transparent
+}
+.btn-add-partner:active{opacity:.75}
+.check-list,.radio-list{display:flex;flex-direction:column;gap:8px}
+.check-list label,.radio-list label{
+  display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 12px;
+  border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  background:#fff;cursor:pointer;font-size:14px;color:var(--text)
+}
+.check-list input,.radio-list input{
+  width:18px;height:18px;margin:0;flex-shrink:0;accent-color:var(--blue)
+}
+.check-list label:has(input:checked),
+.radio-list label:has(input:checked){border-color:var(--blue);background:var(--bg-blue-light)}
+.mask{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;
+  align-items:center;justify-content:center;padding:24px
+}
+.mask.on{display:flex}
+.dialog{
+  width:100%;max-width:300px;background:#fff;border-radius:12px;overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.18)
+}
+.dialog .dlg-hd{
+  padding:20px 20px 0;font-size:17px;font-weight:600;color:var(--text);text-align:center
+}
+.dialog .dlg-msg{
+  padding:10px 20px 22px;font-size:14px;line-height:1.55;color:var(--text-secondary);text-align:center
+}
+.dialog .dlg-actions{
+  display:flex;border-top:1px solid var(--border)
+}
+.dialog .dlg-actions button{
+  flex:1;height:48px;border:0;background:#fff;font-size:16px;cursor:pointer;padding:0
+}
+.dialog .dlg-actions button+button{border-left:1px solid var(--border)}
+.dialog .dlg-actions .dlg-cancel{color:var(--text-secondary)}
+.dialog .dlg-actions .dlg-ok{color:var(--blue);font-weight:600}
 </style>
 </head>
 <body>
@@ -101,58 +154,33 @@ body{
   </div>
 
   <div class="card">
-    <div class="sec">客户基础信息</div>
+    <div class="sec">白条申请</div>
     <div class="form-item">
       <label><span class="req">*</span>客户名称</label>
       <input id="custName" value="桑姣婧" readonly style="background:#f7f8fa" />
     </div>
-    <div id="breedBlock">
-      <div class="form-item">
-        <label>养殖种类<span class="hint" style="display:inline;margin-left:6px">来自养殖档案</span></label>
-        <input id="breed" value="蛋鸡" readonly style="background:#f7f8fa" />
-      </div>
-      <div class="row2">
-        <div class="form-item">
-          <label>养殖数量<span class="hint" style="display:inline;margin-left:6px">来自客户档案</span></label>
-          <input id="breedQty" value="2.5万羽" readonly style="background:#f7f8fa" />
-        </div>
-        <div class="form-item">
-          <label>鸡龄 / 规模补充</label>
-          <input id="breedExtra" placeholder="鸡龄、年出栏等" />
-        </div>
-      </div>
-    </div>
-    <div class="form-item">
-      <label><span class="req">*</span>从事行业年限</label>
-      <div class="unit"><input id="years" type="number" placeholder="请输入" /><span>年</span></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec">白条申请</div>
     <div class="form-item">
       <label><span class="req">*</span>白条产品类型</label>
       <div class="seg" id="tplSeg">
         <label><input type="radio" name="tpl" value="预混料" checked onchange="syncTpl()" />预混料</label>
         <label><input type="radio" name="tpl" value="全价料" onchange="syncTpl()" />全价料</label>
+        <label><input type="radio" name="tpl" value="大宗" onchange="syncTpl()" />大宗免息白条</label>
       </div>
     </div>
     <div class="form-item">
-      <label><span class="req">*</span>额度档位</label>
+      <label><span class="req">*</span>额度</label>
       <div class="seg">
         <label><input type="radio" name="quotaTier" value="lt30" checked />＜30万</label>
         <label><input type="radio" name="quotaTier" value="ge30" />≥30万</label>
       </div>
     </div>
-    <div class="row2">
-      <div class="form-item">
-        <label><span class="req">*</span>上海银行额度</label>
-        <div class="unit"><input id="syQuota" type="number" min="0" placeholder="请输入" oninput="syncSyReason()" /><span>万</span></div>
-      </div>
-      <div class="form-item" id="xsQuotaItem">
-        <label>锡商银行额度</label>
-        <div class="unit"><input id="xsQuota" type="number" min="0" placeholder="请输入" /><span>万</span></div>
-      </div>
+    <div class="form-item">
+      <label><span class="req">*</span>上海银行额度</label>
+      <div class="unit"><input id="syQuota" type="number" min="0" placeholder="请输入，不申请填写0" oninput="syncSyReason()" /><span>万</span></div>
+    </div>
+    <div class="form-item" id="xsQuotaItem">
+      <label><span class="req">*</span>锡商银行额度</label>
+      <div class="unit"><input id="xsQuota" type="number" min="0" placeholder="请输入，不申请填写0" /><span>万</span></div>
     </div>
     <div class="form-item" id="noSyReason" style="display:none">
       <label><span class="req">*</span>不申请上海银行原因</label>
@@ -164,69 +192,158 @@ body{
     </div>
   </div>
 
-  <div class="card tpl on" id="tpl-预混料">
-    <div class="sec">预混料模板字段</div>
+  <div class="card">
+    <div class="sec">客户养殖信息</div>
     <div class="form-item">
-      <label><span class="req">*</span>每月豆粕玉米需求总量</label>
+      <label>客户类型<span class="hint" style="display:inline;margin-left:6px">取养殖档案</span></label>
+      <select id="custKind" onchange="syncCustKind()">
+        <option value="养殖户" selected>养殖户</option>
+        <option value="次终端">次终端</option>
+        <option value="饲料厂">饲料厂</option>
+      </select>
+    </div>
+    <div class="form-item" id="isRanchItem">
+      <label><span class="req">*</span>是否是牧场</label>
+      <div class="seg">
+        <label><input type="radio" name="isRanch" value="是" />是</label>
+        <label><input type="radio" name="isRanch" value="否" checked />否</label>
+      </div>
+    </div>
+    <div class="form-item" id="custStageItem" style="display:none">
+      <label><span class="req">*</span>客户阶段</label>
+      <div class="seg">
+        <label><input type="radio" name="custStage" value="新客户" />新客户</label>
+        <label><input type="radio" name="custStage" value="存量客户" checked />存量客户</label>
+      </div>
+    </div>
+    <div id="coopEggManureBlock">
+      <div class="form-item">
+        <label>是否平台合作收蛋客户</label>
+        <div class="seg">
+          <label><input type="radio" name="egg" value="是" /><span>是</span></label>
+          <label><input type="radio" name="egg" value="否" checked /><span>否</span></label>
+        </div>
+      </div>
+      <div class="form-item">
+        <label>是否平台合作处理鸡粪</label>
+        <div class="seg">
+          <label><input type="radio" name="manure" value="是" /><span>是</span></label>
+          <label><input type="radio" name="manure" value="否" checked /><span>否</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="form-item" id="supplierStockItem" style="display:none">
+      <label>是否供应商存量客户</label>
+      <div class="seg">
+        <label><input type="radio" name="supplierStock" value="是" /><span>是</span></label>
+        <label><input type="radio" name="supplierStock" value="否" checked /><span>否</span></label>
+      </div>
+    </div>
+    <div id="breedBlock">
+      <div class="form-item">
+        <label>养殖类型<span class="hint" style="display:inline;margin-left:6px">取客户档案</span></label>
+        <select id="breed" onchange="syncBreedExtra()">
+          <option value="鸡" selected>鸡</option>
+          <option value="鸭">鸭</option>
+          <option value="鹅">鹅</option>
+          <option value="猪">猪</option>
+          <option value="牛">牛</option>
+          <option value="羊">羊</option>
+        </select>
+      </div>
+      <div class="form-item" id="econUseItem">
+        <label><span class="req">*</span>经济用途</label>
+        <div class="seg" id="econUseSeg"></div>
+      </div>
+      <div id="chickenDetailBlock" style="display:none"></div>
+      <div class="form-item" id="breedQtyItem">
+        <label id="breedQtyLabel">养殖数量<span class="hint" style="display:inline;margin-left:6px">取客户档案</span></label>
+        <div class="unit">
+          <input id="breedQty" type="number" min="0" placeholder="请输入" value="25000" />
+          <span id="breedQtyUnit">羽/头/只</span>
+        </div>
+      </div>
+      <div id="pigScaleBlock" style="display:none">
+        <div class="form-item">
+          <label><span class="req">*</span>有无防疫证</label>
+          <div class="seg">
+            <label><input type="radio" name="pigVaccineCert" value="有" />有</label>
+            <label><input type="radio" name="pigVaccineCert" value="无" checked />无</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-item" id="breedExtraItem">
+        <label id="breedExtraLabel">日龄</label>
+        <div class="unit">
+          <input id="breedExtra" type="number" min="0" placeholder="请输入日龄" />
+          <span id="breedExtraUnit">天</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tpl on" id="tpl-预混料">
+    <div class="sec">饲料信息</div>
+    <div class="form-item" id="premixBuyCountItem" style="display:none">
+      <label>在平台购买次数<span class="hint" style="display:inline;margin-left:6px">平台统计</span></label>
+      <input id="premixBuyCount" type="number" value="12" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>每月玉米需求量</label>
       <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
     </div>
     <div class="form-item">
-      <label><span class="req">*</span>是否绑定销售预混料</label>
-      <div class="seg">
-        <label><input type="radio" name="bindPremix" value="是" checked onchange="syncPremix()" />是</label>
-        <label><input type="radio" name="bindPremix" value="否" onchange="syncPremix()" />否</label>
-      </div>
-    </div>
-    <div id="premixYes">
-      <div class="row2">
-        <div class="form-item"><label>预混料每月吨数</label><div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div></div>
-        <div class="form-item"><label>预混料报价</label><div class="unit"><input type="number" placeholder="请输入" /><span>元</span></div></div>
-      </div>
-      <div class="form-item"><label>预混料商品名称</label><input placeholder="请输入" /></div>
-    </div>
-    <div class="form-item" id="premixNo" style="display:none">
-      <label><span class="req">*</span>不能绑定预混料的原因</label>
-      <input placeholder="请填写原因" />
+      <label><span class="req">*</span>每月豆粕需求量</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
     </div>
     <div class="form-item">
-      <label>是否平台合作收蛋客户</label>
-      <div class="seg">
-        <label><input type="radio" name="egg" value="是" /><span>是</span></label>
-        <label><input type="radio" name="egg" value="否" checked /><span>否</span></label>
-      </div>
+      <label><span class="req">*</span>预混料需求量</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
     </div>
-    <div class="form-item">
-      <label>是否平台合作处理鸡粪</label>
-      <div class="seg">
-        <label><input type="radio" name="manure" value="是" /><span>是</span></label>
-        <label><input type="radio" name="manure" value="否" checked /><span>否</span></label>
+    <div id="premixBindBlock">
+      <div class="form-item">
+        <label><span class="req">*</span>是否绑定销售预混料</label>
+        <div class="seg">
+          <label><input type="radio" name="bindPremix" value="是" checked onchange="syncPremix()" />是</label>
+          <label><input type="radio" name="bindPremix" value="否" onchange="syncPremix()" />否</label>
+        </div>
+      </div>
+      <div id="premixYes">
+        <div class="form-item">
+          <label>预混料每月吨数</label>
+          <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+        </div>
+        <div class="form-item"><label>预混料商品名称</label><input placeholder="请输入" /></div>
+        <div class="form-item">
+          <label>预混料报价</label>
+          <div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div>
+        </div>
+      </div>
+      <div class="form-item" id="premixNo" style="display:none">
+        <label><span class="req">*</span>不能绑定预混料的原因</label>
+        <input placeholder="请填写原因" />
       </div>
     </div>
   </div>
 
   <div class="card tpl" id="tpl-全价料">
-    <div class="sec">全价料模板字段</div>
-    <div class="form-item"><label><span class="req">*</span>客户类型</label><input value="养殖户" /></div>
-    <div class="row2">
-      <div class="form-item"><label><span class="req">*</span>全价料每月吨数</label><div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div></div>
-      <div class="form-item"><label><span class="req">*</span>单价</label><div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div></div>
-    </div>
-    <div class="form-item"><label><span class="req">*</span>全价料厂家</label><input placeholder="请输入" /></div>
+    <div class="sec">饲料信息</div>
     <div class="form-item">
-      <label><span class="req">*</span>是否供应商存量客户</label>
-      <div class="seg">
-        <label><input type="radio" name="stock" value="是" /><span>是</span></label>
-        <label><input type="radio" name="stock" value="否" checked /><span>否</span></label>
-      </div>
+      <label><span class="req">*</span>全价料每月吨数</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>全价料厂家名字</label>
+      <input placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>单价</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div>
     </div>
   </div>
 
   <div class="card tpl" id="tpl-大宗">
-    <div class="sec">大宗模板字段</div>
-    <div class="form-item">
-      <label>客户类型<span class="hint" style="display:inline;margin-left:6px">来自客户档案，无需选择</span></label>
-      <input id="bulkType" value="次终端/饲料厂" readonly style="background:#f7f8fa" />
-    </div>
+    <div class="sec">饲料信息</div>
     <div class="form-item">
       <label>新/存量客户<span class="hint" style="display:inline;margin-left:6px">系统取值，无需选择</span></label>
       <input id="bulkCust" value="存量" readonly style="background:#f7f8fa" />
@@ -236,52 +353,35 @@ body{
       <input id="bulkBuyCount" type="number" value="12" readonly style="background:#f7f8fa" />
     </div>
     <div class="form-item">
-      <label><span class="req">*</span>每月豆粕玉米需求总量</label>
+      <label><span class="req">*</span>每月玉米需求总量</label>
+      <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>每月豆粕需求总量</label>
       <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="sec">附件资料包</div>
-    <div class="form-item" style="margin-bottom:0">
-      <div class="upload-grid">
-        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>厂房大门</div>
-        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>仓库</div>
-        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>养殖区域</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec">CRM拜访记录</div>
-    <div class="form-item" style="margin-bottom:0">
-      <div class="hint" style="margin-bottom:8px">自动取今日拜访</div>
-      <div class="crm-box" id="crmVisit" data-visit-id="280447">
-        <div class="crm-top">
-          <div class="crm-title">今日拜访 · 桑姣婧</div>
-          <a class="crm-detail" href="javascript:void(0)" onclick="openCrmVisitDetail()">查看详情</a>
-        </div>
-        <div class="crm-meta" id="crmMeta">2026-09-16 10:28 · 业务经理 张伟 · 实地拜访</div>
-      </div>
-      <div class="hint" id="crmEmpty" style="display:none;color:var(--orange)">今日暂无该客户拜访记录，请先在 CRM 完成今日拜访后再提交</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="sec">尽调报告</div>
+    <div class="sec">经营信息</div>
     <div class="form-item">
-      <label><span class="req">*</span>申请人姓名</label>
-      <input id="ddApplicant" placeholder="请输入" />
+      <label>法人名字<span class="hint" style="display:inline;margin-left:6px">取初审资料</span></label>
+      <input id="legalName" value="桑姣婧" readonly style="background:#f7f8fa" />
     </div>
     <div class="form-item">
-      <label><span class="req">*</span>手机号</label>
-      <input id="ddMobile" type="tel" maxlength="11" placeholder="请输入" />
-    </div>
-    <div class="form-item">
-      <label><span class="req">*</span>申请人是否为实控人</label>
+      <label><span class="req">*</span>法人是否为实控人</label>
       <div class="seg">
         <label><input type="radio" name="isController" value="是" checked onchange="syncController()" />是</label>
         <label><input type="radio" name="isController" value="否" onchange="syncController()" />否</label>
+      </div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>实控人从业年限</label>
+      <div class="seg">
+        <label><input type="radio" name="years" value="不满1年" />不满1年</label>
+        <label><input type="radio" name="years" value="1-2年" />1-2年</label>
+        <label><input type="radio" name="years" value="2-5年" checked />2-5年</label>
+        <label><input type="radio" name="years" value="5年以上" />5年以上</label>
       </div>
     </div>
     <div id="controllerBlock" style="display:none">
@@ -299,16 +399,43 @@ body{
       </div>
     </div>
     <div class="form-item">
-      <label>合伙人姓名</label>
-      <input id="partnerName" placeholder="请输入" />
+      <label><span class="req">*</span>是否有合伙人</label>
+      <div class="seg" id="hasPartnerSeg">
+        <label><input type="radio" name="hasPartner" value="是" onchange="syncPartners()" />是</label>
+        <label><input type="radio" name="hasPartner" value="否" checked onchange="syncPartners()" />否</label>
+      </div>
     </div>
-    <div class="form-item">
-      <label>合伙人手机号</label>
-      <input id="partnerMobile" type="tel" maxlength="11" placeholder="请输入" />
+    <div id="partnerBlock" style="display:none">
+      <div id="partnerList">
+        <div class="partner-card" data-pid="1">
+          <div class="partner-hd">
+            <span>合伙人 1</span>
+            <button type="button" class="partner-del" style="display:none">删除</button>
+          </div>
+          <div class="form-item">
+            <label><span class="req">*</span>合伙人姓名</label>
+            <input class="partner-name" placeholder="请输入" />
+          </div>
+          <div class="form-item" style="margin-bottom:0">
+            <label><span class="req">*</span>合伙人手机号</label>
+            <input class="partner-mobile" type="tel" maxlength="11" placeholder="请输入" />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn-add-partner" id="btnAddPartner">＋ 继续添加合伙人</button>
     </div>
     <div class="form-item">
       <label><span class="req">*</span>实控人家庭住址</label>
       <input id="ctrlHomeAddr" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>实控人资产情况</label>
+      <div class="seg" id="assetList">
+        <label><input type="checkbox" name="asset" value="商品房" />商品房</label>
+        <label><input type="checkbox" name="asset" value="汽车" />汽车</label>
+        <label><input type="checkbox" name="asset" value="自建房" />自建房</label>
+        <label><input type="checkbox" name="asset" value="股票期权等" />股票期权等</label>
+      </div>
     </div>
     <div class="form-item">
       <label>实控人车牌号</label>
@@ -316,15 +443,22 @@ body{
     </div>
     <div class="form-item">
       <label><span class="req">*</span>经营场所属性</label>
-      <input id="siteAttr" placeholder="请输入" />
+      <div class="seg">
+        <label><input type="radio" name="siteAttr" value="完全租赁" />完全租赁</label>
+        <label><input type="radio" name="siteAttr" value="合伙租赁" />合伙租赁</label>
+        <label><input type="radio" name="siteAttr" value="自有" checked />自有</label>
+      </div>
     </div>
     <div class="form-item">
-      <label>年租金</label>
-      <input id="yearRent" placeholder="请输入" />
+      <label><span class="req">*</span>年租金<span class="hint" style="display:inline;margin-left:6px">单位: 万元，自有场所填0</span></label>
+      <input id="yearRent" type="number" min="0" placeholder="请输入数字" value="0" />
     </div>
     <div class="form-item">
       <label><span class="req">*</span>经营场所规模</label>
-      <input id="siteScale" placeholder="请输入" />
+      <div class="unit">
+        <input id="siteScale" type="number" min="0" placeholder="请输入数字" />
+        <span>㎡</span>
+      </div>
     </div>
     <div class="form-item">
       <label><span class="req">*</span>向上下游打听实控人和企业口碑</label>
@@ -359,30 +493,98 @@ body{
         <label><input type="radio" name="settleForm" value="微信" />微信</label>
         <label><input type="radio" name="settleForm" value="支付宝" />支付宝</label>
         <label><input type="radio" name="settleForm" value="公户转账" />公户转账</label>
-        <label><input type="radio" name="settleForm" value="个人银行卡" />个人卡</label>
+        <label><input type="radio" name="settleForm" value="个人银行卡" />个人银行卡</label>
       </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">现场照片或视频</div>
     <div class="form-item" style="margin-bottom:0">
-      <label><span class="req">*</span>单月饲料原料消耗量</label>
-      <input id="feedConsume" placeholder="请输入" />
+      <div class="upload-grid">
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>厂房大门</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>仓库</div>
+        <div class="upload" onclick="this.classList.toggle('done')"><div class="plus">+</div>养殖区域</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec">CRM拜访记录<span class="hint" style="display:inline;margin-left:6px;font-weight:400">自动取今日拜访</span></div>
+    <div class="form-item" style="margin-bottom:0">
+      <div class="crm-box" id="crmVisit" data-visit-id="280447">
+        <div class="crm-top">
+          <div class="crm-title">今日拜访 · 桑姣婧</div>
+          <a class="crm-detail" href="javascript:void(0)" onclick="openCrmVisitDetail()">查看详情</a>
+        </div>
+        <div class="crm-meta" id="crmMeta">2026-09-16 10:28 · 业务经理 张伟 · 实地拜访</div>
+      </div>
+      <div class="hint" id="crmEmpty" style="display:none;color:var(--orange)">今日暂无该客户拜访记录，请先在 CRM 完成今日拜访后再提交</div>
     </div>
   </div>
 
   <div class="foot">
     <div class="inner">
-      <button class="btn btn-default" type="button" onclick="saveDraft()">保存</button>
-      <button class="btn btn-primary" type="button" onclick="submitSales()">提交申请资料</button>
+      <button class="btn btn-default" type="button" onclick="goBack()">返回</button>
+      <button class="btn btn-default" type="button" onclick="saveDraft()">保存草稿</button>
+      <button class="btn btn-primary" type="button" onclick="submitSales()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="leaveMask" onclick="if(event.target===this)closeLeaveDialog()">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="leaveDlgTitle">
+    <div class="dlg-hd" id="leaveDlgTitle">提示</div>
+    <div class="dlg-msg">有内容修改未保存，建议保存后再返回。</div>
+    <div class="dlg-actions">
+      <button type="button" class="dlg-cancel" onclick="discardAndLeave()">放弃修改</button>
+      <button type="button" class="dlg-ok" onclick="saveAndLeave()">保存修改并返回</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="submitMask">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="submitDlgTitle">
+    <div class="dlg-hd" id="submitDlgTitle">提示</div>
+    <div class="dlg-msg">尽调资料已提交，请联系客户提交正式进件需要的资料。</div>
+    <div class="dlg-actions">
+      <button type="button" class="dlg-ok" onclick="confirmSubmitDone()">确认</button>
     </div>
   </div>
 </div>
 
 <script>
-function goBack(){
+let formDirty=false;
+let leaveForce=false;
+function markDirty(){ formDirty=true; }
+function clearDirty(){ formDirty=false; }
+function leavePage(){
   if(history.length>1) history.back();
   else location.href="业务端_客户档案_白条档案.html";
 }
+function goBack(){
+  if(leaveForce||!formDirty){ leavePage(); return; }
+  document.getElementById("leaveMask").classList.add("on");
+}
+function closeLeaveDialog(){
+  document.getElementById("leaveMask").classList.remove("on");
+}
+function discardAndLeave(){
+  closeLeaveDialog();
+  clearDirty();
+  leaveForce=true;
+  leavePage();
+}
+function saveAndLeave(){
+  closeLeaveDialog();
+  clearDirty();
+  alert("草稿已保存");
+  leaveForce=true;
+  leavePage();
+}
 function saveDraft(){
-  alert("已保存");
+  clearDirty();
+  alert("草稿已保存");
 }
 /** 跳转已有 CRM 拜访详情（不新建页面） */
 function openCrmVisitDetail(){
@@ -395,20 +597,141 @@ function openCrmVisitDetail(){
   const name=q.get("cust");
   if(name){
     document.getElementById("custName").value=name;
-    document.getElementById("ddApplicant").value=name;
     const title=document.querySelector("#crmVisit .crm-title");
     if(title) title.textContent="今日拜访 · "+name;
-  }else{
-    document.getElementById("ddApplicant").value=document.getElementById("custName").value;
   }
-  // 演示：养殖档案 / 客户档案带出
-  document.getElementById("breed").value=q.get("breed")||"蛋鸡";
-  document.getElementById("breedQty").value=q.get("qty")||"2.5万羽";
-  // 客户档案类型：次终端 / 饲料厂 时不展示养殖信息
-  document.getElementById("bulkType").value=q.get("custType")||q.get("type")||"次终端/饲料厂";
+  // 法人名字：取初审资料
+  document.getElementById("legalName").value=q.get("legalName")||q.get("cust")||document.getElementById("custName").value;
+  // 演示：养殖档案带出，枚举仅：鸡、鸭、鹅、猪、牛、羊
+  let breed=q.get("breed")||"鸡";
+  let econ=q.get("econUse")||"";
+  if(breed==="蛋鸡"||breed==="肉鸡"||breed==="青年鸡"||breed==="育雏鸡"){ econ=econ||breed; breed="鸡"; }
+  if(breed==="繁殖"||breed==="育肥"||breed==="仔猪"||breed==="保育猪"){ econ=econ||breed; breed="猪"; }
+  if(breed==="奶牛"||breed==="肉牛"||breed==="青年牛"){ econ=econ||breed; breed="牛"; }
+  const ALLOWED_BREED=["鸡","鸭","鹅","猪","牛","羊"];
+  if(!ALLOWED_BREED.includes(breed)) breed="鸡";
+  document.getElementById("breed").value=breed;
+  window.__econUsePref=econ;
+  document.getElementById("breedQty").value=q.get("qty")||"25000";
+  // 客户类型：取养殖档案（养殖户 / 次终端）
+  const custKindRaw=q.get("custKind")||q.get("custType")||q.get("type")||"养殖户";
+  const custKind=/饲料厂/.test(custKindRaw)?"饲料厂":(/次终端/.test(custKindRaw)?"次终端":"养殖户");
+  document.getElementById("custKind").value=custKind;
+  const ranch=q.get("isRanch");
+  if(ranch==="是"||ranch==="1"||ranch==="true"){
+    const el=document.querySelector('input[name="isRanch"][value="是"]');
+    if(el) el.checked=true;
+  }
+  // 大宗模板内客户档案类型：次终端 / 饲料厂 时不展示养殖信息
+  document.getElementById("bulkType").value=q.get("bulkType")||(/次终端|饲料厂/.test(custKind)?custKind:"次终端/饲料厂");
   document.getElementById("bulkCust").value=q.get("bulkCust")||"存量";
-  document.getElementById("bulkBuyCount").value=q.get("buyCount")||"12";
+  const buyCount=q.get("buyCount")||"12";
+  document.getElementById("bulkBuyCount").value=buyCount;
+  document.getElementById("premixBuyCount").value=buyCount;
+  syncCustKind();
+  syncBreedExtra();
 })();
+function isSecondaryCust(){
+  return /次终端|饲料厂/.test(document.getElementById("custKind").value);
+}
+function syncCustKind(){
+  const kind=document.getElementById("custKind").value;
+  const isFarmer=kind==="养殖户";
+  document.getElementById("isRanchItem").style.display=isFarmer?"":"none";
+  if(!isFarmer){
+    const no=document.querySelector('input[name="isRanch"][value="否"]');
+    if(no) no.checked=true;
+  }
+  syncTpl();
+}
+function econUseOptions(breed){
+  if(breed==="鸡") return ["蛋鸡","肉鸡","青年鸡","育雏鸡"];
+  if(breed==="猪") return ["繁殖","育肥","仔猪","保育猪"];
+  if(breed==="牛") return ["奶牛","肉牛","青年牛"];
+  return [];
+}
+function isPoultryBreed(v){
+  return ["鸡","鸭","鹅"].includes((v||"").trim());
+}
+function selectedEconUses(){
+  return [...document.querySelectorAll('#econUseSeg input[name="econUse"]:checked')].map(el=>el.value);
+}
+function hasMultiEcon(breed){
+  return breed==="鸡"||breed==="猪"||breed==="牛";
+}
+function econQtyUnit(breed){
+  return breed==="鸡"?"羽/头/只":"头";
+}
+function syncEconDetail(){
+  const box=document.getElementById("chickenDetailBlock");
+  const breed=document.getElementById("breed").value;
+  if(!hasMultiEcon(breed)){ box.style.display="none"; box.innerHTML=""; return; }
+  const picked=selectedEconUses();
+  if(!picked.length){ box.style.display="none"; box.innerHTML=""; return; }
+  const prev={};
+  box.querySelectorAll(".econ-type-block").forEach(el=>{
+    prev[el.dataset.type]={
+      qty:el.querySelector(".econ-qty")?.value||"",
+      age:el.querySelector(".econ-age")?.value||""
+    };
+  });
+  const unit=econQtyUnit(breed);
+  const showAge=breed==="鸡";
+  box.style.display="";
+  box.innerHTML=picked.map(t=>{
+    const p=prev[t]||{};
+    const ageHtml=showAge?`<div class="form-item">
+        <label><span class="req">*</span>${t}日龄</label>
+        <div class="unit"><input class="econ-age" type="number" min="0" placeholder="请输入日龄" value="${p.age||""}" /><span>天</span></div>
+      </div>`:"";
+    return `<div class="econ-type-block" data-type="${t}" style="margin-bottom:4px">
+      <div class="form-item">
+        <label><span class="req">*</span>${t}养殖数量</label>
+        <div class="unit"><input class="econ-qty" type="number" min="0" placeholder="请输入" value="${p.qty||""}" /><span>${unit}</span></div>
+      </div>
+      ${ageHtml}
+    </div>`;
+  }).join("");
+}
+function syncBreedExtra(){
+  const breed=document.getElementById("breed").value;
+  const isBird=isPoultryBreed(breed);
+  const multiEcon=hasMultiEcon(breed);
+  const opts=econUseOptions(breed);
+  const item=document.getElementById("econUseItem");
+  const seg=document.getElementById("econUseSeg");
+  if(!opts.length){
+    item.style.display="none";
+    seg.innerHTML="";
+  }else{
+    item.style.display="";
+    const pref=window.__econUsePref;
+    const prefs=window.__econUsePrefs||(pref?[pref]:[]);
+    const checkedSet=new Set(prefs.filter(v=>opts.includes(v)));
+    if(!checkedSet.size) checkedSet.add(opts[0]);
+    seg.innerHTML=opts.map(v=>`<label><input type="checkbox" name="econUse" value="${v}"${checkedSet.has(v)?" checked":""} onchange="syncEconDetail()" />${v}</label>`).join("");
+    window.__econUsePref="";
+    window.__econUsePrefs=null;
+  }
+  const isPig=breed==="猪";
+  const hideExtra=multiEcon||breed==="羊";
+  document.getElementById("breedQtyItem").style.display=multiEcon?"none":"";
+  document.getElementById("breedQtyLabel").innerHTML=isPig
+    ?"年出栏规模"
+    :'养殖数量<span class="hint" style="display:inline;margin-left:6px">取客户档案</span>';
+  document.getElementById("breedQtyUnit").textContent=isPig?"头":"羽/头/只";
+  document.getElementById("pigScaleBlock").style.display=isPig?"":"none";
+  document.getElementById("breedExtraItem").style.display=hideExtra?"none":"";
+  if(!hideExtra){
+    document.getElementById("breedExtraLabel").textContent=isBird?"日龄":"鸡龄 / 规模补充";
+    document.getElementById("breedExtra").placeholder=isBird?"请输入日龄":"鸡龄、年出栏等";
+    document.getElementById("breedExtra").type=isBird?"number":"text";
+    document.getElementById("breedExtraUnit").style.display=isBird?"":"none";
+  }else if(!multiEcon){
+    document.getElementById("breedExtra").value="";
+  }
+  syncEconDetail();
+}
 function syncSyReason(){
   const v=document.getElementById("syQuota").value;
   const show=v!=="" && Number(v)===0;
@@ -416,18 +739,24 @@ function syncSyReason(){
   if(!show) document.getElementById("noSyText").value="";
 }
 function syncBreedByCustType(){
-  const tpl=document.querySelector('input[name="tpl"]:checked')?.value;
-  const t=document.getElementById("bulkType").value.trim();
-  const hide=tpl==="大宗" && /次终端|饲料厂/.test(t);
-  document.getElementById("breedBlock").style.display=hide?"none":"";
+  document.getElementById("breedBlock").style.display=isSecondaryCust()?"none":"";
 }
 function syncTpl(){
   const v=document.querySelector('input[name="tpl"]:checked')?.value||"预混料";
   document.querySelectorAll(".tpl").forEach(el=>el.classList.toggle("on", el.id==="tpl-"+v));
-  document.getElementById("xsQuotaItem").style.display=v==="全价料"?"none":"";
+  const isFull=v==="全价料";
+  const secondary=isSecondaryCust();
+  document.getElementById("xsQuotaItem").style.display="";
+  document.getElementById("coopEggManureBlock").style.display=(isFull||secondary)?"none":"";
+  document.getElementById("supplierStockItem").style.display=isFull?"":"none";
+  document.getElementById("premixBindBlock").style.display=secondary?"none":"";
+  document.getElementById("premixBuyCountItem").style.display=secondary?"":"none";
+  document.getElementById("custStageItem").style.display=secondary?"":"none";
   syncBreedByCustType();
+  if(!secondary) syncPremix();
 }
 function syncPremix(){
+  if(isSecondaryCust()) return;
   const yes=document.querySelector('input[name="bindPremix"]:checked')?.value==="是";
   document.getElementById("premixYes").style.display=yes?"":"none";
   document.getElementById("premixNo").style.display=yes?"none":"";
@@ -441,6 +770,146 @@ function syncController(){
     document.getElementById("ctrlMobile").value="";
   }
 }
+let partnerSeq=1;
+function ensureDefaultPartner(){
+  const list=document.getElementById("partnerList");
+  if(!list) return;
+  if(list.querySelector(".partner-card")) return;
+  partnerSeq=Math.max(partnerSeq,1);
+  const wrap=document.createElement("div");
+  wrap.className="partner-card";
+  wrap.dataset.pid="1";
+  wrap.innerHTML=
+    '<div class="partner-hd">'+
+      '<span>合伙人 1</span>'+
+      '<button type="button" class="partner-del" style="display:none">删除</button>'+
+    '</div>'+
+    '<div class="form-item">'+
+      '<label><span class="req">*</span>合伙人姓名</label>'+
+      '<input class="partner-name" placeholder="请输入" />'+
+    '</div>'+
+    '<div class="form-item" style="margin-bottom:0">'+
+      '<label><span class="req">*</span>合伙人手机号</label>'+
+      '<input class="partner-mobile" type="tel" maxlength="11" placeholder="请输入" />'+
+    '</div>';
+  list.appendChild(wrap);
+}
+function syncPartners(){
+  const checked=document.querySelector('input[name="hasPartner"]:checked');
+  const has=checked && checked.value==="是";
+  const block=document.getElementById("partnerBlock");
+  const list=document.getElementById("partnerList");
+  if(!block||!list) return;
+  if(!has){
+    block.style.display="none";
+    // 选「否」时清空多余项，但保留默认第 1 条结构供再次选「是」直接展示
+    const cards=[...list.querySelectorAll(".partner-card")];
+    cards.forEach((el,idx)=>{
+      if(idx===0){
+        el.querySelectorAll("input").forEach(inp=>{ inp.value=""; });
+      }else{
+        el.remove();
+      }
+    });
+    ensureDefaultPartner();
+    partnerSeq=1;
+    updatePartnerActions();
+    return;
+  }
+  ensureDefaultPartner();
+  block.style.display="block";
+  updatePartnerActions();
+}
+function addPartner(opts){
+  const list=document.getElementById("partnerList");
+  if(!list) return;
+  ensureDefaultPartner();
+  partnerSeq+=1;
+  const wrap=document.createElement("div");
+  wrap.className="partner-card";
+  wrap.dataset.pid=String(partnerSeq);
+  wrap.innerHTML=
+    '<div class="partner-hd">'+
+      '<span>合伙人 '+partnerSeq+'</span>'+
+      '<button type="button" class="partner-del">删除</button>'+
+    '</div>'+
+    '<div class="form-item">'+
+      '<label><span class="req">*</span>合伙人姓名</label>'+
+      '<input class="partner-name" placeholder="请输入" />'+
+    '</div>'+
+    '<div class="form-item" style="margin-bottom:0">'+
+      '<label><span class="req">*</span>合伙人手机号</label>'+
+      '<input class="partner-mobile" type="tel" maxlength="11" placeholder="请输入" />'+
+    '</div>';
+  list.appendChild(wrap);
+  renumberPartners();
+  if(opts && opts.scroll===false) return;
+  wrap.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function removePartner(btn){
+  const list=document.getElementById("partnerList");
+  if(!list) return;
+  if(list.querySelectorAll(".partner-card").length<=1) return; // 默认至少保留 1 条
+  btn.closest(".partner-card")?.remove();
+  renumberPartners();
+}
+function renumberPartners(){
+  [...document.querySelectorAll("#partnerList .partner-card")].forEach((el,idx)=>{
+    const title=el.querySelector(".partner-hd span");
+    if(title) title.textContent="合伙人 "+(idx+1);
+  });
+  updatePartnerActions();
+}
+function updatePartnerActions(){
+  const cards=[...document.querySelectorAll("#partnerList .partner-card")];
+  cards.forEach(el=>{
+    const del=el.querySelector(".partner-del");
+    if(del) del.style.display=cards.length>1?"":"none";
+  });
+}
+function bindPartnerActions(){
+  window.syncPartners=syncPartners;
+  window.addPartner=function(){
+    addPartner();
+    if(typeof markDirty==="function") markDirty();
+  };
+  window.removePartner=removePartner;
+  const seg=document.getElementById("hasPartnerSeg");
+  if(seg && seg.dataset.bound!=="1"){
+    seg.dataset.bound="1";
+    // .seg input 被 display:none，部分环境点 label 不会真正勾选；这里强制勾选再展开
+    seg.addEventListener("click",e=>{
+      const lab=e.target.closest("label");
+      if(!lab||!seg.contains(lab)) return;
+      const input=lab.querySelector('input[name="hasPartner"]');
+      if(!input) return;
+      input.checked=true;
+      syncPartners();
+      if(typeof markDirty==="function") markDirty();
+    },true);
+    seg.addEventListener("change",e=>{
+      if(e.target && e.target.name==="hasPartner") syncPartners();
+    });
+  }
+  const addBtn=document.getElementById("btnAddPartner");
+  if(addBtn){
+    addBtn.onclick=function(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      window.addPartner();
+    };
+  }
+  const block=document.getElementById("partnerBlock");
+  if(block && block.dataset.bound!=="1"){
+    block.dataset.bound="1";
+    block.addEventListener("click",e=>{
+      const delBtn=e.target.closest(".partner-del");
+      if(!delBtn) return;
+      e.preventDefault();
+      removePartner(delBtn);
+      if(typeof markDirty==="function") markDirty();
+    });
+  }
+}
 function submitSales(){
   const tpl=document.querySelector('input[name="tpl"]:checked')?.value;
   const sy=document.getElementById("syQuota").value;
@@ -451,31 +920,60 @@ function submitSales(){
     const why=document.getElementById("noSyText").value.trim();
     if(!why){alert("上银额度为0时，请填写不申请上海银行原因");return}
   }
+  const xs=document.getElementById("xsQuota").value;
+  if(xs===""){alert("请填写锡商银行额度（不申请请填0）");return}
   if(!reason){alert("请填写申请原因");return}
-  if(!document.getElementById("ddApplicant").value.trim()){alert("请填写申请人姓名");return}
-  if(!document.getElementById("ddMobile").value.trim()){alert("请填写手机号");return}
   if(document.querySelector('input[name="isController"]:checked')?.value==="否"){
     if(!document.getElementById("ctrlName").value.trim()){alert("请填写实控人姓名");return}
     if(!document.getElementById("ctrlId").value.trim()){alert("请填写实控人身份证号码");return}
     if(!document.getElementById("ctrlMobile").value.trim()){alert("请填写实控人手机号");return}
   }
+  if(document.querySelector('input[name="hasPartner"]:checked')?.value==="是"){
+    const cards=[...document.querySelectorAll("#partnerList .partner-card")];
+    if(!cards.length){alert("请至少添加一位合伙人");return}
+    for(let i=0;i<cards.length;i++){
+      const n=cards[i].querySelector(".partner-name")?.value.trim();
+      const m=cards[i].querySelector(".partner-mobile")?.value.trim();
+      if(!n){alert("请填写合伙人"+(i+1)+"姓名");return}
+      if(!m){alert("请填写合伙人"+(i+1)+"手机号");return}
+    }
+  }
   if(!document.getElementById("ctrlHomeAddr").value.trim()){alert("请填写实控人家庭住址");return}
-  if(!document.getElementById("siteAttr").value.trim()){alert("请填写经营场所属性");return}
-  if(!document.getElementById("siteScale").value.trim()){alert("请填写经营场所规模");return}
+  if(!document.querySelector('input[name="asset"]:checked')){alert("请选择实控人资产情况");return}
+  if(!document.querySelector('input[name="siteAttr"]:checked')){alert("请选择经营场所属性");return}
+  if(document.getElementById("yearRent").value===""){alert("请填写年租金（自有场所填0）");return}
+  if(document.getElementById("siteScale").value===""){alert("请填写经营场所规模");return}
   if(!document.querySelector('input[name="repUpDown"]:checked')){alert("请选择向上下游打听口碑");return}
   if(!document.querySelector('input[name="repAround"]:checked')){alert("请选择向周边及员工打听口碑");return}
   if(!document.querySelector('input[name="shipFreq"]:checked')){alert("请选择平均出货频率");return}
   if(!document.querySelector('input[name="settleForm"]:checked')){alert("请选择下游结算形式");return}
-  if(!document.getElementById("feedConsume").value.trim()){alert("请填写单月饲料原料消耗量");return}
   const done=[...document.querySelectorAll(".upload.done")].length;
   if(done<1){alert("请完善现场照片等附件");return}
-  alert("业务员申请资料已提交");
-  goBack();
+  clearDirty();
+  leaveForce=true;
+  document.getElementById("submitMask").classList.add("on");
 }
+function confirmSubmitDone(){
+  document.getElementById("submitMask").classList.remove("on");
+  leavePage();
+}
+function bindDirtyWatch(){
+  const page=document.querySelector(".page");
+  if(!page) return;
+  page.addEventListener("input",markDirty,true);
+  page.addEventListener("change",markDirty,true);
+  page.addEventListener("click",e=>{
+    if(e.target.closest(".upload,.seg label,.btn-add-partner,.partner-del")) markDirty();
+  },true);
+}
+bindDirtyWatch();
+bindPartnerActions();
 syncTpl();
 syncPremix();
 syncSyReason();
 syncController();
+syncPartners();
+clearDirty();
 </script>
 </body>
 </html>

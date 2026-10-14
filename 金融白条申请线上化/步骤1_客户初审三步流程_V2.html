@@ -308,7 +308,6 @@ body{
 }
 .btn-inline:disabled{opacity:.45;cursor:not-allowed}
 .dash{height:8px;background:#f7f7f7;margin:6px 0}
-.warn-foot{text-align:center;font-size:12px;color:var(--red);padding:4px 16px 8px}
 .modal-mask{
   display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.45);
   align-items:center;justify-content:center;padding:24px
@@ -534,7 +533,6 @@ body{
 <body>
 <div class="demo">
   <span>演示</span>
-  <button type="button" data-jump="bank-home" class="active-bank">银行白条首页</button>
   <button type="button" data-demo="esign-fail">三要素失败</button>
   <button type="button" data-demo="esign-pass">三要素通过</button>
   <button type="button" data-pbc="0" class="active-pbc">无人行账号→注册</button>
@@ -933,7 +931,6 @@ body{
     </div>
 
     <div class="tip red" id="esignFailTip" style="display:none" hidden></div>
-    <div class="warn-foot">* 请上传清晰原件，勿多次提交错误信息</div>
     </div>
 
     <!-- 下载上传后：审核结果页（仅展示审核结果） -->
@@ -1173,7 +1170,7 @@ body{
           <div class="ctrl">
             <div class="file-row">
               <a href="javascript:;" class="file-link" id="creditSuccessFileLink" data-file="征信报告.pdf" onclick="downloadCreditFile('creditSuccessFileLink');return false;">已上传-征信报告</a>
-              <button type="button" class="file-dl" onclick="downloadCreditFile('creditSuccessFileLink')">下载</button>
+              <button type="button" class="file-dl" onclick="downloadCreditFile('creditSuccessFileLink')" style="display:none">下载</button>
             </div>
           </div>
         </div>
