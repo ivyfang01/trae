@@ -152,50 +152,79 @@ tr:hover td{background:var(--theme-table-hover)}
 .detail-nav .back{border:none;background:none;color:#333;font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
 .detail-nav h1{font-size:16px;font-weight:600;color:#262626}
 .detail-nav .sub{font-size:12px;color:var(--theme-text-secondary);margin-top:2px}
-.detail-wrap{max-width:1100px;margin:0 auto;padding:16px 16px 88px}
-.detail-card{background:#fff;border-radius:var(--theme-radius-sm);padding:20px 24px 8px;border:1px solid #f0f0f0}
-.sec{font-size:14px;font-weight:600;margin:20px 0 14px;padding-left:10px;border-left:3px solid var(--theme-primary);line-height:1.2;color:#262626}
-.sec:first-child{margin-top:4px}
-.sec-tip{font-size:12px;color:var(--theme-text-secondary);font-weight:400;margin-left:8px}
-.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px;row-gap:16px;margin-bottom:16px;align-items:center}
-.fg{display:grid;grid-template-columns:168px minmax(0,1fr);align-items:center;gap:8px;min-width:0;margin:0}
-.fg label{width:auto;text-align:right;font-size:13px;color:#333;line-height:1.35;margin:0;white-space:nowrap}
+.detail-wrap{max-width:1080px;margin:0 auto;padding:16px 16px 96px}
+.detail-card{display:flex;flex-direction:column;gap:12px;background:transparent;border:none;padding:0}
+.panel{
+  background:#fff;border:1px solid #eef0f4;border-radius:8px;padding:16px 20px 12px;
+  box-shadow:0 1px 2px rgba(15,23,42,.03)
+}
+.sec{
+  font-size:15px;font-weight:600;margin:0 0 14px;padding:0 0 10px;border:none;border-bottom:1px solid #f0f2f5;
+  line-height:1.3;color:#1f2329;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px
+}
+.sec::before{
+  content:"";width:3px;height:14px;border-radius:2px;background:var(--theme-primary);flex:0 0 auto
+}
+.sec-tip{font-size:12px;color:#8c8c8c;font-weight:400;margin-left:0}
+.sub-lab{
+  font-size:12px;font-weight:500;color:#86909c;margin:2px 0 10px;letter-spacing:.02em
+}
+.sub-lab + .form-grid{margin-top:0}
+.form-grid + .sub-lab{margin-top:6px}
+.form-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:28px;row-gap:12px;margin-bottom:12px;align-items:start
+}
+.fg{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:10px;min-width:0;margin:0}
+.fg label{
+  width:auto;text-align:right;font-size:13px;color:#595959;line-height:1.35;margin:0;
+  white-space:normal;word-break:break-all
+}
 .fg label .req{color:var(--theme-danger);margin-right:2px}
 .fg .ctrl{min-width:0;width:100%}
 .fg input,.fg select,.fg textarea{
-  width:100%;height:32px;border:1px solid var(--theme-border-input);border-radius:var(--theme-radius-sm);padding:0 11px;
-  font-size:13px;outline:none;background:#f5f5f5;color:#4e5969;box-sizing:border-box
+  width:100%;height:34px;border:1px solid #e5e6eb;border-radius:6px;padding:0 12px;
+  font-size:13px;outline:none;background:#f7f8fa;color:#1d2129;box-sizing:border-box
 }
-.fg textarea{height:72px;padding:6px 11px;resize:none;line-height:1.5}
+.fg textarea{height:76px;padding:8px 12px;resize:none;line-height:1.5}
 .fg input:disabled,.fg select:disabled,.fg textarea:disabled,
-.fg input[readonly],.fg select[readonly],.fg textarea[readonly]{background:#f5f5f5;color:#4e5969;cursor:default}
+.fg input[readonly],.fg select[readonly],.fg textarea[readonly]{background:#f7f8fa;color:#1d2129;cursor:default}
 .fg.span2{grid-column:span 2}
-.fg.span3{grid-column:span 3}
+.fg.span3{grid-column:1 / -1}
 .fg.align-top{align-items:start}
-.fg.align-top label{line-height:1.4;padding-top:6px;white-space:normal}
+.fg.align-top label{line-height:1.4;padding-top:8px;white-space:normal}
 .fg.select .ctrl{position:relative}
 .fg.select .ctrl::after{
-  content:"";position:absolute;right:10px;top:50%;width:0;height:0;
+  content:"";position:absolute;right:12px;top:50%;width:0;height:0;
   border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #86909c;
   transform:translateY(-50%);pointer-events:none
 }
 .fg.select input{padding-right:28px}
-.upload-row{display:flex;flex-wrap:wrap;gap:16px;margin:4px 0 16px}
-.upload-box{width:120px;text-align:center}
+.upload-row{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 8px;padding:4px 0 4px}
+.upload-box{width:104px;text-align:center}
 .upload-box .u-card{
-  width:120px;height:120px;border:1px dashed #d9d9d9;border-radius:var(--theme-radius-sm);background:#fafafa;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#86909c;font-size:13px;gap:4px;
-  position:relative;padding-bottom:22px;box-sizing:border-box
+  width:104px;height:104px;border:1px dashed #d9d9d9;border-radius:8px;background:#fafbfc;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#86909c;font-size:12px;gap:2px;
+  position:relative;padding-bottom:20px;box-sizing:border-box
 }
-.upload-box .u-card.on{border-style:solid;border-color:#adbbe2;background:var(--theme-primary-bg);color:var(--theme-primary)}
-.upload-box .u-plus{font-size:28px;line-height:1;font-weight:300}
-.upload-box .u-name{margin-top:8px;font-size:13px;color:#1d2129}
+.upload-box .u-card.on{border-style:solid;border-color:#c3cee8;background:var(--theme-primary-bg);color:var(--theme-primary)}
+.upload-box .u-plus{font-size:24px;line-height:1;font-weight:300}
+.upload-box .u-name{margin-top:6px;font-size:12px;color:#4e5969;line-height:1.35}
 .upload-box .u-acts{
   position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:8px
 }
 .upload-box .u-acts .link{font-size:12px;color:var(--theme-link)}
-.bank-row{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-.bank-item{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.status-panel .check-box{margin-bottom:0}
+.status-panel .ai-detail{margin-top:6px;font-size:12px;color:#8c8c8c;line-height:1.55}
+.empty-hint{
+  padding:14px 16px;border-radius:8px;background:#f7f8fa;border:1px dashed #e5e6eb;
+  color:#86909c;font-size:13px;margin:0 0 4px
+}
+.bank-row{display:flex;flex-direction:column;gap:10px;margin:0 0 4px}
+.bank-item{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 14px;border:1px solid #eef0f4;border-radius:8px;background:#fafbfc
+}
 .bank-item label.chk{display:flex;align-items:center;gap:6px;min-width:100px;font-size:13px;color:#1d2129;cursor:default}
 .bank-item input[type=checkbox]{width:14px;height:14px;accent-color:#409eff}
 .bank-item .amt{display:flex;align-items:center;gap:8px}
@@ -236,36 +265,36 @@ tr:hover td{background:var(--theme-table-hover)}
 .xs-settle .xs-line .ctrl{max-width:220px}
 .xs-settle .unit{color:#86909c;font-size:13px;margin-left:6px}
 .check-box{
-  border-radius:var(--theme-radius);
-  padding:10px 12px;
+  border-radius:8px;
+  padding:12px 14px;
   font-size:13px;
-  line-height:1.7;
-  margin-bottom:8px;
-  background:#f2f3f5;
-  border:1px solid #e5e6eb;
+  line-height:1.6;
+  margin-bottom:10px;
+  background:#f7f8fa;
+  border:1px solid #eef0f4;
   color:#595959;
 }
 .check-box.ok{
   background:#f6ffed;
-  border:1px solid #b7eb8f;
+  border:1px solid #d9f7be;
   color:#389e0d;
 }
 .check-box.ok b{color:var(--theme-success);font-weight:600}
 .check-box.bad{
   background:#fff1f0;
-  border:1px solid #ffa39e;
+  border:1px solid #ffccc7;
   color:#cf1322;
 }
 .check-box.bad b{color:var(--theme-danger);font-weight:600}
 .check-box.blue{
-  background:var(--theme-primary-bg);
-  border:1px dashed var(--theme-primary);
+  background:#f7f8fd;
+  border:1px dashed #c3cee8;
   color:#595959;
 }
 .check-box.blue b{color:var(--theme-primary);font-weight:600}
 .check-box .tag{margin:0 4px;vertical-align:middle}
-.ai-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:8px}
-.ai-row .check-box{margin-bottom:0}
+.ai-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0}
+.ai-row .check-box{margin-bottom:0;min-height:44px;display:flex;align-items:center}
 .tl{padding-left:4px;margin-bottom:12px}
 .tl-item{position:relative;padding:0 0 14px 18px;border-left:2px solid #f0f0f0}
 .tl-item:last-child{padding-bottom:0;border-left-color:transparent}
@@ -312,7 +341,7 @@ tr:hover td{background:var(--theme-table-hover)}
 .attach-modal .sec-lab:first-child{margin-top:0}
 .attach-modal .ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid #f0f0f0;flex:0 0 auto}
 .detail-foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #f0f0f0;padding:12px 16px;z-index:10}
-.detail-foot .inner{max-width:1100px;width:100%;margin:0 auto;display:flex;gap:8px;justify-content:flex-end}
+.detail-foot .inner{max-width:1080px;width:100%;margin:0 auto;display:flex;gap:8px;justify-content:flex-end}
 .btn{
   border:1px solid transparent;border-radius:var(--theme-radius);padding:0 14px;font-size:13px;cursor:pointer;
   height:32px;line-height:30px;display:inline-flex;align-items:center;justify-content:center
@@ -325,8 +354,14 @@ tr:hover td{background:var(--theme-table-hover)}
   background:#c9cdd4;color:#fff;cursor:not-allowed;border:none;opacity:1
 }
 @media(max-width:1100px){.filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:900px){.form-grid{grid-template-columns:1fr 1fr}.fg.span2,.fg.span3{grid-column:span 2}.stats{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}.fg.span2,.fg.span3{grid-column:span 1}.filter-panel{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .form-grid{grid-template-columns:1fr}
+  .fg.span2,.fg.span3{grid-column:span 1}
+  .ai-row{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .fg{grid-template-columns:100px minmax(0,1fr)}
+}
+@media(max-width:600px){.filter-panel{grid-template-columns:1fr}.panel{padding:14px 14px 10px}}
 </style>
 
 </head>
@@ -1190,7 +1225,13 @@ function field(label, value, req, type){
 }
 function fieldArea(label, value, req){
   const v=String(value??"");
-  return `<div class="fg align-top"><label>${req?'<span class="req">*</span>':''}${label}</label><div class="ctrl"><textarea readonly>${v}</textarea></div></div>`;
+  return `<div class="fg align-top span2"><label>${req?'<span class="req">*</span>':''}${label}</label><div class="ctrl"><textarea readonly>${v}</textarea></div></div>`;
+}
+function panel(title, tip, body){
+  return `<div class="panel">
+    <div class="sec">${title}${tip?`<span class="sec-tip">${tip}</span>`:""}</div>
+    ${body}
+  </div>`;
 }
 function xsExtraBlock(t){
   const flows=t.xsFlows||[
@@ -1210,8 +1251,7 @@ function xsExtraBlock(t){
       <div class="cell amt"><label>支出金额</label><input readonly value="${f.outAmt}" /><span class="unit">元</span></div>
       <button class="del" type="button">删除</button>
     </div>`).join("");
-  return `
-    <div class="sec">锡商银行补充信息</div>
+  return panel("锡商银行补充信息","",`
     <div class="xs-extra">
       <div class="xs-line select">
         <label>关联客户主体</label>
@@ -1238,7 +1278,8 @@ function xsExtraBlock(t){
           <span class="unit">元</span>
         </div>
       </div>
-    </div>`;
+    </div>
+  `);
 }
 function uploadCard(name, uploaded){
   const safe=String(name||"").replace(/'/g,"\\'").replace(/"/g,"&quot;");
@@ -1287,7 +1328,7 @@ function buildLogs(t){
 function logsBlock(t){
   const logs=buildLogs(t);
   if(!logs.length){
-    return `<div class="sec">操作日志</div><div class="log-empty">暂无操作记录</div>`;
+    return panel("操作日志","",`<div class="log-empty">暂无操作记录</div>`);
   }
   const rows=logs.map(l=>`
     <tr>
@@ -1296,14 +1337,14 @@ function logsBlock(t){
       <td>${l.operator||"—"}</td>
       <td>${l.result||"—"}</td>
     </tr>`).join("");
-  return `
-    <div class="sec">操作日志</div>
+  return panel("操作日志","",`
     <table class="log-table">
       <thead>
         <tr><th>操作</th><th>操作时间</th><th>操作人</th><th>操作结果</th></tr>
       </thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table>
+  `);
 }
 function checkCls(v){
   if(v==="齐全"||v==="通过"||v===true||v==="已收到"||v==="人审通过") return "ok";
@@ -1358,9 +1399,9 @@ function auditStatusBlock(t){
   );
   const tip=(["初审驳回","正式审核驳回"].includes(t.stage)&&(t.rejectReason||t.reject))
     ?`<br><span style="color:#8c8c8c">驳回原因：${t.rejectReason||t.reject}</span>`:"";
-  return `
-    <div class="sec">审核状态</div>
-    <div class="check-box ${tone}">当前状态：<span class="tag ${tagClass(t.stage)}">${label}</span>${tip}</div>`;
+  return panel("审核状态","",`
+    <div class="check-box ${tone} status-panel">当前状态：<span class="tag ${tagClass(t.stage)}">${label}</span>${tip}</div>
+  `);
 }
 function aiCheckBlock(t){
   const formalVal=formalStatusText(t);
@@ -1368,14 +1409,14 @@ function aiCheckBlock(t){
   const firstVal=t.esign||"—";
   const aiVal=t.ai||"—";
   const tip=t.aiDetail||(aiVal==="审核中"?"AI识别中，请稍候":aiVal==="—"?"暂无AI结果":"");
-  return `
-    <div class="sec">资料与 AI 识别</div>
-    <div class="check-box ${checkCls(aiVal)}">AI审核结果和建议：<span class="tag ${checkTagCls(aiVal)}">${aiVal}</span>${tip?`<br><span style="color:#8c8c8c">${tip}</span>`:""}</div>
+  return panel("资料与 AI 识别","",`
+    <div class="check-box ${checkCls(aiVal)}">AI审核结果和建议：<span class="tag ${checkTagCls(aiVal)}">${aiVal}</span>${tip?`<div class="ai-detail">${tip}</div>`:""}</div>
     <div class="ai-row">
       <div class="check-box ${checkCls(firstVal)}">客户初审资料：<span class="tag ${checkTagCls(firstVal)}">${firstVal}</span></div>
       <div class="check-box ${checkCls(formalVal)}">客户正式进件：<span class="tag ${checkTagCls(formalVal)}">${formalVal}</span></div>
       <div class="check-box ${checkCls(salesVal)}">业务员申请资料：<span class="tag ${checkTagCls(salesVal)}">${salesVal}</span></div>
-    </div>`;
+    </div>
+  `);
 }
 function pickTpl(s, keys){
   const list=s.tplFields||[];
@@ -1399,26 +1440,25 @@ function chuShenBlock(t){
     return (t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||""));
   };
   const showBaihang=!!t.fullPrice;
-  return `
-    <div class="sec">客户初审资料<span class="sec-tip">来源：客户端初审资料上传 · ${t.esign||"—"}</span></div>
-    <div class="sec-tip" style="margin:0 0 8px;color:#86909c;font-size:12px">企业信息认证</div>
+  return panel("客户初审资料",`客户端上传 · ${t.esign||"—"}`,`
+    <div class="sub-lab">企业信息认证</div>
     <div class="form-grid">
       ${field("企业名称", t.subject||t.name, true)}
       ${field("统一社会信用代码", creditCode, true)}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">企业法人认证</div>
+    <div class="sub-lab">企业法人认证</div>
     <div class="form-grid">
       ${field("法人姓名", legalName, true)}
       ${field("法人身份证号", legalId, true)}
       ${field("法人实名手机号", t.mobile, true)}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">白条类型与提交</div>
+    <div class="sub-lab">白条类型与提交</div>
     <div class="form-grid">
       ${field("全价料白条", t.fullPrice?"是":"否", true)}
       ${field("业务员", t.sales||"—", false)}
       ${field("提交时间", t.time||"—", false)}
     </div>
-    <div class="sec-tip" style="margin:10px 0 6px;color:#86909c;font-size:12px">初审附件${showBaihang?"（含全价料百行征信）":""}</div>
+    <div class="sub-lab">初审附件${showBaihang?"（含全价料百行征信）":""}</div>
     <div class="upload-row">
       ${uploadCard("营业执照", hasFile("营业执照"))}
       ${uploadCard("法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面"))}
@@ -1426,12 +1466,12 @@ function chuShenBlock(t){
       ${uploadCard("信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分"))}
       ${uploadCard("法人征信报告", hasLegalCredit())}
       ${showBaihang?uploadCard("百行征信报告", hasFile("百行")||t.baihangOk===true):""}
-    </div>`;
+    </div>
+  `);
 }
 function platformCustomerBlock(t){
   const kind=custKindLabel(t);
-  return `
-    <div class="sec">平台客户信息<span class="sec-tip">平台档案带入</span></div>
+  return panel("平台客户信息","平台档案带入",`
     <div class="form-grid">
       ${field("主体类型", t.subjectType||kind||"个人", true, "select")}
       ${field("手机号", t.mobile||"—", true)}
@@ -1440,7 +1480,8 @@ function platformCustomerBlock(t){
       ${field("平台注册时间", t.regTime||(t.time||"").slice(0,10)||"—", true)}
       ${field("平台累计注册月份", t.regMonths??14, true)}
       ${field("借款人与平台方关联", t.related||"否", true, "select")}
-    </div>`;
+    </div>
+  `);
 }
 function financeSubjectBlock(t){
   const legalName=t.legalName||(String(t.subject||"").includes("合作社")||String(t.subject||"").includes("场")||String(t.subject||"").includes("公司")
@@ -1448,8 +1489,7 @@ function financeSubjectBlock(t){
     :t.name)||"—";
   const creditCode=t.creditCode||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?"":t.idNo)||"—";
   const legalId=t.legalId||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?t.idNo:"")||"—";
-  return `
-    <div class="sec">融资主体信息<span class="sec-tip">平台主体档案带入</span></div>
+  return panel("融资主体信息","平台主体档案带入",`
     <div class="form-grid">
       ${field("融资主体名称", t.subject||t.name||"—", true)}
       ${field("企业类型", t.entType||"工商企业", true, "select")}
@@ -1460,35 +1500,37 @@ function financeSubjectBlock(t){
       ${field("法人身份证号", legalId, false)}
       ${field("法人手机号", t.mobile||"—", true)}
       ${fieldArea("融资主体联系地址", t.address||"安徽省宿州市埇桥区某某路1号", true)}
-    </div>`;
+    </div>
+  `);
 }
 function creditInfoBlock(t){
-  return `
-    <div class="sec">征信信息<span class="sec-tip">人行报告解析</span></div>
+  return panel("征信信息","人行报告解析",`
     <div class="form-grid">
       ${field("逾期笔数", t.overdue??0, true)}
       ${field("不良贷款笔数", t.badLoan??0, true)}
       ${field("已结清贷款笔数", t.settled??0, true)}
-    </div>`;
+    </div>
+  `);
 }
 function tradeInfoBlock(t){
-  return `
-    <div class="sec">交易信息<span class="sec-tip">平台交易统计</span></div>
+  return panel("交易信息","平台交易统计",`
     <div class="form-grid">
       ${field("近6月累计交易月数", t.tradeMonths??0, true)}
       ${field("近6月月均交易吨数", t.tradeTons??0, true)}
       ${field("近6月月均交易金额(元)", t.tradeAmt??0, true)}
       ${field("距近一笔交易（天）", t.daysSince??0, true)}
-    </div>`;
+    </div>
+  `);
 }
 function formalBlock(t){
   const f=t.formal;
   if(!f){
     const locked=["初审待审核","初审驳回","初审资料上传中","AI审核中"].includes(t.stage);
-    return `<div class="sec">客户正式进件资料</div>
-      <div class="check-box blue">${locked
+    return panel("客户正式进件资料","",`
+      <div class="empty-hint">${locked
         ?"初审通过后方可补充正式进件资料"
-        :"初审已通过，客户尚未提交正式进件资料（条件由业务员尽调决定）"}</div>`;
+        :"初审已通过，客户尚未提交正式进件资料（条件由业务员尽调决定）"}</div>
+    `);
   }
   const flow=f.flow||{};
   const channels=(flow.channels||[]).join("、")||"—";
@@ -1535,9 +1577,8 @@ function formalBlock(t){
   const ge30=tier==="≥30万";
   let ctlHtml="";
   if(ge30){
-    const isLegal=ctl.needed===false || ctl.isLegalController===true || (!ctl.name && !ctl.needed);
     ctlHtml=`
-      <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">实控人信息（额度≥30万）</div>
+      <div class="sub-lab">实控人信息（额度≥30万）</div>
       <div class="form-grid">
         ${field("法人是否为实控人", ctl.needed?"否":"是", true)}
         ${ctl.needed?`
@@ -1548,16 +1589,15 @@ function formalBlock(t){
         `:""}
       </div>`;
   }
-  return `
-    <div class="sec">客户正式进件资料<span class="sec-tip">状态：${f.status||"—"} · 对齐客户端正式进件资料补充</span></div>
-    <div class="sec-tip" style="margin:0 0 8px;color:#86909c;font-size:12px">条件上下文（业务员尽调带入，客户不填）</div>
+  return panel("客户正式进件资料",`状态：${f.status||"—"}`,`
+    <div class="sub-lab">条件上下文（业务员尽调带入）</div>
     <div class="form-grid">
       ${field("白条额度", tier, false)}
       ${field("白条产品类型", product, false)}
       ${field("养殖类型", breedType, false)}
       ${field("是否牧场", isRanch?"是":"否", false)}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">客户本页提交</div>
+    <div class="sub-lab">客户本页提交</div>
     <div class="form-grid">
       ${ge30?field("主体类型", f.subjectKind||"—", true):""}
       ${field("经营性流水来源", channels, true)}
@@ -1567,17 +1607,19 @@ function formalBlock(t){
       ${bh.needed?field("百行征信状态", bh.ok?"已齐":"未齐", true):""}
     </div>
     ${ctlHtml}
-    <div class="sec-tip" style="margin:10px 0 6px;color:#86909c;font-size:12px">正式进件附件（流水/百行可邮箱解析；其余随尽调条件动态）</div>
-    <div class="upload-row">${filesHtml||`<div class="check-box blue">暂无附件</div>`}</div>`;
+    <div class="sub-lab">正式进件附件</div>
+    <div class="upload-row">${filesHtml||`<div class="empty-hint">暂无附件</div>`}</div>
+  `);
 }
 function salesBlock(t){
   const s=t.salesApp;
   if(!s){
     const locked=["初审待审核","初审驳回","初审资料上传中","AI审核中"].includes(t.stage);
-    return `<div class="sec">业务员申请资料</div>
-      <div class="check-box blue">${locked
+    return panel("业务员申请资料","",`
+      <div class="empty-hint">${locked
         ?"初审通过后业务员方可提交尽调资料"
-        :"业务员尚未提交申请资料"}</div>`;
+        :"业务员尚未提交申请资料"}</div>
+    `);
   }
   const breedKeys=["客户类型","是否是牧场","是否牧场","客户阶段","收蛋","鸡粪","供应商存量","养殖类型","经济用途","养殖数量","日龄","防疫"];
   const feedKeys=["购买次数","玉米","豆粕","预混料","全价料","绑定","大宗"];
@@ -1587,9 +1629,8 @@ function salesBlock(t){
   const photos=(s.photos||[]).map(n=>uploadCard(n,true)).join("");
   const dd=(s.dd||[]).map(([k,v])=>field(k,v,false)).join("");
   const syZero=/^0/.test(String(s.sy||""))||String(s.sy)==="0万";
-  return `
-    <div class="sec">业务员申请资料<span class="sec-tip">状态：${s.status||"—"} · 对齐业务端申请资料填写</span></div>
-    <div class="sec-tip" style="margin:0 0 8px;color:#86909c;font-size:12px">① 白条申请</div>
+  return panel("业务员申请资料",`状态：${s.status||"—"}`,`
+    <div class="sub-lab">① 白条申请</div>
     <div class="form-grid">
       ${field("客户名称", t.name||t.subject, false)}
       ${field("白条产品类型", s.product||"—", true)}
@@ -1599,26 +1640,27 @@ function salesBlock(t){
       ${syZero?field("不申请上海银行原因", s.syZeroReason||s.reason||"—", true):""}
       ${fieldArea("申请原因", s.reason||"—", true)}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">② 客户养殖信息</div>
+    <div class="sub-lab">② 客户养殖信息</div>
     <div class="form-grid">
       ${field("养殖种类", s.breed||"—", false)}
       ${field("养殖数量", s.scale||"—", false)}
       ${field("从事行业年限", s.years||"—", false)}
       ${breedTpl.map(([k,v])=>field(k,v,false)).join("")}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">③ 饲料信息</div>
+    <div class="sub-lab">③ 饲料信息</div>
     <div class="form-grid">
       ${feedTpl.map(([k,v])=>field(k,v,false)).join("")||field("饲料信息","—",false)}
       ${otherTpl.map(([k,v])=>field(k,v,false)).join("")}
     </div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">④ 经营信息</div>
+    <div class="sub-lab">④ 经营信息</div>
     <div class="form-grid">${dd||field("经营信息","—",false)}</div>
-    <div class="sec-tip" style="margin:10px 0 6px;color:#86909c;font-size:12px">⑤ 现场照片或视频</div>
-    <div class="upload-row">${photos||`<div class="check-box blue">暂无现场照片</div>`}</div>
-    <div class="sec-tip" style="margin:10px 0 8px;color:#86909c;font-size:12px">⑥ CRM 拜访记录</div>
+    <div class="sub-lab">⑤ 现场照片或视频</div>
+    <div class="upload-row">${photos||`<div class="empty-hint">暂无现场照片</div>`}</div>
+    <div class="sub-lab">⑥ CRM 拜访记录</div>
     <div class="form-grid">
       ${field("CRM拜访记录", s.crm||"—", false)}
-    </div>`;
+    </div>
+  `);
 }
 function openTask(id, mode){
   current=TASKS.find(x=>x.id===id); if(!current) return;
@@ -1652,8 +1694,7 @@ function openTask(id, mode){
     ${creditInfoBlock(t)}
     ${tradeInfoBlock(t)}
     ${showXsExtra?xsExtraBlock(t):""}
-    ${showBank?`
-    <div class="sec">推送银行<span class="sec-tip">额度来自业务员申请资料</span></div>
+    ${showBank?panel("推送银行","额度来自业务员申请资料",`
     <div class="bank-row">
       <div class="bank-item">
         <label class="chk"><input type="checkbox" disabled ${syOn?"checked":""}/> 上海银行</label>
@@ -1667,7 +1708,7 @@ function openTask(id, mode){
         <span class="tag ${tagClass(t.xishangPushed)}">${t.xishangPushed==="是"?"已推送":"未推送"}</span>
         <span class="tag ${tagClass(t.xishangResult)}">${t.xishangResult}</span>
       </div>
-    </div>`:""}
+    </div>`):""}
     ${logsBlock(t)}
   `;
 
