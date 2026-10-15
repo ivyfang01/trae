@@ -244,7 +244,7 @@ table.field-table{width:100%;border-collapse:collapse}
           <div class="page-head">
             <div>
               <div class="page-title">资料字段配置</div>
-              <div class="page-desc">配置业务员尽调、客户正式进件的字段模块与字段；单选/多选可通过【+关联二级字段】按选项添加二级字段。</div>
+              <div class="page-desc">配置业务员尽调、客户正式进件的字段模块与字段；添加字段时可选择关联一级字段，并指定选项值控制展示。</div>
             </div>
           </div>
 
@@ -266,7 +266,6 @@ table.field-table{width:100%;border-collapse:collapse}
                 <div class="tit" id="fieldPanelTitle">字段列表</div>
                 <button class="btn btn-primary btn-sm" type="button" id="btnAddField" onclick="openFieldModal()">＋ 字段</button>
               </div>
-              <div class="toolbar" id="fieldToolbar"></div>
               <div class="panel-bd" id="fieldBody"></div>
             </div>
           </div>
@@ -300,15 +299,18 @@ table.field-table{width:100%;border-collapse:collapse}
   <div class="modal">
     <div class="modal-hd"><span id="fieldTitle">新增字段</span><button class="x" type="button" onclick="closeFieldModal()">×</button></div>
     <div class="modal-bd">
-      <div class="fg" id="relatedParentRow" style="display:none">
-        <label>一级字段</label>
-        <div class="ctrl"><input id="fieldParentName" readonly /></div>
+      <div class="fg" id="linkParentRow">
+        <label>关联一级字段</label>
+        <div class="ctrl">
+          <select id="fieldLinkParent" onchange="onLinkParentChange()"></select>
+          <div class="hint">不关联则作为一级字段；可选任意模块下的单选/多选一级字段；所属模块可单独指定（如展示在「饲料信息」）。</div>
+        </div>
       </div>
       <div class="fg" id="relatedWhenRow" style="display:none">
-        <label><span class="req">*</span>当一级选项等于</label>
+        <label><span class="req">*</span>一级选项值</label>
         <div class="ctrl">
           <select id="fieldWhenValue"></select>
-          <div class="hint">填报端仅在一级字段选中该值时展示本关联字段。</div>
+          <div class="hint">取自所选一级字段的选项列表。</div>
         </div>
       </div>
       <div class="fg">
@@ -393,43 +395,46 @@ function demoData(){
         {
           id:"m_sales_1", name:"白条申请", sort:1,
           fields:[
-            {id:"s1", name:"客户名称", format:"text", required:true, placeholder:"系统带入", remark:"只读", children:[]},
-            {id:"s2", name:"白条产品类型", format:"radio", required:true, options:["预混料","全价料","大宗免息白条"], children:[
-              {id:"fp1", name:"每月玉米需求量", format:"number", required:true, placeholder:"吨", whenValue:"预混料", children:[]},
-              {id:"fp2", name:"预混料商品名称", format:"checkbox", required:false, options:["正大蛋鸡预混料 5%","正大肉鸡预混料 3%"], remark:"模糊检索多选", whenValue:"预混料", children:[]},
-              {id:"fp3", name:"预混料报价", format:"number", required:false, placeholder:"元/吨，自动带出", remark:"只读", whenValue:"预混料", children:[]},
-              {id:"ff1", name:"全价料每月吨数", format:"number", required:true, placeholder:"吨", whenValue:"全价料", children:[]},
-              {id:"ff2", name:"全价料商品名字", format:"text", required:true, whenValue:"全价料", children:[]},
-              {id:"ff3", name:"单价", format:"number", required:true, placeholder:"元/吨", whenValue:"全价料", children:[]},
-              {id:"ff4", name:"全价料捆绑商品的吨数", format:"number", required:false, placeholder:"系统自动计算", remark:"申请额度×6÷最低预混料单价", whenValue:"全价料", children:[]},
-              {id:"fb1", name:"每月玉米需求总量", format:"number", required:true, placeholder:"吨", whenValue:"大宗免息白条", children:[]},
-              {id:"fb2", name:"每月豆粕需求总量", format:"number", required:true, placeholder:"吨", whenValue:"大宗免息白条", children:[]}
-            ]},
-            {id:"s2a", name:"是否能收取保证金", format:"radio", required:true, options:["是","否"], remark:"预混料/全价料；提醒：30万≤额度＜50万至少5%，≥50万至少10%", children:[]},
-            {id:"s3", name:"申请额度", format:"number", required:true, placeholder:"单位：万，仅数字", children:[]},
-            {id:"s4", name:"上海银行额度", format:"number", required:true, placeholder:"单位：万", children:[]},
-            {id:"s5", name:"锡商银行额度", format:"number", required:true, placeholder:"单位：万", children:[]},
-            {id:"s6", name:"申请原因", format:"text", required:true, children:[]}
+            {id:"s1", name:"客户名称", format:"text", required:true, placeholder:"系统带入", remark:"只读"},
+            {id:"s2", name:"白条产品类型", format:"radio", required:true, options:["预混料","全价料","大宗免息白条"]},
+            {id:"s2a", name:"是否能收取保证金", format:"radio", required:true, options:["是","否"], remark:"预混料/全价料；提醒：30万≤额度＜50万至少5%，≥50万至少10%"},
+            {id:"s3", name:"申请额度", format:"number", required:true, placeholder:"单位：万，仅数字"},
+            {id:"s4", name:"上海银行额度", format:"number", required:true, placeholder:"单位：万"},
+            {id:"s5", name:"锡商银行额度", format:"number", required:true, placeholder:"单位：万"},
+            {id:"s6", name:"申请原因", format:"text", required:true}
           ]
         },
         {
-          id:"m_sales_2", name:"客户养殖信息", sort:2,
+          id:"m_feed", name:"饲料信息", sort:2,
           fields:[
-            {id:"s7", name:"客户类型", format:"radio", required:false, options:["养殖户","次终端","饲料厂"], children:[]},
-            {id:"s8", name:"是否是牧场", format:"radio", required:false, options:["是","否"], children:[]},
-            {id:"s9", name:"养殖类型", format:"radio", required:false, options:["鸡","鸭","鹅","猪","牛","羊"], children:[]}
+            {id:"fp1", name:"每月玉米需求量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"预混料"},
+            {id:"fp2", name:"预混料商品名称", format:"checkbox", required:false, options:["正大蛋鸡预混料 5%","正大肉鸡预混料 3%"], remark:"模糊检索多选", parentFieldId:"s2", whenValue:"预混料"},
+            {id:"fp3", name:"预混料报价", format:"number", required:false, placeholder:"元/吨，自动带出", remark:"只读", parentFieldId:"s2", whenValue:"预混料"},
+            {id:"ff1", name:"全价料每月吨数", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"ff2", name:"全价料商品名字", format:"text", required:true, parentFieldId:"s2", whenValue:"全价料"},
+            {id:"ff3", name:"单价", format:"number", required:true, placeholder:"元/吨", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"ff4", name:"全价料捆绑商品的吨数", format:"number", required:false, placeholder:"系统自动计算", remark:"申请额度×6÷最低预混料单价", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"fb1", name:"每月玉米需求总量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"},
+            {id:"fb2", name:"每月豆粕需求总量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"}
           ]
         },
         {
-          id:"m_sales_3", name:"经营信息", sort:3,
+          id:"m_sales_2", name:"客户养殖信息", sort:3,
           fields:[
-            {id:"s10", name:"法人是否为实控人", format:"radio", required:true, options:["是","否"], children:[
-              {id:"sc1", name:"实控人身份证人像面", format:"image", required:true, whenValue:"否", children:[]},
-              {id:"sc2", name:"实控人身份证国徽面", format:"image", required:true, whenValue:"否", children:[]},
-              {id:"sc3", name:"实控人实名手机号", format:"text", required:true, whenValue:"否", children:[]}
-            ]},
-            {id:"s11", name:"实控人资产情况", format:"checkbox", required:true, options:["商品房","汽车","自建房","股票期权"], children:[]},
-            {id:"s13", name:"现场照片", format:"image", required:true, remark:"可多张", children:[]}
+            {id:"s7", name:"客户类型", format:"radio", required:false, options:["养殖户","次终端","饲料厂"]},
+            {id:"s8", name:"是否是牧场", format:"radio", required:false, options:["是","否"]},
+            {id:"s9", name:"养殖类型", format:"radio", required:false, options:["鸡","鸭","鹅","猪","牛","羊"]}
+          ]
+        },
+        {
+          id:"m_sales_3", name:"经营信息", sort:4,
+          fields:[
+            {id:"s10", name:"法人是否为实控人", format:"radio", required:true, options:["是","否"]},
+            {id:"sc1", name:"实控人身份证人像面", format:"image", required:true, parentFieldId:"s10", whenValue:"否"},
+            {id:"sc2", name:"实控人身份证国徽面", format:"image", required:true, parentFieldId:"s10", whenValue:"否"},
+            {id:"sc3", name:"实控人实名手机号", format:"text", required:true, parentFieldId:"s10", whenValue:"否"},
+            {id:"s11", name:"实控人资产情况", format:"checkbox", required:true, options:["商品房","汽车","自建房","股票期权"]},
+            {id:"s13", name:"现场照片", format:"image", required:true, remark:"可多张"}
           ]
         }
       ]
@@ -439,31 +444,30 @@ function demoData(){
         {
           id:"m_formal_1", name:"经营性流水", sort:1,
           fields:[
-            {id:"f1", name:"近1年经营性流水来源", format:"checkbox", required:true, options:["银行","支付宝","微信"], children:[
-              {id:"f1a", name:"银行流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"银行", children:[]},
-              {id:"f1b", name:"支付宝流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"支付宝", children:[]},
-              {id:"f1c", name:"微信流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"微信", children:[]}
-            ]}
+            {id:"f1", name:"近1年经营性流水来源", format:"checkbox", required:true, options:["银行","支付宝","微信"]},
+            {id:"f1a", name:"银行流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"银行"},
+            {id:"f1b", name:"支付宝流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"支付宝"},
+            {id:"f1c", name:"微信流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"微信"}
           ]
         },
         {
           id:"m_formal_2", name:"经营资料附件", sort:2,
           fields:[
-            {id:"f2", name:"近3个月经营场地水电费账单", format:"file", required:true, remark:"水电有其一即可", children:[]},
-            {id:"f3", name:"最近一次养殖资产买卖合同/首付款凭证", format:"file", required:true, children:[]},
-            {id:"f4", name:"经营场地权属证明", format:"file", required:false, remark:"额度≥30万", children:[]},
-            {id:"f5", name:"动物防疫登记证或出栏防疫记录", format:"file", required:false, remark:"养殖类型=猪牛羊", children:[]},
-            {id:"f6", name:"下游乳企合同", format:"file", required:false, remark:"是否牧场=是", children:[]},
-            {id:"f7", name:"最近1年和最近1期的财务三表", format:"file", required:false, remark:"≥30万且企业主体", children:[]}
+            {id:"f2", name:"近3个月经营场地水电费账单", format:"file", required:true, remark:"水电有其一即可"},
+            {id:"f3", name:"最近一次养殖资产买卖合同/首付款凭证", format:"file", required:true},
+            {id:"f4", name:"经营场地权属证明", format:"file", required:false, remark:"额度≥30万"},
+            {id:"f5", name:"动物防疫登记证或出栏防疫记录", format:"file", required:false, remark:"养殖类型=猪牛羊"},
+            {id:"f6", name:"下游乳企合同", format:"file", required:false, remark:"是否牧场=是"},
+            {id:"f7", name:"最近1年和最近1期的财务三表", format:"file", required:false, remark:"≥30万且企业主体"}
           ]
         },
         {
           id:"m_formal_3", name:"征信与主体", sort:3,
           fields:[
-            {id:"f8", name:"主体类型", format:"radio", required:false, options:["个人","企业"], remark:"额度≥30万", children:[]},
-            {id:"f9", name:"百行征信报告", format:"file", required:false, remark:"仅全价料", children:[]},
-            {id:"f10", name:"实控人姓名", format:"text", required:false, remark:"只读，取尽调", children:[]},
-            {id:"f11", name:"实控人征信报告", format:"file", required:false, remark:"额度≥30万", children:[]}
+            {id:"f8", name:"主体类型", format:"radio", required:false, options:["个人","企业"], remark:"额度≥30万"},
+            {id:"f9", name:"百行征信报告", format:"file", required:false, remark:"仅全价料"},
+            {id:"f10", name:"实控人姓名", format:"text", required:false, remark:"只读，取尽调"},
+            {id:"f11", name:"实控人征信报告", format:"file", required:false, remark:"额度≥30万"}
           ]
         }
       ]
@@ -475,17 +479,34 @@ let store=loadStore();
 let scope="sales";
 let activeModId=null;
 let editingModId=null;
-let editingField=null; // {id, parentId?}
+let editingField=null; // {id, parentId?, fromModId, editingTopLevel}
 
 function loadStore(){
   try{
-    const raw=localStorage.getItem("baitiao_field_config_v3");
+    const raw=localStorage.getItem("baitiao_field_config_v5");
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return demoData();
 }
 function persist(){
-  localStorage.setItem("baitiao_field_config_v3", JSON.stringify(store));
+  localStorage.setItem("baitiao_field_config_v5", JSON.stringify(store));
+}
+function moduleNameById(id){
+  const m=(store[scope].modules||[]).find(x=>x.id===id);
+  return m?m.name:id;
+}
+/** 在全配置域查找字段：{ mod, field, index } */
+function locateField(id){
+  for(const mod of store[scope].modules||[]){
+    const index=(mod.fields||[]).findIndex(f=>f.id===id);
+    if(index>=0) return {mod, field:mod.fields[index], index};
+  }
+  return null;
+}
+function findParentFieldById(parentId){
+  if(!parentId) return null;
+  const loc=locateField(parentId);
+  return loc?loc.field:null;
 }
 function toast(msg){
   const el=document.getElementById("toast");
@@ -502,12 +523,7 @@ function currentModule(){
   return currentModules().find(m=>m.id===activeModId)||null;
 }
 function countFields(fields){
-  let n=0;
-  (fields||[]).forEach(f=>{
-    n+=1;
-    n+=countFields(f.children||[]);
-  });
-  return n;
+  return (fields||[]).length;
 }
 
 function switchScope(next){
@@ -564,37 +580,36 @@ function renderFields(){
   const mod=currentModule();
   const title=document.getElementById("fieldPanelTitle");
   const body=document.getElementById("fieldBody");
-  const toolbar=document.getElementById("fieldToolbar");
   const addBtn=document.getElementById("btnAddField");
   if(!mod){
     title.textContent="字段列表";
-    toolbar.innerHTML="";
     addBtn.disabled=true;
     body.innerHTML=`<div class="empty">请先选择或新建字段模块</div>`;
     return;
   }
   addBtn.disabled=false;
   title.textContent=`${mod.name} · 字段列表`;
-  toolbar.innerHTML=`<span style="color:#8c8c8c">单选/多选可点【+关联二级字段】添加二级字段（含名称、格式等）；仅在一级选项等于指定值时展示。</span>`;
   const rows=[];
   flattenRows(mod.fields||[], rows);
   if(!rows.length){
     body.innerHTML=`<div class="empty">该模块暂无字段，点击右上角「＋ 字段」添加</div>`;
     return;
   }
+  const modName=mod.name||"—";
   body.innerHTML=`
     <table class="field-table">
       <thead>
         <tr>
-          <th style="width:28%">字段</th>
-          <th style="width:12%">类型</th>
-          <th style="width:8%">必填</th>
-          <th style="width:30%">展示条件</th>
-          <th style="width:22%">操作</th>
+          <th style="width:18%">字段名字</th>
+          <th style="width:14%">展示模块</th>
+          <th style="width:10%">类型</th>
+          <th style="width:16%">关联一级字段</th>
+          <th style="width:18%">关联字段条件</th>
+          <th style="width:24%">操作</th>
         </tr>
       </thead>
       <tbody>
-        ${rows.map(r=>r.kind==="child"?childRowHtml(r):fieldRowHtml(r)).join("")}
+        ${rows.map(r=>fieldRowHtml(r, modName)).join("")}
       </tbody>
     </table>
   `;
@@ -602,12 +617,8 @@ function renderFields(){
     btn.addEventListener("click",()=>{
       const act=btn.dataset.act;
       const id=btn.dataset.id;
-      const parentId=btn.dataset.parent||null;
       if(act==="edit") openFieldModal(id);
-      if(act==="addRelated") openFieldModal(null, id);
-      if(act==="editChild") openFieldModal(id, parentId);
       if(act==="del") deleteField(id);
-      if(act==="delChild") deleteField(id, parentId);
       if(act==="up") moveField(id, -1);
       if(act==="down") moveField(id, 1);
     });
@@ -615,51 +626,25 @@ function renderFields(){
 }
 
 function flattenRows(fields, out){
-  (fields||[]).forEach(f=>{
-    out.push({kind:"field", field:f});
-    (f.children||[]).forEach(ch=>{
-      out.push({kind:"child", parent:f, field:ch});
-    });
-  });
+  (fields||[]).forEach(f=>out.push({field:f}));
 }
-function fieldRowHtml(r){
+function fieldRowHtml(r, modName){
   const f=r.field;
   const fmt=FORMAT_MAP[f.format]||f.format;
-  const canRelated=f.format==="radio"||f.format==="checkbox";
+  const parent=f.parentFieldId?findParentFieldById(f.parentFieldId):null;
+  const linked=!!(f.parentFieldId && parent);
   return `
     <tr>
       <td><span>${esc(f.name)}</span></td>
+      <td style="color:#595959">${esc(modName||"—")}</td>
       <td><span class="tag">${fmt}</span></td>
-      <td>${f.required?'<span class="tag ok">是</span>':'<span class="tag muted">否</span>'}</td>
-      <td style="color:#8c8c8c">—</td>
+      <td style="color:${linked?"#595959":"#8c8c8c"}">${linked?esc(parent.name):"—"}</td>
+      <td style="color:${linked?"#595959":"#8c8c8c"}">${linked?`= ${esc(f.whenValue||"—")}`:"—"}</td>
       <td class="ops" style="white-space:nowrap">
         <button class="link" type="button" data-act="edit" data-id="${f.id}">编辑</button>
-        ${canRelated?`<button class="link" type="button" data-act="addRelated" data-id="${f.id}">+关联二级字段</button>`:""}
         <button class="link" type="button" data-act="up" data-id="${f.id}">上移</button>
         <button class="link" type="button" data-act="down" data-id="${f.id}">下移</button>
         <button class="link danger" type="button" data-act="del" data-id="${f.id}">删除</button>
-      </td>
-    </tr>
-  `;
-}
-function childRowHtml(r){
-  const p=r.parent;
-  const f=r.field;
-  const fmt=FORMAT_MAP[f.format]||f.format;
-  return `
-    <tr class="child">
-      <td>
-        <span class="indent">
-          <span class="tree">└</span>
-          <span>${esc(f.name)}</span>
-        </span>
-      </td>
-      <td><span class="tag">${fmt}</span></td>
-      <td>${f.required?'<span class="tag ok">是</span>':'<span class="tag muted">否</span>'}</td>
-      <td style="color:#595959;word-break:break-all">当「${esc(p.name)}」= <b>${esc(f.whenValue||"—")}</b> 时展示</td>
-      <td class="ops" style="white-space:nowrap">
-        <button class="link" type="button" data-act="editChild" data-id="${f.id}" data-parent="${p.id}">编辑</button>
-        <button class="link danger" type="button" data-act="delChild" data-id="${f.id}" data-parent="${p.id}">删除</button>
       </td>
     </tr>
   `;
@@ -707,58 +692,91 @@ function deleteModule(id){
 }
 
 /* —— 字段 —— */
-function findFieldById(fields, id){
-  for(const f of fields||[]){
-    if(f.id===id) return f;
-    const inChild=findFieldById(f.children||[], id);
-    if(inChild) return inChild;
+/** 全配置域可作为关联父级的一级单选/多选字段（可跨模块） */
+function eligibleParents(excludeId){
+  const list=[];
+  for(const mod of store[scope].modules||[]){
+    for(const f of mod.fields||[]){
+      if(excludeId && f.id===excludeId) continue;
+      if(f.parentFieldId) continue; // 关联字段不可再作父级
+      if((f.format==="radio"||f.format==="checkbox") && (f.options||[]).length){
+        list.push({field:f, mod});
+      }
+    }
   }
-  return null;
+  return list;
 }
-function findParentField(fields, childId){
-  for(const f of fields||[]){
-    if((f.children||[]).some(c=>c.id===childId)) return f;
+function fillLinkParentSelect(selectedParentId, excludeId){
+  const sel=document.getElementById("fieldLinkParent");
+  const parents=eligibleParents(excludeId);
+  sel.innerHTML=`<option value="">不关联（作为一级字段）</option>`+
+    parents.map(({field:p, mod})=>`<option value="${p.id}">${esc(mod.name)} / ${esc(p.name)}</option>`).join("");
+  if(selectedParentId && parents.some(x=>x.field.id===selectedParentId)) sel.value=selectedParentId;
+  else sel.value="";
+}
+function fillWhenValueOptions(parent, selectedWhen){
+  const sel=document.getElementById("fieldWhenValue");
+  const opts=(parent&&parent.options)||[];
+  sel.innerHTML=opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join("")||`<option value="">—</option>`;
+  if(selectedWhen && opts.includes(selectedWhen)) sel.value=selectedWhen;
+}
+function syncLinkUi(){
+  const parentId=document.getElementById("fieldLinkParent").value;
+  const linked=!!parentId;
+  document.getElementById("relatedWhenRow").style.display=linked?"":"none";
+  document.getElementById("fieldModuleFilter").readOnly=false;
+  document.getElementById("fieldModuleHint").textContent=linked
+    ?"可筛选选择展示模块（可与一级字段所在模块不同，如一级在「白条申请」、本字段在「饲料信息」）"
+    :"可输入关键字筛选并选择模块；编辑时可改到其他模块";
+  if(linked){
+    const parent=findParentFieldById(parentId);
+    fillWhenValueOptions(parent, document.getElementById("fieldWhenValue").value);
   }
-  return null;
+}
+function onLinkParentChange(){
+  const parentId=document.getElementById("fieldLinkParent").value;
+  const parent=parentId?findParentFieldById(parentId):null;
+  fillWhenValueOptions(parent, null);
+  syncLinkUi();
 }
 
-/** @param {string|null} id 字段 id；新增传 null
- *  @param {string|null} parentId 有值则为关联字段（挂在一级字段下） */
-function openFieldModal(id, parentId){
+/** @param {string|null} id 字段 id；新增传 null */
+function openFieldModal(id){
   const mod=currentModule();
   if(!mod){ toast("请先选择模块"); return; }
-  const isRelated=!!parentId;
-  let parent=null;
   let field=null;
-  if(isRelated){
-    parent=findFieldById(mod.fields, parentId);
-    if(!parent){ toast("一级字段不存在"); return; }
-    if(parent.format!=="radio" && parent.format!=="checkbox"){
-      toast("仅单选 / 多选字段可添加关联字段"); return;
-    }
-    if(!(parent.options||[]).length){ toast("请先为一级字段配置选项"); return; }
-    field=id?(parent.children||[]).find(c=>c.id===id):null;
+  let fromModId=mod.id;
+  if(id){
+    const loc=locateField(id);
+    if(!loc){ toast("字段不存在"); return; }
+    field=loc.field;
+    fromModId=loc.mod.id;
+  }
+  const isLinked=!!(field&&field.parentFieldId);
+  const isTopLevel=!!(id && field && !field.parentFieldId);
+  editingField={
+    id:id||null,
+    parentId:isLinked?field.parentFieldId:null,
+    fromModId,
+    editingTopLevel:isTopLevel
+  };
+  document.getElementById("fieldTitle").textContent=field?"编辑字段":"新增字段";
+  // 新增、或编辑关联字段：可选/可改关联一级；编辑一级字段：不展示关联
+  const showLink=!editingField.editingTopLevel;
+  document.getElementById("linkParentRow").style.display=showLink?"":"none";
+  if(showLink){
+    fillLinkParentSelect(isLinked?field.parentFieldId:null, id||null);
+    if(isLinked) fillWhenValueOptions(findParentFieldById(field.parentFieldId), field.whenValue);
+    else fillWhenValueOptions(null, null);
+    syncLinkUi();
   }else{
-    field=id?findFieldById(mod.fields, id):null;
+    document.getElementById("relatedWhenRow").style.display="none";
+    document.getElementById("fieldModuleFilter").readOnly=false;
+    document.getElementById("fieldModuleHint").textContent="可输入关键字筛选并选择模块；编辑时可改到其他模块";
   }
-  editingField={id:id||null, parentId:parentId||null, fromModId:mod.id};
-  document.getElementById("fieldTitle").textContent=isRelated
-    ?(field?"编辑关联字段":"添加关联字段")
-    :(field?"编辑字段":"新增字段");
-  document.getElementById("relatedParentRow").style.display=isRelated?"":"none";
-  document.getElementById("relatedWhenRow").style.display=isRelated?"":"none";
   document.getElementById("fieldModuleRow").style.display="";
-  document.getElementById("fieldModuleFilter").readOnly=!!isRelated;
-  document.getElementById("fieldModuleHint").textContent=isRelated
-    ?"关联字段所属模块随一级字段，不可单独修改"
-    :"可输入关键字筛选并选择模块；编辑时可改到其他模块";
-  setFieldModule(mod.id, mod.name);
-  if(isRelated){
-    document.getElementById("fieldParentName").value=parent.name;
-    const sel=document.getElementById("fieldWhenValue");
-    sel.innerHTML=(parent.options||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join("");
-    if(field&&field.whenValue) sel.value=field.whenValue;
-  }
+  const showMod=id?locateField(id)?.mod||mod:mod;
+  setFieldModule(showMod.id, showMod.name);
   document.getElementById("fieldName").value=field?field.name:"";
   document.getElementById("fieldFormat").value=field?field.format:"text";
   document.getElementById("fieldRequired").value=field?(field.required?"1":"0"):"1";
@@ -841,6 +859,28 @@ function readOptions(){
   return [...document.querySelectorAll("#optList input")].map(i=>i.value.trim()).filter(Boolean);
 }
 
+function clearLinkedTo(parentId){
+  for(const mod of store[scope].modules||[]){
+    mod.fields=(mod.fields||[]).filter(f=>f.parentFieldId!==parentId);
+  }
+}
+function upsertFieldInModule(targetMod, fieldObj, fromModId, fieldId){
+  if(fieldId){
+    const loc=locateField(fieldId);
+    if(!loc) return false;
+    const payload={...fieldObj, id:fieldId};
+    if(loc.mod.id===targetMod.id){
+      loc.mod.fields[loc.index]=payload;
+    }else{
+      loc.mod.fields.splice(loc.index,1);
+      targetMod.fields.push(payload);
+    }
+  }else{
+    targetMod.fields.push({id:uid(), ...fieldObj});
+  }
+  activeModId=targetMod.id;
+  return true;
+}
 function saveField(){
   if(!editingField) return;
   const name=document.getElementById("fieldName").value.trim();
@@ -854,85 +894,63 @@ function saveField(){
     options=readOptions();
     if(!options.length){ toast("请至少配置一个选项"); return; }
   }
-  const parentId=editingField.parentId;
   const targetModId=document.getElementById("fieldModuleId").value;
   const targetMod=(store[scope].modules||[]).find(m=>m.id===targetModId);
   if(!targetMod){ toast("请选择所属模块"); return; }
 
+  let parentId=null;
+  let whenValue=undefined;
+  if(!editingField.editingTopLevel){
+    parentId=document.getElementById("fieldLinkParent").value||null;
+  }
   if(parentId){
-    // 关联字段仍落在一级字段所在模块（当前列表模块）
-    const fromMod=(store[scope].modules||[]).find(m=>m.id===editingField.fromModId)||currentModule();
-    if(!fromMod){ toast("一级字段所在模块不存在"); return; }
-    const parent=findFieldById(fromMod.fields, parentId);
-    if(!parent){ toast("一级字段不存在"); return; }
-    const whenValue=document.getElementById("fieldWhenValue").value;
+    const parent=findParentFieldById(parentId);
+    if(!parent){ toast("请选择有效的关联一级字段"); return; }
+    if(parent.format!=="radio" && parent.format!=="checkbox"){
+      toast("仅可关联单选 / 多选一级字段"); return;
+    }
+    whenValue=document.getElementById("fieldWhenValue").value;
     if(!whenValue){ toast("请选择一级选项值"); return; }
-    if(!parent.children) parent.children=[];
-    if(editingField.id){
-      const f=parent.children.find(c=>c.id===editingField.id);
-      if(!f){ toast("关联字段不存在"); return; }
-      f.name=name; f.format=format; f.required=required;
-      f.placeholder=placeholder; f.remark=remark; f.whenValue=whenValue;
-      if(format==="radio"||format==="checkbox") f.options=options;
-      else delete f.options;
-    }else{
-      parent.children.push({
-        id:uid(), name, format, required, placeholder, remark, whenValue,
-        options:(format==="radio"||format==="checkbox")?options:undefined,
-        children:[]
-      });
-    }
+  }
+
+  const payload={
+    name, format, required, placeholder, remark,
+    options:(format==="radio"||format==="checkbox")?options:undefined
+  };
+  if(parentId){
+    payload.parentFieldId=parentId;
+    payload.whenValue=whenValue;
+  }
+
+  if(editingField.id && editingField.editingTopLevel){
+    // 编辑一级：格式从单选/多选改为其他时，清空挂靠关联字段
+    const oldLoc=locateField(editingField.id);
+    if(!oldLoc){ toast("字段不存在"); return; }
+    const wasChoice=oldLoc.field.format==="radio"||oldLoc.field.format==="checkbox";
+    const nowChoice=format==="radio"||format==="checkbox";
+    if(wasChoice && !nowChoice) clearLinkedTo(editingField.id);
+    if(!nowChoice) delete payload.options;
+    else payload.options=options;
+    upsertFieldInModule(targetMod, payload, editingField.fromModId, editingField.id);
+  }else if(editingField.id){
+    upsertFieldInModule(targetMod, payload, editingField.fromModId, editingField.id);
   }else{
-    const payload={
-      name, format, required, placeholder, remark,
-      options:(format==="radio"||format==="checkbox")?options:undefined,
-      children:[]
-    };
-    if(editingField.id){
-      const fromMod=(store[scope].modules||[]).find(m=>m.id===editingField.fromModId)||currentModule();
-      if(!fromMod){ toast("字段不存在"); return; }
-      const idx=fromMod.fields.findIndex(x=>x.id===editingField.id);
-      if(idx<0){ toast("字段不存在"); return; }
-      const old=fromMod.fields[idx];
-      payload.id=old.id;
-      payload.children=format==="radio"||format==="checkbox"?(old.children||[]):[];
-      if(!(format==="radio"||format==="checkbox")) delete payload.options;
-      else payload.options=options;
-      if(fromMod.id===targetMod.id){
-        fromMod.fields[idx]=payload;
-      }else{
-        fromMod.fields.splice(idx,1);
-        targetMod.fields.push(payload);
-        activeModId=targetMod.id;
-      }
-    }else{
-      targetMod.fields.push({
-        id:uid(), ...payload,
-        options:(format==="radio"||format==="checkbox")?options:undefined,
-        children:[]
-      });
-      activeModId=targetMod.id;
-    }
+    upsertFieldInModule(targetMod, payload, null, null);
   }
   closeFieldModal();
   persist();
   render();
-  toast(parentId?"关联字段已保存":"字段已保存");
+  toast("字段已保存");
 }
 
-function deleteField(id, parentId){
-  const tip=parentId?"确认删除该关联字段？":"确认删除该字段及其全部关联字段？";
+function deleteField(id){
+  const loc=locateField(id);
+  if(!loc) return;
+  const linked=!!loc.field.parentFieldId;
+  const tip=linked?"确认删除该关联字段？":"确认删除该字段及其全部关联字段？";
   if(!confirm(tip)) return;
-  const mod=currentModule();
-  if(!mod) return;
-  if(parentId){
-    const parent=findFieldById(mod.fields, parentId);
-    if(!parent||!parent.children) return;
-    parent.children=parent.children.filter(c=>c.id!==id);
-  }else{
-    const idx=mod.fields.findIndex(f=>f.id===id);
-    if(idx>=0) mod.fields.splice(idx,1);
-  }
+  loc.mod.fields.splice(loc.index,1);
+  if(!linked) clearLinkedTo(id);
   persist();
   render();
   toast("字段已删除");
