@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>白条资料 · 字段配置</title>
+<style>
+:root{
+  --theme-primary:#8096d2;
+  --theme-primary-hover:#6f85c4;
+  --theme-primary-bg:#edf0ff;
+  --theme-link:#8096d2;
+  --theme-success:#52c41a;
+  --theme-warning:#fa8c16;
+  --theme-danger:#ff4d4f;
+  --theme-radius:4px;
+  --theme-radius-sm:2px;
+  --theme-border:#dcdfe6;
+  --theme-border-input:#d9d9d9;
+  --theme-text:#333333;
+  --theme-text-secondary:#8c8c8c;
+  --theme-text-btn:#606266;
+  --theme-bg:#f0f2f5;
+  --theme-logo-bg:#8096d2;
+  --theme-table-header:#fafafa;
+  --theme-table-hover:#f7f8fd;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--theme-bg);color:var(--theme-text);font-size:13px;line-height:1.5;
+}
+.app-shell{min-height:100vh;display:flex;flex-direction:column;background:var(--theme-bg)}
+.topbar-wrap{flex-shrink:0;background:#fff}
+.topbar{height:48px;display:flex;align-items:stretch;background:#fff}
+.logo-block{
+  display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--theme-logo-bg);color:#fff;
+  font-size:14px;font-weight:600;white-space:nowrap;flex-shrink:0
+}
+.logo-block .burger{font-size:16px;font-weight:400;opacity:.95}
+.top-nav{display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;padding:0 4px}
+.top-nav .nav-item{
+  display:inline-flex;align-items:center;gap:4px;height:48px;padding:0 12px;white-space:nowrap;
+  color:#333;font-size:14px;cursor:default
+}
+.top-nav .nav-item .caret{font-size:10px;color:#bfbfbf;transform:scale(.85)}
+.top-nav .nav-item.active{color:var(--theme-primary);font-weight:500}
+.top-right{
+  margin-left:auto;display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0;
+  font-size:13px;color:#595959
+}
+.user-avatar{
+  width:28px;height:28px;border-radius:50%;background:#d9d9d9;color:#666;
+  display:inline-flex;align-items:center;justify-content:center;font-size:12px
+}
+.app-body{display:flex;flex:1;min-height:0}
+.sidebar{
+  width:180px;background:#fff;border-right:1px solid var(--theme-border);padding:8px 0;
+  overflow-y:auto;flex-shrink:0;font-size:13px
+}
+.side-item{
+  display:block;padding:10px 14px 10px 11px;color:#595959;text-decoration:none;
+  border-left:3px solid transparent;line-height:1.3;cursor:pointer
+}
+.side-item:hover{color:var(--theme-primary)}
+.side-item.active{
+  background:var(--theme-primary-bg);color:var(--theme-primary);
+  border-left-color:var(--theme-primary);font-weight:500
+}
+.main-col{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--theme-bg)}
+.page-tabs{
+  height:36px;background:#f5f5f5;display:flex;align-items:stretch;padding:0 16px;
+  border-bottom:1px solid var(--theme-border);flex-shrink:0
+}
+.page-tab{
+  display:inline-flex;align-items:center;gap:8px;padding:0 4px;margin-right:20px;
+  font-size:13px;color:var(--theme-primary);border-bottom:2px solid var(--theme-primary)
+}
+.content{flex:1;padding:16px;overflow:auto;background:var(--theme-bg);min-height:0}
+.page-card{background:#fff;border-radius:var(--theme-radius-sm);padding:16px 20px;min-height:calc(100vh - 120px)}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.page-title{font-size:16px;font-weight:600;color:#262626}
+.page-desc{font-size:12px;color:var(--theme-text-secondary);margin-top:4px}
+.scope-tabs{
+  display:flex;gap:0;margin-bottom:16px;background:#fff;border-radius:var(--theme-radius);
+  border:1px solid #f0f0f0;overflow:hidden
+}
+.scope-tabs button{
+  border:none;background:transparent;padding:10px 18px;cursor:pointer;font-size:13px;color:#595959;
+  border-bottom:2px solid transparent;white-space:nowrap
+}
+.scope-tabs button:hover{color:var(--theme-primary)}
+.scope-tabs button.active{
+  color:var(--theme-primary);font-weight:600;border-bottom-color:var(--theme-primary);background:var(--theme-primary-bg)
+}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;min-height:520px}
+.mod-panel,.field-panel{
+  border:1px solid #eef0f4;border-radius:8px;background:#fff;
+  box-shadow:0 1px 2px rgba(15,23,42,.03);display:flex;flex-direction:column;min-height:0
+}
+.panel-hd{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:12px 14px;border-bottom:1px solid #f0f2f5;font-size:14px;font-weight:600;color:#1f2329
+}
+.panel-hd::before{
+  content:"";width:3px;height:14px;border-radius:2px;background:var(--theme-primary);margin-right:2px;flex:0 0 auto
+}
+.panel-hd .tit{display:flex;align-items:center;gap:8px;flex:1}
+.panel-bd{flex:1;overflow:auto;padding:8px}
+.mod-item{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:6px;cursor:pointer;
+  border:1px solid transparent;margin-bottom:4px
+}
+.mod-item:hover{background:#f7f8fd}
+.mod-item.active{background:var(--theme-primary-bg);border-color:#adbbe2;color:var(--theme-primary)}
+.mod-item .name{flex:1;min-width:0;font-weight:500}
+.mod-item .cnt{font-size:12px;color:var(--theme-text-secondary)}
+.mod-item.active .cnt{color:var(--theme-primary)}
+.mod-item .ops{display:none;gap:6px}
+.mod-item:hover .ops,.mod-item.active .ops{display:inline-flex}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:0 4px 10px}
+.btn{
+  border:1px solid transparent;border-radius:var(--theme-radius);padding:0 14px;font-size:13px;cursor:pointer;
+  height:32px;line-height:30px;display:inline-flex;align-items:center;justify-content:center;gap:4px
+}
+.btn-default{background:#fff;border-color:#dcdfe6;color:var(--theme-text-btn)}
+.btn-default:hover{border-color:var(--theme-primary);color:var(--theme-primary)}
+.btn-danger{background:#fff;border-color:var(--theme-danger);color:var(--theme-danger)}
+.btn-primary{background:var(--theme-primary);color:#fff;border-color:var(--theme-primary)}
+.btn-primary:hover{background:var(--theme-primary-hover)}
+.btn-sm{height:28px;line-height:26px;padding:0 10px;font-size:12px}
+.link{color:var(--theme-link);cursor:pointer;border:none;background:none;font-size:13px;padding:0}
+.link + .link{margin-left:10px}
+.link.danger{color:var(--theme-danger)}
+.tag{
+  display:inline-block;font-size:12px;padding:0 7px;height:22px;line-height:20px;
+  border-radius:var(--theme-radius-sm);background:var(--theme-primary-bg);color:var(--theme-primary);
+  border:1px solid #adbbe2;box-sizing:border-box;white-space:nowrap
+}
+.tag.muted{background:#f2f3f5;color:#86909c;border-color:#e5e6eb}
+.tag.ok{background:#f6ffed;color:var(--theme-success);border-color:#b7eb8f}
+.tag.warn{background:#fff7e6;color:var(--theme-warning);border-color:#ffd591}
+table.field-table{width:100%;border-collapse:collapse}
+.field-table th{
+  background:var(--theme-table-header);text-align:left;padding:10px 12px;font-size:13px;color:#595959;
+  border-bottom:1px solid #f0f0f0;font-weight:600;white-space:nowrap
+}
+.field-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle}
+.field-table tr:hover td{background:var(--theme-table-hover)}
+.field-table tr.child td{background:#fafbfd}
+.field-table tr.child:hover td{background:#f3f5fb}
+.field-table .indent{display:inline-flex;align-items:center;gap:6px}
+.field-table .indent .tree{
+  color:#c0c4cc;font-size:12px;width:28px;text-align:right;flex-shrink:0
+}
+.empty{
+  padding:48px 16px;text-align:center;color:var(--theme-text-secondary);font-size:13px
+}
+.mask{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:40;
+  align-items:center;justify-content:center;padding:16px
+}
+.mask.on{display:flex}
+.modal{
+  width:min(560px,100%);background:#fff;border-radius:var(--theme-radius);
+  box-shadow:0 4px 12px rgba(0,0,0,.15);overflow:hidden
+}
+.modal-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid #f0f0f0;font-size:15px;font-weight:600
+}
+.modal-hd .x{border:none;background:none;font-size:18px;cursor:pointer;color:#8c8c8c;line-height:1}
+.modal-bd{padding:16px 20px;max-height:min(70vh,520px);overflow:auto}
+.modal-ft{
+  display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid #f0f0f0
+}
+.fg{display:grid;grid-template-columns:108px minmax(0,1fr);align-items:flex-start;gap:10px;margin-bottom:14px}
+.fg label{text-align:right;font-size:13px;color:#595959;line-height:32px;padding-top:0}
+.fg label .req{color:var(--theme-danger);margin-right:2px}
+.fg .ctrl{min-width:0}
+.fg input,.fg select,.fg textarea{
+  width:100%;height:32px;border:1px solid var(--theme-border-input);border-radius:var(--theme-radius);
+  padding:0 10px;font-size:13px;outline:none;background:#fff;color:#333
+}
+.fg textarea{height:88px;padding:8px 10px;resize:vertical;line-height:1.5}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#409eff}
+.hint{font-size:12px;color:var(--theme-text-secondary);margin-top:6px;line-height:1.5}
+.opt-list{display:flex;flex-direction:column;gap:8px}
+.opt-row{display:flex;gap:8px;align-items:center}
+.opt-row input{flex:1}
+.mod-pick{position:relative}
+.mod-pick-drop{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;
+  max-height:200px;overflow:auto;background:#fff;border:1px solid var(--theme-border-input);
+  border-radius:var(--theme-radius);box-shadow:0 4px 12px rgba(0,0,0,.08)
+}
+.mod-pick-drop.on{display:block}
+.mod-pick-opt{
+  padding:8px 10px;font-size:13px;cursor:pointer;color:#333
+}
+.mod-pick-opt:hover,.mod-pick-opt.active{background:var(--theme-primary-bg);color:var(--theme-primary)}
+.mod-pick-empty{padding:10px;font-size:12px;color:var(--theme-text-secondary);text-align:center}
+.toast{
+  position:fixed;left:50%;bottom:48px;transform:translateX(-50%);
+  background:rgba(0,0,0,.72);color:#fff;padding:8px 16px;border-radius:16px;
+  font-size:13px;z-index:60;display:none
+}
+.toast.on{display:block}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <div class="logo-block">粮巴巴管理系统 <span class="burger">☰</span></div>
+      <div class="top-nav">
+        <span class="nav-item">首页</span>
+        <span class="nav-item">客户管理 <i class="caret">▼</i></span>
+        <span class="nav-item active">白条 <i class="caret">▼</i></span>
+        <span class="nav-item">系统管理 <i class="caret">▼</i></span>
+      </div>
+      <div class="top-right">
+        <span class="user-avatar">张</span>
+        <span>金融-张敏</span>
+      </div>
+    </div>
+  </div>
+  <div class="app-body">
+    <div class="sidebar">
+      <a class="side-item" href="步骤1_金融初审审核.html">金融白条审核台</a>
+      <a class="side-item active" href="字段配置.html">资料字段配置</a>
+      <a class="side-item" href="Admin_白条入口白名单.html">白条入口白名单</a>
+    </div>
+    <div class="main-col">
+      <div class="page-tabs">
+        <div class="page-tab">资料字段配置 <span class="close">×</span></div>
+      </div>
+      <div class="content">
+        <div class="page-card">
+          <div class="page-head">
+            <div>
+              <div class="page-title">资料字段配置</div>
+              <div class="page-desc">配置业务员尽调、客户正式进件的字段模块与字段；单选/多选可通过【+关联二级字段】按选项添加二级字段。</div>
+            </div>
+          </div>
+
+          <div class="scope-tabs" id="scopeTabs">
+            <button type="button" class="active" data-scope="sales">业务员尽调资料字段配置</button>
+            <button type="button" data-scope="formal">正式进件资料字段配置</button>
+          </div>
+
+          <div class="layout">
+            <div class="mod-panel">
+              <div class="panel-hd">
+                <div class="tit">字段模块</div>
+                <button class="btn btn-default btn-sm" type="button" onclick="openModuleModal()">＋ 模块</button>
+              </div>
+              <div class="panel-bd" id="modList"></div>
+            </div>
+            <div class="field-panel">
+              <div class="panel-hd">
+                <div class="tit" id="fieldPanelTitle">字段列表</div>
+                <button class="btn btn-primary btn-sm" type="button" id="btnAddField" onclick="openFieldModal()">＋ 字段</button>
+              </div>
+              <div class="toolbar" id="fieldToolbar"></div>
+              <div class="panel-bd" id="fieldBody"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="modMask">
+  <div class="modal">
+    <div class="modal-hd"><span id="modTitle">新增模块</span><button class="x" type="button" onclick="closeModModal()">×</button></div>
+    <div class="modal-bd">
+      <div class="fg">
+        <label><span class="req">*</span>模块名称</label>
+        <div class="ctrl"><input id="modName" placeholder="如：白条申请" maxlength="40" /></div>
+      </div>
+      <div class="fg">
+        <label>排序</label>
+        <div class="ctrl"><input id="modSort" type="number" min="1" step="1" placeholder="数字越小越靠前" /></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" type="button" onclick="closeModModal()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="saveModule()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="fieldMask">
+  <div class="modal">
+    <div class="modal-hd"><span id="fieldTitle">新增字段</span><button class="x" type="button" onclick="closeFieldModal()">×</button></div>
+    <div class="modal-bd">
+      <div class="fg" id="relatedParentRow" style="display:none">
+        <label>一级字段</label>
+        <div class="ctrl"><input id="fieldParentName" readonly /></div>
+      </div>
+      <div class="fg" id="relatedWhenRow" style="display:none">
+        <label><span class="req">*</span>当一级选项等于</label>
+        <div class="ctrl">
+          <select id="fieldWhenValue"></select>
+          <div class="hint">填报端仅在一级字段选中该值时展示本关联字段。</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label><span class="req">*</span>字段名称</label>
+        <div class="ctrl"><input id="fieldName" placeholder="展示名称" maxlength="40" /></div>
+      </div>
+      <div class="fg">
+        <label><span class="req">*</span>字段格式</label>
+        <div class="ctrl">
+          <select id="fieldFormat" onchange="onFormatChange()">
+            <option value="text">文本</option>
+            <option value="number">数字</option>
+            <option value="radio">单选</option>
+            <option value="checkbox">多选</option>
+            <option value="image">上传图片</option>
+            <option value="file">上传文件</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" id="optionsRow" style="display:none">
+        <label><span class="req">*</span>选项</label>
+        <div class="ctrl">
+          <div class="opt-list" id="optList"></div>
+          <button class="btn btn-default btn-sm" type="button" style="margin-top:8px" onclick="addOption()">＋ 添加选项</button>
+          <div class="hint">单选 / 多选需至少配置 1 个选项；每行一个选项文案。</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>是否必填</label>
+        <div class="ctrl">
+          <select id="fieldRequired">
+            <option value="1">是</option>
+            <option value="0">否</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg" id="fieldModuleRow">
+        <label><span class="req">*</span>所属模块</label>
+        <div class="ctrl">
+          <div class="mod-pick" id="fieldModulePick">
+            <input id="fieldModuleFilter" type="text" placeholder="输入关键词筛选模块" autocomplete="off"
+              onfocus="openFieldModDrop()" oninput="filterFieldModules()" />
+            <div class="mod-pick-drop" id="fieldModuleDrop"></div>
+          </div>
+          <input type="hidden" id="fieldModuleId" />
+          <div class="hint" id="fieldModuleHint">可输入关键字筛选并选择模块；编辑时可改到其他模块。</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label>占位提示</label>
+        <div class="ctrl"><input id="fieldPlaceholder" placeholder="输入框占位文案（可选）" /></div>
+      </div>
+      <div class="fg">
+        <label>备注</label>
+        <div class="ctrl"><textarea id="fieldRemark" placeholder="字段说明（可选）"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-default" type="button" onclick="closeFieldModal()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="saveField()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FORMAT_MAP={
+  text:"文本",
+  number:"数字",
+  radio:"单选",
+  checkbox:"多选",
+  image:"上传图片",
+  file:"上传文件"
+};
+const uid=()=>"f_"+Math.random().toString(36).slice(2,9);
+
+function demoData(){
+  return {
+    sales:{
+      modules:[
+        {
+          id:"m_sales_1", name:"白条申请", sort:1,
+          fields:[
+            {id:"s1", name:"客户名称", format:"text", required:true, placeholder:"系统带入", remark:"只读", children:[]},
+            {id:"s2", name:"白条产品类型", format:"radio", required:true, options:["预混料","全价料","大宗免息白条"], children:[
+              {id:"fp1", name:"每月玉米需求量", format:"number", required:true, placeholder:"吨", whenValue:"预混料", children:[]},
+              {id:"fp2", name:"预混料商品名称", format:"checkbox", required:false, options:["正大蛋鸡预混料 5%","正大肉鸡预混料 3%"], remark:"模糊检索多选", whenValue:"预混料", children:[]},
+              {id:"fp3", name:"预混料报价", format:"number", required:false, placeholder:"元/吨，自动带出", remark:"只读", whenValue:"预混料", children:[]},
+              {id:"ff1", name:"全价料每月吨数", format:"number", required:true, placeholder:"吨", whenValue:"全价料", children:[]},
+              {id:"ff2", name:"全价料商品名字", format:"text", required:true, whenValue:"全价料", children:[]},
+              {id:"ff3", name:"单价", format:"number", required:true, placeholder:"元/吨", whenValue:"全价料", children:[]},
+              {id:"ff4", name:"全价料捆绑商品的吨数", format:"number", required:false, placeholder:"系统自动计算", remark:"申请额度×6÷最低预混料单价", whenValue:"全价料", children:[]},
+              {id:"fb1", name:"每月玉米需求总量", format:"number", required:true, placeholder:"吨", whenValue:"大宗免息白条", children:[]},
+              {id:"fb2", name:"每月豆粕需求总量", format:"number", required:true, placeholder:"吨", whenValue:"大宗免息白条", children:[]}
+            ]},
+            {id:"s2a", name:"是否能收取保证金", format:"radio", required:true, options:["是","否"], remark:"预混料/全价料；提醒：30万≤额度＜50万至少5%，≥50万至少10%", children:[]},
+            {id:"s3", name:"申请额度", format:"number", required:true, placeholder:"单位：万，仅数字", children:[]},
+            {id:"s4", name:"上海银行额度", format:"number", required:true, placeholder:"单位：万", children:[]},
+            {id:"s5", name:"锡商银行额度", format:"number", required:true, placeholder:"单位：万", children:[]},
+            {id:"s6", name:"申请原因", format:"text", required:true, children:[]}
+          ]
+        },
+        {
+          id:"m_sales_2", name:"客户养殖信息", sort:2,
+          fields:[
+            {id:"s7", name:"客户类型", format:"radio", required:false, options:["养殖户","次终端","饲料厂"], children:[]},
+            {id:"s8", name:"是否是牧场", format:"radio", required:false, options:["是","否"], children:[]},
+            {id:"s9", name:"养殖类型", format:"radio", required:false, options:["鸡","鸭","鹅","猪","牛","羊"], children:[]}
+          ]
+        },
+        {
+          id:"m_sales_3", name:"经营信息", sort:3,
+          fields:[
+            {id:"s10", name:"法人是否为实控人", format:"radio", required:true, options:["是","否"], children:[
+              {id:"sc1", name:"实控人身份证人像面", format:"image", required:true, whenValue:"否", children:[]},
+              {id:"sc2", name:"实控人身份证国徽面", format:"image", required:true, whenValue:"否", children:[]},
+              {id:"sc3", name:"实控人实名手机号", format:"text", required:true, whenValue:"否", children:[]}
+            ]},
+            {id:"s11", name:"实控人资产情况", format:"checkbox", required:true, options:["商品房","汽车","自建房","股票期权"], children:[]},
+            {id:"s13", name:"现场照片", format:"image", required:true, remark:"可多张", children:[]}
+          ]
+        }
+      ]
+    },
+    formal:{
+      modules:[
+        {
+          id:"m_formal_1", name:"经营性流水", sort:1,
+          fields:[
+            {id:"f1", name:"近1年经营性流水来源", format:"checkbox", required:true, options:["银行","支付宝","微信"], children:[
+              {id:"f1a", name:"银行流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"银行", children:[]},
+              {id:"f1b", name:"支付宝流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"支付宝", children:[]},
+              {id:"f1c", name:"微信流水解压密码", format:"text", required:true, placeholder:"请填写", whenValue:"微信", children:[]}
+            ]}
+          ]
+        },
+        {
+          id:"m_formal_2", name:"经营资料附件", sort:2,
+          fields:[
+            {id:"f2", name:"近3个月经营场地水电费账单", format:"file", required:true, remark:"水电有其一即可", children:[]},
+            {id:"f3", name:"最近一次养殖资产买卖合同/首付款凭证", format:"file", required:true, children:[]},
+            {id:"f4", name:"经营场地权属证明", format:"file", required:false, remark:"额度≥30万", children:[]},
+            {id:"f5", name:"动物防疫登记证或出栏防疫记录", format:"file", required:false, remark:"养殖类型=猪牛羊", children:[]},
+            {id:"f6", name:"下游乳企合同", format:"file", required:false, remark:"是否牧场=是", children:[]},
+            {id:"f7", name:"最近1年和最近1期的财务三表", format:"file", required:false, remark:"≥30万且企业主体", children:[]}
+          ]
+        },
+        {
+          id:"m_formal_3", name:"征信与主体", sort:3,
+          fields:[
+            {id:"f8", name:"主体类型", format:"radio", required:false, options:["个人","企业"], remark:"额度≥30万", children:[]},
+            {id:"f9", name:"百行征信报告", format:"file", required:false, remark:"仅全价料", children:[]},
+            {id:"f10", name:"实控人姓名", format:"text", required:false, remark:"只读，取尽调", children:[]},
+            {id:"f11", name:"实控人征信报告", format:"file", required:false, remark:"额度≥30万", children:[]}
+          ]
+        }
+      ]
+    }
+  };
+}
+
+let store=loadStore();
+let scope="sales";
+let activeModId=null;
+let editingModId=null;
+let editingField=null; // {id, parentId?}
+
+function loadStore(){
+  try{
+    const raw=localStorage.getItem("baitiao_field_config_v3");
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return demoData();
+}
+function persist(){
+  localStorage.setItem("baitiao_field_config_v3", JSON.stringify(store));
+}
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.textContent=msg;
+  el.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t=setTimeout(()=>el.classList.remove("on"),1800);
+}
+
+function currentModules(){
+  return store[scope].modules.slice().sort((a,b)=>(a.sort||0)-(b.sort||0));
+}
+function currentModule(){
+  return currentModules().find(m=>m.id===activeModId)||null;
+}
+function countFields(fields){
+  let n=0;
+  (fields||[]).forEach(f=>{
+    n+=1;
+    n+=countFields(f.children||[]);
+  });
+  return n;
+}
+
+function switchScope(next){
+  scope=next;
+  document.querySelectorAll("#scopeTabs button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.scope===scope);
+  });
+  const mods=currentModules();
+  activeModId=mods[0]?mods[0].id:null;
+  render();
+}
+
+document.getElementById("scopeTabs").addEventListener("click",e=>{
+  const btn=e.target.closest("button[data-scope]");
+  if(!btn) return;
+  switchScope(btn.dataset.scope);
+});
+
+function render(){
+  renderModules();
+  renderFields();
+}
+function renderModules(){
+  const list=document.getElementById("modList");
+  const mods=currentModules();
+  if(!mods.length){
+    list.innerHTML=`<div class="empty">暂无模块，请先新增</div>`;
+    return;
+  }
+  if(!activeModId || !mods.some(m=>m.id===activeModId)) activeModId=mods[0].id;
+  list.innerHTML=mods.map(m=>`
+    <div class="mod-item ${m.id===activeModId?"active":""}" data-id="${m.id}">
+      <div class="name">${esc(m.name)}</div>
+      <span class="cnt">${countFields(m.fields)} 字段</span>
+      <span class="ops">
+        <button class="link" type="button" data-act="edit">编辑</button>
+        <button class="link danger" type="button" data-act="del">删</button>
+      </span>
+    </div>
+  `).join("");
+  list.querySelectorAll(".mod-item").forEach(el=>{
+    el.addEventListener("click",e=>{
+      const act=e.target.getAttribute("data-act");
+      const id=el.dataset.id;
+      if(act==="edit"){ openModuleModal(id); return; }
+      if(act==="del"){ deleteModule(id); return; }
+      activeModId=id;
+      render();
+    });
+  });
+}
+
+function renderFields(){
+  const mod=currentModule();
+  const title=document.getElementById("fieldPanelTitle");
+  const body=document.getElementById("fieldBody");
+  const toolbar=document.getElementById("fieldToolbar");
+  const addBtn=document.getElementById("btnAddField");
+  if(!mod){
+    title.textContent="字段列表";
+    toolbar.innerHTML="";
+    addBtn.disabled=true;
+    body.innerHTML=`<div class="empty">请先选择或新建字段模块</div>`;
+    return;
+  }
+  addBtn.disabled=false;
+  title.textContent=`${mod.name} · 字段列表`;
+  toolbar.innerHTML=`<span style="color:#8c8c8c">单选/多选可点【+关联二级字段】添加二级字段（含名称、格式等）；仅在一级选项等于指定值时展示。</span>`;
+  const rows=[];
+  flattenRows(mod.fields||[], rows);
+  if(!rows.length){
+    body.innerHTML=`<div class="empty">该模块暂无字段，点击右上角「＋ 字段」添加</div>`;
+    return;
+  }
+  body.innerHTML=`
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th style="width:28%">字段</th>
+          <th style="width:12%">类型</th>
+          <th style="width:8%">必填</th>
+          <th style="width:30%">展示条件</th>
+          <th style="width:22%">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r=>r.kind==="child"?childRowHtml(r):fieldRowHtml(r)).join("")}
+      </tbody>
+    </table>
+  `;
+  body.querySelectorAll("[data-act]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const act=btn.dataset.act;
+      const id=btn.dataset.id;
+      const parentId=btn.dataset.parent||null;
+      if(act==="edit") openFieldModal(id);
+      if(act==="addRelated") openFieldModal(null, id);
+      if(act==="editChild") openFieldModal(id, parentId);
+      if(act==="del") deleteField(id);
+      if(act==="delChild") deleteField(id, parentId);
+      if(act==="up") moveField(id, -1);
+      if(act==="down") moveField(id, 1);
+    });
+  });
+}
+
+function flattenRows(fields, out){
+  (fields||[]).forEach(f=>{
+    out.push({kind:"field", field:f});
+    (f.children||[]).forEach(ch=>{
+      out.push({kind:"child", parent:f, field:ch});
+    });
+  });
+}
+function fieldRowHtml(r){
+  const f=r.field;
+  const fmt=FORMAT_MAP[f.format]||f.format;
+  const canRelated=f.format==="radio"||f.format==="checkbox";
+  return `
+    <tr>
+      <td><span>${esc(f.name)}</span></td>
+      <td><span class="tag">${fmt}</span></td>
+      <td>${f.required?'<span class="tag ok">是</span>':'<span class="tag muted">否</span>'}</td>
+      <td style="color:#8c8c8c">—</td>
+      <td class="ops" style="white-space:nowrap">
+        <button class="link" type="button" data-act="edit" data-id="${f.id}">编辑</button>
+        ${canRelated?`<button class="link" type="button" data-act="addRelated" data-id="${f.id}">+关联二级字段</button>`:""}
+        <button class="link" type="button" data-act="up" data-id="${f.id}">上移</button>
+        <button class="link" type="button" data-act="down" data-id="${f.id}">下移</button>
+        <button class="link danger" type="button" data-act="del" data-id="${f.id}">删除</button>
+      </td>
+    </tr>
+  `;
+}
+function childRowHtml(r){
+  const p=r.parent;
+  const f=r.field;
+  const fmt=FORMAT_MAP[f.format]||f.format;
+  return `
+    <tr class="child">
+      <td>
+        <span class="indent">
+          <span class="tree">└</span>
+          <span>${esc(f.name)}</span>
+        </span>
+      </td>
+      <td><span class="tag">${fmt}</span></td>
+      <td>${f.required?'<span class="tag ok">是</span>':'<span class="tag muted">否</span>'}</td>
+      <td style="color:#595959;word-break:break-all">当「${esc(p.name)}」= <b>${esc(f.whenValue||"—")}</b> 时展示</td>
+      <td class="ops" style="white-space:nowrap">
+        <button class="link" type="button" data-act="editChild" data-id="${f.id}" data-parent="${p.id}">编辑</button>
+        <button class="link danger" type="button" data-act="delChild" data-id="${f.id}" data-parent="${p.id}">删除</button>
+      </td>
+    </tr>
+  `;
+}
+
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+/* —— 模块 —— */
+function openModuleModal(id){
+  editingModId=id||null;
+  const mod=id?currentModules().find(m=>m.id===id):null;
+  document.getElementById("modTitle").textContent=mod?"编辑模块":"新增模块";
+  document.getElementById("modName").value=mod?mod.name:"";
+  document.getElementById("modSort").value=mod?(mod.sort||""):"";
+  document.getElementById("modMask").classList.add("on");
+  setTimeout(()=>document.getElementById("modName").focus(),50);
+}
+function closeModModal(){ document.getElementById("modMask").classList.remove("on"); editingModId=null; }
+function saveModule(){
+  const name=document.getElementById("modName").value.trim();
+  if(!name){ toast("请填写模块名称"); return; }
+  const sort=Number(document.getElementById("modSort").value)|| (currentModules().length+1);
+  if(editingModId){
+    const m=store[scope].modules.find(x=>x.id===editingModId);
+    if(m){ m.name=name; m.sort=sort; }
+  }else{
+    const id=uid();
+    store[scope].modules.push({id, name, sort, fields:[]});
+    activeModId=id;
+  }
+  closeModModal();
+  persist();
+  render();
+  toast("模块已保存");
+}
+function deleteModule(id){
+  if(!confirm("确认删除该模块及其全部字段？")) return;
+  store[scope].modules=store[scope].modules.filter(m=>m.id!==id);
+  if(activeModId===id) activeModId=null;
+  persist();
+  render();
+  toast("模块已删除");
+}
+
+/* —— 字段 —— */
+function findFieldById(fields, id){
+  for(const f of fields||[]){
+    if(f.id===id) return f;
+    const inChild=findFieldById(f.children||[], id);
+    if(inChild) return inChild;
+  }
+  return null;
+}
+function findParentField(fields, childId){
+  for(const f of fields||[]){
+    if((f.children||[]).some(c=>c.id===childId)) return f;
+  }
+  return null;
+}
+
+/** @param {string|null} id 字段 id；新增传 null
+ *  @param {string|null} parentId 有值则为关联字段（挂在一级字段下） */
+function openFieldModal(id, parentId){
+  const mod=currentModule();
+  if(!mod){ toast("请先选择模块"); return; }
+  const isRelated=!!parentId;
+  let parent=null;
+  let field=null;
+  if(isRelated){
+    parent=findFieldById(mod.fields, parentId);
+    if(!parent){ toast("一级字段不存在"); return; }
+    if(parent.format!=="radio" && parent.format!=="checkbox"){
+      toast("仅单选 / 多选字段可添加关联字段"); return;
+    }
+    if(!(parent.options||[]).length){ toast("请先为一级字段配置选项"); return; }
+    field=id?(parent.children||[]).find(c=>c.id===id):null;
+  }else{
+    field=id?findFieldById(mod.fields, id):null;
+  }
+  editingField={id:id||null, parentId:parentId||null, fromModId:mod.id};
+  document.getElementById("fieldTitle").textContent=isRelated
+    ?(field?"编辑关联字段":"添加关联字段")
+    :(field?"编辑字段":"新增字段");
+  document.getElementById("relatedParentRow").style.display=isRelated?"":"none";
+  document.getElementById("relatedWhenRow").style.display=isRelated?"":"none";
+  document.getElementById("fieldModuleRow").style.display="";
+  document.getElementById("fieldModuleFilter").readOnly=!!isRelated;
+  document.getElementById("fieldModuleHint").textContent=isRelated
+    ?"关联字段所属模块随一级字段，不可单独修改"
+    :"可输入关键字筛选并选择模块；编辑时可改到其他模块";
+  setFieldModule(mod.id, mod.name);
+  if(isRelated){
+    document.getElementById("fieldParentName").value=parent.name;
+    const sel=document.getElementById("fieldWhenValue");
+    sel.innerHTML=(parent.options||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join("");
+    if(field&&field.whenValue) sel.value=field.whenValue;
+  }
+  document.getElementById("fieldName").value=field?field.name:"";
+  document.getElementById("fieldFormat").value=field?field.format:"text";
+  document.getElementById("fieldRequired").value=field?(field.required?"1":"0"):"1";
+  document.getElementById("fieldPlaceholder").value=field?(field.placeholder||""):"";
+  document.getElementById("fieldRemark").value=field?(field.remark||""):"";
+  renderOptions(field&&(field.format==="radio"||field.format==="checkbox")?(field.options||[]):[]);
+  onFormatChange();
+  closeFieldModDrop();
+  document.getElementById("fieldMask").classList.add("on");
+  setTimeout(()=>document.getElementById("fieldName").focus(),50);
+}
+function setFieldModule(id, name){
+  document.getElementById("fieldModuleId").value=id||"";
+  document.getElementById("fieldModuleFilter").value=name||"";
+}
+function openFieldModDrop(){
+  if(document.getElementById("fieldModuleFilter").readOnly) return;
+  filterFieldModules();
+  document.getElementById("fieldModuleDrop").classList.add("on");
+}
+function closeFieldModDrop(){
+  document.getElementById("fieldModuleDrop")?.classList.remove("on");
+}
+function filterFieldModules(){
+  const drop=document.getElementById("fieldModuleDrop");
+  const q=(document.getElementById("fieldModuleFilter").value||"").trim().toLowerCase();
+  const cur=document.getElementById("fieldModuleId").value;
+  const mods=currentModules().filter(m=>!q || String(m.name).toLowerCase().includes(q));
+  if(!mods.length){
+    drop.innerHTML=`<div class="mod-pick-empty">无匹配模块</div>`;
+    drop.classList.add("on");
+    return;
+  }
+  drop.innerHTML=mods.map(m=>`
+    <div class="mod-pick-opt ${m.id===cur?"active":""}" data-id="${m.id}">${esc(m.name)}</div>
+  `).join("");
+  drop.classList.add("on");
+  drop.querySelectorAll(".mod-pick-opt").forEach(el=>{
+    el.onclick=()=>{
+      setFieldModule(el.dataset.id, el.textContent.trim());
+      closeFieldModDrop();
+    };
+  });
+}
+document.addEventListener("click",e=>{
+  const pick=document.getElementById("fieldModulePick");
+  if(pick && !pick.contains(e.target)) closeFieldModDrop();
+});
+function closeFieldModal(){
+  document.getElementById("fieldMask").classList.remove("on");
+  editingField=null;
+  closeFieldModDrop();
+}
+
+function onFormatChange(){
+  const fmt=document.getElementById("fieldFormat").value;
+  const need=fmt==="radio"||fmt==="checkbox";
+  document.getElementById("optionsRow").style.display=need?"grid":"none";
+  if(need && !document.querySelectorAll("#optList input").length) renderOptions([""]);
+}
+function renderOptions(list){
+  const box=document.getElementById("optList");
+  const arr=list&&list.length?list:[""];
+  box.innerHTML=arr.map((v,i)=>`
+    <div class="opt-row">
+      <input value="${esc(v)}" placeholder="选项 ${i+1}" />
+      <button class="link danger" type="button" onclick="this.parentElement.remove()">删除</button>
+    </div>
+  `).join("");
+}
+function addOption(){
+  const box=document.getElementById("optList");
+  const row=document.createElement("div");
+  row.className="opt-row";
+  row.innerHTML=`<input placeholder="新选项" /><button class="link danger" type="button" onclick="this.parentElement.remove()">删除</button>`;
+  box.appendChild(row);
+  row.querySelector("input").focus();
+}
+function readOptions(){
+  return [...document.querySelectorAll("#optList input")].map(i=>i.value.trim()).filter(Boolean);
+}
+
+function saveField(){
+  if(!editingField) return;
+  const name=document.getElementById("fieldName").value.trim();
+  if(!name){ toast("请填写字段名称"); return; }
+  const format=document.getElementById("fieldFormat").value;
+  const required=document.getElementById("fieldRequired").value==="1";
+  const placeholder=document.getElementById("fieldPlaceholder").value.trim();
+  const remark=document.getElementById("fieldRemark").value.trim();
+  let options=[];
+  if(format==="radio"||format==="checkbox"){
+    options=readOptions();
+    if(!options.length){ toast("请至少配置一个选项"); return; }
+  }
+  const parentId=editingField.parentId;
+  const targetModId=document.getElementById("fieldModuleId").value;
+  const targetMod=(store[scope].modules||[]).find(m=>m.id===targetModId);
+  if(!targetMod){ toast("请选择所属模块"); return; }
+
+  if(parentId){
+    // 关联字段仍落在一级字段所在模块（当前列表模块）
+    const fromMod=(store[scope].modules||[]).find(m=>m.id===editingField.fromModId)||currentModule();
+    if(!fromMod){ toast("一级字段所在模块不存在"); return; }
+    const parent=findFieldById(fromMod.fields, parentId);
+    if(!parent){ toast("一级字段不存在"); return; }
+    const whenValue=document.getElementById("fieldWhenValue").value;
+    if(!whenValue){ toast("请选择一级选项值"); return; }
+    if(!parent.children) parent.children=[];
+    if(editingField.id){
+      const f=parent.children.find(c=>c.id===editingField.id);
+      if(!f){ toast("关联字段不存在"); return; }
+      f.name=name; f.format=format; f.required=required;
+      f.placeholder=placeholder; f.remark=remark; f.whenValue=whenValue;
+      if(format==="radio"||format==="checkbox") f.options=options;
+      else delete f.options;
+    }else{
+      parent.children.push({
+        id:uid(), name, format, required, placeholder, remark, whenValue,
+        options:(format==="radio"||format==="checkbox")?options:undefined,
+        children:[]
+      });
+    }
+  }else{
+    const payload={
+      name, format, required, placeholder, remark,
+      options:(format==="radio"||format==="checkbox")?options:undefined,
+      children:[]
+    };
+    if(editingField.id){
+      const fromMod=(store[scope].modules||[]).find(m=>m.id===editingField.fromModId)||currentModule();
+      if(!fromMod){ toast("字段不存在"); return; }
+      const idx=fromMod.fields.findIndex(x=>x.id===editingField.id);
+      if(idx<0){ toast("字段不存在"); return; }
+      const old=fromMod.fields[idx];
+      payload.id=old.id;
+      payload.children=format==="radio"||format==="checkbox"?(old.children||[]):[];
+      if(!(format==="radio"||format==="checkbox")) delete payload.options;
+      else payload.options=options;
+      if(fromMod.id===targetMod.id){
+        fromMod.fields[idx]=payload;
+      }else{
+        fromMod.fields.splice(idx,1);
+        targetMod.fields.push(payload);
+        activeModId=targetMod.id;
+      }
+    }else{
+      targetMod.fields.push({
+        id:uid(), ...payload,
+        options:(format==="radio"||format==="checkbox")?options:undefined,
+        children:[]
+      });
+      activeModId=targetMod.id;
+    }
+  }
+  closeFieldModal();
+  persist();
+  render();
+  toast(parentId?"关联字段已保存":"字段已保存");
+}
+
+function deleteField(id, parentId){
+  const tip=parentId?"确认删除该关联字段？":"确认删除该字段及其全部关联字段？";
+  if(!confirm(tip)) return;
+  const mod=currentModule();
+  if(!mod) return;
+  if(parentId){
+    const parent=findFieldById(mod.fields, parentId);
+    if(!parent||!parent.children) return;
+    parent.children=parent.children.filter(c=>c.id!==id);
+  }else{
+    const idx=mod.fields.findIndex(f=>f.id===id);
+    if(idx>=0) mod.fields.splice(idx,1);
+  }
+  persist();
+  render();
+  toast("字段已删除");
+}
+function moveField(id, dir){
+  const mod=currentModule();
+  if(!mod) return;
+  const list=mod.fields;
+  const idx=list.findIndex(f=>f.id===id);
+  const to=idx+dir;
+  if(idx<0||to<0||to>=list.length) return;
+  const [item]=list.splice(idx,1);
+  list.splice(to,0,item);
+  persist();
+  render();
+}
+
+function saveAll(){
+  persist();
+  toast("配置已保存到本地");
+}
+function resetDemo(){
+  if(!confirm("确认恢复为示例配置？当前修改将丢失。")) return;
+  store=demoData();
+  persist();
+  activeModId=null;
+  switchScope(scope);
+  toast("已恢复示例配置");
+}
+
+switchScope("sales");
+</script>
+</body>
+</html>

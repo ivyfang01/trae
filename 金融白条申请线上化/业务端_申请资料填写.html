@@ -63,6 +63,9 @@ body{
 .upload.done{border-color:#91caff;background:var(--bg-blue-light);color:var(--blue)}
 .upload .plus{font-size:22px;line-height:1;color:#c9cdd4}
 .upload.done .plus{color:var(--blue)}
+.upload .hint{font-size:12px;line-height:1.4;color:inherit}
+.up-label{font-size:13px;color:var(--text);margin:0 0 8px}
+.field-hint{font-size:12px;color:var(--text-muted);line-height:1.45;margin-top:6px}
 .link{color:var(--blue);text-decoration:none;font-size:13px}
 .crm-box{
   background:#f7f8fa;border:1px solid var(--border-light);border-radius:var(--radius-sm);
@@ -109,6 +112,35 @@ body{
   pointer-events:auto;-webkit-tap-highlight-color:transparent
 }
 .btn-add-partner:active{opacity:.75}
+.ms-wrap{position:relative}
+.ms-box{
+  min-height:40px;border:1px solid var(--border-light);border-radius:var(--radius-sm);
+  padding:6px 10px;background:#fff;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:text
+}
+.ms-box.on{border-color:var(--blue)}
+.ms-tag{
+  display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;
+  background:var(--bg-blue-light);color:var(--blue);border-radius:4px;font-size:12px
+}
+.ms-tag button{
+  border:none;background:none;color:var(--blue);cursor:pointer;font-size:14px;line-height:1;padding:0
+}
+.ms-box input{
+  flex:1;min-width:120px;height:26px;border:none;outline:none;padding:0;font-size:14px;background:transparent
+}
+.ms-drop{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;
+  max-height:220px;overflow:auto;background:#fff;border:1px solid var(--border-light);
+  border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,.08)
+}
+.ms-drop.on{display:block}
+.ms-opt{
+  padding:10px 12px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;gap:8px
+}
+.ms-opt:hover,.ms-opt.active{background:var(--bg-blue-light)}
+.ms-opt .price{color:var(--text-muted);flex-shrink:0}
+.ms-opt .chk{color:var(--blue);margin-right:6px}
+.ms-empty{padding:12px;text-align:center;color:var(--text-muted);font-size:13px}
 .check-list,.radio-list{display:flex;flex-direction:column;gap:8px}
 .check-list label,.radio-list label{
   display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 12px;
@@ -167,20 +199,53 @@ body{
         <label><input type="radio" name="tpl" value="大宗" onchange="syncTpl()" />大宗免息白条</label>
       </div>
     </div>
-    <div class="form-item">
-      <label><span class="req">*</span>额度</label>
+    <div class="form-item" id="depositItem">
+      <label><span class="req">*</span>是否能收取保证金</label>
       <div class="seg">
-        <label><input type="radio" name="quotaTier" value="lt30" checked />＜30万</label>
-        <label><input type="radio" name="quotaTier" value="ge30" />≥30万</label>
+        <label><input type="radio" name="canDeposit" value="是" />是</label>
+        <label><input type="radio" name="canDeposit" value="否" checked />否</label>
       </div>
+      <div class="hint">30万≤额度＜50万，至少5%保证金；额度≥50万，至少10%保证金</div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>申请额度</label>
+      <div class="unit"><input id="applyQuota" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="请输入数字" oninput="this.value=this.value.replace(/\D/g,'');syncFullPriceBundleTons()" /><span>万</span></div>
     </div>
     <div class="form-item">
       <label><span class="req">*</span>上海银行额度</label>
       <div class="unit"><input id="syQuota" type="number" min="0" placeholder="请输入，不申请填写0" oninput="syncSyReason()" /><span>万</span></div>
     </div>
+    <div id="syExtraBlock" style="display:none">
+      <div class="form-item">
+        <label><span class="req">*</span>上银免息期</label>
+        <div class="unit"><input id="syFreeDays" type="number" min="0" step="1" placeholder="请输入" /><span>天</span></div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>是否开通自动支付</label>
+        <div class="seg">
+          <label><input type="radio" name="syAutoPay" value="是" />是</label>
+          <label><input type="radio" name="syAutoPay" value="否" checked />否</label>
+        </div>
+        <div class="hint">开通自动支付：万 2.86/天；不开通自动支付：万 3.5/天</div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>最长借款期</label>
+        <div class="unit"><input id="syMaxLoanMonths" type="number" min="1" step="1" placeholder="请输入" /><span>月</span></div>
+      </div>
+    </div>
     <div class="form-item" id="xsQuotaItem">
       <label><span class="req">*</span>锡商银行额度</label>
-      <div class="unit"><input id="xsQuota" type="number" min="0" placeholder="请输入，不申请填写0" /><span>万</span></div>
+      <div class="unit"><input id="xsQuota" type="number" min="0" placeholder="请输入，不申请填写0" oninput="syncXsExtra()" /><span>万</span></div>
+    </div>
+    <div id="xsExtraBlock" style="display:none">
+      <div class="form-item">
+        <label><span class="req">*</span>锡商免息期</label>
+        <div class="unit"><input id="xsFreeDays" type="number" min="0" step="1" placeholder="请输入" /><span>天</span></div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>最长借款期限</label>
+        <div class="unit"><input id="xsMaxLoanMonths" type="number" min="1" step="1" placeholder="请输入" /><span>月</span></div>
+      </div>
     </div>
     <div class="form-item" id="noSyReason" style="display:none">
       <label><span class="req">*</span>不申请上海银行原因</label>
@@ -313,10 +378,21 @@ body{
           <label>预混料每月吨数</label>
           <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
         </div>
-        <div class="form-item"><label>预混料商品名称</label><input placeholder="请输入" /></div>
+        <div class="form-item">
+          <label>预混料商品名称</label>
+          <div class="ms-wrap" id="premixNameWrap">
+            <div class="ms-box" id="premixNameBox" onclick="focusPremixSearch()">
+              <span id="premixNameTags"></span>
+              <input id="premixNameSearch" type="text" placeholder="输入名称模糊检索，可多选" autocomplete="off"
+                oninput="renderPremixDrop()" onfocus="openPremixDrop()" />
+            </div>
+            <div class="ms-drop" id="premixNameDrop"></div>
+          </div>
+          <div class="hint">支持多选；报价按所选商品自动带出</div>
+        </div>
         <div class="form-item">
           <label>预混料报价</label>
-          <div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div>
+          <div class="unit"><input id="premixPrice" type="text" readonly placeholder="选择商品后自动带出" style="background:#f7f8fa" /><span>元/吨</span></div>
         </div>
       </div>
       <div class="form-item" id="premixNo" style="display:none">
@@ -333,12 +409,17 @@ body{
       <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
     </div>
     <div class="form-item">
-      <label><span class="req">*</span>全价料厂家名字</label>
+      <label><span class="req">*</span>全价料商品名字</label>
       <input placeholder="请输入" />
     </div>
     <div class="form-item">
       <label><span class="req">*</span>单价</label>
       <div class="unit"><input type="number" placeholder="请输入" /><span>元/吨</span></div>
+    </div>
+    <div class="form-item">
+      <label>全价料捆绑商品的吨数<span class="hint" style="display:inline;margin-left:6px">系统自动计算</span></label>
+      <div class="unit"><input id="fullPriceBundleTons" type="text" readonly placeholder="填写申请额度后自动计算" style="background:#f7f8fa" /><span>吨</span></div>
+      <div class="hint">申请额度×6÷预混料商品最低单价（申请额度按万元换算）</div>
     </div>
   </div>
 
@@ -375,6 +456,35 @@ body{
         <label><input type="radio" name="isController" value="否" onchange="syncController()" />否</label>
       </div>
     </div>
+    <div id="controllerBlock" style="display:none">
+      <div class="form-item" style="margin-bottom:10px">
+        <div class="up-label"><span class="req">*</span>请上传实控人身份证正反面照片：</div>
+        <div class="upload-grid">
+          <div class="upload" id="upCtrlIdFront" data-up="ctrl-id-front" onclick="toggleCtrlId(this)">
+            <div class="plus">+</div>
+            <div class="hint">点击上传身份证人像面</div>
+          </div>
+          <div class="upload" id="upCtrlIdBack" data-up="ctrl-id-back" onclick="toggleCtrlId(this)">
+            <div class="plus">+</div>
+            <div class="hint">点击上传身份证国徽面</div>
+          </div>
+        </div>
+        <div class="field-hint" id="ocrCtrlIdHint" style="display:none;margin-top:8px">已识别身份证信息，请核对，支持修改</div>
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>实控人姓名</label>
+        <input id="ctrlName" placeholder="上传身份证人像面后自动识别" />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>实控人身份证号</label>
+        <input id="ctrlId" maxlength="18" placeholder="上传身份证人像面后自动识别" />
+      </div>
+      <div class="form-item">
+        <label><span class="req">*</span>实控人实名手机号</label>
+        <input id="ctrlMobile" type="tel" maxlength="11" placeholder="请输入实名认证手机号" />
+        <div class="field-hint">请输入该身份证对应的实名认证手机号</div>
+      </div>
+    </div>
     <div class="form-item">
       <label><span class="req">*</span>实控人从业年限</label>
       <div class="seg">
@@ -384,19 +494,22 @@ body{
         <label><input type="radio" name="years" value="5年以上" />5年以上</label>
       </div>
     </div>
-    <div id="controllerBlock" style="display:none">
-      <div class="form-item">
-        <label><span class="req">*</span>实控人姓名</label>
-        <input id="ctrlName" placeholder="请输入" />
+    <div class="form-item">
+      <label><span class="req">*</span>实控人家庭住址</label>
+      <input id="ctrlHomeAddr" placeholder="请输入" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>实控人资产情况</label>
+      <div class="seg" id="assetList">
+        <label><input type="checkbox" name="asset" value="商品房" />商品房</label>
+        <label><input type="checkbox" name="asset" value="汽车" />汽车</label>
+        <label><input type="checkbox" name="asset" value="自建房" />自建房</label>
+        <label><input type="checkbox" name="asset" value="股票期权等" />股票期权等</label>
       </div>
-      <div class="form-item">
-        <label><span class="req">*</span>实控人身份证号码</label>
-        <input id="ctrlId" maxlength="18" placeholder="请输入" />
-      </div>
-      <div class="form-item">
-        <label><span class="req">*</span>实控人手机号</label>
-        <input id="ctrlMobile" type="tel" maxlength="11" placeholder="请输入" />
-      </div>
+    </div>
+    <div class="form-item">
+      <label>实控人车牌号</label>
+      <input id="ctrlPlate" placeholder="请输入" />
     </div>
     <div class="form-item">
       <label><span class="req">*</span>是否有合伙人</label>
@@ -423,23 +536,6 @@ body{
         </div>
       </div>
       <button type="button" class="btn-add-partner" id="btnAddPartner">＋ 继续添加合伙人</button>
-    </div>
-    <div class="form-item">
-      <label><span class="req">*</span>实控人家庭住址</label>
-      <input id="ctrlHomeAddr" placeholder="请输入" />
-    </div>
-    <div class="form-item">
-      <label><span class="req">*</span>实控人资产情况</label>
-      <div class="seg" id="assetList">
-        <label><input type="checkbox" name="asset" value="商品房" />商品房</label>
-        <label><input type="checkbox" name="asset" value="汽车" />汽车</label>
-        <label><input type="checkbox" name="asset" value="自建房" />自建房</label>
-        <label><input type="checkbox" name="asset" value="股票期权等" />股票期权等</label>
-      </div>
-    </div>
-    <div class="form-item">
-      <label>实控人车牌号</label>
-      <input id="ctrlPlate" placeholder="请输入" />
     </div>
     <div class="form-item">
       <label><span class="req">*</span>经营场所属性</label>
@@ -734,9 +830,28 @@ function syncBreedExtra(){
 }
 function syncSyReason(){
   const v=document.getElementById("syQuota").value;
-  const show=v!=="" && Number(v)===0;
-  document.getElementById("noSyReason").style.display=show?"":"none";
-  if(!show) document.getElementById("noSyText").value="";
+  const num=v===""?NaN:Number(v);
+  const zero=v!=="" && num===0;
+  const gt0=v!=="" && num>0;
+  document.getElementById("noSyReason").style.display=zero?"":"none";
+  if(!zero) document.getElementById("noSyText").value="";
+  document.getElementById("syExtraBlock").style.display=gt0?"":"none";
+  if(!gt0){
+    document.getElementById("syFreeDays").value="";
+    document.getElementById("syMaxLoanMonths").value="";
+    const autoNo=document.querySelector('input[name="syAutoPay"][value="否"]');
+    if(autoNo) autoNo.checked=true;
+  }
+}
+function syncXsExtra(){
+  const v=document.getElementById("xsQuota").value;
+  const num=v===""?NaN:Number(v);
+  const gt0=v!=="" && num>0;
+  document.getElementById("xsExtraBlock").style.display=gt0?"":"none";
+  if(!gt0){
+    document.getElementById("xsFreeDays").value="";
+    document.getElementById("xsMaxLoanMonths").value="";
+  }
 }
 function syncBreedByCustType(){
   document.getElementById("breedBlock").style.display=isSecondaryCust()?"none":"";
@@ -745,7 +860,13 @@ function syncTpl(){
   const v=document.querySelector('input[name="tpl"]:checked')?.value||"预混料";
   document.querySelectorAll(".tpl").forEach(el=>el.classList.toggle("on", el.id==="tpl-"+v));
   const isFull=v==="全价料";
+  const showDeposit=v==="预混料"||v==="全价料";
   const secondary=isSecondaryCust();
+  document.getElementById("depositItem").style.display=showDeposit?"":"none";
+  if(!showDeposit){
+    const no=document.querySelector('input[name="canDeposit"][value="否"]');
+    if(no) no.checked=true;
+  }
   document.getElementById("xsQuotaItem").style.display="";
   document.getElementById("coopEggManureBlock").style.display=(isFull||secondary)?"none":"";
   document.getElementById("supplierStockItem").style.display=isFull?"":"none";
@@ -754,7 +875,102 @@ function syncTpl(){
   document.getElementById("custStageItem").style.display=secondary?"":"none";
   syncBreedByCustType();
   if(!secondary) syncPremix();
+  syncFullPriceBundleTons();
 }
+/** 全价料捆绑吨数 = 申请额度(万)×10000×6 ÷ 预混料商品最低单价(元/吨) */
+function syncFullPriceBundleTons(){
+  const inp=document.getElementById("fullPriceBundleTons");
+  if(!inp) return;
+  const aq=document.getElementById("applyQuota")?.value.trim()||"";
+  if(!/^\d+$/.test(aq) || !PREMIX_PRODUCTS.length){
+    inp.value="";
+    return;
+  }
+  const minPrice=Math.min(...PREMIX_PRODUCTS.map(p=>Number(p.price)||Infinity));
+  if(!Number.isFinite(minPrice) || minPrice<=0){
+    inp.value="";
+    return;
+  }
+  const tons=Number(aq)*10000*6/minPrice;
+  inp.value=String(Math.round(tons*100)/100);
+}
+const PREMIX_PRODUCTS=[
+  {id:"p1", name:"正大蛋鸡预混料 5%", price:3800},
+  {id:"p2", name:"正大肉鸡预混料 3%", price:4200},
+  {id:"p3", name:"新希望猪用预混料 4%", price:3650},
+  {id:"p4", name:"双胞胎乳猪预混料", price:4500},
+  {id:"p5", name:"通威水产预混料", price:3900},
+  {id:"p6", name:"海大蛋鸭预混料", price:3750},
+  {id:"p7", name:"大北农育肥猪预混料", price:3580},
+  {id:"p8", name:"禾丰青年鸡预混料", price:4020}
+];
+let premixSelected=[]; // [{id,name,price}]
+
+function focusPremixSearch(){
+  document.getElementById("premixNameSearch")?.focus();
+  openPremixDrop();
+}
+function openPremixDrop(){
+  document.getElementById("premixNameBox")?.classList.add("on");
+  renderPremixDrop();
+  document.getElementById("premixNameDrop")?.classList.add("on");
+}
+function closePremixDrop(){
+  document.getElementById("premixNameBox")?.classList.remove("on");
+  document.getElementById("premixNameDrop")?.classList.remove("on");
+}
+function renderPremixTags(){
+  const box=document.getElementById("premixNameTags");
+  if(!box) return;
+  box.innerHTML=premixSelected.map(p=>`
+    <span class="ms-tag">${p.name}<button type="button" aria-label="移除" onclick="removePremixProduct('${p.id}');event.stopPropagation()">×</button></span>
+  `).join("");
+  syncPremixPrice();
+}
+function syncPremixPrice(){
+  const inp=document.getElementById("premixPrice");
+  if(!inp) return;
+  if(!premixSelected.length){ inp.value=""; return; }
+  inp.value=premixSelected.map(p=>p.price).join("、");
+}
+function togglePremixProduct(id){
+  const prod=PREMIX_PRODUCTS.find(p=>p.id===id);
+  if(!prod) return;
+  const idx=premixSelected.findIndex(p=>p.id===id);
+  if(idx>=0) premixSelected.splice(idx,1);
+  else premixSelected.push({...prod});
+  renderPremixTags();
+  renderPremixDrop();
+  if(typeof markDirty==="function") markDirty();
+}
+function removePremixProduct(id){
+  premixSelected=premixSelected.filter(p=>p.id!==id);
+  renderPremixTags();
+  renderPremixDrop();
+  if(typeof markDirty==="function") markDirty();
+}
+function renderPremixDrop(){
+  const drop=document.getElementById("premixNameDrop");
+  const q=(document.getElementById("premixNameSearch")?.value||"").trim().toLowerCase();
+  if(!drop) return;
+  const list=PREMIX_PRODUCTS.filter(p=>!q || p.name.toLowerCase().includes(q));
+  if(!list.length){
+    drop.innerHTML=`<div class="ms-empty">无匹配商品</div>`;
+    return;
+  }
+  drop.innerHTML=list.map(p=>{
+    const on=premixSelected.some(s=>s.id===p.id);
+    return `<div class="ms-opt ${on?"active":""}" onclick="togglePremixProduct('${p.id}')">
+      <span>${on?'<span class="chk">✓</span>':""}${p.name}</span>
+      <span class="price">${p.price} 元/吨</span>
+    </div>`;
+  }).join("");
+}
+document.addEventListener("click",e=>{
+  const wrap=document.getElementById("premixNameWrap");
+  if(wrap && !wrap.contains(e.target)) closePremixDrop();
+});
+
 function syncPremix(){
   if(isSecondaryCust()) return;
   const yes=document.querySelector('input[name="bindPremix"]:checked')?.value==="是";
@@ -768,7 +984,26 @@ function syncController(){
     document.getElementById("ctrlName").value="";
     document.getElementById("ctrlId").value="";
     document.getElementById("ctrlMobile").value="";
+    document.getElementById("upCtrlIdFront")?.classList.remove("done");
+    document.getElementById("upCtrlIdBack")?.classList.remove("done");
+    const hint=document.getElementById("ocrCtrlIdHint");
+    if(hint) hint.style.display="none";
   }
+}
+function toggleCtrlId(el){
+  el.classList.toggle("done");
+  const frontDone=document.getElementById("upCtrlIdFront")?.classList.contains("done");
+  const hint=document.getElementById("ocrCtrlIdHint");
+  const name=document.getElementById("ctrlName");
+  const idNo=document.getElementById("ctrlId");
+  if(frontDone){
+    if(name && !name.value.trim()) name.value="李实控";
+    if(idNo && !idNo.value.trim()) idNo.value="320102199001011234";
+    if(hint) hint.style.display="block";
+  }else{
+    if(hint) hint.style.display="none";
+  }
+  markDirty();
 }
 let partnerSeq=1;
 function ensureDefaultPartner(){
@@ -915,18 +1150,43 @@ function submitSales(){
   const sy=document.getElementById("syQuota").value;
   const reason=document.getElementById("reason").value.trim();
   if(!tpl){alert("请选择申请模板");return}
+  if((tpl==="预混料"||tpl==="全价料") && !document.querySelector('input[name="canDeposit"]:checked')){
+    alert("请选择是否能收取保证金");return
+  }
+  const applyQuota=document.getElementById("applyQuota").value.trim();
+  if(applyQuota==="" || !/^\d+$/.test(applyQuota)){
+    alert("请填写申请额度（仅数字，单位万）");return
+  }
+  if(tpl==="全价料"){
+    syncFullPriceBundleTons();
+    if(document.getElementById("fullPriceBundleTons").value===""){
+      alert("全价料捆绑商品的吨数无法计算，请先填写申请额度");return
+    }
+  }
   if(sy===""){alert("请填写上海银行额度（不申请请填0）");return}
   if(Number(sy)===0){
     const why=document.getElementById("noSyText").value.trim();
     if(!why){alert("上银额度为0时，请填写不申请上海银行原因");return}
   }
+  if(Number(sy)>0){
+    if(document.getElementById("syFreeDays").value===""){alert("请填写上银免息期（天）");return}
+    if(!document.querySelector('input[name="syAutoPay"]:checked')){alert("请选择是否开通自动支付");return}
+    if(document.getElementById("syMaxLoanMonths").value===""){alert("请填写最长借款期（月）");return}
+  }
   const xs=document.getElementById("xsQuota").value;
   if(xs===""){alert("请填写锡商银行额度（不申请请填0）");return}
+  if(Number(xs)>0){
+    if(document.getElementById("xsFreeDays").value===""){alert("请填写锡商免息期（天）");return}
+    if(document.getElementById("xsMaxLoanMonths").value===""){alert("请填写最长借款期限（月）");return}
+  }
   if(!reason){alert("请填写申请原因");return}
   if(document.querySelector('input[name="isController"]:checked')?.value==="否"){
-    if(!document.getElementById("ctrlName").value.trim()){alert("请填写实控人姓名");return}
-    if(!document.getElementById("ctrlId").value.trim()){alert("请填写实控人身份证号码");return}
-    if(!document.getElementById("ctrlMobile").value.trim()){alert("请填写实控人手机号");return}
+    if(!document.getElementById("upCtrlIdFront")?.classList.contains("done") || !document.getElementById("upCtrlIdBack")?.classList.contains("done")){
+      alert("请上传实控人身份证正反面");return
+    }
+    if(!document.getElementById("ctrlName").value.trim()){alert("请核对并填写实控人姓名");return}
+    if(!document.getElementById("ctrlId").value.trim()){alert("请核对并填写实控人身份证号");return}
+    if(!/^1\d{10}$/.test(document.getElementById("ctrlMobile").value.trim())){alert("请填写正确的实控人实名手机号");return}
   }
   if(document.querySelector('input[name="hasPartner"]:checked')?.value==="是"){
     const cards=[...document.querySelectorAll("#partnerList .partner-card")];
@@ -947,8 +1207,23 @@ function submitSales(){
   if(!document.querySelector('input[name="repAround"]:checked')){alert("请选择向周边及员工打听口碑");return}
   if(!document.querySelector('input[name="shipFreq"]:checked')){alert("请选择平均出货频率");return}
   if(!document.querySelector('input[name="settleForm"]:checked')){alert("请选择下游结算形式");return}
-  const done=[...document.querySelectorAll(".upload.done")].length;
-  if(done<1){alert("请完善现场照片等附件");return}
+  const siteDone=[...document.querySelectorAll(".card .upload-grid .upload.done")].filter(el=>!el.closest("#controllerBlock")).length;
+  if(siteDone<1){alert("请完善现场照片等附件");return}
+  try{
+    const legalIsController=document.querySelector('input[name="isController"]:checked')?.value!=="否";
+    const legalName=(document.getElementById("legalName")?.value||"").trim();
+    const controllerName=legalIsController
+      ? legalName
+      : (document.getElementById("ctrlName")?.value||"").trim();
+    localStorage.setItem("baitiao_sales_dd", JSON.stringify({
+      legalIsController,
+      controllerName,
+      legalName,
+      controllerIdNo: legalIsController?"":(document.getElementById("ctrlId")?.value||"").trim(),
+      controllerMobile: legalIsController?"":(document.getElementById("ctrlMobile")?.value||"").trim(),
+      updatedAt: Date.now()
+    }));
+  }catch(e){}
   clearDirty();
   leaveForce=true;
   document.getElementById("submitMask").classList.add("on");
@@ -971,6 +1246,8 @@ bindPartnerActions();
 syncTpl();
 syncPremix();
 syncSyReason();
+syncXsExtra();
+renderPremixTags();
 syncController();
 syncPartners();
 clearDirty();

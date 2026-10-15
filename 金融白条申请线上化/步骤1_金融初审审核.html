@@ -93,12 +93,8 @@ body{
 .content{flex:1;padding:16px;overflow:auto;background:var(--theme-bg);min-height:0}
 .page-card{background:#fff;border-radius:var(--theme-radius-sm);padding:16px 20px}
 .page-title{font-size:16px;font-weight:600;margin-bottom:10px;color:#262626}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.stat{background:#fff;border:1px solid #f0f0f0;border-radius:var(--theme-radius);padding:12px 14px}
-.stat .lab{font-size:12px;color:var(--theme-text-secondary)}
-.stat .val{font-size:22px;font-weight:700;margin-top:4px;color:var(--theme-primary)}
 .filter-panel{
-  background:#fff;border:1px solid #f0f0f0;border-radius:var(--theme-radius);padding:14px 16px 10px;margin-bottom:12px;
+  background:transparent;border:none;border-radius:0;padding:0 0 10px;margin-bottom:12px;
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 24px;align-items:center
 }
 .filter-item{display:flex;align-items:center;gap:8px;min-width:0}
@@ -142,7 +138,6 @@ tr:hover td{background:var(--theme-table-hover)}
 .tag.ok{background:#f6ffed;color:var(--theme-success);border-color:#b7eb8f}
 .tag.err{background:#fff1f0;color:var(--theme-danger);border-color:#ffa39e}
 .tag.muted{background:#f2f3f5;color:#86909c;border-color:#e5e6eb}
-.note{font-size:12px;color:var(--theme-text-secondary);margin:0 0 12px;line-height:1.6}
 .detail-page{display:none;min-height:100vh;background:var(--theme-bg)}
 .detail-page.on{display:block}
 .detail-nav{
@@ -160,22 +155,40 @@ tr:hover td{background:var(--theme-table-hover)}
 }
 .sec{
   font-size:15px;font-weight:600;margin:0 0 14px;padding:0 0 10px;border:none;border-bottom:1px solid #f0f2f5;
-  line-height:1.3;color:#1f2329;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px
+  line-height:1.3;color:#1f2329;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px
 }
 .sec::before{
   content:"";width:3px;height:14px;border-radius:2px;background:var(--theme-primary);flex:0 0 auto
 }
+.sec-main{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;flex:1;min-width:0}
 .sec-tip{font-size:12px;color:#8c8c8c;font-weight:400;margin-left:0}
+.sec-actions{margin-left:auto;flex:0 0 auto;font-weight:400}
+.sec-actions .link{font-size:13px}
 .sub-lab{
-  font-size:12px;font-weight:500;color:#86909c;margin:2px 0 10px;letter-spacing:.02em
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;font-weight:600;color:#1f2329;
+  margin:16px 0 12px;padding:0;letter-spacing:0;line-height:1.2
 }
-.sub-lab + .form-grid{margin-top:0}
-.form-grid + .sub-lab{margin-top:6px}
+.sub-lab::before{
+  content:"";width:3px;height:14px;border-radius:1px;
+  background:var(--theme-primary);flex:0 0 auto
+}
+.sub-lab-actions{margin-left:auto;font-weight:400}
+.sub-lab-actions .link{font-size:13px}
+.sec-actions .link + .link{margin-left:12px}
+.panel > .sub-lab:first-of-type{margin-top:0}
+.sub-lab + .form-grid,.sub-lab + .upload-row{margin-top:0}
+.form-grid + .sub-lab,
+.upload-row + .sub-lab,
+.empty-hint + .sub-lab{
+  margin-top:18px;padding-top:14px;
+  border-top:1px dashed #e5e6eb
+}
 .form-grid{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  column-gap:28px;row-gap:12px;margin-bottom:12px;align-items:start
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:20px;row-gap:12px;margin-bottom:12px;align-items:start
 }
-.fg{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:10px;min-width:0;margin:0}
+.fg{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:center;gap:8px;min-width:0;margin:0}
 .fg label{
   width:auto;text-align:right;font-size:13px;color:#595959;line-height:1.35;margin:0;
   white-space:normal;word-break:break-all
@@ -220,6 +233,9 @@ tr:hover td{background:var(--theme-table-hover)}
   padding:14px 16px;border-radius:8px;background:#f7f8fa;border:1px dashed #e5e6eb;
   color:#86909c;font-size:13px;margin:0 0 4px
 }
+.crm-row{display:flex;align-items:center;gap:12px;min-width:0}
+.crm-row input{flex:1;min-width:0}
+.crm-row .link{flex:0 0 auto;white-space:nowrap}
 .bank-row{display:flex;flex-direction:column;gap:10px;margin:0 0 4px}
 .bank-item{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
@@ -303,13 +319,17 @@ tr:hover td{background:var(--theme-table-hover)}
 .tl-item.cur::before{background:var(--theme-success);box-shadow:0 0 0 3px rgba(82,196,26,.2)}
 .tl-t{font-size:13px;font-weight:600}
 .tl-d{font-size:12px;color:var(--theme-text-secondary);margin-top:2px}
-.log-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:4px}
+.log-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;margin-bottom:4px}
 .log-table th{
   background:var(--theme-table-header);text-align:left;padding:10px 12px;color:#595959;font-weight:600;
   border-bottom:1px solid #f0f0f0;white-space:nowrap
 }
-.log-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;color:#333;vertical-align:top}
+.log-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;color:#333;vertical-align:top;word-break:break-all}
 .log-table tr:last-child td{border-bottom:none}
+.log-table .col-action{width:28%}
+.log-table .col-operator{width:18%}
+.log-table .col-time{width:24%}
+.log-table .col-result{width:30%}
 .log-empty{padding:12px;color:var(--theme-text-secondary);font-size:13px}
 .opinion-box{margin-bottom:16px}
 .opinion-box label{display:block;font-size:13px;color:#333;margin-bottom:6px}
@@ -337,8 +357,10 @@ tr:hover td{background:var(--theme-table-hover)}
 }
 .attach-modal .hd{font-size:15px;font-weight:600;padding:14px 20px;border-bottom:1px solid #f0f0f0;color:#1f2329;flex:0 0 auto}
 .attach-modal .bd{padding:12px 20px 8px;overflow:auto;flex:1 1 auto}
-.attach-modal .sec-lab{font-size:13px;font-weight:600;color:#262626;margin:10px 0 8px}
-.attach-modal .sec-lab:first-child{margin-top:0}
+.attach-modal .sec-lab,.attach-modal .sub-lab{font-size:13px;font-weight:600;color:#262626;margin:10px 0 8px}
+.attach-modal .sec-lab:first-child,.attach-modal .sub-lab:first-child{margin-top:0}
+.attach-modal .sub-lab::before{height:12px}
+.attach-modal .upload-row + .sub-lab{margin-top:14px;padding-top:10px;border-top:1px dashed #e5e6eb}
 .attach-modal .ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid #f0f0f0;flex:0 0 auto}
 .detail-foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #f0f0f0;padding:12px 16px;z-index:10}
 .detail-foot .inner{max-width:1080px;width:100%;margin:0 auto;display:flex;gap:8px;justify-content:flex-end}
@@ -353,12 +375,15 @@ tr:hover td{background:var(--theme-table-hover)}
 .btn-primary:disabled,.btn-primary.disabled{
   background:#c9cdd4;color:#fff;cursor:not-allowed;border:none;opacity:1
 }
-@media(max-width:1100px){.filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){
+  .filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fg.span2,.fg.span3{grid-column:span 2}
+}
 @media(max-width:900px){
   .form-grid{grid-template-columns:1fr}
   .fg.span2,.fg.span3{grid-column:span 1}
   .ai-row{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr 1fr}
   .fg{grid-template-columns:100px minmax(0,1fr)}
 }
 @media(max-width:600px){.filter-panel{grid-template-columns:1fr}.panel{padding:14px 14px 10px}}
@@ -404,13 +429,6 @@ tr:hover td{background:var(--theme-table-hover)}
       <div class="content">
         <div class="page-card">
           <div class="page-title">金融白条审核台</div>
-    <div class="stats">
-      <div class="stat"><div class="lab">今日提交</div><div class="val">9</div></div>
-      <div class="stat"><div class="lab">初审待审核</div><div class="val">1</div></div>
-      <div class="stat"><div class="lab">正式进件补件中</div><div class="val">1</div></div>
-      <div class="stat"><div class="lab">正式进件审核中</div><div class="val">1</div></div>
-    </div>
-    <div class="note">流程约束：仅「初审通过」后客户才可进入正式进件资料补充并提交正式进件；未过初审不可进入正式进件审核。</div>
     <div class="filter-panel" id="filterPanel">
       <div class="filter-item">
         <label>客户名称</label>
@@ -498,12 +516,39 @@ tr:hover td{background:var(--theme-table-hover)}
         </div>
       </div>
       <div class="filter-item">
+        <label>评审审核状态</label>
+        <div class="ctrl">
+          <select id="fReviewStatus">
+            <option value="">请选择</option>
+            <option value="初审资料上传中">初审草稿</option>
+            <option value="初审待审核">初审审核中</option>
+            <option value="初审驳回">初审驳回</option>
+            <option value="正式进件补件中">正式进件草稿</option>
+            <option value="正式进件审核中">正式进件审核中</option>
+            <option value="正式审核通过">正式进件审核通过</option>
+            <option value="正式审核驳回">正式进件审核驳回</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-item">
+        <label>银行状态</label>
+        <div class="ctrl">
+          <select id="fBankStatus">
+            <option value="">请选择</option>
+            <option value="—">—</option>
+            <option value="审批中">银行审批中</option>
+            <option value="已开通">白条已开通</option>
+            <option value="拒绝">银行拒绝</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-item">
         <label>客户初审资料</label>
         <div class="ctrl">
           <select id="fFirstDocs">
             <option value="">请选择</option>
-            <option value="齐全">齐全</option>
-            <option value="缺失">缺失</option>
+            <option value="已提交">已提交</option>
+            <option value="未提交">未提交</option>
           </select>
         </div>
       </div>
@@ -512,20 +557,19 @@ tr:hover td{background:var(--theme-table-hover)}
         <div class="ctrl">
           <select id="fFormalDocs">
             <option value="">请选择</option>
-            <option value="齐全">齐全</option>
-            <option value="缺失">缺失</option>
-            <option value="补充中">补充中</option>
+            <option value="已提交">已提交</option>
+            <option value="未提交">未提交</option>
             <option value="—">—</option>
           </select>
         </div>
       </div>
       <div class="filter-item">
-        <label>业务员申请资料</label>
+        <label>业务员尽调资料</label>
         <div class="ctrl">
           <select id="fSalesDocs">
             <option value="">请选择</option>
-            <option value="齐全">齐全</option>
-            <option value="缺失">缺失</option>
+            <option value="已提交">已提交</option>
+            <option value="未提交">未提交</option>
             <option value="—">—</option>
           </select>
         </div>
@@ -537,16 +581,13 @@ tr:hover td{background:var(--theme-table-hover)}
     </div>
     <div class="stage-tabs" id="stageTabs">
       <button type="button" class="active" data-stage="" data-label="全部" onclick="setStageTab(this)">全部</button>
-      <button type="button" data-stage="初审资料上传中" data-label="初审资料上传中" onclick="setStageTab(this)">初审资料上传中</button>
-      <button type="button" data-stage="初审待审核" data-label="初审待审核" onclick="setStageTab(this)">初审待审核</button>
+      <button type="button" data-stage="初审资料上传中" data-label="初审草稿" onclick="setStageTab(this)">初审草稿</button>
+      <button type="button" data-stage="初审待审核" data-label="初审审核中" onclick="setStageTab(this)">初审审核中</button>
       <button type="button" data-stage="初审驳回" data-label="初审驳回" onclick="setStageTab(this)">初审驳回</button>
-      <button type="button" data-stage="正式进件补件中" data-label="正式进件补件中" onclick="setStageTab(this)">正式进件补件中</button>
+      <button type="button" data-stage="正式进件补件中" data-label="正式进件草稿" onclick="setStageTab(this)">正式进件草稿</button>
       <button type="button" data-stage="正式进件审核中" data-label="正式进件审核中" onclick="setStageTab(this)">正式进件审核中</button>
-      <button type="button" data-stage="正式审核通过" data-label="正式审核通过" onclick="setStageTab(this)">正式审核通过</button>
-      <button type="button" data-stage="正式审核驳回" data-label="正式审核驳回" onclick="setStageTab(this)">正式审核驳回</button>
-      <button type="button" data-stage="已推送银行" data-label="已推送银行" onclick="setStageTab(this)">已推送银行</button>
-      <button type="button" data-stage="白条已开通" data-label="白条已开通" onclick="setStageTab(this)">白条已开通</button>
-      <button type="button" data-stage="银行拒绝" data-label="银行拒绝" onclick="setStageTab(this)">银行拒绝</button>
+      <button type="button" data-stage="正式审核通过" data-label="正式进件审核通过" onclick="setStageTab(this)">正式进件审核通过</button>
+      <button type="button" data-stage="正式审核驳回" data-label="正式进件审核驳回" onclick="setStageTab(this)">正式进件审核驳回</button>
     </div>
     <div class="table">
       <table>
@@ -565,11 +606,12 @@ tr:hover td{background:var(--theme-table-hover)}
             <th>锡商是否已推送</th>
             <th>锡商审批结果</th>
             <th>平台审核状态</th>
+            <th>银行状态</th>
             <th>驳回原因</th>
             <th>客户初审资料</th>
             <th>客户正式进件资料</th>
             <th>担保人资料</th>
-            <th>业务员申请资料</th>
+            <th>业务员尽调资料</th>
             <th>最近更新时间</th>
             <th>最后一次推送时间</th>
             <th>推送人</th>
@@ -629,7 +671,7 @@ const TASKS=[
     id:1, custId:"C20260915001", name:"党闯养殖专业合作社", subject:"党闯养殖专业合作社",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"初审待审核", sourceType:"客户申请", guarantee:"—", sales:"朱震", custKind:"企业", mobile:"13812345678", idNo:"341202199001011234", pushDate:"", pusher:"", time:"2026-09-15 10:12",
-    esign:"齐全", credit:"—", ai:"通过", status:"初审待审核",
+    esign:"已提交", credit:"—", ai:"通过", status:"初审待审核",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分"],
     legalCreditOk:true,
@@ -646,7 +688,7 @@ const TASKS=[
     id:2, custId:"C20260915002", name:"尚兆立养殖场", subject:"尚兆立",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"AI审核中", sourceType:"系统跑批", guarantee:"—", sales:"朱震", custKind:"个人", mobile:"13900001111", idNo:"341202199002021234", pushDate:"", pusher:"", time:"2026-09-15 10:08",
-    esign:"齐全", credit:"—", ai:"审核中", status:"AI审核中",
+    esign:"已提交", credit:"—", ai:"审核中", status:"AI审核中",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分"],
     legalCreditOk:true,
@@ -662,7 +704,7 @@ const TASKS=[
     id:3, custId:"C20260915003", name:"李明蛋鸡场", subject:"李明蛋鸡场",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"正式进件补件中", sourceType:"手工录入", guarantee:"—", sales:"王园康", custKind:"个人", mobile:"13700002222", idNo:"341202198803031234", pushDate:"", pusher:"", time:"2026-09-15 09:50",
-    esign:"齐全", credit:"缺失", ai:"通过", status:"正式进件补件中",
+    esign:"已提交", credit:"未提交", ai:"通过", status:"正式进件补件中",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
@@ -689,15 +731,15 @@ const TASKS=[
     id:4, custId:"C20260915004", name:"刘洋蛋鸡合作社", subject:"刘洋蛋鸡合作社",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"50万", xishangPushed:"否", xishangResult:"—",
     stage:"正式进件审核中", sourceType:"客户申请", guarantee:"—", sales:"朱震", custKind:"企业", mobile:"13600003333", idNo:"341202198704041234", pushDate:"", pusher:"", time:"2026-09-15 09:40",
-    esign:"齐全", credit:"缺失", ai:"通过", status:"正式进件审核中",
+    esign:"已提交", credit:"未提交", ai:"通过", status:"正式进件审核中",
     fullPrice:true,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:true,
-      status:"齐全",
+      status:"已提交",
       tier:"≥30万", product:"全价料", fullPrice:true,
       subjectKind:"企业", breedType:"禽类", isRanch:false,
-      flow:{channels:["微信","支付宝","银行"], mailOk:true, pwds:{微信:"已填",支付宝:"已填",银行:"已填"}},
+      flow:{channels:["微信","支付宝","银行"], mailOk:true, pwds:{微信:"wx20260915",支付宝:"zfb6688",银行:"yh123456"}},
       baihang:{needed:true, ok:true},
       controller:{needed:true, name:"刘洋", idNo:"341202198704041234", mobile:"13600003333", creditOk:true},
       files:[
@@ -708,18 +750,21 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"缺失3项",
-      product:"全价料", tier:"≥30万", sy:"30万", xs:"20万",
+      status:"未提交",
+      product:"全价料", applyQuota:50, canDeposit:"是", tier:"≥30万", sy:"30万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"20万", xsFreeDays:30, xsMaxLoanMonths:12,
       breed:"蛋鸡", scale:"3万羽", years:"6年",
       reason:"信誉结算良好，平台合作12次；申请上银免息白条",
-      tplFields:[["客户类型","养殖户"],["全价料每月吨数","40吨"],["全价料厂家","正大"],["单价","3800元/吨"],["是否供应商存量客户","是"]],
+      tplFields:[["客户类型","养殖户"],["全价料每月吨数","40吨"],["全价料商品名字","正大全价料"],["单价","3800元/吨"],["全价料捆绑商品的吨数","837.99吨"],["是否供应商存量客户","是"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-15 09:20 · 朱震 · 实地拜访",
       dd:[
-        ["申请人姓名","刘洋"],["手机号","136****3333"],["申请人是否为实控人","是"],
-        ["经营场所属性","自有"],["经营场所规模","约10亩"],
+        ["法人是否为实控人","否"],
+        ["实控人姓名","刘洋"],["实控人身份证号","341202198704041234"],["实控人手机号","13600003333"],
+        ["实控人从业年限","5年以上"],["实控人家庭住址","安徽省宿州市埇桥区某某村"],["实控人资产情况","商品房、汽车"],["实控人车牌号","皖L·A1234"],
+        ["是否有合伙人","是"],["合伙人1姓名","李强"],["合伙人1手机号","139****2211"],
+        ["经营场所属性","自有"],["年租金","0万元"],["经营场所规模","约10亩"],
         ["向上下游打听口碑","良好"],["向周边及员工打听口碑","良好"],
-        ["平均出货频率","每3至7天"],["下游结算形式","微信"],["单月饲料原料消耗量","40吨"]
+        ["平均出货频率","每3至7天"],["下游结算形式","微信"]
       ]
     },
     timeline:[
@@ -732,18 +777,18 @@ const TASKS=[
   {
     id:5, custId:"C20260914005", name:"周敏蛋鸡场", subject:"周敏蛋鸡场",
     shangyinQuota:"80万", shangyinPushed:"是", shangyinResult:"审批中", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
-    stage:"已推送银行", sourceType:"系统跑批", guarantee:"缺失", sales:"朱震", custKind:"企业", mobile:"13500004444", idNo:"341202198605051234", pushDate:"2026-09-14 17:20", pusher:"张敏", time:"2026-09-14 16:20",
-    esign:"齐全", credit:"齐全", ai:"通过", status:"银行审批中",
+    stage:"正式审核通过", bankStatus:"审批中", sourceType:"系统跑批", guarantee:"未提交", sales:"朱震", custKind:"企业", mobile:"13500004444", idNo:"341202198605051234", pushDate:"2026-09-14 17:20", pusher:"张敏", time:"2026-09-14 16:20",
+    esign:"已提交", credit:"已提交", ai:"通过", status:"正式审核通过",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:true,
-      status:"齐全",
+      status:"已提交",
       tier:"≥30万", product:"预混料", fullPrice:false,
       subjectKind:"企业", breedType:"禽类", isRanch:false,
-      flow:{channels:["银行"], mailOk:true, pwds:{银行:"已填"}},
+      flow:{channels:["银行"], mailOk:true, pwds:{银行:"yh123456"}},
       baihang:{needed:false, ok:false},
-      controller:{needed:true, name:"周敏", creditOk:true},
+      controller:{needed:false, creditOk:true},
       files:[
         {name:"近3个月经营场地水电费账单", ok:true},
         {name:"最近一次养殖资产买卖合同/首付款凭证", ok:true},
@@ -752,25 +797,27 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"齐全",
-      product:"预混料", tier:"≥30万", sy:"50万", xs:"30万",
+      status:"已提交",
+      product:"预混料", applyQuota:80, canDeposit:"是", tier:"≥30万", sy:"50万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"30万", xsFreeDays:30, xsMaxLoanMonths:12,
       breed:"蛋鸡", scale:"2.5万羽", years:"8年",
       reason:"信誉结算良好，平台合作10次；申请免息白条",
       tplFields:[["每月豆粕玉米需求","40吨"],["是否绑定销售预混料","是"],["预混料每月吨数","8吨"],["预混料报价","3200元"],["预混料商品名称","蛋鸡预混料A"],["平台合作收蛋","否"],["平台合作处理鸡粪","是"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-14 10:28 · 朱震 · 实地拜访",
       dd:[
-        ["申请人姓名","周敏"],["手机号","135****4444"],["申请人是否为实控人","是"],
-        ["经营场所属性","自有"],["经营场所规模","约12亩"],
+        ["法人是否为实控人","是"],["实控人从业年限","5年以上"],
+        ["实控人家庭住址","安徽省宿州市埇桥区某某路"],["实控人资产情况","自建房、汽车"],
+        ["是否有合伙人","否"],
+        ["经营场所属性","自有"],["年租金","0万元"],["经营场所规模","约12亩"],
         ["向上下游打听口碑","良好"],["向周边及员工打听口碑","良好"],
-        ["平均出货频率","每3至7天"],["下游结算形式","公户转账"],["单月饲料原料消耗量","40吨"]
+        ["平均出货频率","每3至7天"],["下游结算形式","公户转账"]
       ]
     },
     timeline:[
       {t:"初审通过",d:"2026-09-13 12:00",s:"done"},
       {t:"正式进件审核通过",d:"2026-09-14 17:05",s:"done"},
       {t:"已推送上银",d:"2026-09-14 17:20",s:"done"},
-      {t:"已推送银行",d:"—",s:"cur"}
+      {t:"银行审批中",d:"—",s:"cur"}
     ],
     aiDetail:"建议通过。",
     passTime:"2026-09-14 17:05"
@@ -779,16 +826,16 @@ const TASKS=[
     id:8, custId:"C20260915008", name:"孙伟蛋鸡场", subject:"孙伟蛋鸡场",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"60万", xishangPushed:"否", xishangResult:"—",
     stage:"正式审核驳回", sourceType:"手工录入", guarantee:"—", sales:"王园康", custKind:"个人", mobile:"13200007777", idNo:"341202199106061234", pushDate:"", pusher:"", time:"2026-09-14 14:10",
-    esign:"齐全", credit:"齐全", ai:"通过", status:"正式审核驳回",
+    esign:"已提交", credit:"已提交", ai:"通过", status:"正式审核驳回",
     rejectReason:"经营流水邮箱未收到",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:false,
-      status:"缺失",
+      status:"未提交",
       tier:"＜30万", product:"预混料", fullPrice:false,
       subjectKind:"个人", breedType:"禽类", isRanch:false,
-      flow:{channels:["微信","支付宝"], mailOk:false, pwds:{微信:"已填",支付宝:"已填"}},
+      flow:{channels:["微信","支付宝"], mailOk:false, pwds:{微信:"wx20260914",支付宝:"zfb9900"}},
       baihang:{needed:false, ok:false},
       controller:{needed:false},
       files:[
@@ -797,16 +844,20 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"齐全",
-      product:"预混料", tier:"＜30万", sy:"0万", xs:"20万",
+      status:"已提交",
+      product:"预混料", applyQuota:20, canDeposit:"是", tier:"＜30万", sy:"0万", xs:"20万", xsFreeDays:30, xsMaxLoanMonths:12,
       breed:"蛋鸡", scale:"1.8万羽", years:"5年",
       reason:"申请锡商免息白条；不申请上银原因：客户只做锡商",
       tplFields:[["每月豆粕玉米需求","25吨"],["是否绑定销售预混料","是"],["预混料每月吨数","5吨"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-14 11:00 · 王园康 · 实地拜访",
       dd:[
-        ["申请人姓名","孙伟"],["手机号","132****7777"],["申请人是否为实控人","是"],
-        ["向上下游打听口碑","存在负面评价"],["平均出货频率","不固定"],["下游结算形式","现金"],["单月饲料原料消耗量","25吨"]
+        ["法人是否为实控人","是"],["实控人从业年限","2-5年"],
+        ["实控人家庭住址","安徽省宿州市某某镇"],["实控人资产情况","汽车"],
+        ["是否有合伙人","是"],["合伙人1姓名","赵磊"],["合伙人1手机号","137****6655"],
+        ["经营场所属性","完全租赁"],["年租金","3万元"],["经营场所规模","约6亩"],
+        ["向上下游打听口碑","存在负面评价"],["向周边及员工打听口碑","无法获取"],
+        ["平均出货频率","不固定"],["下游结算形式","现金"]
       ]
     },
     timeline:[
@@ -820,7 +871,7 @@ const TASKS=[
     id:6, custId:"C20260914006", name:"陈强养猪场", subject:"陈强养猪场",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"初审资料上传中", sourceType:"客户申请", guarantee:"—", sales:"王园康", custKind:"个人", mobile:"13400005555", idNo:"341202199207071234", pushDate:"", pusher:"", time:"2026-09-13 11:05",
-    esign:"缺失", credit:"—", ai:"—", status:"初审资料上传中",
+    esign:"未提交", credit:"—", ai:"—", status:"初审资料上传中",
     fullPrice:false,
     files:["营业执照","法人身份证正面"],
     timeline:[
@@ -832,7 +883,7 @@ const TASKS=[
     id:7, custId:"C20260915007", name:"赵磊养殖合作社", subject:"赵磊养殖合作社",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"初审驳回", sourceType:"系统跑批", guarantee:"—", sales:"朱震", custKind:"企业", mobile:"13300006666", idNo:"341202199308081234", pushDate:"", pusher:"", time:"2026-09-12 15:20",
-    esign:"齐全", credit:"—", ai:"通过", status:"初审驳回",
+    esign:"已提交", credit:"—", ai:"通过", status:"初审驳回",
     rejectReason:"征信逾期金额偏高",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
@@ -846,18 +897,18 @@ const TASKS=[
   {
     id:9, custId:"C20260910009", name:"吴强蛋鸡场", subject:"吴强蛋鸡场",
     shangyinQuota:"50万", shangyinPushed:"是", shangyinResult:"通过", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
-    stage:"白条已开通", sourceType:"手工录入", guarantee:"齐全", sales:"朱震", custKind:"企业", mobile:"13100008888", idNo:"341202198509091234", pushDate:"2026-09-09 11:00", pusher:"张敏", time:"2026-09-08 11:30",
-    esign:"齐全", credit:"齐全", ai:"通过", status:"白条已开通",
+    stage:"正式审核通过", bankStatus:"已开通", sourceType:"手工录入", guarantee:"已提交", sales:"朱震", custKind:"企业", mobile:"13100008888", idNo:"341202198509091234", pushDate:"2026-09-09 11:00", pusher:"张敏", time:"2026-09-08 11:30",
+    esign:"已提交", credit:"已提交", ai:"通过", status:"正式审核通过",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:true,
-      status:"齐全",
+      status:"已提交",
       tier:"≥30万", product:"预混料", fullPrice:false,
       subjectKind:"企业", breedType:"禽类", isRanch:false,
-      flow:{channels:["银行","微信"], mailOk:true, pwds:{银行:"已填",微信:"已填"}},
+      flow:{channels:["银行","微信"], mailOk:true, pwds:{银行:"yh889900",微信:"wx20260909"}},
       baihang:{needed:false, ok:false},
-      controller:{needed:true, name:"吴强", creditOk:true},
+      controller:{needed:false, creditOk:true},
       files:[
         {name:"近3个月经营场地水电费账单", ok:true},
         {name:"最近一次养殖资产买卖合同/首付款凭证", ok:true},
@@ -866,16 +917,19 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"齐全",
-      product:"预混料", tier:"≥30万", sy:"50万", xs:"0万",
+      status:"已提交",
+      product:"预混料", applyQuota:50, canDeposit:"是", tier:"≥30万", sy:"50万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"0万",
       breed:"蛋鸡", scale:"2万羽", years:"7年",
       reason:"信誉结算良好，平台合作15次",
       tplFields:[["每月豆粕玉米需求","35吨"],["是否绑定销售预混料","是"],["预混料每月吨数","6吨"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-08 09:10 · 朱震 · 实地拜访",
       dd:[
-        ["申请人姓名","吴强"],["手机号","131****8888"],["申请人是否为实控人","是"],
-        ["向上下游打听口碑","良好"],["平均出货频率","每日"],["下游结算形式","支付宝"],["单月饲料原料消耗量","35吨"]
+        ["法人是否为实控人","是"],["实控人从业年限","5年以上"],
+        ["是否有合伙人","否"],
+        ["经营场所属性","自有"],["年租金","0万元"],["经营场所规模","约8亩"],
+        ["向上下游打听口碑","良好"],["向周边及员工打听口碑","良好"],
+        ["平均出货频率","每日"],["下游结算形式","支付宝"]
       ]
     },
     timeline:[
@@ -891,17 +945,17 @@ const TASKS=[
   {
     id:11, custId:"C20260911011", name:"黄磊肉鸡场", subject:"黄磊肉鸡场",
     shangyinQuota:"40万", shangyinPushed:"是", shangyinResult:"拒绝", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
-    stage:"银行拒绝", sourceType:"客户申请", guarantee:"—", sales:"王园康", custKind:"个人", mobile:"13900008888", idNo:"341202198812121234", pushDate:"2026-09-10 09:00", pusher:"王浩", time:"2026-09-09 14:20",
-    esign:"齐全", credit:"齐全", ai:"通过", status:"银行拒绝",
+    stage:"正式审核通过", bankStatus:"拒绝", sourceType:"客户申请", guarantee:"—", sales:"王园康", custKind:"个人", mobile:"13900008888", idNo:"341202198812121234", pushDate:"2026-09-10 09:00", pusher:"王浩", time:"2026-09-09 14:20",
+    esign:"已提交", credit:"已提交", ai:"通过", status:"正式审核通过",
     fullPrice:false,
     bankRejectReason:"银行风控未通过：近期待还负债偏高",
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:true,
-      status:"齐全",
+      status:"已提交",
       tier:"＜30万", product:"预混料", fullPrice:false,
       subjectKind:"个人", breedType:"禽类", isRanch:false,
-      flow:{channels:["微信"], mailOk:true, pwds:{微信:"已填"}},
+      flow:{channels:["微信"], mailOk:true, pwds:{微信:"wx20260910"}},
       baihang:{needed:false, ok:false},
       controller:{needed:false},
       files:[
@@ -910,14 +964,19 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"齐全",
-      product:"预混料", tier:"＜30万", sy:"40万", xs:"0万",
+      status:"已提交",
+      product:"预混料", applyQuota:40, canDeposit:"是", tier:"＜30万", sy:"40万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"0万",
       breed:"肉鸡", scale:"1.2万羽", years:"3年",
       reason:"信誉结算良好，申请上银免息白条",
       tplFields:[["每月豆粕玉米需求","20吨"],["是否绑定销售预混料","是"],["预混料每月吨数","4吨"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-09 10:00 · 王园康 · 实地拜访",
-      dd:[["申请人姓名","黄磊"],["手机号","139****8888"],["申请人是否为实控人","是"]]
+      dd:[
+        ["法人是否为实控人","是"],["实控人从业年限","1-2年"],
+        ["是否有合伙人","否"],
+        ["经营场所属性","完全租赁"],["年租金","2万元"],["经营场所规模","约5亩"],
+        ["向上下游打听口碑","良好"],["平均出货频率","每15日至1个月"],["下游结算形式","微信"]
+      ]
     },
     timeline:[
       {t:"初审通过",d:"2026-09-08 11:00",s:"done"},
@@ -931,15 +990,15 @@ const TASKS=[
     id:10, custId:"C20260915010", name:"钱进养猪场", subject:"钱进养猪场",
     shangyinQuota:"—", shangyinPushed:"否", shangyinResult:"—", xishangQuota:"40万", xishangPushed:"否", xishangResult:"—",
     stage:"正式进件审核中", sourceType:"系统跑批", guarantee:"—", sales:"朱震", custKind:"个人", mobile:"13000009999", idNo:"341202199001019999", pushDate:"", pusher:"", time:"2026-09-15 11:20",
-    esign:"齐全", credit:"齐全", ai:"通过", status:"正式进件审核中",
+    esign:"已提交", credit:"已提交", ai:"通过", status:"正式进件审核中",
     fullPrice:true,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
     formal:{
       legalCreditOk:true,
-      status:"齐全",
+      status:"已提交",
       tier:"＜30万", product:"全价料", fullPrice:true,
       subjectKind:"个人", breedType:"猪牛羊", isRanch:false,
-      flow:{channels:["微信","支付宝"], mailOk:true, pwds:{微信:"已填",支付宝:"已填"}},
+      flow:{channels:["微信","支付宝"], mailOk:true, pwds:{微信:"wx20260915",支付宝:"zfb7788"}},
       baihang:{needed:true, ok:true},
       controller:{needed:false},
       files:[
@@ -949,16 +1008,20 @@ const TASKS=[
       ]
     },
     salesApp:{
-      status:"齐全",
-      product:"全价料", tier:"＜30万", sy:"0万", xs:"40万",
+      status:"已提交",
+      product:"全价料", applyQuota:40, canDeposit:"是", tier:"＜30万", sy:"0万", xs:"40万", xsFreeDays:30, xsMaxLoanMonths:12,
       breed:"猪", scale:"800头", years:"4年",
       reason:"信誉结算良好；申请锡商全价料白条",
-      tplFields:[["客户类型","养殖户"],["全价料每月吨数","60吨"],["全价料厂家","新希望"],["单价","3600元/吨"],["是否供应商存量客户","否"]],
+      tplFields:[["客户类型","养殖户"],["全价料每月吨数","60吨"],["全价料商品名字","新希望全价料"],["单价","3600元/吨"],["全价料捆绑商品的吨数","670.39吨"],["是否供应商存量客户","否"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-15 10:00 · 朱震 · 实地拜访",
       dd:[
-        ["申请人姓名","钱进"],["手机号","130****9999"],["申请人是否为实控人","是"],
-        ["向上下游打听口碑","良好"],["平均出货频率","每月"],["下游结算形式","公户转账"],["单月饲料原料消耗量","60吨"]
+        ["法人是否为实控人","是"],["实控人从业年限","2-5年"],
+        ["实控人家庭住址","安徽省某某县某某村"],["实控人资产情况","自建房"],
+        ["是否有合伙人","是"],["合伙人1姓名","钱进合伙"],["合伙人1手机号","130****8888"],
+        ["经营场所属性","合伙租赁"],["年租金","4万元"],["经营场所规模","约15亩"],
+        ["向上下游打听口碑","良好"],["向周边及员工打听口碑","良好"],
+        ["平均出货频率","每15日至1个月"],["下游结算形式","公户转账"]
       ]
     },
     timeline:[
@@ -976,10 +1039,21 @@ let activeStage="";
 function setStageTab(btn){
   activeStage=btn.getAttribute("data-stage")||"";
   document.querySelectorAll("#stageTabs button").forEach(b=>b.classList.toggle("active",b===btn));
+  const reviewSel=document.getElementById("fReviewStatus");
+  if(reviewSel) reviewSel.value=activeStage;
   render();
 }
 
+function syncStageTabFromReview(){
+  const v=document.getElementById("fReviewStatus")?.value||"";
+  activeStage=v;
+  document.querySelectorAll("#stageTabs button").forEach(b=>{
+    b.classList.toggle("active",(b.getAttribute("data-stage")||"")===v);
+  });
+}
+
 function getFilters(){
+  const reviewStatus=document.getElementById("fReviewStatus")?.value||"";
   return {
     name:(document.getElementById("fName").value||"").trim(),
     sales:(document.getElementById("fSales").value||"").trim(),
@@ -990,11 +1064,12 @@ function getFilters(){
     timeEnd:document.getElementById("fTimeEnd").value,
     pushStart:document.getElementById("fPushStart").value,
     pushEnd:document.getElementById("fPushEnd").value,
-    stage:activeStage,
+    stage:reviewStatus||activeStage,
     shangyinResult:document.getElementById("fShangyinResult").value,
     xishangResult:document.getElementById("fXishangResult").value,
     shangyinPushed:document.getElementById("fShangyinPushed").value,
     xishangPushed:document.getElementById("fXishangPushed").value,
+    bankStatus:document.getElementById("fBankStatus")?.value||"",
     firstDocs:document.getElementById("fFirstDocs").value,
     formalDocs:document.getElementById("fFormalDocs").value,
     salesDocs:document.getElementById("fSalesDocs").value
@@ -1023,26 +1098,54 @@ function inDateRange(dateStr, start, end){
   if(end && d>end) return false;
   return true;
 }
-function applyFilters(){ render(); }
+function applyFilters(){
+  syncStageTabFromReview();
+  render();
+}
 function resetFilters(){
   ["fName","fSales","fMobile","fIdNo","fTimeStart","fTimeEnd","fPushStart","fPushEnd"].forEach(id=>document.getElementById(id).value="");
-  ["fSourceType","fShangyinResult","fXishangResult","fShangyinPushed","fXishangPushed","fFirstDocs","fFormalDocs","fSalesDocs"].forEach(id=>document.getElementById(id).value="");
+  ["fSourceType","fShangyinResult","fXishangResult","fShangyinPushed","fXishangPushed","fReviewStatus","fBankStatus","fFirstDocs","fFormalDocs","fSalesDocs"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value="";
+  });
   activeStage="";
   document.querySelectorAll("#stageTabs button").forEach(b=>b.classList.toggle("active",(b.getAttribute("data-stage")||"")===""));
   render();
 }
 
+/** 银行状态内部码：— / 审批中 / 已开通 / 拒绝 */
+function getBankStatus(t){
+  const v=t.bankStatus;
+  if(v!=null && v!=="") return v;
+  return "—";
+}
+function displayBankStatus(t){
+  const map={"—":"—","审批中":"银行审批中","已开通":"白条已开通","拒绝":"银行拒绝"};
+  return map[getBankStatus(t)]||getBankStatus(t);
+}
+
 function tagClass(v){
-  if(["通过","已上传","待正式进件","是","正式审核通过","齐全","白条已开通","已推送银行"].includes(v)) return "ok";
+  if(["通过","已上传","待正式进件","是","正式审核通过","齐全","已提交","白条已开通","已开通"].includes(v)) return "ok";
   if(["初审待审核","正式进件审核中","银行审批中","待补充担保人","AI审核中","审核中","审批中","初审资料上传中","正式进件补件中"].includes(v)) return "warn";
-  if(["失败","拒绝","否","初审驳回","正式审核驳回","缺失","补充中","银行拒绝"].includes(v)||String(v||"").startsWith("缺失")) return v==="否"?"muted":"err";
+  if(["失败","拒绝","否","初审驳回","正式审核驳回","缺失","未提交","补充中","银行拒绝"].includes(v)||String(v||"").startsWith("缺失")) return v==="否"?"muted":"err";
   if(["—",""].includes(v)) return "muted";
   return "warn";
+}
+function docStatusLabel(v){
+  const s=v==null?"":String(v).trim();
+  if(!s||s==="—") return "—";
+  if(s==="齐全"||s==="已提交") return "已提交";
+  if(s==="缺失"||s==="未提交"||s==="补充中"||s==="暂未提交"||s.startsWith("缺失")) return "未提交";
+  return s;
+}
+function matchDocFilter(actual, filter){
+  if(!filter) return true;
+  if(filter==="—") return !actual||actual==="—"||actual==="暂未提交";
+  return docStatusLabel(actual)===filter;
 }
 function formalDocsStatus(t){
   if(t.formalDocs!=null && t.formalDocs!=="") return t.formalDocs;
   if(!t.formal) return "—";
-  return t.formal.status||"齐全";
+  return t.formal.status||"已提交";
 }
 function salesDocsStatus(t){
   if(t.salesApp) return t.salesApp.status||"—";
@@ -1092,21 +1195,17 @@ function render(){
     if(f.xishangResult && t.xishangResult!==f.xishangResult) return false;
     if(f.shangyinPushed && t.shangyinPushed!==f.shangyinPushed) return false;
     if(f.xishangPushed && t.xishangPushed!==f.xishangPushed) return false;
-    if(f.firstDocs && t.esign!==f.firstDocs) return false;
-    if(f.formalDocs && formalDocsStatus(t)!==f.formalDocs) return false;
-    if(f.salesDocs){
-      const sd=salesDocsStatus(t);
-      if(f.salesDocs==="缺失"){
-        if(!(sd==="缺失"||String(sd).startsWith("缺失"))) return false;
-      }else if(sd!==f.salesDocs) return false;
-    }
+    if(f.bankStatus && getBankStatus(t)!==f.bankStatus) return false;
+    if(!matchDocFilter(t.esign, f.firstDocs)) return false;
+    if(!matchDocFilter(formalDocsStatus(t), f.formalDocs)) return false;
+    if(!matchDocFilter(salesDocsStatus(t), f.salesDocs)) return false;
     return true;
   });
   document.getElementById("tbody").innerHTML=rows.map(t=>{
-    const first=t.esign||"—";
-    const formal=formalDocsStatus(t);
-    const guar=guarDocsStatus(t);
-    const sales=salesDocsStatus(t);
+    const first=docStatusLabel(t.esign||"—");
+    const formal=docStatusLabel(formalDocsStatus(t));
+    const guar=docStatusLabel(guarDocsStatus(t));
+    const sales=docStatusLabel(salesDocsStatus(t));
     return `
     <tr>
       <td>${t.custId}</td>
@@ -1121,7 +1220,8 @@ function render(){
       <td>${t.xishangQuota}</td>
       <td><span class="tag ${tagClass(t.xishangPushed)}">${t.xishangPushed}</span></td>
       <td><span class="tag ${tagClass(t.xishangResult)}">${t.xishangResult}</span></td>
-      <td><span class="tag ${tagClass(t.stage)}">${t.stage}</span></td>
+      <td><span class="tag ${tagClass(t.stage)}">${displayAuditStatus(t)}</span></td>
+      <td><span class="tag ${tagClass(getBankStatus(t))}">${displayBankStatus(t)}</span></td>
       <td>${rejectReasonLabel(t)}</td>
       <td><span class="tag ${tagClass(first)}">${first}</span></td>
       <td><span class="tag ${tagClass(formal)}">${formal}</span></td>
@@ -1132,7 +1232,7 @@ function render(){
       <td>${pusherLabel(t)}</td>
       <td class="ops">${opsHtml(t)}</td>
     </tr>`;
-  }).join("")||`<tr><td colspan="22" style="text-align:center;color:#999;padding:28px">暂无数据</td></tr>`;
+  }).join("")||`<tr><td colspan="23" style="text-align:center;color:#999;padding:28px">暂无数据</td></tr>`;
 }
 
 function opsHtml(t){
@@ -1146,11 +1246,11 @@ function opsHtml(t){
     prefix.push(`<button class="link" type="button" onclick="openTask(${t.id},'audit')">&#21021;&#23457;&#23457;&#26680;</button>`);
   }else if(t.stage==="正式进件审核中"){
     prefix.push(`<button class="link" type="button" onclick="openTask(${t.id},'audit')">&#27491;&#24335;&#23457;&#26680;</button>`);
-  }else if(t.stage==="银行拒绝"){
+  }else if(getBankStatus(t)==="拒绝"){
     prefix.push(`<button class="link" type="button" onclick="notifyBankReject(${t.id})">&#36890;&#30693;&#23458;&#25143;&#21644;&#38144;&#21806;</button>`);
   }
   const suffix=[];
-  if(["正式审核通过","已推送银行","白条已开通","银行拒绝"].includes(t.stage)){
+  if(t.stage==="正式审核通过"){
     suffix.push(`<button class="link" type="button" onclick="pushBank(${t.id})">&#25512;&#36865;&#38134;&#34892;</button>`);
   }
   return prefix.join("")+common+suffix.join("");
@@ -1160,7 +1260,7 @@ function rejectFromList(id){
   if(!current) return;
   openRejectModal("audit");
 }
-function collectAttachCards(t){
+function buildAttachSections(t){
   const files=t.files||[];
   const hasFile=n=>files.some(f=>String(f).includes(n.replace("法人",""))||f===n);
   const hasLegalCredit=()=>{
@@ -1169,47 +1269,79 @@ function collectAttachCards(t){
     if(t.formal&&(t.formal.legalCreditOk===true||(t.formal.legalCredit&&t.formal.legalCredit.ok))) return true;
     return (t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||""));
   };
-  const first=[
-    ["营业执照", hasFile("营业执照")],
-    ["法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面")],
-    ["法人身份证反面", hasFile("身份证反面")||hasFile("法人身份证反面")],
-    ["信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分")],
-    ["法人征信报告", hasLegalCredit()],
-  ];
-  if(t.fullPrice){
-    first.push(["百行征信报告", hasFile("百行")||t.baihangOk===true||!!(t.formal&&t.formal.baihang&&t.formal.baihang.ok)]);
+  const f=t.formal||null;
+  const s=t.salesApp||null;
+  const legalRow=((s&&s.dd)||[]).find(([k])=>/法人是否为实控人|申请人是否为实控人/.test(String(k||"")));
+  const showCtrlId=legalRow ? String(legalRow[1])==="否" : !!(f&&f.controller&&f.controller.needed);
+  const ge30=(s&&s.applyQuota!=null&&s.applyQuota!=="")?Number(s.applyQuota)>=30:((f&&f.tier)||(s&&s.tier)||"")==="≥30万";
+  const showBaihang=!!t.fullPrice || !!(f&&f.baihang&&f.baihang.needed) || hasFile("百行");
+  const ctrlIdOk=showCtrlId && (
+    hasFile("实控人身份证") ||
+    !!(s&&s.ctrlIdOk) ||
+    !!(f&&f.controller&&(f.controller.idNo||f.controller.name||f.controller.needed))
+  );
+  const ctrlCreditOk=!!(f&&f.controller&&f.controller.creditOk) || hasFile("实控人征信");
+  const baihangOk=hasFile("百行")||t.baihangOk===true||!!(f&&f.baihang&&f.baihang.ok);
+
+  const chuShenCards=[
+    uploadCard("营业执照", hasFile("营业执照")),
+    uploadCard("法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面")),
+    uploadCard("法人身份证反面", hasFile("身份证反面")||hasFile("法人身份证反面")),
+    uploadCard("信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分")),
+    uploadCard("法人征信报告", hasLegalCredit()),
+  ].join("");
+
+  const ddCards=[];
+  if(showCtrlId){
+    ddCards.push(uploadCard("实控人身份证正面", ctrlIdOk));
+    ddCards.push(uploadCard("实控人身份证反面", ctrlIdOk));
   }
-  let html=`<div class="sec-lab">初审附件</div><div class="upload-row">${first.map(([n,ok])=>uploadCard(n,ok)).join("")}</div>`;
-  const f=t.formal;
-  if(f){
-    const mailFiles=[];
-    if(f.flow) mailFiles.push({name:"经营性流水", ok:!!(f.flow.mailOk||(f.flow.channels||[]).length)});
-    if(f.baihang&&f.baihang.needed) mailFiles.push({name:"百行征信报告", ok:!!f.baihang.ok});
-    if(f.controller&&f.controller.needed) mailFiles.push({name:"实控人人行征信", ok:!!f.controller.creditOk});
-    const uploadFiles=(f.files||[]).map(item=>{
-      if(typeof item==="string") return {name:item, ok:true};
-      return {name:item.name||item.label||"附件", ok:!!item.ok};
-    });
-    const all=[...mailFiles, ...uploadFiles];
-    html+=`<div class="sec-lab">正式进件附件</div><div class="upload-row">${all.length?all.map(x=>uploadCard(x.name,!!x.ok)).join(""):`<div class="check-box blue">暂无正式进件附件</div>`}</div>`;
+  ((s&&s.photos)||[]).forEach(n=>ddCards.push(uploadCard(n,true)));
+  const ddHtml=ddCards.length
+    ? ddCards.join("")
+    : `<div class="empty-hint">${s?"暂无尽调附件":"业务员尚未提交尽调资料"}</div>`;
+
+  let formalHtml="";
+  if(!f){
+    const locked=["初审待审核","初审驳回","初审资料上传中","AI审核中"].includes(t.stage);
+    formalHtml=`<div class="empty-hint">${locked?"初审通过后方可补充正式进件资料":"客户尚未提交正式进件资料"}</div>`;
   }else{
-    html+=`<div class="sec-lab">正式进件附件</div><div class="upload-row"><div class="check-box blue">暂未提交正式进件资料</div></div>`;
+    const cards=[];
+    if(f.flow) cards.push(uploadCard("经营性流水", !!(f.flow.mailOk||(f.flow.channels||[]).length)));
+    if(showBaihang) cards.push(uploadCard("百行征信报告", baihangOk));
+    if(ge30) cards.push(uploadCard("实控人征信报告", ctrlCreditOk));
+    (f.files||[]).forEach(item=>{
+      if(typeof item==="string") cards.push(uploadCard(item,true));
+      else cards.push(uploadCard(item.name||item.label||"附件", !!item.ok));
+    });
+    formalHtml=cards.length?cards.join(""):`<div class="empty-hint">暂无正式补件附件</div>`;
   }
-  const s=t.salesApp;
-  if(s&&(s.photos||[]).length){
-    html+=`<div class="sec-lab">业务员现场照片</div><div class="upload-row">${(s.photos||[]).map(n=>uploadCard(n,true)).join("")}</div>`;
-  }
-  return html;
+
+  return `
+    <div class="sub-lab">初审附件</div>
+    <div class="upload-row">${chuShenCards}</div>
+    <div class="sub-lab">业务员尽调资料附件</div>
+    <div class="upload-row">${ddHtml}</div>
+    <div class="sub-lab">客户正式补件附件</div>
+    <div class="upload-row">${formalHtml}</div>
+  `;
 }
+
+function collectAttachCards(t){
+  return buildAttachSections(t);
+}
+let attachModalTaskId=null;
 function openAttachModal(id){
   const t=TASKS.find(x=>x.id===id);
   if(!t) return;
+  attachModalTaskId=id;
   document.getElementById("attachModalTitle").textContent=`附件 · ${t.name}`;
   document.getElementById("attachModalBody").innerHTML=collectAttachCards(t);
   document.getElementById("attachModal").classList.add("on");
 }
 function closeAttachModal(){
   document.getElementById("attachModal").classList.remove("on");
+  attachModalTaskId=null;
 }
 function parseQuota(q){
   if(!q || q==="—") return "";
@@ -1225,11 +1357,14 @@ function field(label, value, req, type){
 }
 function fieldArea(label, value, req){
   const v=String(value??"");
-  return `<div class="fg align-top span2"><label>${req?'<span class="req">*</span>':''}${label}</label><div class="ctrl"><textarea readonly>${v}</textarea></div></div>`;
+  return `<div class="fg align-top span3"><label>${req?'<span class="req">*</span>':''}${label}</label><div class="ctrl"><textarea readonly>${v}</textarea></div></div>`;
 }
-function panel(title, tip, body){
+function panel(title, tip, body, actions){
   return `<div class="panel">
-    <div class="sec">${title}${tip?`<span class="sec-tip">${tip}</span>`:""}</div>
+    <div class="sec">
+      <span class="sec-main">${title}${tip?`<span class="sec-tip">${tip}</span>`:""}</span>
+      ${actions?`<span class="sec-actions">${actions}</span>`:""}
+    </div>
     ${body}
   </div>`;
 }
@@ -1304,12 +1439,125 @@ function viewAttach(name){
 function downloadAttach(name){
   alert("开始下载："+name+"\n（原型：触发文件下载）");
 }
+function collectUploadedAttachNames(t){
+  const names=[];
+  const push=(n,ok)=>{ if(ok&&n) names.push(n); };
+  const files=t.files||[];
+  const has=k=>files.some(f=>String(f).includes(k));
+  push("营业执照", has("营业执照"));
+  push("法人身份证正面", has("身份证正面")||has("法人身份证正面"));
+  push("法人身份证反面", has("身份证反面")||has("法人身份证反面"));
+  push("信用分截图", has("微信支付分")||has("微信分")||has("支付分")||has("信用分"));
+  const legalCredit=(t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||""))||has("征信");
+  push("法人征信报告", legalCredit);
+  const s=t.salesApp;
+  if(s){
+    const ctrlNeeded=Array.isArray(s.dd)&&s.dd.some(([k,v])=>String(k).includes("法人是否为实控人")&&v==="否");
+    push("实控人身份证正面", ctrlNeeded);
+    push("实控人身份证反面", ctrlNeeded);
+    (s.photos||[]).forEach(n=>push(n,true));
+  }
+  const f=t.formal;
+  if(f){
+    push("经营性流水", !!(f.flow&&(f.flow.mailOk||(f.flow.channels||[]).length)));
+    if(f.baihang&&f.baihang.needed) push("百行征信报告", !!f.baihang.ok);
+    const aq=t.salesApp&&t.salesApp.applyQuota;
+    const ge30=(aq!=null&&aq!=="")?Number(aq)>=30:((f.tier||"").includes("≥30")||(f.tier||"").includes(">=30"));
+    if(ge30) push("实控人征信报告", !!(f.controller&&f.controller.creditOk));
+    (f.files||[]).forEach(item=>{
+      if(typeof item==="string") push(item,true);
+      else push(item.name||item.label||"附件", !!item.ok);
+    });
+  }
+  return names;
+}
+function downloadAllAttach(){
+  if(!current){
+    alert("暂无可下载附件");
+    return;
+  }
+  const list=collectUploadedAttachNames(current);
+  if(!list.length){
+    alert("当前无可下载的已上传附件");
+    return;
+  }
+  alert(`全部下载（共 ${list.length} 项）\n`+list.map((n,i)=>`${i+1}. ${n}`).join("\n")+`\n\n（原型：打包下载 ZIP）`);
+}
+function pushDdRow(rows, module, key, val){
+  if(val==null || val==="") return;
+  rows.push([module, key, String(val)]);
+}
+function collectSalesDdExcelRows(t){
+  const s=t&&t.salesApp;
+  if(!s) return null;
+  const rows=[];
+  pushDdRow(rows,"基本信息","客户名称",t.name);
+  pushDdRow(rows,"基本信息","客户ID",t.custId);
+  pushDdRow(rows,"基本信息","业务员",t.sales);
+  pushDdRow(rows,"基本信息","尽调状态",docStatusLabel(s.status||"—"));
+  pushDdRow(rows,"白条申请","白条产品类型",s.product);
+  if(s.product==="预混料"||s.product==="全价料") pushDdRow(rows,"白条申请","是否能收取保证金",s.canDeposit);
+  pushDdRow(rows,"白条申请","申请额度（万）",s.applyQuota??s.tier);
+  pushDdRow(rows,"白条申请","上海银行额度（万）",s.sy);
+  const syZero=/^0/.test(String(s.sy||""))||String(s.sy)==="0万";
+  const syNum=parseFloat(String(s.sy||"").replace(/[^\d.]/g,""))||0;
+  if(!syZero&&syNum>0){
+    pushDdRow(rows,"白条申请","上银免息期（天）",s.syFreeDays);
+    pushDdRow(rows,"白条申请","是否开通自动支付",s.syAutoPay);
+    pushDdRow(rows,"白条申请","最长借款期（月）",s.syMaxLoanMonths);
+  }
+  pushDdRow(rows,"白条申请","锡商银行额度（万）",s.xs);
+  const xsNum=parseFloat(String(s.xs||"").replace(/[^\d.]/g,""))||0;
+  if(xsNum>0){
+    pushDdRow(rows,"白条申请","锡商免息期（天）",s.xsFreeDays);
+    pushDdRow(rows,"白条申请","最长借款期限（月）",s.xsMaxLoanMonths);
+  }
+  if(syZero) pushDdRow(rows,"白条申请","不申请上海银行原因",s.syZeroReason||s.reason);
+  pushDdRow(rows,"白条申请","申请原因",s.reason);
+  pushDdRow(rows,"客户养殖信息","养殖种类",s.breed);
+  pushDdRow(rows,"客户养殖信息","养殖数量",s.scale);
+  pushDdRow(rows,"客户养殖信息","从事行业年限",s.years);
+  const breedKeys=["客户类型","是否是牧场","是否牧场","客户阶段","收蛋","鸡粪","供应商存量","养殖类型","经济用途","养殖数量","日龄","防疫"];
+  const feedKeys=["购买次数","玉米","豆粕","预混料","全价料","绑定","大宗"];
+  pickTpl(s, breedKeys).forEach(([k,v])=>pushDdRow(rows,"客户养殖信息",k,v));
+  pickTpl(s, feedKeys).forEach(([k,v])=>pushDdRow(rows,"饲料信息",k,v));
+  excludeTpl(s, [...breedKeys, ...feedKeys]).forEach(([k,v])=>pushDdRow(rows,"饲料信息",k,v));
+  (s.dd||[]).forEach(([k,v])=>pushDdRow(rows,"经营信息",k,v));
+  if(s.photos&&s.photos.length) pushDdRow(rows,"经营信息","现场照片",s.photos.join("、"));
+  pushDdRow(rows,"CRM拜访记录","拜访摘要",s.crm);
+  return rows;
+}
+function downloadSalesDdExcel(){
+  const task=current||(attachModalTaskId!=null?TASKS.find(x=>x.id===attachModalTaskId):null);
+  if(!task){
+    alert("请先打开工单详情或附件");
+    return;
+  }
+  const rows=collectSalesDdExcelRows(task);
+  if(!rows||!rows.length){
+    alert("业务员尚未提交尽调资料，无法下载");
+    return;
+  }
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const trs=rows.map(([m,k,v])=>`<tr><td>${esc(m)}</td><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("");
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>尽调资料</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border="1"><thead><tr><th>模块</th><th>字段</th><th>内容</th></tr></thead><tbody>${trs}</tbody></table></body></html>`;
+  const blob=new Blob(["\ufeff"+html],{type:"application/vnd.ms-excel;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const safeName=String(task.name||task.custId||"客户").replace(/[\\/:*?"<>|]/g,"_");
+  a.href=url;
+  a.download=`${safeName}_尽调资料.xls`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function guessOperator(action, t){
   const a=action||"";
-  if(/客户|上传初审/.test(a)) return t.name||"客户";
-  if(/业务|正式进件提交/.test(a)) return t.sales||"业务员";
-  if(/AI|e签宝|系统|征信已上传/.test(a)) return "系统";
-  if(/初审|正式审核|推送|银行|人审/.test(a)) return "金融审核员";
+  if(/客户提交|客户正式|修改资料|上传初审|补件/.test(a)) return t.name||"客户";
+  if(/业务员|尽调|申请资料/.test(a)) return t.sales||"业务员";
+  if(/AI|e签宝|系统|征信已上传|跑批/.test(a)) return "系统";
+  if(/初审|正式审核|正式进件通过|推送|银行|人审|驳回/.test(a)) return t.auditor||"金融审核员";
   return t.sales||"系统";
 }
 function buildLogs(t){
@@ -1322,7 +1570,7 @@ function buildLogs(t){
     if(x.s==="cur") result=parts.length>1?parts.slice(1).join(" · "):"进行中";
     else if(parts.length>1) result=parts.slice(1).join(" · ");
     else if(!raw||raw==="—") result="—";
-    return {action:x.t, time, operator:guessOperator(x.t,t), result};
+    return {action:x.t, operator:x.operator||guessOperator(x.t,t), time, result};
   });
 }
 function logsBlock(t){
@@ -1333,22 +1581,27 @@ function logsBlock(t){
   const rows=logs.map(l=>`
     <tr>
       <td>${l.action||"—"}</td>
-      <td>${l.time||"—"}</td>
       <td>${l.operator||"—"}</td>
+      <td>${l.time||"—"}</td>
       <td>${l.result||"—"}</td>
     </tr>`).join("");
   return panel("操作日志","",`
     <table class="log-table">
       <thead>
-        <tr><th>操作</th><th>操作时间</th><th>操作人</th><th>操作结果</th></tr>
+        <tr>
+          <th class="col-action">操作</th>
+          <th class="col-operator">操作人</th>
+          <th class="col-time">操作时间</th>
+          <th class="col-result">操作结果</th>
+        </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
   `);
 }
 function checkCls(v){
-  if(v==="齐全"||v==="通过"||v===true||v==="已收到"||v==="人审通过") return "ok";
-  if(v==="缺失"||v==="拒绝"||v==="驳回"||v==="人审驳回"||v==="补充中"||v===false||v==="未收到"||String(v||"").startsWith("缺失")) return "bad";
+  if(v==="齐全"||v==="已提交"||v==="通过"||v===true||v==="已收到"||v==="人审通过") return "ok";
+  if(v==="缺失"||v==="未提交"||v==="拒绝"||v==="驳回"||v==="人审驳回"||v==="补充中"||v===false||v==="未收到"||String(v||"").startsWith("缺失")) return "bad";
   return "blue";
 }
 function checkTagCls(v){
@@ -1360,7 +1613,7 @@ function checkTagCls(v){
 }
 function formalStatusText(t){
   if(!t.formal) return "暂未提交";
-  return t.formal.status||"齐全";
+  return docStatusLabel(t.formal.status||"已提交");
 }
 function humanReviewStatus(t){
   const s=t.stage||"";
@@ -1373,7 +1626,7 @@ function humanReviewStatus(t){
   if(["AI审核中","初审资料上传中"].includes(s)){
     return {val:"—", tip:"待 AI 通过后人审"};
   }
-  if(["正式进件补件中","正式审核通过","已推送银行","白条已开通","银行拒绝","待正式进件"].includes(s)){
+  if(["正式进件补件中","正式审核通过","待正式进件"].includes(s)){
     return {val:"通过", tip:""};
   }
   return {val:"—", tip:""};
@@ -1384,29 +1637,38 @@ function displayAuditStatus(t){
     "初审待审核":"初审审核中",
     "正式进件审核中":"正式进件审核中",
     "AI审核中":"AI审核中",
-    "初审资料上传中":"初审资料上传中",
-    "正式进件补件中":"正式进件补件中",
-    "待正式进件":"正式进件补件中"
+    "初审资料上传中":"初审草稿",
+    "正式进件补件中":"正式进件草稿",
+    "待正式进件":"正式进件草稿",
+    "正式审核通过":"正式进件审核通过",
+    "正式审核驳回":"正式进件审核驳回"
   };
   return map[s]||s;
 }
 function auditStatusBlock(t){
   const label=displayAuditStatus(t);
+  const bankLabel=displayBankStatus(t);
   const tone=checkCls(
-    ["初审驳回","正式审核驳回","银行拒绝"].includes(t.stage)?"驳回":
-    ["正式审核通过","白条已开通","已推送银行"].includes(t.stage)?"通过":
+    ["初审驳回","正式审核驳回"].includes(t.stage)?"驳回":
+    t.stage==="正式审核通过"?"通过":
     "待审核"
   );
   const tip=(["初审驳回","正式审核驳回"].includes(t.stage)&&(t.rejectReason||t.reject))
     ?`<br><span style="color:#8c8c8c">驳回原因：${t.rejectReason||t.reject}</span>`:"";
+  const bankTip=(getBankStatus(t)==="拒绝"&&t.bankRejectReason)
+    ?`<br><span style="color:#8c8c8c">银行拒绝原因：${t.bankRejectReason}</span>`:"";
   return panel("审核状态","",`
-    <div class="check-box ${tone} status-panel">当前状态：<span class="tag ${tagClass(t.stage)}">${label}</span>${tip}</div>
+    <div class="check-box ${tone} status-panel">
+      平台审核状态：<span class="tag ${tagClass(t.stage)}">${label}</span>
+      &nbsp;&nbsp;银行状态：<span class="tag ${tagClass(getBankStatus(t))}">${bankLabel}</span>
+      ${tip}${bankTip}
+    </div>
   `);
 }
 function aiCheckBlock(t){
-  const formalVal=formalStatusText(t);
-  const salesVal=t.salesApp?(t.salesApp.status||"—"):"暂未提交";
-  const firstVal=t.esign||"—";
+  const firstVal=docStatusLabel(t.esign);
+  const formalVal=t.formal?docStatusLabel(t.formal.status||t.formalDocs||"已提交"):"未提交";
+  const salesVal=t.salesApp?docStatusLabel(t.salesApp.status||t.credit||"—"):"未提交";
   const aiVal=t.ai||"—";
   const tip=t.aiDetail||(aiVal==="审核中"?"AI识别中，请稍候":aiVal==="—"?"暂无AI结果":"");
   return panel("资料与 AI 识别","",`
@@ -1414,7 +1676,7 @@ function aiCheckBlock(t){
     <div class="ai-row">
       <div class="check-box ${checkCls(firstVal)}">客户初审资料：<span class="tag ${checkTagCls(firstVal)}">${firstVal}</span></div>
       <div class="check-box ${checkCls(formalVal)}">客户正式进件：<span class="tag ${checkTagCls(formalVal)}">${formalVal}</span></div>
-      <div class="check-box ${checkCls(salesVal)}">业务员申请资料：<span class="tag ${checkTagCls(salesVal)}">${salesVal}</span></div>
+      <div class="check-box ${checkCls(salesVal)}">业务员尽调资料：<span class="tag ${checkTagCls(salesVal)}">${salesVal}</span></div>
     </div>
   `);
 }
@@ -1427,47 +1689,8 @@ function excludeTpl(s, keys){
   return list.filter(([k])=>!keys.some(x=>String(k).includes(x)));
 }
 function chuShenBlock(t){
-  const legalName=t.legalName||(String(t.subject||"").includes("合作社")||String(t.subject||"").includes("场")
-    ?(String(t.name||"").replace(/养殖专业合作社|蛋鸡合作社|蛋鸡场|养猪场|养殖场|肉鸡场/,"").slice(0,3)||t.subject)
-    :t.subject);
-  const creditCode=t.creditCode||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?"":t.idNo)||"—";
-  const legalId=t.legalId||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?t.idNo:"")||"—";
-  const files=t.files||[];
-  const hasFile=n=>files.some(f=>String(f).includes(n.replace("法人",""))||f===n);
-  const hasLegalCredit=()=>{
-    if(hasFile("征信")||hasFile("法人征信")||hasFile("人行征信")) return true;
-    if(t.legalCreditOk===true) return true;
-    return (t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||""));
-  };
-  const showBaihang=!!t.fullPrice;
-  return panel("客户初审资料",`客户端上传 · ${t.esign||"—"}`,`
-    <div class="sub-lab">企业信息认证</div>
-    <div class="form-grid">
-      ${field("企业名称", t.subject||t.name, true)}
-      ${field("统一社会信用代码", creditCode, true)}
-    </div>
-    <div class="sub-lab">企业法人认证</div>
-    <div class="form-grid">
-      ${field("法人姓名", legalName, true)}
-      ${field("法人身份证号", legalId, true)}
-      ${field("法人实名手机号", t.mobile, true)}
-    </div>
-    <div class="sub-lab">白条类型与提交</div>
-    <div class="form-grid">
-      ${field("全价料白条", t.fullPrice?"是":"否", true)}
-      ${field("业务员", t.sales||"—", false)}
-      ${field("提交时间", t.time||"—", false)}
-    </div>
-    <div class="sub-lab">初审附件${showBaihang?"（含全价料百行征信）":""}</div>
-    <div class="upload-row">
-      ${uploadCard("营业执照", hasFile("营业执照"))}
-      ${uploadCard("法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面"))}
-      ${uploadCard("法人身份证反面", hasFile("身份证反面")||hasFile("法人身份证反面"))}
-      ${uploadCard("信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分"))}
-      ${uploadCard("法人征信报告", hasLegalCredit())}
-      ${showBaihang?uploadCard("百行征信报告", hasFile("百行")||t.baihangOk===true):""}
-    </div>
-  `);
+  const actions=`<button class="link" type="button" onclick="downloadAllAttach()">全部下载</button>`;
+  return panel("附件","", buildAttachSections(t), actions);
 }
 function platformCustomerBlock(t){
   const kind=custKindLabel(t);
@@ -1533,134 +1756,128 @@ function formalBlock(t){
     `);
   }
   const flow=f.flow||{};
-  const channels=(flow.channels||[]).join("、")||"—";
-  const mailOk=!!flow.mailOk;
-  const pwdText=(flow.channels||[]).map(ch=>`${ch}：${(flow.pwds&&flow.pwds[ch])||"未填"}`).join("；")||"—";
-  const bh=f.baihang||{};
-  const ctl=f.controller||{};
-  const product=f.product||(t.salesApp&&t.salesApp.product)||"—";
-  const tier=f.tier||(t.salesApp&&t.salesApp.tier)||"—";
-  const breedType=f.breedType||"—";
-  const isRanch=!!f.isRanch;
-  const mailFiles=[];
-  (flow.channels||[]).forEach(ch=>{
-    const fromData=(flow.mailFiles||[]).find(x=>x.channel===ch||x.name?.includes(ch));
-    if(fromData) mailFiles.push({name:fromData.name, ok:!!fromData.ok});
-    else mailFiles.push({
-      name: mailOk?`${ch}经营性流水（邮箱解析）.pdf`:`${ch}经营性流水（邮箱未收到）`,
-      ok: mailOk
-    });
-  });
-  if(bh.needed){
-    const bf=(bh.mailFiles&&bh.mailFiles[0])||null;
-    const way=bh.way||(bf||bh.fromMail?"已发送邮箱":"上传");
-    mailFiles.push({
-      name: bf?.name || (way==="上传"
-        ?(bh.ok?"百行征信报告（已上传）":"百行征信报告（未上传）")
-        :(bh.ok?"百行征信报告（邮箱解析）.pdf":"百行征信报告（邮箱未收到）")),
-      ok: bf?!!bf.ok:!!bh.ok
-    });
-  }
-  if(ctl.needed){
-    const cf=(ctl.mailFiles&&ctl.mailFiles[0])||null;
-    mailFiles.push({
-      name: cf?.name || (ctl.creditOk?"实控人征信报告":"实控人征信报告（未齐）"),
-      ok: cf?!!cf.ok:!!ctl.creditOk
-    });
-  }
-  const uploadFiles=(f.files||[]).map(item=>{
-    if(typeof item==="string") return {name:item, ok:true};
-    return {name:item.name, ok:!!item.ok};
-  });
-  const allFiles=[...mailFiles, ...uploadFiles];
-  const filesHtml=allFiles.map(item=>uploadCard(item.name, !!item.ok)).join("");
-  const ge30=tier==="≥30万";
-  let ctlHtml="";
-  if(ge30){
-    ctlHtml=`
-      <div class="sub-lab">实控人信息（额度≥30万）</div>
-      <div class="form-grid">
-        ${field("法人是否为实控人", ctl.needed?"否":"是", true)}
-        ${ctl.needed?`
-          ${field("实控人姓名", ctl.name||"—", true)}
-          ${field("实控人身份证号", ctl.idNo||"—", true)}
-          ${field("实控人手机号", ctl.mobile||"—", true)}
-          ${field("实控人征信", ctl.creditOk?"已齐":"未齐", true)}
-        `:""}
-      </div>`;
-  }
-  return panel("客户正式进件资料",`状态：${f.status||"—"}`,`
-    <div class="sub-lab">条件上下文（业务员尽调带入）</div>
+  const channelList=flow.channels||[];
+  const channels=channelList.join("、")||"—";
+  // 按已选流水来源分别展示对应解压密码（与客户端正式进件一致）
+  const pwdFields=channelList.length
+    ? channelList.map(ch=>field(`${ch}流水解压密码`, (flow.pwds&&flow.pwds[ch])||"未填", true)).join("")
+    : field("流水解压密码", "未选择流水来源", true);
+  return panel("客户正式进件资料",`状态：${docStatusLabel(f.status||"—")}`,`
     <div class="form-grid">
-      ${field("白条额度", tier, false)}
-      ${field("白条产品类型", product, false)}
-      ${field("养殖类型", breedType, false)}
-      ${field("是否牧场", isRanch?"是":"否", false)}
-    </div>
-    <div class="sub-lab">客户本页提交</div>
-    <div class="form-grid">
-      ${ge30?field("主体类型", f.subjectKind||"—", true):""}
       ${field("经营性流水来源", channels, true)}
-      ${field("流水解压密码", pwdText, true)}
-      ${field("流水邮箱核验", mailOk?"已收到":"未收到", true)}
-      ${bh.needed?field("百行征信提交方式", bh.way||(bh.ok?"已齐":"上传/邮箱"), true):""}
-      ${bh.needed?field("百行征信状态", bh.ok?"已齐":"未齐", true):""}
+      ${pwdFields}
     </div>
-    ${ctlHtml}
-    <div class="sub-lab">正式进件附件</div>
-    <div class="upload-row">${filesHtml||`<div class="empty-hint">暂无附件</div>`}</div>
   `);
 }
 function salesBlock(t){
   const s=t.salesApp;
+  const salesActions=`<button class="link" type="button" onclick="downloadSalesDdExcel()">下载尽调资料</button>`;
   if(!s){
     const locked=["初审待审核","初审驳回","初审资料上传中","AI审核中"].includes(t.stage);
-    return panel("业务员申请资料","",`
+    return panel("业务员尽调资料","",`
       <div class="empty-hint">${locked
         ?"初审通过后业务员方可提交尽调资料"
         :"业务员尚未提交申请资料"}</div>
-    `);
+    `, salesActions);
   }
   const breedKeys=["客户类型","是否是牧场","是否牧场","客户阶段","收蛋","鸡粪","供应商存量","养殖类型","经济用途","养殖数量","日龄","防疫"];
   const feedKeys=["购买次数","玉米","豆粕","预混料","全价料","绑定","大宗"];
   const breedTpl=pickTpl(s, breedKeys);
   const feedTpl=pickTpl(s, feedKeys);
   const otherTpl=excludeTpl(s, [...breedKeys, ...feedKeys]);
-  const photos=(s.photos||[]).map(n=>uploadCard(n,true)).join("");
-  const dd=(s.dd||[]).map(([k,v])=>field(k,v,false)).join("");
+  const skipDd=/申请人姓名|^手机号$|法人名字/;
+  const ddRows=(s.dd||[]).filter(([k])=>!skipDd.test(String(k||"")));
+  const isCtrlKey=k=>/实控人|法人是否为实控人|申请人是否为实控人/.test(String(k||""));
+  const isCtrlIdentityKey=k=>/实控人姓名|实控人身份证|实控人手机/.test(String(k||""));
+  const isPartnerKey=k=>/合伙人/.test(String(k||""));
+  const ctrlRank=k=>{
+    k=String(k||"");
+    if(/法人是否为实控人|申请人是否为实控人/.test(k)) return 1;
+    if(/实控人姓名|实控人身份证|实控人手机/.test(k)) return 2;
+    if(/从业年限/.test(k)) return 3;
+    if(/家庭住址/.test(k)) return 4;
+    if(/资产/.test(k)) return 5;
+    if(/车牌/.test(k)) return 6;
+    return 7;
+  };
+  const legalIsCtrlRow=ddRows.find(([k])=>/法人是否为实控人|申请人是否为实控人/.test(String(k||"")));
+  const legalIsController=!legalIsCtrlRow || String(legalIsCtrlRow[1])!=="否";
+  // 法人非实控人时，若尽调未带三要素，回退正式进件历史字段（兼容旧数据）
+  const ctlFallback=(t.formal&&t.formal.controller)||{};
+  let ctrlSource=ddRows.filter(([k])=>isCtrlKey(k));
+  if(!legalIsController){
+    const hasName=ctrlSource.some(([k])=>/实控人姓名/.test(k));
+    const hasId=ctrlSource.some(([k])=>/实控人身份证/.test(k));
+    const hasMobile=ctrlSource.some(([k])=>/实控人手机/.test(k));
+    if(!hasName && ctlFallback.name) ctrlSource=ctrlSource.concat([["实控人姓名", ctlFallback.name]]);
+    if(!hasId && ctlFallback.idNo) ctrlSource=ctrlSource.concat([["实控人身份证号", ctlFallback.idNo]]);
+    if(!hasMobile && ctlFallback.mobile) ctrlSource=ctrlSource.concat([["实控人手机号", ctlFallback.mobile]]);
+  }
+  const ctrlRows=ctrlSource
+    .filter(([k])=>!(isCtrlIdentityKey(k) && legalIsController))
+    .sort((a,b)=>ctrlRank(a[0])-ctrlRank(b[0]));
+  const partnerRows=ddRows.filter(([k])=>isPartnerKey(k));
+  const otherRows=ddRows.filter(([k])=>!isCtrlKey(k)&&!isPartnerKey(k));
+  const ctrlHtml=ctrlRows.map(([k,v])=>{
+    const req=/法人是否为实控人|申请人是否为实控人|实控人姓名|实控人身份证|实控人手机|从业年限|家庭住址|资产情况/.test(String(k||""));
+    return field(k,v,req);
+  }).join("");
+  const partnerHtml=partnerRows.length
+    ? partnerRows.map(([k,v])=>field(k,v,false)).join("")
+    : `${field("是否有合伙人", s.hasPartner??"是", true)}
+      ${field("合伙人1姓名", (s.partners&&s.partners[0]&&s.partners[0].name)||"王某", true)}
+      ${field("合伙人1手机号", (s.partners&&s.partners[0]&&s.partners[0].mobile)||"138****0001", true)}`;
+  const otherHtml=otherRows.map(([k,v])=>field(k,v,false)).join("");
+  const ddHtml=`${ctrlHtml}${partnerHtml}${otherHtml}`||field("经营信息","—",false);
   const syZero=/^0/.test(String(s.sy||""))||String(s.sy)==="0万";
-  return panel("业务员申请资料",`状态：${s.status||"—"}`,`
-    <div class="sub-lab">① 白条申请</div>
+  const syNum=parseFloat(String(s.sy||"").replace(/[^\d.]/g,""))||0;
+  const syExtra=!syZero&&syNum>0;
+  const xsNum=parseFloat(String(s.xs||"").replace(/[^\d.]/g,""))||0;
+  const xsExtra=xsNum>0;
+  return panel("业务员尽调资料",`状态：${docStatusLabel(s.status||"—")}`,`
+    <div class="sub-lab">白条申请</div>
     <div class="form-grid">
-      ${field("客户名称", t.name||t.subject, false)}
       ${field("白条产品类型", s.product||"—", true)}
-      ${field("额度", s.tier||"—", true)}
+      ${(s.product==="预混料"||s.product==="全价料")?field("是否能收取保证金", s.canDeposit??"—", true):""}
+      ${field("申请额度（万）", s.applyQuota??s.tier??"—", true)}
       ${field("上海银行额度（万）", s.sy||"—", true)}
+      ${syExtra?field("上银免息期（天）", s.syFreeDays??"—", true):""}
+      ${syExtra?field("是否开通自动支付", s.syAutoPay??"—", true):""}
+      ${syExtra?field("最长借款期（月）", s.syMaxLoanMonths??"—", true):""}
       ${field("锡商银行额度（万）", s.xs||"—", true)}
+      ${xsExtra?field("锡商免息期（天）", s.xsFreeDays??"—", true):""}
+      ${xsExtra?field("最长借款期限（月）", s.xsMaxLoanMonths??"—", true):""}
       ${syZero?field("不申请上海银行原因", s.syZeroReason||s.reason||"—", true):""}
       ${fieldArea("申请原因", s.reason||"—", true)}
     </div>
-    <div class="sub-lab">② 客户养殖信息</div>
+    <div class="sub-lab">客户养殖信息</div>
     <div class="form-grid">
       ${field("养殖种类", s.breed||"—", false)}
       ${field("养殖数量", s.scale||"—", false)}
       ${field("从事行业年限", s.years||"—", false)}
       ${breedTpl.map(([k,v])=>field(k,v,false)).join("")}
     </div>
-    <div class="sub-lab">③ 饲料信息</div>
+    <div class="sub-lab">饲料信息</div>
     <div class="form-grid">
       ${feedTpl.map(([k,v])=>field(k,v,false)).join("")||field("饲料信息","—",false)}
       ${otherTpl.map(([k,v])=>field(k,v,false)).join("")}
     </div>
-    <div class="sub-lab">④ 经营信息</div>
-    <div class="form-grid">${dd||field("经营信息","—",false)}</div>
-    <div class="sub-lab">⑤ 现场照片或视频</div>
-    <div class="upload-row">${photos||`<div class="empty-hint">暂无现场照片</div>`}</div>
-    <div class="sub-lab">⑥ CRM 拜访记录</div>
+    <div class="sub-lab">经营信息</div>
+    <div class="form-grid">${ddHtml}</div>
+    <div class="sub-lab">CRM 拜访记录</div>
     <div class="form-grid">
-      ${field("CRM拜访记录", s.crm||"—", false)}
+      <div class="fg span2">
+        <label>CRM拜访记录</label>
+        <div class="ctrl crm-row">
+          <input readonly value="${String(s.crm||"—").replace(/"/g,"&quot;")}" />
+          <button class="link" type="button" onclick="viewCrmDetail('${String(t.custId||"").replace(/'/g,"\\'")}')">查看详情</button>
+        </div>
+      </div>
     </div>
-  `);
+  `, salesActions);
+}
+function viewCrmDetail(custId){
+  alert("查看 CRM 拜访详情\n客户ID："+(custId||"—")+"\n（原型：跳转 CRM 拜访记录详情）");
 }
 function openTask(id, mode){
   current=TASKS.find(x=>x.id===id); if(!current) return;
@@ -1671,7 +1888,7 @@ function openTask(id, mode){
   const auditLabel=t.stage==="正式进件审核中"?"正式审核":"初审审核";
   const page=document.getElementById("detailPage");
   document.getElementById("d-title").textContent=canAudit?`${auditLabel} · ${t.name}`:(canEdit?`编辑 · ${t.name}`:`查看 · ${t.name}`);
-  document.getElementById("d-sub").textContent=`客户ID ${t.custId} · 平台审核状态：${t.stage}`;
+  document.getElementById("d-sub").textContent=`客户ID ${t.custId} · 平台审核状态：${displayAuditStatus(t)} · 银行状态：${displayBankStatus(t)}`;
   page.classList.remove("view-mode");
   if(openMode==="view") page.classList.add("view-mode");
 
@@ -1679,8 +1896,8 @@ function openTask(id, mode){
   const xsAmt=parseQuota(t.xishangQuota);
   const syOn=t.shangyinPushed==="是"||!!syAmt;
   const xsOn=t.xishangPushed==="是"||!!xsAmt;
-  const showBank=["正式进件审核中","正式审核通过","已推送银行","白条已开通","银行拒绝","正式审核驳回"].includes(t.stage)
-    || syOn || xsOn || !!syAmt || !!xsAmt;
+  const showBank=["正式进件审核中","正式审核通过","正式审核驳回"].includes(t.stage)
+    || syOn || xsOn || !!syAmt || !!xsAmt || getBankStatus(t)!=="—";
   const showXsExtra=showBank && (xsOn || !!xsAmt || t.stage==="正式进件审核中");
 
   let html=`
@@ -1694,7 +1911,7 @@ function openTask(id, mode){
     ${creditInfoBlock(t)}
     ${tradeInfoBlock(t)}
     ${showXsExtra?xsExtraBlock(t):""}
-    ${showBank?panel("推送银行","额度来自业务员申请资料",`
+    ${showBank?panel("推送银行","额度来自业务员尽调资料",`
     <div class="bank-row">
       <div class="bank-item">
         <label class="chk"><input type="checkbox" disabled ${syOn?"checked":""}/> 上海银行</label>
@@ -1728,7 +1945,7 @@ function openTask(id, mode){
       document.getElementById("d-foot").innerHTML=`
         <button class="btn btn-default" type="button" onclick="closeDetail()">返回</button>
         <button class="btn btn-danger" type="button" onclick="decide('驳回')">驳回</button>
-        <button class="btn btn-primary${reviewReady?"":" disabled"}" type="button" ${reviewReady?`onclick="decide('正式进件通过')"`:"disabled title=\"客户正式进件资料或业务员申请资料未补全\""}>正式进件通过</button>`;
+        <button class="btn btn-primary${reviewReady?"":" disabled"}" type="button" ${reviewReady?`onclick="decide('正式进件通过')"`:"disabled title=\"客户正式进件资料或业务员尽调资料未补全\""}>正式进件通过</button>`;
     }
   }else if(canEdit){
     document.getElementById("d-foot").innerHTML=`
@@ -1750,15 +1967,17 @@ function saveEdit(){
 
 function isFormalDocsReady(t){
   const f=t.formal;
-  if(!f || (f.status||"")!=="齐全") return false;
+  if(!f || !["齐全","已提交"].includes(f.status||"")) return false;
   if(f.flow && !f.flow.mailOk) return false;
   if(f.baihang && f.baihang.needed && !f.baihang.ok) return false;
-  if(f.controller && f.controller.needed && !f.controller.creditOk) return false;
+  const aq=t.salesApp&&t.salesApp.applyQuota;
+  const ge30=(aq!=null&&aq!=="")?Number(aq)>=30:((f.tier||(t.salesApp&&t.salesApp.tier)||"")==="≥30万");
+  if(ge30 && f.controller && !f.controller.creditOk) return false;
   if((f.files||[]).some(x=>typeof x==="object" && !x.ok)) return false;
   return true;
 }
 function isSalesDocsReady(t){
-  return !!t.salesApp && !String(t.salesApp.status||"").startsWith("缺失") && t.salesApp.status!=="暂未提交";
+  return !!t.salesApp && docStatusLabel(t.salesApp.status||"")!=="未提交" && t.salesApp.status!=="暂未提交" && t.salesApp.status!=="—";
 }
 let rejectModalMode="audit"; // audit | bank-notify
 let notifyBankRejectId=null;
@@ -1813,7 +2032,7 @@ function applyDecide(result, opinion){
     if(!isChuShen){alert("仅「初审待审核」单据可初审通过");return}
     current.status="正式进件补件中";
     current.stage="正式进件补件中";
-    current.credit=current.credit==="—"?"缺失":current.credit;
+    current.credit=current.credit==="—"?"未提交":current.credit;
     current.passTime=new Date().toISOString().slice(0,16).replace("T"," ");
     if(!current.formal){
       current.formal={
@@ -1829,14 +2048,15 @@ function applyDecide(result, opinion){
   }else if(result==="正式进件通过"){
     if(!isFormal){alert("仅正式进件审核中且初审已通过的单据可正式进件通过");return}
     if(!isFormalDocsReady(current)||!isSalesDocsReady(current)){
-      alert("客户正式进件资料或业务员申请资料未补全，无法正式进件通过");return
+      alert("客户正式进件资料或业务员尽调资料未补全，无法正式进件通过");return
     }
-    current.status="银行审批中";
+    current.status="正式审核通过";
     current.stage="正式审核通过";
+    current.bankStatus=current.bankStatus||"—";
     current.passTime=new Date().toISOString().slice(0,16).replace("T"," ");
-    alert(current.name+" · 正式进件通过\n平台审核状态：正式审核通过\n可推送银行\n已通知业务员");
+    alert(current.name+" · 正式进件通过\n平台审核状态：正式进件审核通过\n银行状态：—\n可推送银行\n已通知业务员");
   }else if(result==="驳回"){
-    const formalStages=["正式进件审核中","正式进件补件中","正式审核通过","正式审核驳回","已推送银行","白条已开通","银行拒绝","待正式进件"];
+    const formalStages=["正式进件审核中","正式进件补件中","正式审核通过","正式审核驳回","待正式进件"];
     if(isFormal || formalStages.includes(current.stage)){
       current.status="正式审核驳回";
       current.stage="正式审核驳回";
@@ -1854,7 +2074,7 @@ function applyDecide(result, opinion){
 
 function notifyBankReject(id){
   const t=TASKS.find(x=>x.id===id); if(!t) return;
-  if(t.stage!=="银行拒绝"){alert("仅银行拒绝单据可发送通知");return}
+  if(getBankStatus(t)!=="拒绝"){alert("仅银行拒绝单据可发送通知");return}
   notifyBankRejectId=id;
   openRejectModal("bank-notify", t.bankRejectReason||"");
 }
@@ -1862,12 +2082,12 @@ function doNotifyBankReject(id, reason){
   const t=TASKS.find(x=>x.id===id); if(!t) return;
   t.bankRejectReason=reason;
   t.notifiedBankReject=true;
-  alert(`${t.name} · 已通知客户和销售\n平台状态：银行拒绝\n原因：${reason}\n已同步企微消息给客户与业务员（${t.sales}）`);
+  alert(`${t.name} · 已通知客户和销售\n平台审核状态：${displayAuditStatus(t)}\n银行状态：银行拒绝\n原因：${reason}\n已同步企微消息给客户与业务员（${t.sales}）`);
   render();
 }
 function pushBank(id){
   const t=TASKS.find(x=>x.id===id); if(!t) return;
-  if(t.stage!=="正式审核通过"){alert("仅正式审核通过的单据可推送银行");return}
+  if(t.stage!=="正式审核通过"){alert("仅正式进件审核通过的单据可推送银行");return}
   const bank=prompt("请选择推送银行：输入 上银 或 锡商","上银");
   if(bank==null) return;
   const name=bank.trim();
@@ -1881,12 +2101,13 @@ function pushBank(id){
     }
     t.shangyinPushed="是";
     t.shangyinResult="审批中";
-    t.status="银行审批中";
-    t.stage="已推送银行";
+    t.stage="正式审核通过";
+    t.status="正式审核通过";
+    if(getBankStatus(t)==="—"||getBankStatus(t)==="拒绝") t.bankStatus="审批中";
     const now=new Date();
     t.pushDate=now.toISOString().slice(0,10)+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
     t.pusher=t.pusher||"张敏";
-    alert(t.name+" · 已推送上银\n额度："+t.shangyinQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
+    alert(t.name+" · 已推送上银\n平台审核状态：正式进件审核通过\n银行状态："+displayBankStatus(t)+"\n额度："+t.shangyinQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
   }else{
     if(t.xishangPushed==="是"){alert("锡商已推送，无需重复推送");return}
     if(!t.xishangQuota||t.xishangQuota==="—"){
@@ -1896,12 +2117,13 @@ function pushBank(id){
     }
     t.xishangPushed="是";
     t.xishangResult="审批中";
-    t.status="银行审批中";
-    t.stage="已推送银行";
+    t.stage="正式审核通过";
+    t.status="正式审核通过";
+    if(getBankStatus(t)==="—"||getBankStatus(t)==="拒绝") t.bankStatus="审批中";
     const now=new Date();
     t.pushDate=now.toISOString().slice(0,10)+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
     t.pusher=t.pusher||"张敏";
-    alert(t.name+" · 已推送锡商\n额度："+t.xishangQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
+    alert(t.name+" · 已推送锡商\n平台审核状态：正式进件审核通过\n银行状态："+displayBankStatus(t)+"\n额度："+t.xishangQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
   }
   render();
 }

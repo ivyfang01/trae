@@ -6,9 +6,9 @@
 <title>业务端 · 初审资料和复审资料</title>
 <style>
 :root{
-  --orange:#ff6b00;
-  --orange-2:#ff8a3d;
-  --orange-soft:#fff4ec;
+  --orange:#1677ff;
+  --orange-2:#4096ff;
+  --orange-soft:#e8f3ff;
   --text:#222;
   --muted:#999;
   --line:#eee;
@@ -104,7 +104,7 @@ body{
   min-height:110px;padding:14px 8px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:8px;cursor:pointer;text-align:center
 }
-.upload.done{background:var(--orange-soft);border-color:#ffd2b0}
+.upload.done{background:var(--orange-soft);border-color:#91caff}
 .upload .cam{
   width:36px;height:28px;border:2px solid #cfcfcf;border-radius:4px;position:relative
 }
@@ -119,6 +119,23 @@ body{
 .upload.done .cam,.upload.done .cam::before{border-color:var(--orange)}
 .upload.done .cam::after{background:var(--orange)}
 .upload .hint{font-size:12px;color:var(--orange);line-height:1.35}
+.field.field-file{align-items:flex-start}
+.field.field-file .ctrl{flex:1}
+.view-thumb{
+  width:112px;height:84px;border-radius:6px;border:1px solid #ececec;background:#f7f7f7;
+  position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center
+}
+.view-thumb.on{border-color:#91caff;background:linear-gradient(145deg,#f0f7ff,#e0efff)}
+.view-thumb-fake{width:78%;height:68%;border-radius:3px;background:linear-gradient(160deg,#eef3fa,#d9e4f2);box-shadow:0 1px 3px rgba(0,0,0,.08);padding:8px 6px;box-sizing:border-box}
+.view-thumb-fake i{display:block;height:5px;border-radius:2px;background:rgba(22,119,255,.22);margin-bottom:5px}
+.view-thumb-fake i:nth-child(2){width:70%}
+.view-thumb-fake i:nth-child(3){width:55%;margin-bottom:0}
+.view-thumb-mask{
+  position:absolute;left:0;right:0;bottom:0;height:24px;background:rgba(0,0,0,.45);
+  color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center
+}
+.view-thumb-empty{font-size:12px;color:#999}
+.view-thumb:active{opacity:.88}
 
 .field{
   display:flex;align-items:flex-start;gap:10px;padding:14px 0;
@@ -192,7 +209,7 @@ body{
   width:100%;height:36px;border:1px solid #eee;border-radius:8px;padding:0 12px;
   font-size:14px;outline:none;background:#f7f7f7
 }
-.sheet-search input:focus{border-color:#ffd2b0;background:#fff}
+.sheet-search input:focus{border-color:#91caff;background:#fff}
 .sheet-list{overflow:auto;padding:4px 0 12px;-webkit-overflow-scrolling:touch}
 .sheet-item{
   display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;font-size:14px;color:#333
@@ -265,7 +282,7 @@ body{
 .btn-recheck[hidden]{display:none}
 .tip{
   margin:0 16px 8px;padding:10px 12px;border-radius:6px;font-size:12px;line-height:1.6;
-  background:var(--orange-soft);color:#b35400
+  background:var(--orange-soft);color:#0958d9
 }
 .rpa-log{
   margin:8px 16px;background:#1a1a1a;color:#f0c090;border-radius:8px;padding:12px;
@@ -276,7 +293,7 @@ body{
 .progress > i{display:block;height:100%;width:0;background:var(--orange);transition:width .3s}
 
 .ai-spin{
-  width:52px;height:52px;border-radius:50%;border:3px solid #ffe1cc;border-top-color:var(--orange);
+  width:52px;height:52px;border-radius:50%;border:3px solid #bae0ff;border-top-color:var(--orange);
   margin:18px auto;animation:spin 1s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -319,6 +336,36 @@ body{
   font-size:16px;font-weight:600;cursor:pointer
 }
 .btn-inline:disabled{opacity:.45;cursor:not-allowed}
+.btn-close-page{
+  display:block;width:100%;margin:16px 0 4px;height:44px;border:0;border-radius:22px;
+  background:linear-gradient(90deg,var(--orange-2),var(--orange));color:#fff;
+  font-size:16px;font-weight:600;cursor:pointer
+}
+.result-actions{display:flex;gap:10px;margin:16px 0 4px}
+.result-actions .btn-back{
+  flex:1;height:44px;border:1px solid var(--orange);border-radius:22px;
+  background:#fff;color:var(--orange);font-size:15px;font-weight:600;cursor:pointer
+}
+.result-actions .btn-view{
+  flex:1;height:44px;border:0;border-radius:22px;
+  background:linear-gradient(90deg,var(--orange-2),var(--orange));color:#fff;
+  font-size:15px;font-weight:600;cursor:pointer
+}
+#chuShenFormBox.view-only input,
+#chuShenFormBox.view-only textarea,
+#chuShenFormBox.view-only select,
+#resupplyFormBox.view-only input,
+#resupplyFormBox.view-only textarea,
+#resupplyFormBox.view-only select{
+  pointer-events:none;background:#f7f8fa;color:#333
+}
+#chuShenFormBox.view-only .upload,
+#resupplyFormBox.view-only .upload{pointer-events:none;cursor:default}
+#chuShenFormBox.view-only .seg label,
+#chuShenFormBox.view-only .sample-link,
+#resupplyFormBox.view-only .seg label,
+#resupplyFormBox.view-only .sample-link,
+#resupplyFormBox.view-only button:not(.btn){pointer-events:none;opacity:.75}
 .dash{height:8px;background:#f7f7f7;margin:6px 0}
 .modal-mask{
   display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.45);
@@ -400,11 +447,11 @@ body{
 #bankHomeView .bh-nav .right button{border:0;background:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;width:24px;height:24px;color:#4a4a4a}
 #bankHomeView .bh-nav .right svg{display:block;width:22px;height:22px}
 #bankHomeView .bh-nav .title{font-size:17px;font-weight:600;color:#111}
-#bankHomeView .bh-hero{background:linear-gradient(120deg,#ff7a1a 0%,#ff6b00 48%,#ff9a3d 100%);padding:14px 16px 36px}
+#bankHomeView .bh-hero{background:linear-gradient(120deg,#4096ff 0%,#1677ff 48%,#69b1ff 100%);padding:14px 16px 36px}
 #bankHomeView .bh-slogan{display:flex;align-items:center;gap:6px;color:#fff;font-size:13px;margin-bottom:14px;opacity:.95}
 #bankHomeView .bh-slogan .logo{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 #bankHomeView .bh-slogan .logo svg{width:12px;height:12px}
-#bankHomeView .bh-card{background:#fff;border-radius:14px;padding:22px 18px 18px;box-shadow:0 8px 24px rgba(255,107,0,.22);text-align:center}
+#bankHomeView .bh-card{background:#fff;border-radius:14px;padding:22px 18px 18px;box-shadow:0 8px 24px rgba(22,119,255,.22);text-align:center}
 #bankHomeView .bh-lab{font-size:13px;color:#6b7280;margin-bottom:10px}
 #bankHomeView .bh-amt{font-size:40px;font-weight:700;letter-spacing:1px;color:#111;line-height:1.1}
 #bankHomeView .bh-tip{margin-top:12px;font-size:12px;color:#9ca3af}
@@ -414,13 +461,13 @@ body{
 #bankHomeView .bh-feat .ico svg{width:26px;height:26px}
 #bankHomeView .bh-feat .lab{font-size:13px;color:var(--orange)}
 #bankHomeView .bh-cta-wrap{padding:36px 28px 20px;background:#fff;flex:1}
-#bankHomeView .bh-cta{width:100%;height:48px;border:0;border-radius:24px;background:linear-gradient(90deg,#ff8a3d 0%,#ff6b00 100%);color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:.5px;box-shadow:0 6px 16px rgba(255,107,0,.28)}
+#bankHomeView .bh-cta{width:100%;height:48px;border:0;border-radius:24px;background:linear-gradient(90deg,#4096ff 0%,#1677ff 100%);color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:.5px;box-shadow:0 6px 16px rgba(22,119,255,.28)}
 #bankHomeView .bh-cta:active{opacity:.9;transform:scale(.98)}
 #bankHomeView .bh-tabbar{position:sticky;bottom:0;width:100%;height:64px;background:#fff;border-top:1px solid #eee;display:flex;align-items:flex-end;justify-content:space-around;padding:0 4px 8px;z-index:5;margin-top:auto}
 #bankHomeView .bh-tab{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;cursor:pointer;color:#9aa0a6;font-size:11px;padding:0;position:relative;height:56px}
 #bankHomeView .bh-tab svg{width:22px;height:22px}
 #bankHomeView .bh-tab.active{color:var(--orange)}
-#bankHomeView .bh-tab .home-bubble{position:absolute;top:-18px;width:52px;height:52px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,107,0,.35);border:3px solid #fff}
+#bankHomeView .bh-tab .home-bubble{position:absolute;top:-18px;width:52px;height:52px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(22,119,255,.35);border:3px solid #fff}
 #bankHomeView .bh-tab .home-bubble svg{width:24px;height:24px}
 #bankHomeView .bh-tab.active .tab-lab{margin-top:22px;color:var(--orange);font-weight:500}
 .page.bank-hidden{display:none}
@@ -564,7 +611,7 @@ body{
 }
 #xsApplyView .xa-warn{font-size:12px;color:var(--red);margin-bottom:10px}
 #xsApplyView .xa-next{
-  width:100%;height:44px;border:0;border-radius:22px;background:linear-gradient(90deg,#ff8a3d,#ff6b00);
+  width:100%;height:44px;border:0;border-radius:22px;background:linear-gradient(90deg,#4096ff,#1677ff);
   color:#fff;font-size:16px;font-weight:600;cursor:pointer
 }
 
@@ -588,6 +635,7 @@ body{
   <button type="button" data-demo="manual-pass">人审通过-尽调前</button>
   <button type="button" data-demo="manual-pass-dd">人审通过-尽调后</button>
   <button type="button" data-jump="resupply">正式进件资料补充</button>
+  <button type="button" data-jump="submitted-docs">查看提交资料</button>
   <button type="button" data-flow="0">流水未收到</button>
   <button type="button" data-flow="1" class="active-flow">流水已收到</button>
   <button type="button" data-baihang="0" class="active-baihang">百行未收到</button>
@@ -628,7 +676,7 @@ body{
   <div class="bh-hero">
     <div class="bh-slogan">
       <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="#ff6b00"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 6c1.2 2.2 3.5 3.6 6 4-1.4 3.2-4.2 5.5-6 6.8-1.8-1.3-4.6-3.6-6-6.8 2.5-.4 4.8-1.8 6-4z"/></svg>
+        <svg viewBox="0 0 24 24" fill="#1677ff"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 6c1.2 2.2 3.5 3.6 6 4-1.4 3.2-4.2 5.5-6 6.8-1.8-1.3-4.6-3.6-6-6.8 2.5-.4 4.8-1.8 6-4z"/></svg>
       </span>
       白条在手，买货不愁
     </div>
@@ -640,15 +688,15 @@ body{
   </div>
   <div class="bh-features">
     <div class="bh-feat">
-      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><path d="M24 6l14 6v10c0 9.2-6.2 17.4-14 20-7.8-2.6-14-10.8-14-20V12l14-6z" fill="#ff6b00"/><path d="M22 14l-2 10h6l-4 10 10-14h-6l4-6h-8z" fill="#fff"/></svg></div>
+      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><path d="M24 6l14 6v10c0 9.2-6.2 17.4-14 20-7.8-2.6-14-10.8-14-20V12l14-6z" fill="#1677ff"/><path d="M22 14l-2 10h6l-4 10 10-14h-6l4-6h-8z" fill="#fff"/></svg></div>
       <div class="lab">随借随还</div>
     </div>
     <div class="bh-feat">
-      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="34" rx="14" ry="6" fill="#ffd2b0"/><path d="M10 22c0-5.5 6.3-10 14-10s14 4.5 14 10v10c0 5.5-6.3 10-14 10S10 37.5 10 32V22z" fill="#ff6b00"/><ellipse cx="24" cy="22" rx="14" ry="6" fill="#ff8a3d"/><circle cx="24" cy="22" r="5" fill="#fff"/><text x="24" y="25.5" text-anchor="middle" font-size="8" font-weight="700" fill="#ff6b00">¥</text></svg></div>
+      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="34" rx="14" ry="6" fill="#bae0ff"/><path d="M10 22c0-5.5 6.3-10 14-10s14 4.5 14 10v10c0 5.5-6.3 10-14 10S10 37.5 10 32V22z" fill="#1677ff"/><ellipse cx="24" cy="22" rx="14" ry="6" fill="#4096ff"/><circle cx="24" cy="22" r="5" fill="#fff"/><text x="24" y="25.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1677ff">¥</text></svg></div>
       <div class="lab">快速放款</div>
     </div>
     <div class="bh-feat">
-      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><path d="M24 6l14 6v10c0 9.2-6.2 17.4-14 20-7.8-2.6-14-10.8-14-20V12l14-6z" fill="#ff6b00"/><path d="M16 24l6 6 11-12" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ico"><svg viewBox="0 0 48 48" fill="none"><path d="M24 6l14 6v10c0 9.2-6.2 17.4-14 20-7.8-2.6-14-10.8-14-20V12l14-6z" fill="#1677ff"/><path d="M16 24l6 6 11-12" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="lab">安全可靠</div>
     </div>
   </div>
@@ -839,6 +887,11 @@ body{
     <div class="step" data-i="3"><div class="n">3</div><div class="lab">担保人补充资料</div></div>
   </div>
 
+  <!-- 查看提交资料（初审 + 正式进件，不含尽调） -->
+  <div id="submittedDocsPage" style="display:none">
+    <div id="submittedDocsBody"></div>
+  </div>
+
   <!-- Step 1 -->
   <div class="panel on" id="panel-1">
     <div id="chuShenFormBox">
@@ -974,16 +1027,8 @@ body{
 
     <div class="block" id="controllerCreditWayBlock">
       <div class="sec">法人征信报告</div>
-      <div class="field" style="border-bottom:0;padding-top:4px">
-        <div class="lab"><span class="req">*</span>法人征信报告提交方式</div>
-        <div class="ctrl">
-          <div class="seg">
-            <label><input type="radio" name="controllerCreditWay" value="upload" checked onchange="syncControllerCreditWay()" />已有征信上传</label>
-            <label><input type="radio" name="controllerCreditWay" value="pbc" onchange="syncControllerCreditWay()" />去人行征信中心获取</label>
-          </div>
-        </div>
-      </div>
-      <div id="controllerCreditUploadBox" style="margin-top:8px">
+      <div class="up-label"><span class="req">*</span>上传法人征信报告</div>
+      <div id="controllerCreditUploadBox">
         <div class="upload-grid one">
           <div class="upload" data-up="controller-credit" id="upControllerCreditForm" onclick="pickControllerCreditFile(this)">
             <div class="cam" aria-hidden="true"></div>
@@ -991,9 +1036,6 @@ body{
           </div>
         </div>
         <input type="file" id="controllerCreditFileInput" accept=".pdf,image/*,.jpg,.jpeg,.png,.webp,.gif" style="display:none" onchange="onControllerCreditFileChange(this)" />
-      </div>
-      <div id="controllerCreditPbcTip" style="display:none;margin-top:8px">
-        <div class="field-hint" style="margin:0">选择后将进入人行征信中心流程，下载并上传法人征信报告</div>
       </div>
     </div>
 
@@ -1058,6 +1100,10 @@ body{
             <div class="ctrl"><span class="val" id="aiPassSubmitTime">2026-09-16 18:56:22</span></div>
           </div>
           <div class="tip" style="margin:12px 0 0">提醒：初审资料已提交，预计在2个工作日内完成审核。审核结果在企微群中通知，请注意消息通知。</div>
+          <div class="result-actions">
+            <button type="button" class="btn-back" onclick="closeFlowPage()">返回</button>
+            <button type="button" class="btn-view" onclick="viewSubmittedChuShen()">查看提交资料</button>
+          </div>
         </div>
 
         <div id="resultManualBusy" style="display:none">
@@ -1356,7 +1402,7 @@ body{
         <div class="lab"><span class="req">*</span>百行征信报告提交方式</div>
         <div class="ctrl">
           <div class="seg">
-            <label><input type="radio" name="resupplyBaihangWay" value="upload" checked onchange="syncResupplyBaihangWay()" />上传图片</label>
+            <label><input type="radio" name="resupplyBaihangWay" value="upload" checked onchange="syncResupplyBaihangWay()" />上传征信</label>
             <label><input type="radio" name="resupplyBaihangWay" value="email" onchange="syncResupplyBaihangWay()" />已发送邮箱</label>
           </div>
           <div class="field-hint" id="resupplyBaihangInboxHint" style="display:none">收件箱：jinrong@shyuanyao.com</div>
@@ -1385,41 +1431,18 @@ body{
     </div>
 
       <div class="block" id="controllerCreditBox" style="display:none">
-        <div class="sec">实控人信息</div>
-        <div class="field">
-          <div class="lab"><span class="req">*</span>法人是否为实控人</div>
-          <div class="ctrl">
-            <div class="seg">
-              <label><input type="radio" name="legalIsController" value="是" checked onchange="syncControllerUpload()" />是</label>
-              <label><input type="radio" name="legalIsController" value="否" onchange="syncControllerUpload()" />否</label>
+        <div class="sec">实控人征信报告</div>
+        <div id="controllerPbcUploadWrap">
+          <div class="field">
+            <div class="lab">实控人姓名</div>
+            <div class="ctrl">
+              <input id="ddControllerNameText" value="" readonly style="background:#f7f8fa" />
             </div>
           </div>
-        </div>
-        <div id="controllerInfoWrap" style="display:none">
-          <div class="field">
-            <div class="lab"><span class="req">*</span>实控人姓名</div>
-            <div class="ctrl"><input id="controllerName" placeholder="请输入实控人姓名" /></div>
-          </div>
-          <div class="field">
-            <div class="lab"><span class="req">*</span>身份证号码</div>
-            <div class="ctrl"><input id="controllerIdNo" maxlength="18" placeholder="请输入实控人身份证号码" /></div>
-          </div>
-          <div class="field">
-            <div class="lab"><span class="req">*</span>手机号</div>
-            <div class="ctrl"><input id="controllerMobile" type="tel" maxlength="11" placeholder="请输入实控人手机号" /></div>
-          </div>
-          <div id="controllerPbcUploadWrap" style="display:none">
-            <div class="field" style="border-bottom:0;padding-top:8px">
-              <div class="lab"><span class="req">*</span>实控人征信报告提交方式</div>
-              <div class="ctrl">
-                <div class="seg">
-                  <label><input type="radio" name="actualControllerCreditWay" value="upload" checked onchange="syncActualControllerCreditWay()" />已有征信上传</label>
-                  <label><input type="radio" name="actualControllerCreditWay" value="pbc" onchange="syncActualControllerCreditWay()" />去人行征信中心获取</label>
-                </div>
-              </div>
-            </div>
-            <div id="actualControllerCreditUploadBox" style="margin-top:8px">
-              <div class="field-hint" style="margin:0 0 8px">近1个月人行征信报告，任意银行APP下载</div>
+          <div id="actualControllerCreditUploadBox" class="field" style="border-bottom:0;padding-top:4px;margin-top:0">
+            <div class="lab"><span class="req">*</span>上传实控人征信报告</div>
+            <div class="ctrl">
+              <div class="field-hint" style="margin:0 0 8px">近一个月征信报告</div>
               <div class="upload-grid one">
                 <div class="upload" id="upControllerPbc" data-req="1" onclick="pickActualControllerCreditFile(this)">
                   <div class="cam" aria-hidden="true"></div>
@@ -1466,6 +1489,10 @@ body{
             <div class="ctrl"><span class="val" id="formalSubmitTime">2026-09-16 19:56:00</span></div>
           </div>
           <div class="tip" style="margin:12px 0 0">提醒：正式进件资料已提交，预计在2个工作日内完成审核。审核结果在企微群中通知，请注意消息通知。</div>
+          <div class="result-actions">
+            <button type="button" class="btn-back" onclick="closeFlowPage()">返回</button>
+            <button type="button" class="btn-view" onclick="viewSubmittedResupply()">查看提交资料</button>
+          </div>
         </div>
 
         <div id="formalReviewReject" style="display:none">
@@ -1491,7 +1518,7 @@ body{
         <div id="formalReviewPass" style="display:none">
           <div class="field">
             <div class="lab">审批结果</div>
-            <div class="ctrl"><span class="val" style="color:var(--orange)">资料已推送银行</span></div>
+            <div class="ctrl"><span class="val" style="color:var(--orange)">正式进件审核通过</span></div>
           </div>
           <div class="field">
             <div class="lab">白条银行</div>
@@ -1506,6 +1533,10 @@ body{
             <div class="ctrl"><span class="val" id="formalPassAuditTime">2026-09-16 20:10:22</span></div>
           </div>
           <div class="tip" id="formalPassTip" style="margin:12px 0 0">提醒：资料上海银行，请去上海银行APP申请白条服务。</div>
+          <div class="result-actions">
+            <button type="button" class="btn-back" onclick="closeFlowPage()">返回</button>
+            <button type="button" class="btn-view" onclick="viewSubmittedResupply()">查看提交资料</button>
+          </div>
         </div>
 
         <div id="formalReviewOpened" style="display:none">
@@ -1608,6 +1639,7 @@ body{
             <div class="ctrl"><span class="val" id="guarSubmitTime">2026-09-16 20:20:00</span></div>
           </div>
           <div class="tip" style="margin:12px 0 0">提醒：担保人资料已提交，预计在2个工作日内完成审核。审核结果在企微群中通知，请注意消息通知。</div>
+          <button type="button" class="btn-close-page" onclick="closeFlowPage()">返回</button>
         </div>
 
         <div id="guarReviewPass" style="display:none">
@@ -1766,8 +1798,11 @@ let baihangOk=false;
 let resupplyBaihangOk=false; // 正式进件·全价料百行是否已收到/已上传就绪
 let flowWillReceive=true; // 演示：查验流水邮箱是否已收到（默认已收到，便于进入征信）
 let flowEmailOk=false;
-let chuShenPhase="form"; // form | credit | result（初审：资料页 / 征信 / 审核结果）
-let resupplyPhase="form"; // form | review
+let chuShenPhase="form"; // form | credit | result | view（初审：资料页 / 征信 / 审核结果 / 查看已提交）
+let resupplyPhase="form"; // form | review | view
+let formalReviewReturnStatus="pass";
+let submittedDocsView=false;
+let submittedDocsReturn=null;
 let formalReviewStatus="pending"; // pending | reject | pass | opened
 let formalPassBankType="上海银行"; // 上海银行 | 锡商银行
 let guarPhase="form"; // form | review
@@ -1782,10 +1817,12 @@ const FLOW_CHANNEL_OPTIONS=[
   "南京银行","宁波银行","杭州银行","浙商银行","渤海银行","恒丰银行","其他银行"
 ];
 let flowChannelDraft=[];
-let controllerInfoReady=false; // 非实控人时：已填写姓名/身份证/手机号，进入征信上传
+let controllerInfoReady=false; // ≥30万正式进件：实控人征信区块已就绪
 let controllerCreditOk=false; // 实控人征信已上传成功
 let manualDone=false, manualPass=false, manualBusy=false;
 let salesDdSubmitted=false; // 业务员是否已提交尽调（人审通过后才可进正式补件）
+// 尽调快照：实控人姓名只读展示用（优先读业务端提交写入的 localStorage）
+let salesDdInfo={ legalIsController:true, controllerName:"" };
 let rpaBusy=false, aiBusy=false;
 let creditMode="reg"; // reg | login，由 hasPbcAccount 决定
 let creditNoticeAgreed=false; // 告知协议是否已同意
@@ -1889,26 +1926,14 @@ function syncCreditMobile(){
   if(el) el.value=m;
 }
 function getActualControllerCreditWay(){
-  return document.querySelector('input[name="actualControllerCreditWay"]:checked')?.value||"upload";
+  return "upload";
 }
 function syncActualControllerCreditWay(){
-  const way=getActualControllerCreditWay();
   const up=document.getElementById("actualControllerCreditUploadBox");
-  if(up) up.style.display=way==="upload"?"":"none";
-  if(way==="pbc"){
-    const upload=document.getElementById("upControllerPbc");
-    if(upload){
-      upload.classList.remove("done");
-      const hint=upload.querySelector(".hint");
-      if(hint) hint.innerHTML='点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span>';
-    }
-    const inp=document.getElementById("actualControllerCreditFileInput");
-    if(inp) inp.value="";
-  }
+  if(up) up.style.display="";
   renderFooter();
 }
 function pickActualControllerCreditFile(el){
-  if(getActualControllerCreditWay()!=="upload") return;
   const inp=document.getElementById("actualControllerCreditFileInput");
   if(!inp){ el.classList.toggle("done"); renderFooter(); return; }
   inp.click();
@@ -1932,7 +1957,6 @@ function onActualControllerCreditFileChange(inp){
   renderFooter();
 }
 function isActualControllerCreditUploadReady(){
-  if(getActualControllerCreditWay()!=="upload") return true;
   return !!document.getElementById("upControllerPbc")?.classList.contains("done");
 }
 function enterActualControllerCreditFlow(){
@@ -2045,7 +2069,8 @@ document.querySelectorAll(".demo button[data-jump]").forEach(btn=>{
     if(btn.dataset.jump==="formal-pass") openFormalReviewDemoPage("pass","上海银行");
     if(btn.dataset.jump==="formal-pass-xs") openFormalReviewDemoPage("pass","锡商银行");
     if(btn.dataset.jump==="baitiao-opened") openFormalReviewDemoPage("opened");
-    if(btn.dataset.jump==="resupply"){ step=2; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; salesDdSubmitted=true; manualDone=true; manualPass=true; render(); }
+    if(btn.dataset.jump==="resupply"){ step=2; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; salesDdSubmitted=true; manualDone=true; manualPass=true; ensureSalesDdInfo(true); ensureDemoIdentity(); render(); }
+    if(btn.dataset.jump==="submitted-docs") openSubmittedDocsView(null);
     if(btn.dataset.jump==="guarantor") openGuarantorDemoPage("form");
     if(btn.dataset.jump==="guar-review") openGuarantorDemoPage("pending");
     if(btn.dataset.jump==="guar-pass") openGuarantorDemoPage("pass");
@@ -2126,23 +2151,14 @@ function isChuShenBaihangReady(){
   return !!baihangOk;
 }
 function getControllerCreditWay(){
-  return document.querySelector('input[name="controllerCreditWay"]:checked')?.value||"upload";
+  return "upload";
 }
 function syncControllerCreditWay(){
-  const way=getControllerCreditWay();
   const up=document.getElementById("controllerCreditUploadBox");
-  const tip=document.getElementById("controllerCreditPbcTip");
-  if(up) up.style.display=way==="upload"?"":"none";
-  if(tip) tip.style.display=way==="pbc"?"":"none";
-  if(way==="pbc"){
-    document.getElementById("upControllerCreditForm")?.classList.remove("done");
-    const inp=document.getElementById("controllerCreditFileInput");
-    if(inp) inp.value="";
-  }
+  if(up) up.style.display="";
   renderFooter();
 }
 function pickControllerCreditFile(el){
-  if(getControllerCreditWay()!=="upload") return;
   const inp=document.getElementById("controllerCreditFileInput");
   if(!inp){ el.classList.toggle("done"); return; }
   inp.dataset.target="upControllerCreditForm";
@@ -2165,10 +2181,7 @@ function onControllerCreditFileChange(inp){
   if(hint) hint.innerHTML="已上传："+file.name+'<br><span style="font-size:12px;color:#999">点击可重新选择</span>';
 }
 function isControllerCreditFormReady(){
-  if(getControllerCreditWay()==="upload"){
-    return !!document.getElementById("upControllerCreditForm")?.classList.contains("done");
-  }
-  return true;
+  return !!document.getElementById("upControllerCreditForm")?.classList.contains("done");
 }
 
 function syncBaihangField(){
@@ -2443,8 +2456,6 @@ function openCreditSuccessDemoPage(){
   document.getElementById("creditFileLink").textContent="已上传 "+fileName;
   const successLink=document.getElementById("creditSuccessFileLink");
   if(successLink){ successLink.dataset.file=fileName; successLink.textContent=label; }
-  const yesCtrl=document.querySelector('input[name="legalIsController"][value="是"]');
-  if(yesCtrl) yesCtrl.checked=true;
   render();
   document.getElementById("creditRegPage").style.display="none";
   document.getElementById("creditLoginPage").style.display="none";
@@ -2465,14 +2476,6 @@ function openControllerCreditSuccessDemoPage(){
   closeRegLoginSmsModal();
   const ge30=document.querySelector('input[name="quotaTier"][value="ge30"]');
   if(ge30) ge30.checked=true;
-  const noCtrl=document.querySelector('input[name="legalIsController"][value="否"]');
-  if(noCtrl) noCtrl.checked=true;
-  const nameInput=document.getElementById("controllerName");
-  if(nameInput && !nameInput.value.trim()) nameInput.value="李实控";
-  const idInput=document.getElementById("controllerIdNo");
-  if(idInput && !idInput.value.trim()) idInput.value="320102199001011234";
-  const mobileInput=document.getElementById("controllerMobile");
-  if(mobileInput && !mobileInput.value.trim()) mobileInput.value="13800138000";
   controllerInfoReady=true;
   controllerCreditOk=true;
   step=2;
@@ -2616,6 +2619,7 @@ function openManualResultDemoPage(pass, ddSubmitted){
   manualDone=true;
   manualPass=!!pass;
   salesDdSubmitted=!!pass && !!ddSubmitted;
+  if(salesDdSubmitted) ensureSalesDdInfo(true);
   rpaBusy=false;
   demoMode=pass?(salesDdSubmitted?"manual-pass-dd":"manual-pass"):"reject";
   applyCreditRoute();
@@ -2681,7 +2685,7 @@ function syncResultBlocks(){
 
 function resetDemoFlow(){
   hideBankHome();
-  step=1; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; esignOk=false; creditAuthed=false; firstCreditOk=false; creditApplied=false; creditOk=false; creditNoticeAgreed=false; aiDone=false; aiPass=false; aiBusy=false; manualDone=false; manualPass=false; manualBusy=false; salesDdSubmitted=false; rpaBusy=false; controllerInfoReady=false; controllerCreditOk=false;
+  step=1; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; esignOk=false; creditAuthed=false; firstCreditOk=false; creditApplied=false; creditOk=false; creditNoticeAgreed=false; aiDone=false; aiPass=false; aiBusy=false; manualDone=false; manualPass=false; manualBusy=false; salesDdSubmitted=false; salesDdInfo={ legalIsController:true, controllerName:"" }; rpaBusy=false; controllerInfoReady=false; controllerCreditOk=false;
   baihangOk=false;
   flowEmailOk=false;
   flowChannelSelected=[];
@@ -2699,8 +2703,6 @@ function resetDemoFlow(){
   const wayUpload=document.querySelector('input[name="baihangWay"][value="upload"]');
   if(wayUpload) wayUpload.checked=true;
   syncChuShenBaihang();
-  const ctrlUpload=document.querySelector('input[name="controllerCreditWay"][value="upload"]');
-  if(ctrlUpload) ctrlUpload.checked=true;
   const ctrlUp=document.getElementById("upControllerCreditForm");
   if(ctrlUp){
     ctrlUp.classList.remove("done");
@@ -2782,7 +2784,6 @@ function allUploadsDone(){
     const wrap=el.closest("#chuShenBaihangWrap");
     if(wrap && wrap.style.display==="none") return false;
     if(el.dataset.up==="baihang" && getBaihangWay()!=="upload") return false;
-    if(el.dataset.up==="controller-credit" && getControllerCreditWay()!=="upload") return false;
     return true;
   }).every(x=>x.classList.contains("done"));
 }
@@ -3096,6 +3097,155 @@ function verifyBaihangReport(){
   });
 }
 
+function closeFlowPage(){
+  const fromArchive=new URLSearchParams(location.search).get("from")==="档案";
+  if(fromArchive){
+    history.length>1?history.back():(location.href="业务端_客户档案_白条档案.html");
+    return;
+  }
+  if(typeof showBankHome==="function"){ showBankHome(); return; }
+  history.length>1?history.back():void 0;
+}
+
+function viewKvRow(lab, val){
+  return `<div class="field"><div class="lab">${lab}</div><div class="ctrl"><span class="val">${val==null||val===""?"—":val}</span></div></div>`;
+}
+function previewSubmittedFile(name){
+  alert("预览附件："+name+"\n（原型：打开图片/PDF 预览）");
+}
+function viewFileRow(lab, ok){
+  const safe=String(lab||"附件").replace(/"/g,"&quot;");
+  if(!ok){
+    return `<div class="field field-file"><div class="lab">${lab}</div><div class="ctrl"><div class="view-thumb" aria-label="${safe}未上传"><div class="view-thumb-empty">未上传</div></div></div></div>`;
+  }
+  return `<div class="field field-file"><div class="lab">${lab}</div><div class="ctrl">
+    <div class="view-thumb on" role="button" tabindex="0" aria-label="预览${safe}" onclick="previewSubmittedFile('${safe}')">
+      <div class="view-thumb-fake"><i></i><i></i><i></i></div>
+      <div class="view-thumb-mask">点击预览</div>
+    </div>
+  </div></div>`;
+}
+function radioVal(name){
+  const el=document.querySelector(`input[name="${name}"]:checked`);
+  return el?el.value:"";
+}
+function seedSubmittedDocsDemo(){
+  if(typeof ensureDemoIdentity==="function") ensureDemoIdentity();
+  if(typeof ensureSalesDdInfo==="function") ensureSalesDdInfo(true);
+  ["upLicense","upIdFront","upIdBack","upCreditScore","upControllerCreditForm"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.add("done");
+  });
+  const ge30=document.querySelector('input[name="quotaTier"][value="ge30"]');
+  if(ge30){ ge30.checked=true; }
+  const premix=document.querySelector('input[name="resupplyProduct"][value="预混料"]');
+  if(premix) premix.checked=true;
+  if(!flowChannelSelected.length) flowChannelSelected=["微信","支付宝"];
+  if(typeof syncResupplyDocs==="function") syncResupplyDocs();
+  if(typeof syncFlowUnzipPasswords==="function") syncFlowUnzipPasswords();
+  document.querySelectorAll("#resupplyDocs .upload, #upResupplyBaihang, #upControllerPbc").forEach(el=>el.classList.add("done"));
+  const ctrlName=document.getElementById("ddControllerNameText");
+  if(ctrlName && !ctrlName.value) ctrlName.value=(document.getElementById("legalName")?.value||"").trim()||"桑姣婧";
+  document.querySelectorAll('#resupplyDocs input[type="text"], #resupplyDocs input:not([type])').forEach(inp=>{
+    if(!inp.value) inp.value="演示密码123";
+  });
+}
+function buildSubmittedDocsHtml(){
+  const company=(document.getElementById("companyName")?.value||"").trim()||"—";
+  const code=(document.getElementById("creditCode")?.value||"").trim()||"—";
+  const name=(document.getElementById("legalName")?.value||"").trim()||"—";
+  const idNo=(document.getElementById("legalIdNo")?.value||"").trim()||"—";
+  const mobile=(document.getElementById("legalMobile")?.value||"").trim()||"—";
+  const chuShen=`
+    <div class="block">
+      <div class="sec">初审资料</div>
+      ${viewFileRow("营业执照", document.getElementById("upLicense")?.classList.contains("done"))}
+      ${viewKvRow("企业名称", company)}
+      ${viewKvRow("统一社会信用代码", code)}
+      ${viewFileRow("法人身份证人像面", document.getElementById("upIdFront")?.classList.contains("done"))}
+      ${viewFileRow("法人身份证国徽面", document.getElementById("upIdBack")?.classList.contains("done"))}
+      ${viewKvRow("法人姓名", name)}
+      ${viewKvRow("法人身份证号", idNo)}
+      ${viewKvRow("法人实名手机号", mobile)}
+      ${viewFileRow("信用分截图", document.getElementById("upCreditScore")?.classList.contains("done"))}
+      ${viewFileRow("法人征信报告", document.getElementById("upControllerCreditForm")?.classList.contains("done"))}
+    </div>`;
+  const channels=flowChannelSelected.length?flowChannelSelected.join("、"):"—";
+  let pwdRows="";
+  flowChannelSelected.forEach(ch=>{
+    const inp=[...document.querySelectorAll("#resupplyDocs input")].find(i=> (i.placeholder||"").includes(ch)||(i.previousElementSibling&&String(i.previousElementSibling.textContent||"").includes(ch)));
+    const boxLab=[...document.querySelectorAll("#resupplyDocs .lab,#resupplyDocs .field")].find(el=>String(el.textContent||"").includes(ch)&&String(el.textContent||"").includes("密码"));
+    let pwd="演示密码123";
+    if(boxLab){
+      const field=boxLab.closest(".field")||boxLab.parentElement;
+      const p=field?.querySelector("input");
+      if(p&&p.value) pwd=p.value;
+    }
+    pwdRows+=viewKvRow(`${ch}流水解压密码`, pwd);
+  });
+  const showBaihang=typeof isResupplyFullPrice==="function"&&isResupplyFullPrice();
+  const baihangWay=typeof getResupplyBaihangWay==="function"?getResupplyBaihangWay():"upload";
+  const baihangOk=document.getElementById("upResupplyBaihang")?.classList.contains("done")||(typeof resupplyBaihangOk!=="undefined"&&resupplyBaihangOk);
+  const showCtrl=document.getElementById("controllerCreditBox")?.style.display!=="none";
+  const ctrlNm=(document.getElementById("ddControllerNameText")?.value||"").trim()||"—";
+  const ctrlOk=document.getElementById("upControllerPbc")?.classList.contains("done");
+  const docUploads=[...document.querySelectorAll("#resupplyDocs .upload")].map(up=>{
+    const hint=up.querySelector(".hint");
+    let lab=(hint?.childNodes[0]?.textContent||hint?.textContent||"附件").replace(/\s+/g," ").trim();
+    lab=lab.replace(/^已上传[：:]\s*/,"").replace(/点击可重新选择/g,"").trim()||"附件";
+    return viewFileRow(lab, up.classList.contains("done"));
+  }).join("");
+  const formal=`
+    <div class="dash"></div>
+    <div class="block">
+      <div class="sec">正式进件资料</div>
+      ${viewKvRow("近1年经营性流水来源", channels)}
+      ${pwdRows||viewKvRow("流水解压密码","—")}
+      ${docUploads}
+      ${showBaihang?viewKvRow("百行征信报告提交方式", baihangWay==="email"?"已发送邮箱":"上传征信")+viewFileRow("百行征信报告", !!baihangOk):""}
+      ${showCtrl?viewKvRow("实控人姓名", ctrlNm)+viewFileRow("实控人征信报告", !!ctrlOk):""}
+    </div>`;
+  return chuShen+formal;
+}
+function fillSubmittedDocsPage(){
+  const body=document.getElementById("submittedDocsBody");
+  if(body) body.innerHTML=buildSubmittedDocsHtml();
+}
+function openSubmittedDocsView(from){
+  if(typeof hideBankHome==="function") hideBankHome();
+  seedSubmittedDocsDemo();
+  submittedDocsView=true;
+  submittedDocsReturn=from||null;
+  if(from==="formalReview") formalReviewReturnStatus=formalReviewStatus||"pass";
+  fillSubmittedDocsPage();
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeSubmittedDocsView(){
+  submittedDocsView=false;
+  const from=submittedDocsReturn;
+  submittedDocsReturn=null;
+  if(from==="chuShenResult"){
+    step=1; chuShenPhase="result";
+  }else if(from==="formalReview"){
+    step=2; resupplyPhase="review"; formalReviewStatus=formalReviewReturnStatus||"pass";
+  }
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function viewSubmittedChuShen(){
+  openSubmittedDocsView("chuShenResult");
+}
+function backToChuShenResult(){
+  closeSubmittedDocsView();
+}
+function viewSubmittedResupply(){
+  openSubmittedDocsView("formalReview");
+}
+function backToFormalReview(){
+  closeSubmittedDocsView();
+}
+
 function proceedResupplyNext(fromArchive){
   if(fromArchive){
     alert("正式进件资料已提交");
@@ -3143,14 +3293,15 @@ function syncControllerCreditBox(){
   }
   if(success) success.style.display="none";
   box.style.display="";
+  ensureSalesDdInfo(true);
   syncControllerUpload();
   syncResupplyFormVisibility();
 }
 
 function fillControllerSuccessLink(){
-  const name=(document.getElementById("controllerName")?.value||"").trim()||"实控人";
-  const fileName=name+"征信报告.pdf";
-  const label="已上传-"+name+"征信报告";
+  const name=getDdActualControllerName();
+  const fileName=(name && name!=="—"?name:"实控人")+"征信报告.pdf";
+  const label="已上传-"+(name && name!=="—"?name:"实控人")+"征信报告";
   const link=document.getElementById("controllerSuccessFileLink");
   if(link){
     link.dataset.file=fileName;
@@ -3170,55 +3321,77 @@ function showControllerCreditSuccessPage(){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function syncControllerUpload(){
-  const infoWrap=document.getElementById("controllerInfoWrap");
-  const wrap=document.getElementById("controllerPbcUploadWrap");
-  const need=!isLegalController();
-  if(!need){
-    controllerInfoReady=false;
-    controllerCreditOk=false;
-    if(infoWrap) infoWrap.style.display="none";
-    if(wrap) wrap.style.display="none";
-    const up=document.getElementById("upControllerPbc");
-    if(up){
-      up.classList.remove("done");
-      const hint=up.querySelector(".hint");
-      if(hint) hint.innerHTML='点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span>';
-    }
-    const inp=document.getElementById("actualControllerCreditFileInput");
-    if(inp) inp.value="";
-    ["controllerName","controllerIdNo","controllerMobile"].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.value="";
-    });
-  }else{
-    if(infoWrap) infoWrap.style.display="";
-    if(wrap) wrap.style.display=controllerCreditOk?"none":"";
-    if(!controllerCreditOk) syncActualControllerCreditWay();
+function needResupplyControllerCredit(){
+  return getQuotaTier()==="ge30";
+}
+
+function loadSalesDdInfoFromStore(){
+  try{
+    const raw=localStorage.getItem("baitiao_sales_dd");
+    if(!raw) return false;
+    const data=JSON.parse(raw);
+    if(!data || typeof data!=="object") return false;
+    const legalIsController=data.legalIsController!==false && data.isController!=="否";
+    salesDdInfo={
+      legalIsController,
+      controllerName:(data.controllerName||data.ctrlName||"").trim()
+    };
+    return true;
+  }catch(e){
+    return false;
   }
+}
+
+function ensureSalesDdInfo(forceDemo){
+  if(loadSalesDdInfoFromStore()) return;
+  if(forceDemo || salesDdSubmitted){
+    // 演示默认：法人非实控人，姓名与业务端 OCR 示例一致
+    salesDdInfo={ legalIsController:false, controllerName:"李实控" };
+  }
+}
+
+function getDdActualControllerName(){
+  ensureSalesDdInfo(false);
+  if(salesDdInfo.legalIsController){
+    return (document.getElementById("legalName")?.value||"").trim() || "—";
+  }
+  return (salesDdInfo.controllerName||"").trim() || "—";
+}
+
+function syncDdControllerNameDisplay(){
+  const el=document.getElementById("ddControllerNameText");
+  if(!el) return;
+  const name=getDdActualControllerName();
+  el.value=name==="—"?"":name;
+}
+
+function syncControllerUpload(){
+  const wrap=document.getElementById("controllerPbcUploadWrap");
+  if(!needResupplyControllerCredit()){
+    controllerInfoReady=false;
+    if(wrap) wrap.style.display="none";
+    renderFooter();
+    return;
+  }
+  controllerInfoReady=true;
+  syncDdControllerNameDisplay();
+  if(wrap) wrap.style.display=controllerCreditOk?"none":"";
+  if(!controllerCreditOk) syncActualControllerCreditWay();
   renderFooter();
 }
 
 function isLegalController(){
-  return document.querySelector('input[name="legalIsController"]:checked')?.value!=="否";
+  // 实控人三要素改由业务员尽调采集；本页仅在 ≥30 万时补征信
+  return !needResupplyControllerCredit();
 }
 
 function validateControllerIdentity(){
-  const name=(document.getElementById("controllerName")?.value||"").trim();
-  const idNo=(document.getElementById("controllerIdNo")?.value||"").trim();
-  const mobile=(document.getElementById("controllerMobile")?.value||"").trim();
-  if(!name) return "请填写实控人姓名";
-  if(!idNo || idNo.length<15) return "请填写正确的实控人身份证号码";
-  if(!/^1\d{10}$/.test(mobile)) return "请填写正确的实控人手机号";
   return "";
 }
 
 function validateControllerInfo(){
-  if(isLegalController()) return "";
-  const idErr=validateControllerIdentity();
-  if(idErr) return idErr;
+  if(!needResupplyControllerCredit()) return "";
   if(!controllerCreditOk){
-    if(getActualControllerCreditWay()==="pbc") return "请先去人行征信中心获取实控人征信报告";
     if(!isActualControllerCreditUploadReady()) return "请上传实控人征信报告";
   }
   return "";
@@ -3311,7 +3484,7 @@ function closeEsignFailModal(){
 
 function runEsign(onOk){
   hideEsignFail();
-  if(!allUploadsDone()){alert("请先上传营业执照、法人身份证正反面、信用分截图"+(isFullPrice()&&getBaihangWay()==="upload"?"及百行征信报告":"")+(getControllerCreditWay()==="upload"?"及法人征信报告":""));return}
+  if(!allUploadsDone()){alert("请先上传营业执照、法人身份证正反面、信用分截图"+(isFullPrice()&&getBaihangWay()==="upload"?"及百行征信报告":"")+"及法人征信报告");return}
   if(!isChuShenBaihangReady()){alert("百行征信报告邮箱未收到，请确认已发送至 jinrong@shyuanyao.com 后再次查询");return}
   if(!isControllerCreditFormReady()){alert("请上传法人征信报告（支持 PDF、图片）");return}
   const name=document.getElementById("legalName").value.trim();
@@ -3585,7 +3758,9 @@ function runDownload(){
       manualBusy=false;
     }
     const isActual=creditEntry==="resupply";
-    const name=(document.getElementById(isActual?"controllerName":"legalName")?.value||"").trim()||(isActual?"实控人":"客户");
+    const name=isActual
+      ? (getDdActualControllerName()!=="—"?getDdActualControllerName():"实控人")
+      : ((document.getElementById("legalName")?.value||"").trim()||"客户");
     const fileName=name+"征信报告.pdf";
     const label="已上传-"+name+"征信报告";
     document.getElementById("creditFileLink").dataset.file=fileName;
@@ -3650,6 +3825,20 @@ function downloadCreditFile(linkId){
 function runRpa(){ runDownload(); }
 
 function render(){
+  const submittedPage=document.getElementById("submittedDocsPage");
+  const stepsEl=document.getElementById("steps");
+  if(submittedDocsView){
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+    if(stepsEl) stepsEl.style.display="none";
+    if(submittedPage) submittedPage.style.display="";
+    const title=document.querySelector(".nav .title");
+    if(title) title.textContent="查看提交资料";
+    fillSubmittedDocsPage();
+    renderFooter();
+    return;
+  }
+  if(stepsEl) stepsEl.style.display="";
+  if(submittedPage) submittedPage.style.display="none";
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
   document.getElementById("panel-"+step).classList.add("on");
   document.querySelectorAll(".step").forEach(el=>{
@@ -3660,10 +3849,13 @@ function render(){
   });
   if(step===1){
     const title=document.querySelector(".nav .title");
-    if(title) title.textContent="白条初审";
     const showResult=chuShenPhase==="result";
     const showCredit=chuShenPhase==="credit";
-    document.getElementById("chuShenFormBox").style.display=(!showResult && !showCredit)?"":"none";
+    const showView=chuShenPhase==="view";
+    if(title) title.textContent=showView?"查看提交资料":"白条初审";
+    const formBox=document.getElementById("chuShenFormBox");
+    formBox.style.display=(!showResult && !showCredit)?"":"none";
+    formBox.classList.toggle("view-only", showView);
     document.getElementById("chuShenCreditBox").style.display=showCredit?"":"none";
     document.getElementById("creditResultPage").style.display=showResult?"block":"none";
     if(showCredit){
@@ -3719,7 +3911,7 @@ function render(){
       document.getElementById("creditDownloadPage").style.display=(creditAuthed && creditApplied && !creditOk)?"block":"none";
       document.getElementById("creditSuccessPage").style.display=(creditAuthed && creditApplied && creditOk)?"block":"none";
       if(creditAuthed && creditApplied && creditOk){
-        const name=(document.getElementById("controllerName")?.value||"").trim()||"实控人";
+        const name=getDdActualControllerName()!=="—"?getDdActualControllerName():"实控人";
         const successLink=document.getElementById("creditSuccessFileLink");
         const successSec=document.querySelector("#creditSuccessPage .sec");
         const successLab=document.querySelector("#creditSuccessPage .lab");
@@ -3734,13 +3926,24 @@ function render(){
       document.getElementById("chuShenCreditBox").style.display="none";
       if(title) title.textContent=formalReviewStatus==="opened"?"白条已开通":"正式进件审核";
       document.getElementById("resupplyFormBox").style.display="none";
+      document.getElementById("resupplyFormBox").classList.remove("view-only");
       document.getElementById("resupplyCreditBox").style.display="";
       document.getElementById("formalReviewPage").style.display="block";
       syncFormalReviewBlocks();
+    }else if(resupplyPhase==="view"){
+      document.getElementById("chuShenCreditBox").style.display="none";
+      if(title) title.textContent="查看提交资料";
+      const formBox=document.getElementById("resupplyFormBox");
+      formBox.style.display="";
+      formBox.classList.add("view-only");
+      document.getElementById("resupplyCreditBox").style.display="none";
+      syncResupplyDocs();
     }else{
       document.getElementById("chuShenCreditBox").style.display="none";
       if(title) title.textContent="正式进件资料补充";
-      document.getElementById("resupplyFormBox").style.display="";
+      const formBox=document.getElementById("resupplyFormBox");
+      formBox.style.display="";
+      formBox.classList.remove("view-only");
       document.getElementById("resupplyCreditBox").style.display="none";
       syncResupplyDocs();
     }
@@ -3776,11 +3979,25 @@ function renderFooter(){
   const save=document.getElementById("btnSave");
   if(save){ save.style.display="none"; save.disabled=false; }
   const fromArchive=new URLSearchParams(location.search).get("from")==="档案";
+  if(submittedDocsView){
+    if(save) save.style.display="none";
+    next.style.display="";
+    next.disabled=false;
+    next.textContent=submittedDocsReturn?"返回审核结果":"返回";
+    return;
+  }
   if(step===1 && chuShenPhase==="form"){
     if(save) save.style.display="";
     next.style.display="";
     next.disabled=false;
     next.textContent=fromArchive?"提交初审资料":"提交";
+    return;
+  }
+  if(step===1 && chuShenPhase==="view"){
+    if(save) save.style.display="none";
+    next.style.display="";
+    next.disabled=false;
+    next.textContent="返回审核结果";
     return;
   }
   if(step===1 && chuShenPhase==="result"){
@@ -3805,7 +4022,9 @@ function renderFooter(){
           next.disabled=false;
           next.textContent="去补充正式进件资料";
         }else{
-          next.style.display="none";
+          next.style.display="";
+          next.disabled=false;
+          next.textContent="返回";
         }
       }else{
         next.style.display="";
@@ -3815,6 +4034,7 @@ function renderFooter(){
       return;
     }
     if(aiDone && aiPass){
+      // 卡片内已有【关闭页面】
       next.style.display="none";
       return;
     }
@@ -3853,11 +4073,18 @@ function renderFooter(){
     next.disabled=false;
     if(fromArchive){
       next.textContent="提交正式进件资料";
-    }else if(getQuotaTier()==="ge30" && !isLegalController() && !controllerCreditOk){
-      next.textContent=getActualControllerCreditWay()==="pbc"?"去下载实控人征信报告":"提交";
+    }else if(needResupplyControllerCredit() && !controllerCreditOk){
+      next.textContent="提交";
     }else{
       next.textContent="提交";
     }
+    return;
+  }
+  if(step===2 && resupplyPhase==="view"){
+    if(save) save.style.display="none";
+    next.style.display="";
+    next.disabled=false;
+    next.textContent="返回审核结果";
     return;
   }
   if(step===2 && resupplyPhase==="credit"){
@@ -3906,6 +4133,7 @@ function renderFooter(){
       next.textContent="下一步，补充担保人资料";
       return;
     }
+    // 正式进件审核中：卡片内已有【关闭页面】
     next.style.display="none";
     return;
   }
@@ -3928,6 +4156,15 @@ function renderFooter(){
 function go(d){
   const fromArchive=new URLSearchParams(location.search).get("from")==="档案";
   if(d>0){
+    if(submittedDocsView){
+      if(submittedDocsReturn) closeSubmittedDocsView();
+      else closeFlowPage();
+      return;
+    }
+    if(step===1 && chuShenPhase==="view"){
+      backToChuShenResult();
+      return;
+    }
     if(step===1 && chuShenPhase==="form"){
       if(fromArchive){
         runEsign(()=>{ alert("初审资料已更新"); history.length>1?history.back():(location.href="业务端_客户档案_白条档案.html"); });
@@ -3983,11 +4220,12 @@ function go(d){
           creditOk=false; creditApplied=false; creditAuthed=false; firstCreditOk=false; render();
           return;
         }
-        if(!salesDdSubmitted) return;
+        if(!salesDdSubmitted){ closeFlowPage(); return; }
         step=2; chuShenPhase="form"; resupplyPhase="form"; render();
         return;
       }
       if(aiDone && aiPass){
+        closeFlowPage();
         return;
       }
       chuShenPhase="form";
@@ -3995,23 +4233,19 @@ function go(d){
       creditOk=false; creditApplied=false; creditAuthed=false; firstCreditOk=false; render();
       return;
     }
+    if(step===2 && resupplyPhase==="view"){
+      backToFormalReview();
+      return;
+    }
     if(step===2 && resupplyPhase==="form"){
-      if(getQuotaTier()==="ge30" && !isLegalController()){
-        const idErr=validateControllerIdentity();
-        if(idErr){ alert(idErr); return; }
+      if(needResupplyControllerCredit() && !controllerCreditOk){
         controllerInfoReady=true;
-        if(!controllerCreditOk){
-          if(getActualControllerCreditWay()==="pbc"){
-            enterActualControllerCreditFlow();
-            return;
-          }
-          if(!isActualControllerCreditUploadReady()){
-            alert("请上传实控人征信报告");
-            return;
-          }
-          showControllerCreditSuccessPage();
+        if(!isActualControllerCreditUploadReady()){
+          alert("请上传实控人征信报告");
           return;
         }
+        showControllerCreditSuccessPage();
+        return;
       }
       const miss=validateResupplyDocs();
       if(miss){alert(miss);return}
@@ -4081,6 +4315,7 @@ function go(d){
         window.scrollTo({top:0,behavior:"smooth"});
         return;
       }
+      closeFlowPage();
       return;
     }
     if(step===3){
@@ -4090,7 +4325,9 @@ function go(d){
           guarReviewStatus="pending";
           render();
           window.scrollTo({top:0,behavior:"smooth"});
+          return;
         }
+        closeFlowPage();
         return;
       }
       const err=validateGuarantor();

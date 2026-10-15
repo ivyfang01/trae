@@ -796,33 +796,10 @@ body{
         </div>
       </div>
       <div class="block" id="controllerCreditBox" style="display:none">
-        <div class="sec">实控人信息</div>
-        <div class="field">
-          <div class="lab"><span class="req">*</span>法人是否为实控人</div>
-          <div class="ctrl">
-            <div class="seg">
-              <label><input type="radio" name="legalIsController" value="是" checked onchange="syncControllerUpload()" />是</label>
-              <label><input type="radio" name="legalIsController" value="否" onchange="syncControllerUpload()" />否</label>
-            </div>
-          </div>
-        </div>
-        <div id="controllerInfoWrap" style="display:none">
-          <div class="field">
-            <div class="lab"><span class="req">*</span>实控人姓名</div>
-            <div class="ctrl"><input id="controllerName" placeholder="请输入实控人姓名" /></div>
-          </div>
-          <div class="field">
-            <div class="lab"><span class="req">*</span>身份证号码</div>
-            <div class="ctrl"><input id="controllerIdNo" maxlength="18" placeholder="请输入实控人身份证号码" /></div>
-          </div>
-          <div class="field" style="border-bottom:0">
-            <div class="lab"><span class="req">*</span>手机号</div>
-            <div class="ctrl"><input id="controllerMobile" type="tel" maxlength="11" placeholder="请输入实控人手机号" /></div>
-          </div>
-        </div>
-        <div id="controllerPbcUploadWrap" style="display:none">
-          <div class="up-label" style="margin-top:12px"><span class="req">*</span>实控人近1个月人行征信报告</div>
-          <div class="field-hint" style="margin:0 0 8px">任意银行APP下载</div>
+        <div class="sec">实控人征信报告</div>
+        <div id="controllerPbcUploadWrap">
+          <div class="up-label"><span class="req">*</span>实控人近1个月人行征信报告</div>
+          <div class="field-hint" style="margin:0 0 8px">任意银行APP下载；实控人信息以业务员尽调为准</div>
           <div class="upload-grid one">
             <div class="upload" id="upControllerPbc" data-req="1" onclick="toggleControllerPbc(this)">
               <div class="cam" aria-hidden="true"></div>
@@ -1147,7 +1124,7 @@ const FLOW_CHANNEL_OPTIONS=[
   "南京银行","宁波银行","杭州银行","浙商银行","渤海银行","恒丰银行","其他银行"
 ];
 let flowChannelDraft=[];
-let controllerInfoReady=false; // 非实控人时：已填写姓名/身份证/手机号，进入征信上传
+let controllerInfoReady=false; // ≥30万正式进件：实控人征信区块已就绪
 let controllerCreditOk=false; // 实控人征信已上传成功
 let manualDone=false, manualPass=false, manualBusy=false;
 let rpaBusy=false, aiBusy=false;
@@ -1451,8 +1428,6 @@ function openCreditSuccessDemoPage(){
   const successLink=document.getElementById("creditSuccessFileLink");
   successLink.dataset.file=fileName;
   successLink.textContent=label;
-  const yesCtrl=document.querySelector('input[name="legalIsController"][value="是"]');
-  if(yesCtrl) yesCtrl.checked=true;
   render();
   document.getElementById("creditRegPage").style.display="none";
   document.getElementById("creditLoginPage").style.display="none";
@@ -1474,9 +1449,7 @@ function openControllerCreditDemoPage(){
   closeRegLoginSmsModal();
   const ge30=document.querySelector('input[name="quotaTier"][value="ge30"]');
   if(ge30) ge30.checked=true;
-  const noCtrl=document.querySelector('input[name="legalIsController"][value="否"]');
-  if(noCtrl) noCtrl.checked=true;
-  controllerInfoReady=false;
+  controllerInfoReady=true;
   controllerCreditOk=false;
   step=2;
   chuShenPhase="form";
@@ -1521,14 +1494,6 @@ function openControllerCreditSuccessDemoPage(){
   closeRegLoginSmsModal();
   const ge30=document.querySelector('input[name="quotaTier"][value="ge30"]');
   if(ge30) ge30.checked=true;
-  const noCtrl=document.querySelector('input[name="legalIsController"][value="否"]');
-  if(noCtrl) noCtrl.checked=true;
-  const nameInput=document.getElementById("controllerName");
-  if(nameInput && !nameInput.value.trim()) nameInput.value="李实控";
-  const idInput=document.getElementById("controllerIdNo");
-  if(idInput && !idInput.value.trim()) idInput.value="320102199001011234";
-  const mobileInput=document.getElementById("controllerMobile");
-  if(mobileInput && !mobileInput.value.trim()) mobileInput.value="13800138000";
   controllerInfoReady=true;
   controllerCreditOk=true;
   step=2;
@@ -2072,9 +2037,8 @@ function syncControllerCreditBox(){
 }
 
 function fillControllerSuccessLink(){
-  const name=(document.getElementById("controllerName")?.value||"").trim()||"实控人";
-  const fileName=name+"征信报告.pdf";
-  const label="已上传-"+name+"征信报告";
+  const fileName="实控人征信报告.pdf";
+  const label="已上传-实控人征信报告";
   const link=document.getElementById("controllerSuccessFileLink");
   if(link){
     link.dataset.file=fileName;
@@ -2096,47 +2060,33 @@ function showControllerCreditSuccessPage(){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
+function needResupplyControllerCredit(){
+  return getQuotaTier()==="ge30";
+}
+
 function syncControllerUpload(){
-  const infoWrap=document.getElementById("controllerInfoWrap");
   const wrap=document.getElementById("controllerPbcUploadWrap");
-  const need=!isLegalController();
-  if(!need){
+  if(!needResupplyControllerCredit()){
     controllerInfoReady=false;
-    controllerCreditOk=false;
-    if(infoWrap) infoWrap.style.display="none";
     if(wrap) wrap.style.display="none";
-    const up=document.getElementById("upControllerPbc");
-    if(up) up.classList.remove("done");
-    ["controllerName","controllerIdNo","controllerMobile"].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.value="";
-    });
-  }else{
-    if(infoWrap) infoWrap.style.display="";
-    if(wrap) wrap.style.display=controllerInfoReady && !controllerCreditOk?"":"none";
+    renderFooter();
+    return;
   }
+  controllerInfoReady=true;
+  if(wrap) wrap.style.display=controllerCreditOk?"none":"";
   renderFooter();
 }
 
 function isLegalController(){
-  return document.querySelector('input[name="legalIsController"]:checked')?.value!=="否";
+  return !needResupplyControllerCredit();
 }
 
 function validateControllerIdentity(){
-  const name=(document.getElementById("controllerName")?.value||"").trim();
-  const idNo=(document.getElementById("controllerIdNo")?.value||"").trim();
-  const mobile=(document.getElementById("controllerMobile")?.value||"").trim();
-  if(!name) return "请填写实控人姓名";
-  if(!idNo || idNo.length<15) return "请填写正确的实控人身份证号码";
-  if(!/^1\d{10}$/.test(mobile)) return "请填写正确的实控人手机号";
   return "";
 }
 
 function validateControllerInfo(){
-  if(isLegalController()) return "";
-  const idErr=validateControllerIdentity();
-  if(idErr) return idErr;
-  if(!controllerInfoReady) return "请先获取实控人征信报告";
+  if(!needResupplyControllerCredit()) return "";
   if(!controllerCreditOk){
     const up=document.getElementById("upControllerPbc");
     if(up && !up.classList.contains("done")) return "请上传实控人近1个月人行征信报告";
@@ -2653,8 +2603,8 @@ function renderFooter(){
     if(creditOk){
       next.style.display="";
       next.disabled=false;
-      if(getQuotaTier()==="ge30" && !isLegalController() && !controllerInfoReady){
-        next.textContent="下一步，获取实控人征信报告";
+      if(needResupplyControllerCredit() && !controllerCreditOk){
+        next.textContent="请上传实控人征信报告";
       }else{
         next.textContent="提交审核";
       }
@@ -2788,24 +2738,14 @@ function go(d){
       if(!creditAuthed){ runCreditAuth(); return; }
       if(!creditApplied){ submitCreditApply(); return; }
       if(!creditOk){ runDownload(); return; }
-      if(getQuotaTier()==="ge30" && !isLegalController()){
-        if(!controllerInfoReady){
-          const idErr=validateControllerIdentity();
-          if(idErr){ alert(idErr); return; }
-          controllerInfoReady=true;
-          syncControllerUpload();
-          window.scrollTo({top:document.getElementById("controllerPbcUploadWrap")?.offsetTop||0,behavior:"smooth"});
+      if(needResupplyControllerCredit() && !controllerCreditOk){
+        const up=document.getElementById("upControllerPbc");
+        if(up && !up.classList.contains("done")){
+          alert("请上传实控人近1个月人行征信报告");
           return;
         }
-        if(!controllerCreditOk){
-          const up=document.getElementById("upControllerPbc");
-          if(up && !up.classList.contains("done")){
-            alert("请上传实控人近1个月人行征信报告");
-            return;
-          }
-          showControllerCreditSuccessPage();
-          return;
-        }
+        showControllerCreditSuccessPage();
+        return;
       }
       const t=document.getElementById("formalSubmitTime");
       if(t) t.textContent=nowStamp();
