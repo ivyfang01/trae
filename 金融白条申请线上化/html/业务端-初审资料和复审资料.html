@@ -99,6 +99,31 @@ body{
 .up-label-row .field-hint{margin:0;text-align:left}
 .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
 .upload-grid.one{grid-template-columns:1fr;max-width:180px}
+.multi-up{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px
+}
+.multi-shot,.multi-add{
+  width:100%;aspect-ratio:1;min-height:0;box-sizing:border-box;border-radius:4px;padding:6px 4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative
+}
+.multi-add{
+  border:1px dashed #e5e5e5;background:var(--upload-bg);color:#999;cursor:pointer;font-size:12px;line-height:1.2;text-align:center
+}
+.multi-add .plus{font-size:22px;line-height:1;color:#ccc;font-weight:300}
+.multi-add .hint{display:block;font-size:10px;color:#999;line-height:1.25;font-weight:400;padding:0 2px}
+.multi-shot{border:1px solid #ffd2b0;background:var(--orange-soft)}
+.multi-shot .pic{
+  width:70%;height:46%;border-radius:3px;background:#ffe0c2 center/cover no-repeat;flex:0 0 auto
+}
+.multi-shot .cap{font-size:11px;color:var(--orange);line-height:1.2;font-weight:600}
+.multi-shot.has-img .pic{position:absolute;inset:4px;width:auto;height:auto}
+.multi-shot.has-img .cap{
+  position:relative;z-index:1;color:#fff;background:rgba(0,0,0,.45);padding:1px 4px;border-radius:2px;font-weight:400
+}
+.multi-shot .rm{
+  position:absolute;top:-6px;right:-6px;width:18px;height:18px;border:none;border-radius:50%;
+  background:rgba(0,0,0,.62);color:#fff;font-size:12px;line-height:18px;cursor:pointer;padding:0;z-index:2
+}
 .upload{
   background:var(--upload-bg);border:1px solid #ececec;border-radius:4px;
   min-height:110px;padding:14px 8px;display:flex;flex-direction:column;
@@ -136,6 +161,11 @@ body{
 }
 .view-thumb-empty{font-size:12px;color:#999}
 .view-thumb:active{opacity:.88}
+#filePreviewPage{position:fixed;inset:0;z-index:50;background:#e8e8e8;overflow:auto}
+#filePreviewPage .page{padding-bottom:24px}
+.preview-shot{margin:12px 16px;background:#fff;border-radius:8px;overflow:hidden}
+.preview-shot .cap{display:flex;justify-content:space-between;gap:8px;padding:10px 12px 0;font-size:13px;color:#666}
+.preview-shot img{display:block;width:100%;height:auto;background:#f7f7f7}
 
 .field{
   display:flex;align-items:flex-start;gap:10px;padding:14px 0;
@@ -178,6 +208,15 @@ body{
 }
 .seg input{display:none}
 .seg label:has(input:checked){border-color:var(--orange);color:var(--orange);background:var(--orange-soft)}
+#resupplyBaihangWrap > .field{align-items:center}
+#resupplyBaihangWrap > .field .lab{width:auto;white-space:nowrap}
+#resupplyBaihangWrap > .field .seg{justify-content:flex-end}
+#resupplyBaihangWrap > .field .seg label{flex:0 1 auto;padding:0 14px;white-space:nowrap}
+#actualControllerCreditUploadBox{flex-direction:column;align-items:flex-start}
+#actualControllerCreditUploadBox .lab{width:auto;max-width:none;white-space:nowrap}
+#actualControllerCreditUploadBox .lab .field-hint{display:inline;margin:0 0 0 2em;text-align:left;font-weight:400;line-height:22px;vertical-align:baseline}
+#actualControllerCreditUploadBox .ctrl{width:100%}
+#actualControllerCreditUploadBox #upControllerPbc{justify-content:flex-start;margin-top:8px}
 .multi-select{
   width:100%;min-height:24px;border:0;outline:none;background:transparent;padding:0;
   font-size:14px;color:#333;text-align:left;cursor:pointer;line-height:22px;
@@ -367,6 +406,7 @@ body{
 #resupplyFormBox.view-only .sample-link,
 #resupplyFormBox.view-only button:not(.btn){pointer-events:none;opacity:.75}
 .dash{height:8px;background:#f7f7f7;margin:6px 0}
+.ctrl-split{height:1px;background:#eee;margin:4px 0 14px}
 .modal-mask{
   display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.45);
   align-items:center;justify-content:center;padding:24px
@@ -643,8 +683,10 @@ body{
   <button type="button" data-jump="controller-success">实控人征信上传成功</button>
   <button type="button" data-jump="formal-review">正式进件审核中</button>
   <button type="button" data-jump="formal-reject">正式进件驳回</button>
-  <button type="button" data-jump="formal-pass">正式进件通过-上银</button>
-  <button type="button" data-jump="formal-pass-xs">正式进件通过-锡商</button>
+  <button type="button" data-jump="formal-pass">正式进件通过-上银已开户</button>
+  <button type="button" data-jump="formal-pass" data-opened="0">正式进件通过-上银未开户</button>
+  <button type="button" data-jump="formal-pass-xs" data-opened="1">正式进件通过-锡商已开户</button>
+  <button type="button" data-jump="formal-pass-xs">正式进件通过-锡商未开户</button>
   <button type="button" data-jump="xs-home">锡商白条首页</button>
   <button type="button" data-jump="xs-apply">锡商信息采集</button>
   <button type="button" data-jump="baitiao-opened">白条已开通</button>
@@ -997,7 +1039,7 @@ body{
               <label><input type="radio" name="baihangWay" value="upload" checked onchange="syncBaihangWay()" />上传图片</label>
               <label><input type="radio" name="baihangWay" value="email" onchange="syncBaihangWay()" />已发送邮箱</label>
             </div>
-            <div class="field-hint">邮箱：jinrong@shyuanyao.com</div>
+            <div class="field-hint">邮箱：jinrongbu@shyuanyao.com</div>
           </div>
         </div>
         <div id="baihangUploadBox">
@@ -1029,13 +1071,10 @@ body{
       <div class="sec">法人征信报告</div>
       <div class="up-label"><span class="req">*</span>上传法人征信报告</div>
       <div id="controllerCreditUploadBox">
-        <div class="upload-grid one">
-          <div class="upload" data-up="controller-credit" id="upControllerCreditForm" onclick="pickControllerCreditFile(this)">
-            <div class="cam" aria-hidden="true"></div>
-            <div class="hint">点击上传法人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span></div>
-          </div>
+        <div class="multi-up" id="upControllerCreditForm" data-req="1">
+          <button type="button" class="multi-add" onclick="pickControllerCreditFile(this)"><span class="plus">+</span><span class="hint">支持多张图片、pdf、doc、xls等</span></button>
         </div>
-        <input type="file" id="controllerCreditFileInput" accept=".pdf,image/*,.jpg,.jpeg,.png,.webp,.gif" style="display:none" onchange="onControllerCreditFileChange(this)" />
+        <input type="file" id="controllerCreditFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,image/*,.jpg,.jpeg,.png,.webp,.gif" multiple style="display:none" onchange="onControllerCreditFileChange(this)" />
       </div>
     </div>
 
@@ -1346,8 +1385,8 @@ body{
         <div class="lab"><span class="req">*</span>白条额度</div>
         <div class="ctrl">
           <div class="seg" id="quotaSeg">
-            <label><input type="radio" name="quotaTier" value="lt30" checked onchange="syncResupplyDocs()" />小于30万</label>
-            <label><input type="radio" name="quotaTier" value="ge30" onchange="syncResupplyDocs()" />≥30万</label>
+            <label><input type="radio" name="quotaTier" value="lt30" onchange="syncResupplyDocs()" />小于30万</label>
+            <label><input type="radio" name="quotaTier" value="ge30" checked onchange="syncResupplyDocs()" />≥30万</label>
           </div>
         </div>
       </div>
@@ -1355,8 +1394,8 @@ body{
         <div class="lab"><span class="req">*</span>养殖类型</div>
         <div class="ctrl">
           <div class="seg">
-            <label><input type="radio" name="breedType" value="禽类" checked onchange="syncResupplyDocs()" />禽类</label>
-            <label><input type="radio" name="breedType" value="猪牛羊" onchange="syncResupplyDocs()" />猪牛羊</label>
+            <label><input type="radio" name="breedType" value="禽类" onchange="syncResupplyDocs()" />禽类</label>
+            <label><input type="radio" name="breedType" value="猪牛羊" checked onchange="syncResupplyDocs()" />猪牛羊</label>
           </div>
         </div>
       </div>
@@ -1364,8 +1403,8 @@ body{
         <div class="lab"><span class="req">*</span>是否牧场</div>
         <div class="ctrl">
           <div class="seg">
-            <label><input type="radio" name="isRanch" value="否" checked onchange="syncResupplyDocs()" />否</label>
-            <label><input type="radio" name="isRanch" value="是" onchange="syncResupplyDocs()" />是</label>
+            <label><input type="radio" name="isRanch" value="否" onchange="syncResupplyDocs()" />否</label>
+            <label><input type="radio" name="isRanch" value="是" checked onchange="syncResupplyDocs()" />是</label>
           </div>
         </div>
       </div>
@@ -1373,8 +1412,8 @@ body{
         <div class="lab"><span class="req">*</span>白条产品类型</div>
         <div class="ctrl">
           <div class="seg">
-            <label><input type="radio" name="resupplyProduct" value="预混料" checked onchange="syncResupplyDocs()" />预混料</label>
-            <label><input type="radio" name="resupplyProduct" value="全价料" onchange="syncResupplyDocs()" />全价料</label>
+            <label><input type="radio" name="resupplyProduct" value="预混料" onchange="syncResupplyDocs()" />预混料</label>
+            <label><input type="radio" name="resupplyProduct" value="全价料" checked onchange="syncResupplyDocs()" />全价料</label>
             <label><input type="radio" name="resupplyProduct" value="大宗" onchange="syncResupplyDocs()" />大宗白条</label>
           </div>
         </div>
@@ -1383,8 +1422,8 @@ body{
         <div class="lab"><span class="req">*</span>主体类型</div>
         <div class="ctrl">
           <div class="seg">
-            <label><input type="radio" name="subjectKind" value="个人" checked onchange="syncResupplyDocs()" />个人</label>
-            <label><input type="radio" name="subjectKind" value="企业" onchange="syncResupplyDocs()" />企业</label>
+            <label><input type="radio" name="subjectKind" value="个人" onchange="syncResupplyDocs()" />个人</label>
+            <label><input type="radio" name="subjectKind" value="企业" checked onchange="syncResupplyDocs()" />企业</label>
           </div>
         </div>
       </div>
@@ -1393,27 +1432,24 @@ body{
     <div class="dash" id="resupplyDash"></div>
 
     <div class="block" id="resupplyDocs">
-      <!-- 动态渲染必传资料 -->
+      <div class="sec">经营证明资料</div>
+      <div id="resupplyDocsBody"></div>
     </div>
 
     <div class="block" id="resupplyBaihangWrap" style="display:none">
-      <div class="sec">百行征信报告</div>
       <div class="field" style="border-bottom:0;padding-top:4px">
-        <div class="lab"><span class="req">*</span>百行征信报告提交方式</div>
+        <div class="lab"><span class="req">*</span>法人百行征信报告</div>
         <div class="ctrl">
           <div class="seg">
             <label><input type="radio" name="resupplyBaihangWay" value="upload" checked onchange="syncResupplyBaihangWay()" />上传征信</label>
             <label><input type="radio" name="resupplyBaihangWay" value="email" onchange="syncResupplyBaihangWay()" />已发送邮箱</label>
           </div>
-          <div class="field-hint" id="resupplyBaihangInboxHint" style="display:none">收件箱：jinrong@shyuanyao.com</div>
+          <div class="field-hint" id="resupplyBaihangInboxHint" style="display:none">收件箱：jinrongbu@shyuanyao.com</div>
         </div>
       </div>
       <div id="resupplyBaihangUploadBox">
-        <div class="upload-grid one">
-          <div class="upload" data-up="resupply-baihang" id="upResupplyBaihang" onclick="this.classList.toggle('done')">
-            <div class="cam" aria-hidden="true"></div>
-            <div class="hint">点击上传百行征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span></div>
-          </div>
+        <div class="multi-up" id="upResupplyBaihang">
+          <button type="button" class="multi-add" onclick="addMultiUpload(this)"><span class="plus">+</span><span class="hint">支持多张图片、pdf、doc、xls等</span></button>
         </div>
       </div>
       <div id="resupplyBaihangEmailBox" style="display:none">
@@ -1431,25 +1467,22 @@ body{
     </div>
 
       <div class="block" id="controllerCreditBox" style="display:none">
-        <div class="sec">实控人征信报告</div>
+        <div class="ctrl-split"></div>
+        <div class="sec">实控人资料</div>
         <div id="controllerPbcUploadWrap">
-          <div class="field">
+          <div class="field" style="border-bottom:0">
             <div class="lab">实控人姓名</div>
             <div class="ctrl">
-              <input id="ddControllerNameText" value="" readonly style="background:#f7f8fa" />
+              <input id="ddControllerNameText" value="" readonly style="background:#fff" />
             </div>
           </div>
           <div id="actualControllerCreditUploadBox" class="field" style="border-bottom:0;padding-top:4px;margin-top:0">
-            <div class="lab"><span class="req">*</span>上传实控人征信报告</div>
+            <div class="lab"><span class="req">*</span>上传实控人征信报告<span class="field-hint">近一个月征信报告</span></div>
             <div class="ctrl">
-              <div class="field-hint" style="margin:0 0 8px">近一个月征信报告</div>
-              <div class="upload-grid one">
-                <div class="upload" id="upControllerPbc" data-req="1" onclick="pickActualControllerCreditFile(this)">
-                  <div class="cam" aria-hidden="true"></div>
-                  <div class="hint">点击上传实控人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span></div>
-                </div>
+              <div class="multi-up" id="upControllerPbc" data-req="1">
+                <button type="button" class="multi-add" onclick="pickActualControllerCreditFile(this)"><span class="plus">+</span><span class="hint">支持多张图片、pdf、doc、xls等</span></button>
               </div>
-              <input type="file" id="actualControllerCreditFileInput" accept=".pdf,image/*,.jpg,.jpeg,.png,.webp,.gif" style="display:none" onchange="onActualControllerCreditFileChange(this)" />
+              <input type="file" id="actualControllerCreditFileInput" accept=".pdf,image/*,.jpg,.jpeg,.png,.webp,.gif" multiple style="display:none" onchange="onActualControllerCreditFileChange(this)" />
             </div>
           </div>
         </div>
@@ -1512,7 +1545,6 @@ body{
             <div class="lab">审核时间</div>
             <div class="ctrl"><span class="val" id="formalRejectAuditTime">2026-09-16 20:10:22</span></div>
           </div>
-          <div class="tip" style="margin:12px 0 0">提醒：请根据拒绝原因修改资料后重新提交。审核结果同步在企微群中通知。</div>
         </div>
 
         <div id="formalReviewPass" style="display:none">
@@ -1534,8 +1566,8 @@ body{
           </div>
           <div class="tip" id="formalPassTip" style="margin:12px 0 0">提醒：资料上海银行，请去上海银行APP申请白条服务。</div>
           <div class="result-actions">
-            <button type="button" class="btn-back" onclick="closeFlowPage()">返回</button>
             <button type="button" class="btn-view" onclick="viewSubmittedResupply()">查看提交资料</button>
+            <button type="button" class="btn-view" id="btnApplyXs" style="display:none" onclick="showXsApply()">去申请锡商白条</button>
           </div>
         </div>
 
@@ -1789,6 +1821,16 @@ body{
   </div>
 </div>
 
+<div id="filePreviewPage" style="display:none">
+  <div class="page">
+    <div class="nav">
+      <button class="back" type="button" onclick="closeFilePreview()" aria-label="返回">‹</button>
+      <div class="title" id="filePreviewTitle">预览</div>
+    </div>
+    <div id="filePreviewBody"></div>
+  </div>
+</div>
+
 <script>
 let step=1;
 let demoMode="pass";
@@ -1805,6 +1847,7 @@ let submittedDocsView=false;
 let submittedDocsReturn=null;
 let formalReviewStatus="pending"; // pending | reject | pass | opened
 let formalPassBankType="上海银行"; // 上海银行 | 锡商银行
+let formalBankAccountOpened=true; // 该主体是否已开通对应银行余额账户
 let guarPhase="form"; // form | review
 let guarReviewStatus="pending"; // pending | pass | reject
 let creditEntry="chushen"; // chushen | resupply
@@ -1933,31 +1976,51 @@ function syncActualControllerCreditWay(){
   if(up) up.style.display="";
   renderFooter();
 }
+function hasMultiUpload(id){
+  return !!document.getElementById(id)?.querySelector(".multi-shot");
+}
+function addMultiUpload(btn, file){
+  const row=btn.closest(".multi-up");
+  if(!row) return;
+  const shot=document.createElement("div");
+  shot.className="multi-shot";
+  shot.innerHTML=`<div class="pic"></div><div class="cap">已上传</div><button type="button" class="rm" aria-label="删除">×</button>`;
+  if(file && /^image\//.test(file.type)){
+    shot.classList.add("has-img");
+    shot.querySelector(".pic").style.backgroundImage=`url("${URL.createObjectURL(file)}")`;
+  }
+  shot.querySelector(".rm").onclick=()=>{ shot.remove(); if(window.renderFooter) renderFooter(); };
+  row.insertBefore(shot, row.querySelector(".multi-add"));
+  if(window.renderFooter) renderFooter();
+}
+function clearMultiUpload(id){
+  const row=document.getElementById(id);
+  if(!row) return;
+  row.querySelectorAll(".multi-shot").forEach(el=>el.remove());
+}
 function pickActualControllerCreditFile(el){
   const inp=document.getElementById("actualControllerCreditFileInput");
-  if(!inp){ el.classList.toggle("done"); renderFooter(); return; }
+  if(!inp){ addMultiUpload(el); return; }
   inp.click();
 }
 function onActualControllerCreditFileChange(inp){
-  const file=inp.files&&inp.files[0];
+  const files=[...(inp.files||[])];
   const up=document.getElementById("upControllerPbc");
+  inp.value="";
   if(!up) return;
-  if(!file){ up.classList.remove("done"); renderFooter(); return; }
-  const okType=/pdf|image\//i.test(file.type) || /\.(pdf|jpg|jpeg|png|webp|gif)$/i.test(file.name);
-  if(!okType){
+  if(!files.length){ renderFooter(); return; }
+  const bad=files.some(file=>!(/pdf|image\//i.test(file.type) || /\.(pdf|jpg|jpeg|png|webp|gif)$/i.test(file.name)));
+  if(bad){
     alert("仅支持上传 PDF 或图片文件");
-    inp.value="";
-    up.classList.remove("done");
     renderFooter();
     return;
   }
-  up.classList.add("done");
-  const hint=up.querySelector(".hint");
-  if(hint) hint.innerHTML="已上传："+file.name+'<br><span style="font-size:12px;color:#999">点击可重新选择</span>';
+  const btn=up.querySelector(".multi-add");
+  if(btn) files.forEach(file=>addMultiUpload(btn, file));
   renderFooter();
 }
 function isActualControllerCreditUploadReady(){
-  return !!document.getElementById("upControllerPbc")?.classList.contains("done");
+  return hasMultiUpload("upControllerPbc");
 }
 function enterActualControllerCreditFlow(){
   creditEntry="resupply";
@@ -2066,8 +2129,8 @@ document.querySelectorAll(".demo button[data-jump]").forEach(btn=>{
     if(btn.dataset.jump==="controller-success") openControllerCreditSuccessDemoPage();
     if(btn.dataset.jump==="formal-review") openFormalReviewDemoPage("pending");
     if(btn.dataset.jump==="formal-reject") openFormalReviewDemoPage("reject");
-    if(btn.dataset.jump==="formal-pass") openFormalReviewDemoPage("pass","上海银行");
-    if(btn.dataset.jump==="formal-pass-xs") openFormalReviewDemoPage("pass","锡商银行");
+    if(btn.dataset.jump==="formal-pass") openFormalReviewDemoPage("pass","上海银行", btn.dataset.opened!=="0");
+    if(btn.dataset.jump==="formal-pass-xs") openFormalReviewDemoPage("pass","锡商银行", btn.dataset.opened==="1");
     if(btn.dataset.jump==="baitiao-opened") openFormalReviewDemoPage("opened");
     if(btn.dataset.jump==="resupply"){ step=2; chuShenPhase="form"; resupplyPhase="form"; creditEntry="chushen"; salesDdSubmitted=true; manualDone=true; manualPass=true; ensureSalesDdInfo(true); ensureDemoIdentity(); render(); }
     if(btn.dataset.jump==="submitted-docs") openSubmittedDocsView(null);
@@ -2165,23 +2228,21 @@ function pickControllerCreditFile(el){
   inp.click();
 }
 function onControllerCreditFileChange(inp){
-  const file=inp.files&&inp.files[0];
+  const files=[...(inp.files||[])];
   const up=document.getElementById(inp.dataset.target||"upControllerCreditForm");
+  inp.value="";
   if(!up) return;
-  if(!file){ up.classList.remove("done"); return; }
-  const okType=/pdf|image\//i.test(file.type) || /\.(pdf|jpg|jpeg|png|webp|gif)$/i.test(file.name);
-  if(!okType){
-    alert("仅支持上传 PDF 或图片文件");
-    inp.value="";
-    up.classList.remove("done");
+  if(!files.length) return;
+  const ok=file=>/pdf|image\/|msword|wordprocessingml|excel|spreadsheetml/i.test(file.type) || /\.(pdf|jpg|jpeg|png|webp|gif|doc|docx|xls|xlsx)$/i.test(file.name);
+  if(files.some(file=>!ok(file))){
+    alert("仅支持上传图片、PDF、doc、xls");
     return;
   }
-  up.classList.add("done");
-  const hint=up.querySelector(".hint");
-  if(hint) hint.innerHTML="已上传："+file.name+'<br><span style="font-size:12px;color:#999">点击可重新选择</span>';
+  const btn=up.querySelector(".multi-add");
+  if(btn) files.forEach(file=>addMultiUpload(btn, file));
 }
 function isControllerCreditFormReady(){
-  return !!document.getElementById("upControllerCreditForm")?.classList.contains("done");
+  return !!document.getElementById("upControllerCreditForm")?.querySelector(".multi-shot");
 }
 
 function syncBaihangField(){
@@ -2492,7 +2553,8 @@ function openControllerCreditSuccessDemoPage(){
   manualPass=true;
   rpaBusy=false;
   const up=document.getElementById("upControllerPbc");
-  if(up) up.classList.add("done");
+  const btn=up?.querySelector(".multi-add");
+  if(btn && !up.querySelector(".multi-shot")) addMultiUpload(btn);
   render();
   showControllerCreditSuccessPage();
   const title=document.querySelector(".nav .title");
@@ -2509,14 +2571,21 @@ function nowStamp(){
 function syncFormalPassBankUI(){
   const bankEl=document.getElementById("formalPassBank");
   const tipEl=document.getElementById("formalPassTip");
+  const xs=formalPassBankType==="锡商银行";
   if(bankEl) bankEl.textContent=formalPassBankType;
   if(tipEl){
-    if(formalPassBankType==="锡商银行"){
-      tipEl.textContent="提醒：资料锡商银行，请去申请锡商白条服务。";
+    if(!formalBankAccountOpened){
+      tipEl.textContent=xs
+        ?"提醒：您还没开通锡商银行余额账户，请及时开通。"
+        :"提醒：您还没开通上海银行余额账户，请及时开通。";
     }else{
-      tipEl.textContent="提醒：资料上海银行，请去上海银行APP申请白条服务。";
+      tipEl.textContent=xs
+        ?"提醒：申请白条资料已经推送锡商银行，请及时提交白条申请。"
+        :"提醒：申请白条资料已经推送上海银行，请及时登录上海银行APP提交白条申请。";
     }
   }
+  const xsBtn=document.getElementById("btnApplyXs");
+  if(xsBtn) xsBtn.style.display=(xs && formalBankAccountOpened)?"":"none";
 }
 
 function syncFormalReviewBlocks(){
@@ -2532,7 +2601,7 @@ function syncFormalReviewBlocks(){
   if(formalReviewStatus==="pass") syncFormalPassBankUI();
 }
 
-function openFormalReviewDemoPage(status, bankType){
+function openFormalReviewDemoPage(status, bankType, accountOpened){
   ensureDemoIdentity();
   closeRegLoginSmsModal();
   step=2;
@@ -2541,6 +2610,7 @@ function openFormalReviewDemoPage(status, bankType){
   formalReviewStatus=status||"pending";
   if(bankType) formalPassBankType=bankType;
   else if(status==="pass") formalPassBankType="上海银行";
+  formalBankAccountOpened=accountOpened!==false;
   creditEntry="chushen";
   esignOk=true;
   creditAuthed=true;
@@ -2704,11 +2774,7 @@ function resetDemoFlow(){
   if(wayUpload) wayUpload.checked=true;
   syncChuShenBaihang();
   const ctrlUp=document.getElementById("upControllerCreditForm");
-  if(ctrlUp){
-    ctrlUp.classList.remove("done");
-    const hint=ctrlUp.querySelector(".hint");
-    if(hint) hint.innerHTML='点击上传法人征信报告<br><span style="font-size:12px;color:#999">支持 PDF、图片</span>';
-  }
+  if(ctrlUp) ctrlUp.querySelectorAll(".multi-shot").forEach(el=>el.remove());
   const ctrlInp=document.getElementById("controllerCreditFileInput");
   if(ctrlInp) ctrlInp.value="";
   syncControllerCreditWay();
@@ -2845,19 +2911,19 @@ function isFullPrice(){
 }
 
 function getQuotaTier(){
-  return document.querySelector('input[name="quotaTier"]:checked')?.value||"lt30";
+  return document.querySelector('input[name="quotaTier"]:checked')?.value||"ge30";
 }
 function getBreedType(){
-  return document.querySelector('input[name="breedType"]:checked')?.value||"禽类";
+  return document.querySelector('input[name="breedType"]:checked')?.value||"猪牛羊";
 }
 function getIsRanch(){
   return document.querySelector('input[name="isRanch"]:checked')?.value==="是";
 }
 function getSubjectKind(){
-  return document.querySelector('input[name="subjectKind"]:checked')?.value||"个人";
+  return document.querySelector('input[name="subjectKind"]:checked')?.value||"企业";
 }
 function getResupplyProduct(){
-  return document.querySelector('input[name="resupplyProduct"]:checked')?.value||"预混料";
+  return document.querySelector('input[name="resupplyProduct"]:checked')?.value||"全价料";
 }
 function isResupplyFullPrice(){
   return getResupplyProduct()==="全价料";
@@ -2877,7 +2943,7 @@ function syncResupplyBaihangWay(){
     resupplyBaihangOk=false;
     clearTimeout(startResupplyBaihangCheck._timer);
   }else{
-    document.getElementById("upResupplyBaihang")?.classList.remove("done");
+    clearMultiUpload("upResupplyBaihang");
     if(isResupplyFullPrice()) startResupplyBaihangCheck();
   }
 }
@@ -2886,7 +2952,7 @@ function syncResupplyBaihang(){
   const yes=isResupplyFullPrice();
   if(wrap) wrap.style.display=yes?"":"none";
   if(!yes){
-    document.getElementById("upResupplyBaihang")?.classList.remove("done");
+    clearMultiUpload("upResupplyBaihang");
     resupplyBaihangOk=false;
     clearTimeout(startResupplyBaihangCheck._timer);
   }else{
@@ -2927,7 +2993,7 @@ function startResupplyBaihangCheck(){
 function isResupplyBaihangReady(){
   if(!isResupplyFullPrice()) return true;
   if(getResupplyBaihangWay()==="upload"){
-    return !!document.getElementById("upResupplyBaihang")?.classList.contains("done");
+    return hasMultiUpload("upResupplyBaihang");
   }
   return !!resupplyBaihangOk;
 }
@@ -2957,7 +3023,7 @@ function buildResupplyDocList(){
     {
       key:"flow", req:true, type:"email",
       title:"近1年经营性流水来源",
-      tip:"流水明细可从银行app、微信、支付宝上获取，直接发送到邮箱jinrong@shyuanyao.com"
+      tip:"流水明细可从银行app、微信、支付宝上获取，直接发送到邮箱jinrongbu@shyuanyao.com"
     }
   ];
   list.push(
@@ -2980,15 +3046,15 @@ function buildResupplyDocList(){
 }
 
 function syncResupplyDocs(){
-  const wrap=document.getElementById("resupplyDocs");
+  const wrap=document.getElementById("resupplyDocsBody");
   if(!wrap) return;
   const ge30=getQuotaTier()==="ge30";
   document.getElementById("subjectTypeField").style.display=ge30?"flex":"none";
   syncResupplyBaihang();
   syncControllerCreditBox();
   const prevDone={};
-  wrap.querySelectorAll(".upload[data-up]").forEach(el=>{
-    if(el.classList.contains("done")) prevDone[el.dataset.up]=true;
+  wrap.querySelectorAll(".multi-up[data-up]").forEach(el=>{
+    if(el.querySelector(".multi-shot")) prevDone[el.dataset.up]=true;
   });
   const prevChannel=flowChannelSelected.slice();
   const list=buildResupplyDocList();
@@ -3012,11 +3078,9 @@ function syncResupplyDocs(){
     return `
     <div class="up-label" style="${i? "margin-top:12px":""}">${d.req?'<span class="req">*</span>':''}${d.title}</div>
     ${d.tip?`<div class="field-hint" style="margin:0 0 8px">${d.tip}</div>`:""}
-    <div class="upload-grid one">
-      <div class="upload ${prevDone[d.key]?"done":""}" data-up="${d.key}" data-req="${d.req?"1":"0"}" onclick="this.classList.toggle('done')">
-        <div class="cam" aria-hidden="true"></div>
-        <div class="hint">${d.hint}</div>
-      </div>
+    <div class="multi-up" data-up="${d.key}" data-req="${d.req?"1":"0"}" data-title="${d.title}">
+      ${prevDone[d.key]?`<div class="multi-shot"><div class="pic"></div><div class="cap">已上传</div><button type="button" class="rm" aria-label="删除" onclick="this.parentElement.remove();if(window.renderFooter)renderFooter()">×</button></div>`:""}
+      <button type="button" class="multi-add" onclick="addMultiUpload(this)"><span class="plus">+</span><span class="hint">支持多张图片、pdf、doc、xls等</span></button>
     </div>`;
   }).join("");
   syncFlowUnzipPasswords();
@@ -3110,8 +3174,54 @@ function closeFlowPage(){
 function viewKvRow(lab, val){
   return `<div class="field"><div class="lab">${lab}</div><div class="ctrl"><span class="val">${val==null||val===""?"—":val}</span></div></div>`;
 }
+function submittedPreviewCount(name){
+  const n=String(name||"");
+  if(/征信/.test(n)) return 6;
+  if(/流水|水电|合同|权属|财务|防疫/.test(n)) return 4;
+  return 1;
+}
+function submittedPreviewSrc(name, index){
+  const hues=[24,16,36,12,42,8];
+  const h=hues[index%hues.length];
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="720" height="960" viewBox="0 0 720 960">
+    <rect width="720" height="960" fill="#f6f1ea"/>
+    <rect x="36" y="36" width="648" height="888" rx="8" fill="#fff" stroke="#f0e4d8"/>
+    <rect x="72" y="84" width="360" height="28" rx="4" fill="hsl(${h},55%,62%)"/>
+    <rect x="72" y="140" width="520" height="14" rx="4" fill="#efe6dc"/>
+    <rect x="72" y="170" width="470" height="14" rx="4" fill="#efe6dc"/>
+    <rect x="72" y="200" width="500" height="14" rx="4" fill="#efe6dc"/>
+    <rect x="72" y="260" width="576" height="280" rx="6" fill="hsl(${h},45%,92%)"/>
+    <rect x="108" y="296" width="220" height="200" rx="4" fill="hsl(${h},40%,78%)"/>
+    <rect x="360" y="296" width="250" height="90" rx="4" fill="#fff"/>
+    <rect x="360" y="410" width="250" height="86" rx="4" fill="#fff"/>
+    <rect x="72" y="580" width="576" height="14" rx="4" fill="#efe6dc"/>
+    <rect x="72" y="612" width="520" height="14" rx="4" fill="#efe6dc"/>
+    <rect x="72" y="644" width="480" height="14" rx="4" fill="#efe6dc"/>
+    <text x="72" y="760" fill="#333" font-size="28" font-family="Microsoft YaHei,sans-serif">${name}</text>
+    <text x="72" y="808" fill="#999" font-size="22" font-family="Microsoft YaHei,sans-serif">第 ${index+1} 张</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
 function previewSubmittedFile(name){
-  alert("预览附件："+name+"\n（原型：打开图片/PDF 预览）");
+  const title=name||"附件";
+  const count=submittedPreviewCount(title);
+  const page=document.getElementById("filePreviewPage");
+  const titleEl=document.getElementById("filePreviewTitle");
+  const body=document.getElementById("filePreviewBody");
+  if(!page||!body) return;
+  if(titleEl) titleEl.textContent=title;
+  body.innerHTML=Array.from({length:count},(_,i)=>`
+    <div class="preview-shot">
+      <div class="cap"><span>${title}</span><span>${i+1} / ${count}</span></div>
+      <img alt="${title}第${i+1}张" src="${submittedPreviewSrc(title,i)}" />
+    </div>
+  `).join("");
+  page.style.display="block";
+  page.scrollTop=0;
+}
+function closeFilePreview(){
+  const page=document.getElementById("filePreviewPage");
+  if(page) page.style.display="none";
 }
 function viewFileRow(lab, ok){
   const safe=String(lab||"附件").replace(/"/g,"&quot;");
@@ -3132,10 +3242,13 @@ function radioVal(name){
 function seedSubmittedDocsDemo(){
   if(typeof ensureDemoIdentity==="function") ensureDemoIdentity();
   if(typeof ensureSalesDdInfo==="function") ensureSalesDdInfo(true);
-  ["upLicense","upIdFront","upIdBack","upCreditScore","upControllerCreditForm"].forEach(id=>{
+  ["upLicense","upIdFront","upIdBack","upCreditScore"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.classList.add("done");
   });
+  const creditUp=document.getElementById("upControllerCreditForm");
+  const creditBtn=creditUp?.querySelector(".multi-add");
+  if(creditBtn && !creditUp.querySelector(".multi-shot")) addMultiUpload(creditBtn);
   const ge30=document.querySelector('input[name="quotaTier"][value="ge30"]');
   if(ge30){ ge30.checked=true; }
   const premix=document.querySelector('input[name="resupplyProduct"][value="预混料"]');
@@ -3143,7 +3256,10 @@ function seedSubmittedDocsDemo(){
   if(!flowChannelSelected.length) flowChannelSelected=["微信","支付宝"];
   if(typeof syncResupplyDocs==="function") syncResupplyDocs();
   if(typeof syncFlowUnzipPasswords==="function") syncFlowUnzipPasswords();
-  document.querySelectorAll("#resupplyDocs .upload, #upResupplyBaihang, #upControllerPbc").forEach(el=>el.classList.add("done"));
+  document.querySelectorAll("#resupplyDocs .multi-up, #upResupplyBaihang, #upControllerPbc").forEach(row=>{
+    const btn=row.querySelector(".multi-add");
+    if(btn && !row.querySelector(".multi-shot")) addMultiUpload(btn);
+  });
   const ctrlName=document.getElementById("ddControllerNameText");
   if(ctrlName && !ctrlName.value) ctrlName.value=(document.getElementById("legalName")?.value||"").trim()||"桑姣婧";
   document.querySelectorAll('#resupplyDocs input[type="text"], #resupplyDocs input:not([type])').forEach(inp=>{
@@ -3168,7 +3284,7 @@ function buildSubmittedDocsHtml(){
       ${viewKvRow("法人身份证号", idNo)}
       ${viewKvRow("法人实名手机号", mobile)}
       ${viewFileRow("信用分截图", document.getElementById("upCreditScore")?.classList.contains("done"))}
-      ${viewFileRow("法人征信报告", document.getElementById("upControllerCreditForm")?.classList.contains("done"))}
+      ${viewFileRow("法人征信报告", !!document.getElementById("upControllerCreditForm")?.querySelector(".multi-shot"))}
     </div>`;
   const channels=flowChannelSelected.length?flowChannelSelected.join("、"):"—";
   let pwdRows="";
@@ -3185,15 +3301,12 @@ function buildSubmittedDocsHtml(){
   });
   const showBaihang=typeof isResupplyFullPrice==="function"&&isResupplyFullPrice();
   const baihangWay=typeof getResupplyBaihangWay==="function"?getResupplyBaihangWay():"upload";
-  const baihangOk=document.getElementById("upResupplyBaihang")?.classList.contains("done")||(typeof resupplyBaihangOk!=="undefined"&&resupplyBaihangOk);
+  const baihangOk=hasMultiUpload("upResupplyBaihang")||(typeof resupplyBaihangOk!=="undefined"&&resupplyBaihangOk);
   const showCtrl=document.getElementById("controllerCreditBox")?.style.display!=="none";
   const ctrlNm=(document.getElementById("ddControllerNameText")?.value||"").trim()||"—";
-  const ctrlOk=document.getElementById("upControllerPbc")?.classList.contains("done");
-  const docUploads=[...document.querySelectorAll("#resupplyDocs .upload")].map(up=>{
-    const hint=up.querySelector(".hint");
-    let lab=(hint?.childNodes[0]?.textContent||hint?.textContent||"附件").replace(/\s+/g," ").trim();
-    lab=lab.replace(/^已上传[：:]\s*/,"").replace(/点击可重新选择/g,"").trim()||"附件";
-    return viewFileRow(lab, up.classList.contains("done"));
+  const ctrlOk=hasMultiUpload("upControllerPbc");
+  const docUploads=[...document.querySelectorAll("#resupplyDocs .multi-up")].map(row=>{
+    return viewFileRow(row.dataset.title||"附件", !!row.querySelector(".multi-shot"));
   }).join("");
   const formal=`
     <div class="dash"></div>
@@ -3458,7 +3571,7 @@ function validateResupplyDocs(){
   if(!flowChannelSelected.length) return "请选择近1年经营性流水来源";
   const pwdErr=validateFlowUnzipPasswords();
   if(pwdErr) return pwdErr;
-  const miss=[...document.querySelectorAll("#resupplyDocs .upload[data-req='1']")].filter(el=>!el.classList.contains("done"));
+  const miss=[...document.querySelectorAll("#resupplyDocs .multi-up[data-req='1']")].filter(el=>!el.querySelector(".multi-shot"));
   if(miss.length) return "请上传其余必填正式进件资料";
   if(isResupplyFullPrice() && !isResupplyBaihangReady()){
     return getResupplyBaihangWay()==="email"?"百行征信报告邮箱未收到，请确认已发送后再次查询":"请上传百行征信报告";
@@ -3485,7 +3598,7 @@ function closeEsignFailModal(){
 function runEsign(onOk){
   hideEsignFail();
   if(!allUploadsDone()){alert("请先上传营业执照、法人身份证正反面、信用分截图"+(isFullPrice()&&getBaihangWay()==="upload"?"及百行征信报告":"")+"及法人征信报告");return}
-  if(!isChuShenBaihangReady()){alert("百行征信报告邮箱未收到，请确认已发送至 jinrong@shyuanyao.com 后再次查询");return}
+  if(!isChuShenBaihangReady()){alert("百行征信报告邮箱未收到，请确认已发送至 jinrongbu@shyuanyao.com 后再次查询");return}
   if(!isControllerCreditFormReady()){alert("请上传法人征信报告（支持 PDF、图片）");return}
   const name=document.getElementById("legalName").value.trim();
   const idNo=document.getElementById("legalIdNo").value.trim();
@@ -3837,6 +3950,7 @@ function render(){
     renderFooter();
     return;
   }
+  closeFilePreview();
   if(stepsEl) stepsEl.style.display="";
   if(submittedPage) submittedPage.style.display="none";
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
@@ -4118,13 +4232,7 @@ function renderFooter(){
       return;
     }
     if(formalReviewStatus==="pass"){
-      if(formalPassBankType==="锡商银行"){
-        next.style.display="";
-        next.disabled=false;
-        next.textContent="去申请锡商白条";
-      }else{
-        next.style.display="none";
-      }
+      next.style.display="none";
       return;
     }
     if(formalReviewStatus==="opened"){
@@ -4265,7 +4373,7 @@ function go(d){
             if(!bhOk){
               nextBtn.disabled=false;
               renderFooter();
-              alert("百行征信报告邮箱未收到，请确认已发送至 jinrong@shyuanyao.com 后再次查询");
+              alert("百行征信报告邮箱未收到，请确认已发送至 jinrongbu@shyuanyao.com 后再次查询");
               return;
             }
             nextBtn.disabled=false;

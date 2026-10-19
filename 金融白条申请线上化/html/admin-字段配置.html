@@ -94,6 +94,8 @@ body{
   color:var(--theme-primary);font-weight:600;border-bottom-color:var(--theme-primary);background:var(--theme-primary-bg)
 }
 .layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;min-height:520px}
+.layout.flat{grid-template-columns:minmax(0,1fr)}
+.layout.flat .mod-panel{display:none}
 .mod-panel,.field-panel{
   border:1px solid #eef0f4;border-radius:8px;background:#fff;
   box-shadow:0 1px 2px rgba(15,23,42,.03);display:flex;flex-direction:column;min-height:0
@@ -184,6 +186,12 @@ table.field-table{width:100%;border-collapse:collapse}
 }
 .fg textarea{height:88px;padding:8px 10px;resize:vertical;line-height:1.5}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#409eff}
+.radio-line{display:flex;align-items:center;gap:18px;min-height:32px}
+.fg .radio-line label{
+  text-align:left;line-height:22px;color:var(--theme-text);
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer
+}
+.radio-line input{width:auto;height:auto;padding:0;border:0;accent-color:var(--theme-primary);background:transparent}
 .hint{font-size:12px;color:var(--theme-text-secondary);margin-top:6px;line-height:1.5}
 .opt-list{display:flex;flex-direction:column;gap:8px}
 .opt-row{display:flex;gap:8px;align-items:center}
@@ -231,7 +239,7 @@ table.field-table{width:100%;border-collapse:collapse}
   </div>
   <div class="app-body">
     <div class="sidebar">
-      <a class="side-item" href="步骤1_金融初审审核.html">金融白条审核台</a>
+      <a class="side-item" href="步骤1_金融初审审核.html">白条用户准入管理</a>
       <a class="side-item active" href="字段配置.html">资料字段配置</a>
       <a class="side-item" href="Admin_白条入口白名单.html">白条入口白名单</a>
     </div>
@@ -257,7 +265,6 @@ table.field-table{width:100%;border-collapse:collapse}
             <div class="mod-panel">
               <div class="panel-hd">
                 <div class="tit">字段模块</div>
-                <button class="btn btn-default btn-sm" type="button" onclick="openModuleModal()">＋ 模块</button>
               </div>
               <div class="panel-bd" id="modList"></div>
             </div>
@@ -303,7 +310,7 @@ table.field-table{width:100%;border-collapse:collapse}
         <label>关联一级字段</label>
         <div class="ctrl">
           <select id="fieldLinkParent" onchange="onLinkParentChange()"></select>
-          <div class="hint">不关联则作为一级字段；可选任意模块下的单选/多选一级字段；所属模块可单独指定（如展示在「饲料信息」）。</div>
+          <div class="hint">不关联则作为一级字段；可选白条产品类型、客户类型、是否牧场、养殖类型、白条金额是否大于30万等；所属模块可单独指定。</div>
         </div>
       </div>
       <div class="fg" id="relatedWhenRow" style="display:none">
@@ -321,13 +328,30 @@ table.field-table{width:100%;border-collapse:collapse}
         <label><span class="req">*</span>字段格式</label>
         <div class="ctrl">
           <select id="fieldFormat" onchange="onFormatChange()">
-            <option value="text">文本</option>
+            <option value="text">单行文本</option>
+            <option value="textarea">多行文本</option>
             <option value="number">数字</option>
             <option value="radio">单选</option>
             <option value="checkbox">多选</option>
-            <option value="image">上传图片</option>
-            <option value="file">上传文件</option>
+            <option value="image">图片</option>
+            <option value="video">视频</option>
+            <option value="file">文件</option>
           </select>
+        </div>
+      </div>
+      <div class="fg" id="unitRow" style="display:none">
+        <label><span class="req">*</span>单位</label>
+        <div class="ctrl">
+          <input id="fieldUnit" placeholder="如：万、吨、元/吨" maxlength="20" />
+        </div>
+      </div>
+      <div class="fg" id="imageCountRow" style="display:none">
+        <label><span class="req">*</span>图片张数</label>
+        <div class="ctrl">
+          <div class="radio-line" id="fieldImageCount">
+            <label><input type="radio" name="fieldImageCount" value="single" checked />单张</label>
+            <label><input type="radio" name="fieldImageCount" value="multi" />多张</label>
+          </div>
         </div>
       </div>
       <div class="fg" id="optionsRow" style="display:none">
@@ -341,10 +365,10 @@ table.field-table{width:100%;border-collapse:collapse}
       <div class="fg">
         <label>是否必填</label>
         <div class="ctrl">
-          <select id="fieldRequired">
-            <option value="1">是</option>
-            <option value="0">否</option>
-          </select>
+          <div class="radio-line" id="fieldRequired">
+            <label><input type="radio" name="fieldRequired" value="1" checked />是</label>
+            <label><input type="radio" name="fieldRequired" value="0" />否</label>
+          </div>
         </div>
       </div>
       <div class="fg" id="fieldModuleRow">
@@ -379,12 +403,14 @@ table.field-table{width:100%;border-collapse:collapse}
 
 <script>
 const FORMAT_MAP={
-  text:"文本",
+  text:"单行文本",
+  textarea:"多行文本",
   number:"数字",
   radio:"单选",
   checkbox:"多选",
-  image:"上传图片",
-  file:"上传文件"
+  image:"图片",
+  video:"视频",
+  file:"文件"
 };
 const uid=()=>"f_"+Math.random().toString(36).slice(2,9);
 
@@ -396,45 +422,53 @@ function demoData(){
           id:"m_sales_1", name:"白条申请", sort:1,
           fields:[
             {id:"s1", name:"客户名称", format:"text", required:true, placeholder:"系统带入", remark:"只读"},
-            {id:"s2", name:"白条产品类型", format:"radio", required:true, options:["预混料","全价料","大宗免息白条"]},
+            {id:"s2", name:"白条产品类型", format:"radio", required:true, options:["预混料","全价料","大宗免息白条"], linkable:true},
             {id:"s2a", name:"是否能收取保证金", format:"radio", required:true, options:["是","否"], remark:"预混料/全价料；提醒：30万≤额度＜50万至少5%，≥50万至少10%"},
-            {id:"s3", name:"申请额度", format:"number", required:true, placeholder:"单位：万，仅数字"},
-            {id:"s4", name:"上海银行额度", format:"number", required:true, placeholder:"单位：万"},
-            {id:"s5", name:"锡商银行额度", format:"number", required:true, placeholder:"单位：万"},
+            {id:"s3", name:"申请额度", format:"number", required:true, unit:"万", placeholder:"仅数字"},
+            {id:"s3a", name:"白条金额是否大于30万", format:"radio", required:true, options:["是","否"], linkable:true},
+            {id:"s4", name:"上海银行额度", format:"number", required:true, unit:"万", placeholder:"不申请填0"},
+            {id:"s5", name:"锡商银行额度", format:"number", required:true, unit:"万", placeholder:"不申请填0"},
             {id:"s6", name:"申请原因", format:"text", required:true}
           ]
         },
         {
-          id:"m_feed", name:"饲料信息", sort:2,
+          id:"m_feed", name:"饲料信息", sort:3,
           fields:[
-            {id:"fp1", name:"每月玉米需求量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"预混料"},
+            {id:"fp1", name:"每月玉米需求量", format:"number", required:true, unit:"吨", parentFieldId:"s2", whenValue:"预混料"},
             {id:"fp2", name:"预混料商品名称", format:"checkbox", required:false, options:["正大蛋鸡预混料 5%","正大肉鸡预混料 3%"], remark:"模糊检索多选", parentFieldId:"s2", whenValue:"预混料"},
-            {id:"fp3", name:"预混料报价", format:"number", required:false, placeholder:"元/吨，自动带出", remark:"只读", parentFieldId:"s2", whenValue:"预混料"},
-            {id:"ff1", name:"全价料每月吨数", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"fp3", name:"预混料报价", format:"number", required:false, unit:"元/吨", remark:"只读", parentFieldId:"s2", whenValue:"预混料"},
+            {id:"ff1", name:"全价料每月吨数", format:"number", required:true, unit:"吨", parentFieldId:"s2", whenValue:"全价料"},
             {id:"ff2", name:"全价料商品名字", format:"text", required:true, parentFieldId:"s2", whenValue:"全价料"},
-            {id:"ff3", name:"单价", format:"number", required:true, placeholder:"元/吨", parentFieldId:"s2", whenValue:"全价料"},
-            {id:"ff4", name:"全价料捆绑商品的吨数", format:"number", required:false, placeholder:"系统自动计算", remark:"申请额度×6÷最低预混料单价", parentFieldId:"s2", whenValue:"全价料"},
-            {id:"fb1", name:"每月玉米需求总量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"},
-            {id:"fb2", name:"每月豆粕需求总量", format:"number", required:true, placeholder:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"}
+            {id:"ff3", name:"单价", format:"number", required:true, unit:"元/吨", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"ff4", name:"全价料捆绑商品的吨数", format:"number", required:false, unit:"吨", remark:"申请额度×6÷最低预混料单价", parentFieldId:"s2", whenValue:"全价料"},
+            {id:"fb1", name:"每月玉米需求总量", format:"number", required:true, unit:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"},
+            {id:"fb2", name:"每月豆粕需求总量", format:"number", required:true, unit:"吨", parentFieldId:"s2", whenValue:"大宗免息白条"}
           ]
         },
         {
-          id:"m_sales_2", name:"客户养殖信息", sort:3,
+          id:"m_sales_2", name:"客户养殖信息", sort:2,
           fields:[
-            {id:"s7", name:"客户类型", format:"radio", required:false, options:["养殖户","次终端","饲料厂"]},
-            {id:"s8", name:"是否是牧场", format:"radio", required:false, options:["是","否"]},
-            {id:"s9", name:"养殖类型", format:"radio", required:false, options:["鸡","鸭","鹅","猪","牛","羊"]}
+            {id:"s7", name:"客户类型", format:"radio", required:false, options:["养殖户","次终端","饲料厂"], linkable:true},
+            {id:"s8", name:"是否牧场", format:"radio", required:false, options:["是","否"], linkable:true},
+            {id:"s9", name:"养殖类型", format:"radio", required:false, options:["鸡","鸭","鹅","猪","牛","羊"], linkable:true}
           ]
         },
         {
           id:"m_sales_3", name:"经营信息", sort:4,
           fields:[
             {id:"s10", name:"法人是否为实控人", format:"radio", required:true, options:["是","否"]},
-            {id:"sc1", name:"实控人身份证人像面", format:"image", required:true, parentFieldId:"s10", whenValue:"否"},
-            {id:"sc2", name:"实控人身份证国徽面", format:"image", required:true, parentFieldId:"s10", whenValue:"否"},
+            {id:"sc1", name:"实控人身份证人像面", format:"image", imageCount:"single", required:true, parentFieldId:"s10", whenValue:"否"},
+            {id:"sc2", name:"实控人身份证国徽面", format:"image", imageCount:"single", required:true, parentFieldId:"s10", whenValue:"否"},
             {id:"sc3", name:"实控人实名手机号", format:"text", required:true, parentFieldId:"s10", whenValue:"否"},
-            {id:"s11", name:"实控人资产情况", format:"checkbox", required:true, options:["商品房","汽车","自建房","股票期权"]},
-            {id:"s13", name:"现场照片", format:"image", required:true, remark:"可多张"}
+            {id:"s11", name:"实控人资产情况", format:"checkbox", required:true, options:["商品房","汽车","自建房","股票期权"]}
+          ]
+        },
+        {
+          id:"m_photo", name:"现场照片或者视频", sort:5,
+          fields:[
+            {id:"ph1", name:"厂房大门", format:"image", imageCount:"multi", required:false},
+            {id:"ph2", name:"仓库", format:"image", imageCount:"multi", required:false},
+            {id:"ph3", name:"养殖区域", format:"image", imageCount:"multi", required:false}
           ]
         }
       ]
@@ -442,33 +476,15 @@ function demoData(){
     formal:{
       modules:[
         {
-          id:"m_formal_1", name:"经营性流水", sort:1,
+          id:"m_biz_proof", name:"经营证明材料", sort:1,
           fields:[
-            {id:"f1", name:"近1年经营性流水来源", format:"checkbox", required:true, options:["银行","支付宝","微信"]},
-            {id:"f1a", name:"银行流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"银行"},
-            {id:"f1b", name:"支付宝流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"支付宝"},
-            {id:"f1c", name:"微信流水解压密码", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"微信"}
+            {id:"f1", name:"参考字段1", format:"checkbox", required:true, options:["银行","支付宝","微信"]},
+            {id:"f1a", name:"参考字段2", format:"text", required:true, placeholder:"请填写", parentFieldId:"f1", whenValue:"银行"}
           ]
         },
         {
-          id:"m_formal_2", name:"经营资料附件", sort:2,
-          fields:[
-            {id:"f2", name:"近3个月经营场地水电费账单", format:"file", required:true, remark:"水电有其一即可"},
-            {id:"f3", name:"最近一次养殖资产买卖合同/首付款凭证", format:"file", required:true},
-            {id:"f4", name:"经营场地权属证明", format:"file", required:false, remark:"额度≥30万"},
-            {id:"f5", name:"动物防疫登记证或出栏防疫记录", format:"file", required:false, remark:"养殖类型=猪牛羊"},
-            {id:"f6", name:"下游乳企合同", format:"file", required:false, remark:"是否牧场=是"},
-            {id:"f7", name:"最近1年和最近1期的财务三表", format:"file", required:false, remark:"≥30万且企业主体"}
-          ]
-        },
-        {
-          id:"m_formal_3", name:"征信与主体", sort:3,
-          fields:[
-            {id:"f8", name:"主体类型", format:"radio", required:false, options:["个人","企业"], remark:"额度≥30万"},
-            {id:"f9", name:"百行征信报告", format:"file", required:false, remark:"仅全价料"},
-            {id:"f10", name:"实控人姓名", format:"text", required:false, remark:"只读，取尽调"},
-            {id:"f11", name:"实控人征信报告", format:"file", required:false, remark:"额度≥30万"}
-          ]
+          id:"m_ctrl", name:"实控人资料", sort:2,
+          fields:[]
         }
       ]
     }
@@ -483,13 +499,13 @@ let editingField=null; // {id, parentId?, fromModId, editingTopLevel}
 
 function loadStore(){
   try{
-    const raw=localStorage.getItem("baitiao_field_config_v5");
+    const raw=localStorage.getItem("baitiao_field_config_v14");
     if(raw) return JSON.parse(raw);
   }catch(e){}
   return demoData();
 }
 function persist(){
-  localStorage.setItem("baitiao_field_config_v5", JSON.stringify(store));
+  localStorage.setItem("baitiao_field_config_v14", JSON.stringify(store));
 }
 function moduleNameById(id){
   const m=(store[scope].modules||[]).find(x=>x.id===id);
@@ -558,19 +574,11 @@ function renderModules(){
     <div class="mod-item ${m.id===activeModId?"active":""}" data-id="${m.id}">
       <div class="name">${esc(m.name)}</div>
       <span class="cnt">${countFields(m.fields)} 字段</span>
-      <span class="ops">
-        <button class="link" type="button" data-act="edit">编辑</button>
-        <button class="link danger" type="button" data-act="del">删</button>
-      </span>
     </div>
   `).join("");
   list.querySelectorAll(".mod-item").forEach(el=>{
-    el.addEventListener("click",e=>{
-      const act=e.target.getAttribute("data-act");
-      const id=el.dataset.id;
-      if(act==="edit"){ openModuleModal(id); return; }
-      if(act==="del"){ deleteModule(id); return; }
-      activeModId=id;
+    el.addEventListener("click",()=>{
+      activeModId=el.dataset.id;
       render();
     });
   });
@@ -588,11 +596,12 @@ function renderFields(){
     return;
   }
   addBtn.disabled=false;
-  title.textContent=`${mod.name} · 字段列表`;
+  const flat=false;
+  title.textContent=flat?"字段列表":`${mod.name} · 字段列表`;
   const rows=[];
   flattenRows(mod.fields||[], rows);
   if(!rows.length){
-    body.innerHTML=`<div class="empty">该模块暂无字段，点击右上角「＋ 字段」添加</div>`;
+    body.innerHTML=`<div class="empty">${flat?"暂无字段，点击右上角「＋ 字段」添加":"该模块暂无字段，点击右上角「＋ 字段」添加"}</div>`;
     return;
   }
   const modName=mod.name||"—";
@@ -601,7 +610,7 @@ function renderFields(){
       <thead>
         <tr>
           <th style="width:18%">字段名字</th>
-          <th style="width:14%">展示模块</th>
+          ${flat?"":`<th style="width:14%">展示模块</th>`}
           <th style="width:10%">类型</th>
           <th style="width:16%">关联一级字段</th>
           <th style="width:18%">关联字段条件</th>
@@ -609,7 +618,7 @@ function renderFields(){
         </tr>
       </thead>
       <tbody>
-        ${rows.map(r=>fieldRowHtml(r, modName)).join("")}
+        ${rows.map(r=>fieldRowHtml(r, modName, flat)).join("")}
       </tbody>
     </table>
   `;
@@ -628,7 +637,7 @@ function renderFields(){
 function flattenRows(fields, out){
   (fields||[]).forEach(f=>out.push({field:f}));
 }
-function fieldRowHtml(r, modName){
+function fieldRowHtml(r, modName, flat){
   const f=r.field;
   const fmt=FORMAT_MAP[f.format]||f.format;
   const parent=f.parentFieldId?findParentFieldById(f.parentFieldId):null;
@@ -636,8 +645,8 @@ function fieldRowHtml(r, modName){
   return `
     <tr>
       <td><span>${esc(f.name)}</span></td>
-      <td style="color:#595959">${esc(modName||"—")}</td>
-      <td><span class="tag">${fmt}</span></td>
+      ${flat?"":`<td style="color:#595959">${esc(modName||"—")}</td>`}
+      <td><span class="tag">${fmt}${f.format==="number"&&f.unit?` · ${esc(f.unit)}`:""}${f.format==="image"?` · ${f.imageCount==="multi"?"多张":"单张"}`:""}</span></td>
       <td style="color:${linked?"#595959":"#8c8c8c"}">${linked?esc(parent.name):"—"}</td>
       <td style="color:${linked?"#595959":"#8c8c8c"}">${linked?`= ${esc(f.whenValue||"—")}`:"—"}</td>
       <td class="ops" style="white-space:nowrap">
@@ -692,25 +701,31 @@ function deleteModule(id){
 }
 
 /* —— 字段 —— */
-/** 全配置域可作为关联父级的一级单选/多选字段（可跨模块） */
-function eligibleParents(excludeId){
-  const list=[];
+/** 可作为关联父级的一级单选/多选；若配置了 linkable 则仅列出标记项（当前已关联的父级始终保留） */
+function eligibleParents(excludeId, keepParentId){
+  const all=[];
   for(const mod of store[scope].modules||[]){
     for(const f of mod.fields||[]){
       if(excludeId && f.id===excludeId) continue;
-      if(f.parentFieldId) continue; // 关联字段不可再作父级
+      if(f.parentFieldId) continue;
       if((f.format==="radio"||f.format==="checkbox") && (f.options||[]).length){
-        list.push({field:f, mod});
+        all.push({field:f, mod});
       }
     }
+  }
+  const marked=all.filter(x=>x.field.linkable);
+  let list=marked.length?marked:all;
+  if(keepParentId && !list.some(x=>x.field.id===keepParentId)){
+    const keep=all.find(x=>x.field.id===keepParentId);
+    if(keep) list=list.concat([keep]);
   }
   return list;
 }
 function fillLinkParentSelect(selectedParentId, excludeId){
   const sel=document.getElementById("fieldLinkParent");
-  const parents=eligibleParents(excludeId);
-  sel.innerHTML=`<option value="">不关联（作为一级字段）</option>`+
-    parents.map(({field:p, mod})=>`<option value="${p.id}">${esc(mod.name)} / ${esc(p.name)}</option>`).join("");
+  const parents=eligibleParents(excludeId, selectedParentId||null);
+  sel.innerHTML=`<option value="">不关联</option>`+
+    parents.map(({field:p})=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
   if(selectedParentId && parents.some(x=>x.field.id===selectedParentId)) sel.value=selectedParentId;
   else sel.value="";
 }
@@ -779,8 +794,10 @@ function openFieldModal(id){
   setFieldModule(showMod.id, showMod.name);
   document.getElementById("fieldName").value=field?field.name:"";
   document.getElementById("fieldFormat").value=field?field.format:"text";
-  document.getElementById("fieldRequired").value=field?(field.required?"1":"0"):"1";
+  document.getElementById("fieldRequired").querySelector(`input[value="${field?(field.required?"1":"0"):"1"}"]`).checked=true;
   document.getElementById("fieldPlaceholder").value=field?(field.placeholder||""):"";
+  document.getElementById("fieldUnit").value=field?(field.unit||""):"";
+  document.getElementById("fieldImageCount").querySelector(`input[value="${(field&&field.imageCount==="multi")?"multi":"single"}"]`).checked=true;
   document.getElementById("fieldRemark").value=field?(field.remark||""):"";
   renderOptions(field&&(field.format==="radio"||field.format==="checkbox")?(field.options||[]):[]);
   onFormatChange();
@@ -835,6 +852,8 @@ function onFormatChange(){
   const fmt=document.getElementById("fieldFormat").value;
   const need=fmt==="radio"||fmt==="checkbox";
   document.getElementById("optionsRow").style.display=need?"grid":"none";
+  document.getElementById("unitRow").style.display=fmt==="number"?"grid":"none";
+  document.getElementById("imageCountRow").style.display=fmt==="image"?"grid":"none";
   if(need && !document.querySelectorAll("#optList input").length) renderOptions([""]);
 }
 function renderOptions(list){
@@ -886,14 +905,16 @@ function saveField(){
   const name=document.getElementById("fieldName").value.trim();
   if(!name){ toast("请填写字段名称"); return; }
   const format=document.getElementById("fieldFormat").value;
-  const required=document.getElementById("fieldRequired").value==="1";
+  const required=document.querySelector('input[name="fieldRequired"]:checked')?.value==="1";
   const placeholder=document.getElementById("fieldPlaceholder").value.trim();
+  const unit=document.getElementById("fieldUnit").value.trim();
   const remark=document.getElementById("fieldRemark").value.trim();
   let options=[];
   if(format==="radio"||format==="checkbox"){
     options=readOptions();
     if(!options.length){ toast("请至少配置一个选项"); return; }
   }
+  if(format==="number" && !unit){ toast("请填写单位"); return; }
   const targetModId=document.getElementById("fieldModuleId").value;
   const targetMod=(store[scope].modules||[]).find(m=>m.id===targetModId);
   if(!targetMod){ toast("请选择所属模块"); return; }
@@ -915,6 +936,8 @@ function saveField(){
 
   const payload={
     name, format, required, placeholder, remark,
+    unit:format==="number"?unit:undefined,
+    imageCount:format==="image"?(document.querySelector('input[name="fieldImageCount"]:checked')?.value||"single"):"",
     options:(format==="radio"||format==="checkbox")?options:undefined
   };
   if(parentId){

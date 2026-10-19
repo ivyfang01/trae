@@ -126,7 +126,7 @@ body{
 .stage-tabs button:hover{color:var(--theme-primary)}
 .stage-tabs button.active{color:var(--theme-primary);font-weight:600;border-bottom-color:var(--theme-primary);background:var(--theme-primary-bg)}
 .table{width:100%;background:#fff;border-radius:var(--theme-radius);overflow:auto;border:1px solid #f0f0f0}
-table{width:100%;border-collapse:collapse;min-width:2680px}
+.table table{width:100%;border-collapse:collapse;min-width:2680px}
 th{background:var(--theme-table-header);text-align:left;padding:10px 12px;font-size:13px;color:#595959;border-bottom:1px solid #f0f0f0;font-weight:600;white-space:nowrap}
 td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle}
 tr:hover td{background:var(--theme-table-hover)}
@@ -138,6 +138,34 @@ tr:hover td{background:var(--theme-table-hover)}
 .tag.ok{background:#f6ffed;color:var(--theme-success);border-color:#b7eb8f}
 .tag.err{background:#fff1f0;color:var(--theme-danger);border-color:#ffa39e}
 .tag.muted{background:#f2f3f5;color:#86909c;border-color:#e5e6eb}
+.preview-page{display:none;position:fixed;inset:0;z-index:80;background:#1f2329;flex-direction:column}
+.preview-page.on{display:flex}
+.preview-nav{
+  flex:0 0 auto;height:48px;display:flex;align-items:center;gap:12px;padding:0 16px;
+  background:#fff;border-bottom:1px solid #f0f0f0
+}
+.preview-nav .back{border:none;background:none;color:#333;font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
+.preview-nav h1{font-size:16px;font-weight:600;color:#262626}
+.preview-nav .sub{font-size:12px;color:#8c8c8c;margin-top:2px}
+.preview-nav .grow{flex:1;min-width:0}
+.preview-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.preview-tools button{
+  height:28px;padding:0 10px;border:1px solid #d9d9d9;border-radius:4px;background:#fff;
+  color:#333;font-size:13px;cursor:pointer
+}
+.preview-tools button:hover{border-color:var(--theme-primary);color:var(--theme-primary)}
+.preview-tools .zoom-label{min-width:42px;text-align:center;font-size:12px;color:#8c8c8c}
+.preview-body{flex:1;overflow:auto;padding:16px 16px 32px}
+.preview-stage{width:min(720px,100%);margin:0 auto}
+.preview-sheet{
+  width:100%;margin:0 auto 16px;background:#fff;border-radius:4px;
+  box-shadow:0 4px 16px rgba(0,0,0,.28);overflow:hidden
+}
+.preview-sheet .cap{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;font-size:12px;color:#8c8c8c;background:#fafafa;border-bottom:1px solid #f0f0f0
+}
+.preview-sheet img.shot{display:block;width:100%;height:auto;background:#f4f1ea}
 .detail-page{display:none;min-height:100vh;background:var(--theme-bg)}
 .detail-page.on{display:block}
 .detail-nav{
@@ -218,15 +246,32 @@ tr:hover td{background:var(--theme-table-hover)}
 .upload-box .u-card{
   width:104px;height:104px;border:1px dashed #d9d9d9;border-radius:8px;background:#fafbfc;
   display:flex;flex-direction:column;align-items:center;justify-content:center;color:#86909c;font-size:12px;gap:2px;
-  position:relative;padding-bottom:20px;box-sizing:border-box
+  position:relative;padding:8px 2px 22px;box-sizing:border-box
 }
-.upload-box .u-card.on{border-style:solid;border-color:#c3cee8;background:var(--theme-primary-bg);color:var(--theme-primary)}
-.upload-box .u-plus{font-size:24px;line-height:1;font-weight:300}
+.upload-box .u-card.on{border-style:solid;border-color:#c3cee8;background:#fff;color:var(--theme-primary)}
+.upload-box .u-preview{
+  border:none;background:transparent;padding:0;margin:0;cursor:default;color:inherit;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:72px;height:58px
+}
+.upload-box .u-card.on .u-preview{
+  cursor:pointer;border-radius:4px;background:linear-gradient(160deg,#d9e4ff 0%,#eef2ff 55%,#f7f8fd 100%);
+  border:1px solid #d5def2
+}
+.upload-box .u-plus{font-size:22px;line-height:1;font-weight:300}
+.upload-box .u-card.on .u-plus{font-size:16px}
+.upload-box .u-del{
+  display:none;position:absolute;right:4px;top:4px;width:16px;height:16px;padding:0;
+  border:none;border-radius:50%;background:rgba(29,33,41,.55);color:#fff;font-size:12px;line-height:16px;
+  cursor:pointer
+}
+.upload-box .u-card.on .u-del{display:block}
+.detail-page.view-mode .upload-box .u-del,
+.detail-page.view-mode .upload-box .u-upload{display:none}
 .upload-box .u-name{margin-top:6px;font-size:12px;color:#4e5969;line-height:1.35}
 .upload-box .u-acts{
-  position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:8px
+  position:absolute;left:0;right:0;bottom:4px;display:flex;justify-content:center;gap:8px
 }
-.upload-box .u-acts .link{font-size:12px;color:var(--theme-link)}
+.upload-box .u-acts .link{font-size:12px;color:var(--theme-link);padding:0}
 .status-panel .check-box{margin-bottom:0}
 .status-panel .ai-detail{margin-top:6px;font-size:12px;color:#8c8c8c;line-height:1.55}
 .empty-hint{
@@ -319,7 +364,7 @@ tr:hover td{background:var(--theme-table-hover)}
 .tl-item.cur::before{background:var(--theme-success);box-shadow:0 0 0 3px rgba(82,196,26,.2)}
 .tl-t{font-size:13px;font-weight:600}
 .tl-d{font-size:12px;color:var(--theme-text-secondary);margin-top:2px}
-.log-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;margin-bottom:4px}
+.log-table{width:100%;max-width:100%;min-width:0;border-collapse:collapse;table-layout:fixed;font-size:13px;margin-bottom:4px}
 .log-table th{
   background:var(--theme-table-header);text-align:left;padding:10px 12px;color:#595959;font-weight:600;
   border-bottom:1px solid #f0f0f0;white-space:nowrap
@@ -424,7 +469,7 @@ tr:hover td{background:var(--theme-table-hover)}
     </div>
     <div class="main-col">
       <div class="page-tabs">
-        <div class="page-tab">白条审核台 <span class="close">×</span></div>
+        <div class="page-tab">白条用户准入管理 <span class="close">×</span></div>
       </div>
       <div class="content">
         <div class="page-card">
@@ -627,6 +672,23 @@ tr:hover td{background:var(--theme-table-hover)}
   </div>
 </div>
 
+<div class="preview-page" id="attachPreview">
+  <div class="preview-nav">
+    <button class="back" type="button" onclick="closeAttachPreview()" title="返回">←</button>
+    <div class="grow">
+      <h1 id="previewTitle">查看附件</h1>
+      <div class="sub" id="previewSub">向下滑动查看每张图片</div>
+    </div>
+    <div class="preview-tools">
+      <button type="button" onclick="zoomPreview(-1)">缩小</button>
+      <span class="zoom-label" id="previewZoomLabel">100%</span>
+      <button type="button" onclick="zoomPreview(1)">放大</button>
+      <button type="button" onclick="closeAttachPreview()">关闭</button>
+    </div>
+  </div>
+  <div class="preview-body" id="previewBody"></div>
+</div>
+
 <div class="detail-page" id="detailPage">
   <div class="detail-nav">
     <button class="back" type="button" onclick="closeDetail()" title="返回">←</button>
@@ -801,7 +863,7 @@ const TASKS=[
       product:"预混料", applyQuota:80, canDeposit:"是", tier:"≥30万", sy:"50万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"30万", xsFreeDays:30, xsMaxLoanMonths:12,
       breed:"蛋鸡", scale:"2.5万羽", years:"8年",
       reason:"信誉结算良好，平台合作10次；申请免息白条",
-      tplFields:[["每月豆粕玉米需求","40吨"],["是否绑定销售预混料","是"],["预混料每月吨数","8吨"],["预混料报价","3200元"],["预混料商品名称","蛋鸡预混料A"],["平台合作收蛋","否"],["平台合作处理鸡粪","是"]],
+      tplFields:[["每月豆粕玉米需求","40吨"],["是否绑定销售预混料","是"],["预混料每月吨数","8吨"],["预混料报价","3200元"],["预混料商品名称","蛋鸡预混料A、青年鸡预混料B"],["平台合作收蛋","否"],["平台合作处理鸡粪","是"]],
       photos:["厂房大门","仓库","养殖区域"],
       crm:"2026-09-14 10:28 · 朱震 · 实地拜访",
       dd:[
@@ -1122,6 +1184,11 @@ function displayBankStatus(t){
   const map={"—":"—","审批中":"银行审批中","已开通":"白条已开通","拒绝":"银行拒绝"};
   return map[getBankStatus(t)]||getBankStatus(t);
 }
+function sideBankStatus(t, key){
+  const v=t[key];
+  if(v==null || v==="") return "—";
+  return v;
+}
 
 function tagClass(v){
   if(["通过","已上传","待正式进件","是","正式审核通过","齐全","已提交","白条已开通","已开通"].includes(v)) return "ok";
@@ -1285,16 +1352,14 @@ function buildAttachSections(t){
 
   const chuShenCards=[
     uploadCard("营业执照", hasFile("营业执照")),
-    uploadCard("法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面")),
-    uploadCard("法人身份证反面", hasFile("身份证反面")||hasFile("法人身份证反面")),
+    uploadCard("法人身份证正反面", hasFile("身份证正面")||hasFile("法人身份证正面")||hasFile("身份证反面")||hasFile("法人身份证反面")),
     uploadCard("信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分")),
     uploadCard("法人征信报告", hasLegalCredit()),
   ].join("");
 
   const ddCards=[];
   if(showCtrlId){
-    ddCards.push(uploadCard("实控人身份证正面", ctrlIdOk));
-    ddCards.push(uploadCard("实控人身份证反面", ctrlIdOk));
+    ddCards.push(uploadCard("实控人身份证正反面", ctrlIdOk));
   }
   ((s&&s.photos)||[]).forEach(n=>ddCards.push(uploadCard(n,true)));
   const ddHtml=ddCards.length
@@ -1418,26 +1483,105 @@ function xsExtraBlock(t){
 }
 function uploadCard(name, uploaded){
   const safe=String(name||"").replace(/'/g,"\\'").replace(/"/g,"&quot;");
-  const acts=uploaded
-    ?`<div class="u-acts">
-        <button class="link" type="button" onclick="viewAttach('${safe}')">查看</button>
-        <button class="link" type="button" onclick="downloadAttach('${safe}')">下载</button>
-      </div>`
-    :"";
   return `<div class="upload-box">
     <div class="u-card ${uploaded?"on":""}">
-      <div class="u-plus">${uploaded?"✓":"+"}</div>
-      <div>${uploaded?"已上传":"上传"}</div>
-      ${acts}
+      <button class="u-del" type="button" title="删除" onclick="askDeleteAttach(this,'${safe}')">×</button>
+      <button class="u-preview" type="button" onclick="viewAttachFromCard(this,'${safe}')">
+        <div class="u-plus">${uploaded?"图":"+"}</div>
+        <div class="u-state">${uploaded?"已上传":"未上传"}</div>
+      </button>
+      <div class="u-acts">
+        <button class="link u-upload" type="button" onclick="uploadAttach(this,'${safe}')">上传</button>
+        <button class="link" type="button" onclick="downloadAttach('${safe}')">下载</button>
+      </div>
     </div>
     <div class="u-name">${name}</div>
   </div>`;
 }
+function setAttachUploaded(card, uploaded){
+  if(!card) return;
+  card.classList.toggle("on", !!uploaded);
+  const plus=card.querySelector(".u-plus");
+  const state=card.querySelector(".u-state");
+  if(plus) plus.textContent=uploaded?"图":"+";
+  if(state) state.textContent=uploaded?"已上传":"未上传";
+}
+function viewAttachFromCard(btn, name){
+  const card=btn.closest(".u-card");
+  if(!card||!card.classList.contains("on")) return;
+  viewAttach(name);
+}
+function attachPageCount(name){
+  const n=String(name||"");
+  if(/征信/.test(n)) return 6;
+  if(/厂房大门|仓库|养殖/.test(n)) return 3;
+  if(/流水|水电|合同|权属|财务|防疫/.test(n)) return 4;
+  return 1;
+}
+let previewZoom=1;
+function applyPreviewZoom(){
+  const stage=document.getElementById("previewStage");
+  const label=document.getElementById("previewZoomLabel");
+  if(stage) stage.style.width=Math.round(720*previewZoom)+"px";
+  if(label) label.textContent=Math.round(previewZoom*100)+"%";
+}
+function zoomPreview(dir){
+  previewZoom=Math.min(2, Math.max(0.5, Math.round((previewZoom+dir*0.2)*10)/10));
+  applyPreviewZoom();
+}
+function previewImageSrc(index){
+  const hues=[210,28,152,262,36,188];
+  const h=hues[index%hues.length];
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="720" height="960" viewBox="0 0 720 960">
+    <rect width="720" height="960" fill="#efece6"/>
+    <rect x="28" y="28" width="664" height="904" rx="6" fill="#fff"/>
+    <rect x="56" y="64" width="248" height="312" rx="4" fill="hsl(${h},32%,82%)"/>
+    <circle cx="180" cy="168" r="52" fill="hsl(${h},24%,64%)"/>
+    <rect x="108" y="248" width="144" height="18" rx="9" fill="hsl(${h},18%,72%)"/>
+    <rect x="124" y="278" width="112" height="12" rx="6" fill="hsl(${h},14%,78%)"/>
+    <rect x="332" y="72" width="300" height="22" rx="4" fill="#e7e4de"/>
+    <rect x="332" y="112" width="240" height="14" rx="4" fill="#eeebe6"/>
+    <rect x="332" y="142" width="268" height="14" rx="4" fill="#eeebe6"/>
+    <rect x="332" y="186" width="300" height="150" rx="4" fill="hsl(${h},18%,93%)"/>
+    <rect x="56" y="412" width="608" height="468" rx="4" fill="hsl(${h},22%,94%)"/>
+    <rect x="80" y="440" width="260" height="180" rx="4" fill="hsl(${h},28%,84%)"/>
+    <rect x="360" y="440" width="260" height="180" rx="4" fill="hsl(${h},16%,88%)"/>
+    <rect x="80" y="640" width="540" height="200" rx="4" fill="hsl(${h},20%,90%)"/>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
 function viewAttach(name){
-  alert("查看附件："+name+"\n（原型：打开预览）");
+  const idSides=/身份证正反面/.test(name);
+  const labels=idSides?["正面","反面"]:null;
+  const count=idSides?2:attachPageCount(name);
+  document.getElementById("previewTitle").textContent=name||"查看附件";
+  document.getElementById("previewSub").textContent=`共 ${count} 张，向下滑动查看`;
+  document.getElementById("previewBody").innerHTML=`<div class="preview-stage" id="previewStage">`+Array.from({length:count},(_,i)=>`
+    <div class="preview-sheet">
+      <div class="cap"><span>${labels?name+" · "+labels[i]:name}</span><span>${i+1} / ${count}</span></div>
+      <img class="shot" alt="" src="${previewImageSrc(i)}" />
+    </div>
+  `).join("")+`</div>`;
+  previewZoom=1;
+  applyPreviewZoom();
+  const page=document.getElementById("attachPreview");
+  page.classList.add("on");
+  page.querySelector(".preview-body").scrollTop=0;
+}
+function closeAttachPreview(){
+  document.getElementById("attachPreview").classList.remove("on");
+}
+function uploadAttach(btn, name){
+  setAttachUploaded(btn.closest(".u-card"), true);
+  alert("上传附件："+name+"\n（原型：选择文件并上传）");
 }
 function downloadAttach(name){
   alert("开始下载："+name+"\n（原型：触发文件下载）");
+}
+function askDeleteAttach(btn, name){
+  if(!confirm("确认删除「"+name+"」？")) return;
+  setAttachUploaded(btn.closest(".u-card"), false);
+  alert("已删除附件："+name);
 }
 function collectUploadedAttachNames(t){
   const names=[];
@@ -1445,16 +1589,14 @@ function collectUploadedAttachNames(t){
   const files=t.files||[];
   const has=k=>files.some(f=>String(f).includes(k));
   push("营业执照", has("营业执照"));
-  push("法人身份证正面", has("身份证正面")||has("法人身份证正面"));
-  push("法人身份证反面", has("身份证反面")||has("法人身份证反面"));
+  push("法人身份证正反面", has("身份证正面")||has("法人身份证正面")||has("身份证反面")||has("法人身份证反面"));
   push("信用分截图", has("微信支付分")||has("微信分")||has("支付分")||has("信用分"));
   const legalCredit=(t.timeline||[]).some(x=>/法人.*征信|人行征信已上传/.test(x.t||""))||has("征信");
   push("法人征信报告", legalCredit);
   const s=t.salesApp;
   if(s){
     const ctrlNeeded=Array.isArray(s.dd)&&s.dd.some(([k,v])=>String(k).includes("法人是否为实控人")&&v==="否");
-    push("实控人身份证正面", ctrlNeeded);
-    push("实控人身份证反面", ctrlNeeded);
+    push("实控人身份证正反面", ctrlNeeded);
     (s.photos||[]).forEach(n=>push(n,true));
   }
   const f=t.formal;
@@ -1521,6 +1663,7 @@ function collectSalesDdExcelRows(t){
   const feedKeys=["购买次数","玉米","豆粕","预混料","全价料","绑定","大宗"];
   pickTpl(s, breedKeys).forEach(([k,v])=>pushDdRow(rows,"客户养殖信息",k,v));
   pickTpl(s, feedKeys).forEach(([k,v])=>pushDdRow(rows,"饲料信息",k,v));
+  productProfitPairs(productNamesFromFeed(pickTpl(s, feedKeys))).forEach(([k,v])=>pushDdRow(rows,"饲料信息",k,v));
   excludeTpl(s, [...breedKeys, ...feedKeys]).forEach(([k,v])=>pushDdRow(rows,"饲料信息",k,v));
   (s.dd||[]).forEach(([k,v])=>pushDdRow(rows,"经营信息",k,v));
   if(s.photos&&s.photos.length) pushDdRow(rows,"经营信息","现场照片",s.photos.join("、"));
@@ -1647,7 +1790,8 @@ function displayAuditStatus(t){
 }
 function auditStatusBlock(t){
   const label=displayAuditStatus(t);
-  const bankLabel=displayBankStatus(t);
+  const sy=sideBankStatus(t,"shangyinResult");
+  const xs=sideBankStatus(t,"xishangResult");
   const tone=checkCls(
     ["初审驳回","正式审核驳回"].includes(t.stage)?"驳回":
     t.stage==="正式审核通过"?"通过":
@@ -1655,12 +1799,13 @@ function auditStatusBlock(t){
   );
   const tip=(["初审驳回","正式审核驳回"].includes(t.stage)&&(t.rejectReason||t.reject))
     ?`<br><span style="color:#8c8c8c">驳回原因：${t.rejectReason||t.reject}</span>`:"";
-  const bankTip=(getBankStatus(t)==="拒绝"&&t.bankRejectReason)
+  const bankTip=((sy==="拒绝"||xs==="拒绝")&&t.bankRejectReason)
     ?`<br><span style="color:#8c8c8c">银行拒绝原因：${t.bankRejectReason}</span>`:"";
   return panel("审核状态","",`
     <div class="check-box ${tone} status-panel">
       平台审核状态：<span class="tag ${tagClass(t.stage)}">${label}</span>
-      &nbsp;&nbsp;银行状态：<span class="tag ${tagClass(getBankStatus(t))}">${bankLabel}</span>
+      &nbsp;&nbsp;上银状态：<span class="tag ${tagClass(sy)}">${sy}</span>
+      &nbsp;&nbsp;锡商状态：<span class="tag ${tagClass(xs)}">${xs}</span>
       ${tip}${bankTip}
     </div>
   `);
@@ -1679,6 +1824,33 @@ function aiCheckBlock(t){
       <div class="check-box ${checkCls(salesVal)}">业务员尽调资料：<span class="tag ${checkTagCls(salesVal)}">${salesVal}</span></div>
     </div>
   `);
+}
+function productNamesFromFeed(rows){
+  const hit=(rows||[]).find(([k])=>/商品名称|商品名字/.test(String(k||"")));
+  if(!hit) return [];
+  return String(hit[1]||"").split(/[、,，]/).map(s=>s.trim()).filter(s=>s && s!=="—");
+}
+function productProfitPairs(names){
+  const table={
+    "蛋鸡预混料A":"186元/吨",
+    "青年鸡预混料B":"142元/吨",
+    "正大全价料":"210元/吨",
+    "新希望全价料":"168元/吨"
+  };
+  return names.map((n,i)=>[n+"利润", table[n]||((120+i*15)+"元/吨")]);
+}
+function feedFieldsHtml(feedTpl){
+  const profits=productProfitPairs(productNamesFromFeed(feedTpl));
+  let emitted=false;
+  const html=(feedTpl||[]).map(([k,v])=>{
+    let row=field(k,v,false);
+    if(!emitted && /商品名称|商品名字/.test(String(k||""))){
+      emitted=true;
+      row+=profits.map(([pk,pv])=>field(pk,pv,false)).join("");
+    }
+    return row;
+  }).join("");
+  return html||field("饲料信息","—",false);
 }
 function pickTpl(s, keys){
   const list=s.tplFields||[];
@@ -1699,7 +1871,7 @@ function platformCustomerBlock(t){
       ${field("主体类型", t.subjectType||kind||"个人", true, "select")}
       ${field("手机号", t.mobile||"—", true)}
       ${field("客户姓名", t.name||"—", true)}
-      ${field("客户类型", t.custType||"蛋鸡养殖", true, "select")}
+      ${field("白条客户类型", t.custType||"蛋鸡养殖", true, "select")}
       ${field("平台注册时间", t.regTime||(t.time||"").slice(0,10)||"—", true)}
       ${field("平台累计注册月份", t.regMonths??14, true)}
       ${field("借款人与平台方关联", t.related||"否", true, "select")}
@@ -1712,7 +1884,7 @@ function financeSubjectBlock(t){
     :t.name)||"—";
   const creditCode=t.creditCode||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?"":t.idNo)||"—";
   const legalId=t.legalId||(/^\d{17}[\dXx]$/.test(String(t.idNo||""))?t.idNo:"")||"—";
-  return panel("融资主体信息","平台主体档案带入",`
+  return panel("融资主体信息","营业执照识别",`
     <div class="form-grid">
       ${field("融资主体名称", t.subject||t.name||"—", true)}
       ${field("企业类型", t.entType||"工商企业", true, "select")}
@@ -1859,7 +2031,7 @@ function salesBlock(t){
     </div>
     <div class="sub-lab">饲料信息</div>
     <div class="form-grid">
-      ${feedTpl.map(([k,v])=>field(k,v,false)).join("")||field("饲料信息","—",false)}
+      ${feedFieldsHtml(feedTpl)}
       ${otherTpl.map(([k,v])=>field(k,v,false)).join("")}
     </div>
     <div class="sub-lab">经营信息</div>
@@ -1888,7 +2060,7 @@ function openTask(id, mode){
   const auditLabel=t.stage==="正式进件审核中"?"正式审核":"初审审核";
   const page=document.getElementById("detailPage");
   document.getElementById("d-title").textContent=canAudit?`${auditLabel} · ${t.name}`:(canEdit?`编辑 · ${t.name}`:`查看 · ${t.name}`);
-  document.getElementById("d-sub").textContent=`客户ID ${t.custId} · 平台审核状态：${displayAuditStatus(t)} · 银行状态：${displayBankStatus(t)}`;
+  document.getElementById("d-sub").textContent=`客户ID ${t.custId} · 平台审核状态：${displayAuditStatus(t)} · 上银状态：${sideBankStatus(t,"shangyinResult")} · 锡商状态：${sideBankStatus(t,"xishangResult")}`;
   page.classList.remove("view-mode");
   if(openMode==="view") page.classList.add("view-mode");
 
@@ -1897,7 +2069,7 @@ function openTask(id, mode){
   const syOn=t.shangyinPushed==="是"||!!syAmt;
   const xsOn=t.xishangPushed==="是"||!!xsAmt;
   const showBank=["正式进件审核中","正式审核通过","正式审核驳回"].includes(t.stage)
-    || syOn || xsOn || !!syAmt || !!xsAmt || getBankStatus(t)!=="—";
+    || syOn || xsOn || !!syAmt || !!xsAmt || sideBankStatus(t,"shangyinResult")!=="—" || sideBankStatus(t,"xishangResult")!=="—";
   const showXsExtra=showBank && (xsOn || !!xsAmt || t.stage==="正式进件审核中");
 
   let html=`
@@ -1911,7 +2083,7 @@ function openTask(id, mode){
     ${creditInfoBlock(t)}
     ${tradeInfoBlock(t)}
     ${showXsExtra?xsExtraBlock(t):""}
-    ${showBank?panel("推送银行","额度来自业务员尽调资料",`
+    ${showBank?panel("推送银行","",`
     <div class="bank-row">
       <div class="bank-item">
         <label class="chk"><input type="checkbox" disabled ${syOn?"checked":""}/> 上海银行</label>
@@ -1933,9 +2105,6 @@ function openTask(id, mode){
   if(canAudit){
     const isChuShen=t.stage==="初审待审核";
     const isFormal=t.stage==="正式进件审核中";
-    const formalOk=isFormalDocsReady(t);
-    const salesOk=isSalesDocsReady(t);
-    const reviewReady=formalOk && salesOk;
     if(isChuShen){
       document.getElementById("d-foot").innerHTML=`
         <button class="btn btn-default" type="button" onclick="closeDetail()">返回</button>
@@ -1945,7 +2114,7 @@ function openTask(id, mode){
       document.getElementById("d-foot").innerHTML=`
         <button class="btn btn-default" type="button" onclick="closeDetail()">返回</button>
         <button class="btn btn-danger" type="button" onclick="decide('驳回')">驳回</button>
-        <button class="btn btn-primary${reviewReady?"":" disabled"}" type="button" ${reviewReady?`onclick="decide('正式进件通过')"`:"disabled title=\"客户正式进件资料或业务员尽调资料未补全\""}>正式进件通过</button>`;
+        <button class="btn btn-primary" type="button" onclick="decide('正式进件通过')">正式进件通过</button>`;
     }
   }else if(canEdit){
     document.getElementById("d-foot").innerHTML=`

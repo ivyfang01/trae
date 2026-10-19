@@ -151,6 +151,21 @@ body{
   text-align:center;font-size:12px;color:var(--text-secondary);line-height:1.4;gap:4px
 }
 .detail-page .file.ok{border-color:#91caff;background:var(--bg-blue-light);color:var(--blue)}
+.detail-page .file.view{cursor:pointer}
+.id-photo{margin:12px;background:#fff;border-radius:12px;overflow:hidden}
+.id-photo .cap{padding:10px 14px 0;font-size:13px;font-weight:600}
+.id-photo img,.vplayer canvas{display:block;width:100%;height:auto;background:#f7f8fa}
+.vplayer{position:relative;background:#111}
+.vplayer canvas{background:#111}
+.vplay{
+  position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
+  width:68px;height:68px;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(0,0,0,.45);color:#fff;font-size:14px
+}
+.vplayer.playing .vplay{opacity:0;pointer-events:none}
+.vbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#1d2129;color:#fff;font-size:12px}
+.vbar .track{flex:1;height:4px;border-radius:2px;background:#3a3f47;overflow:hidden}
+.vbar .fill{display:block;height:100%;width:0;background:var(--blue)}
 .detail-page .sub{
   display:flex;align-items:center;gap:6px;
   font-size:13px;font-weight:600;color:var(--text);margin:14px 0 8px;line-height:1.2
@@ -166,9 +181,11 @@ body{
 .detail-page .tag.warn{background:#fff7e6;color:var(--orange)}
 .detail-page .tag.err{background:#ffece8;color:var(--red)}
 .detail-page .tag.muted{background:#f5f5f5;color:#999}
-.detail-page .bank-item{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-page .bank-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
 .detail-page .bank-item:last-child{border-bottom:none}
 .detail-page .bank-item .name{font-weight:600;min-width:72px}
+.detail-page .bank-val{margin-left:auto;display:flex;align-items:center;gap:8px}
+.detail-page .bank-val .amt{font-weight:600;color:var(--text)}
 .detail-page .log-item{position:relative;padding:0 0 14px 16px;border-left:2px solid #f0f0f0}
 .detail-page .log-item:last-child{padding-bottom:0;border-left-color:transparent}
 .detail-page .log-item::before{content:"";position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:#c9cdd4}
@@ -261,26 +278,6 @@ body{
         <div class="lab">平台审核状态</div>
         <div class="val" id="btStatus">—</div>
       </div>
-      <div class="kv" id="btRejectRow">
-        <div class="lab">驳回原因</div>
-        <div class="val err" id="btReject">—</div>
-      </div>
-      <div class="kv">
-        <div class="lab">上银白条启用状态</div>
-        <div class="val" id="btSyEnable">—</div>
-      </div>
-      <div class="kv">
-        <div class="lab">上银可用额度</div>
-        <div class="val" id="btSyAvail">—</div>
-      </div>
-      <div class="kv">
-        <div class="lab">锡商白条启用状态</div>
-        <div class="val" id="btXsEnable">—</div>
-      </div>
-      <div class="kv">
-        <div class="lab">锡商可用额度</div>
-        <div class="val" id="btXsAvail">—</div>
-      </div>
       <div class="kv">
         <div class="lab">平台最高可用额度</div>
         <div class="val" id="btPlatMax">—</div>
@@ -292,6 +289,38 @@ body{
       <div class="kv">
         <div class="lab">购买品类</div>
         <div class="val" id="btCategory">—</div>
+      </div>
+      <div class="kv" id="btRejectRow">
+        <div class="lab">驳回原因</div>
+        <div class="val err" id="btReject">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">上银白条启用状态</div>
+        <div class="val" id="btSyEnable">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">上银授信额度</div>
+        <div class="val" id="btSyCredit">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">上银可用额度</div>
+        <div class="val" id="btSyAvail">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">锡商白条启用状态</div>
+        <div class="val" id="btXsEnable">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">锡商授信额度</div>
+        <div class="val" id="btXsCredit">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">锡商可用额度</div>
+        <div class="val" id="btXsAvail">—</div>
+      </div>
+      <div class="kv">
+        <div class="lab">初审排队客户数</div>
+        <div class="val" id="btQueue">—</div>
       </div>
       <div class="kv">
         <div class="lab">初审资料</div>
@@ -339,13 +368,36 @@ body{
   <div id="detailBody" style="padding-bottom:24px"></div>
 </div>
 
+<div class="page" id="siteMediaPage" style="display:none">
+  <div class="nav">
+    <button class="back" type="button" onclick="closeSiteMedia()" aria-label="返回">‹</button>
+    <div class="title" id="siteMediaTitle">现场资料</div>
+  </div>
+  <div id="siteMediaBody" style="padding-bottom:24px"></div>
+</div>
+
+<div class="page" id="idPhotoPage" style="display:none">
+  <div class="nav">
+    <button class="back" type="button" onclick="closeIdPhotoPage()" aria-label="返回">‹</button>
+    <div class="title">法人身份证正反面</div>
+  </div>
+  <div class="id-photo">
+    <div class="cap">正面</div>
+    <img id="idFrontImg" alt="法人身份证正面" />
+  </div>
+  <div class="id-photo">
+    <div class="cap">反面</div>
+    <img id="idBackImg" alt="法人身份证反面" />
+  </div>
+</div>
+
 <script>
 let btMode="none"; // none | pass | miss | reject
 const DEMO={
   none:null,
-  pass:{name:"桑姣婧", status:"正式进件审核通过", statusClass:"ok", syAvail:"32万", xsAvail:"—", platMax:"50万", curAvail:"32万", category:"预混料", syEnable:"已启用", xsEnable:"未启用", reject:"", first:"已提交", second:"已提交", sales:"已提交", guarantee:"已提交"},
-  miss:{name:"桑姣婧", status:"正式进件审核中", statusClass:"warn", syAvail:"—", xsAvail:"—", platMax:"80万", curAvail:"—", category:"预混料", syEnable:"未启用", xsEnable:"未启用", reject:"", first:"已提交", second:"已提交", sales:"未提交", guarantee:"未提交"},
-  reject:{name:"桑姣婧", status:"初审驳回", statusClass:"err", syAvail:"—", xsAvail:"—", platMax:"—", curAvail:"—", category:"—", syEnable:"—", xsEnable:"—", reject:"征信逾期金额偏高，暂不符合白条准入条件", first:"已提交", second:"未提交", sales:"未提交", guarantee:"未提交"}
+  pass:{name:"桑姣婧", status:"正式进件审核通过", statusClass:"ok", syCredit:"50万", syAvail:"32万", xsCredit:"—", xsAvail:"—", platMax:"50万", curAvail:"32万", category:"预混料", syEnable:"已启用", xsEnable:"未启用", reject:"", queue:"—", first:"已提交", second:"已提交", sales:"已提交", guarantee:"已提交"},
+  miss:{name:"桑姣婧", status:"正式进件审核中", statusClass:"warn", syCredit:"—", syAvail:"—", xsCredit:"—", xsAvail:"—", platMax:"80万", curAvail:"—", category:"预混料", syEnable:"未启用", xsEnable:"未启用", reject:"", queue:"4", first:"已提交", second:"已提交", sales:"未提交", guarantee:"未提交"},
+  reject:{name:"桑姣婧", status:"初审驳回", statusClass:"err", syCredit:"—", syAvail:"—", xsCredit:"—", xsAvail:"—", platMax:"—", curAvail:"—", category:"—", syEnable:"—", xsEnable:"—", reject:"征信逾期金额偏高，暂不符合白条准入条件", queue:"—", first:"已提交", second:"未提交", sales:"未提交", guarantee:"未提交"}
 };
 
 document.querySelectorAll(".demo button[data-bt]").forEach(btn=>{
@@ -354,7 +406,7 @@ document.querySelectorAll(".demo button[data-bt]").forEach(btn=>{
     btn.classList.add("active");
     btMode=btn.dataset.bt;
     // 若当前在详情页，切换演示态后刷新详情
-    if(document.getElementById("detailPage").style.display==="block"){
+    if(document.getElementById("detailPage").style.display==="block"||document.getElementById("idPhotoPage").style.display==="block"||document.getElementById("siteMediaPage").style.display==="block"){
       if(btMode==="none"){
         closeDetailPage();
         switchTab("baitiao");
@@ -445,11 +497,14 @@ function renderBaitiao(){
     : data.status;
   st.textContent=platformStatus;
   st.className="val "+data.statusClass;
+  document.getElementById("btSyCredit").textContent=data.syCredit||"—";
   document.getElementById("btSyAvail").textContent=data.syAvail||"—";
+  document.getElementById("btXsCredit").textContent=data.xsCredit||"—";
   document.getElementById("btXsAvail").textContent=data.xsAvail||"—";
   document.getElementById("btPlatMax").textContent=data.platMax||"—";
   document.getElementById("btCurAvail").textContent=data.curAvail||"—";
   document.getElementById("btCategory").textContent=data.category||"—";
+  document.getElementById("btQueue").textContent=data.queue||"—";
   document.getElementById("btSyEnable").textContent=data.syEnable||"—";
   document.getElementById("btXsEnable").textContent=data.xsEnable||"—";
   const rejectRow=document.getElementById("btRejectRow");
@@ -512,6 +567,8 @@ document.getElementById("btnEdit").addEventListener("click",()=>{
 });
 
 function openDetailPage(mode, cust){
+  closeSiteMedia(true);
+  document.getElementById("idPhotoPage").style.display="none";
   document.getElementById("archiveMain").style.display="none";
   document.getElementById("pageFoot").style.display="none";
   document.getElementById("detailPage").style.display="block";
@@ -521,9 +578,173 @@ function openDetailPage(mode, cust){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function closeDetailPage(){
+  closeSiteMedia(true);
+  document.getElementById("idPhotoPage").style.display="none";
   document.getElementById("detailPage").style.display="none";
   document.getElementById("archiveMain").style.display="";
   switchTab("baitiao");
+}
+function idCardSrc(side){
+  const front=side==="front";
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="856" height="540" viewBox="0 0 856 540">
+    <rect width="856" height="540" fill="#e8eef6"/>
+    <rect x="24" y="24" width="808" height="492" rx="16" fill="#fff" stroke="#d6e4f5"/>
+    <text x="48" y="72" fill="#1d2129" font-size="28" font-family="Microsoft YaHei,sans-serif">${front?"居民身份证":"中华人民共和国"}</text>
+    <text x="48" y="112" fill="#4e5969" font-size="20" font-family="Microsoft YaHei,sans-serif">${front?"正面":"居民身份证 · 反面"}</text>
+    ${front
+      ? `<rect x="560" y="150" width="220" height="280" rx="8" fill="#d6e4ff"/>
+         <circle cx="670" cy="250" r="48" fill="#91b4f5"/>
+         <rect x="610" y="320" width="120" height="16" rx="8" fill="#b7cdfb"/>
+         <text x="48" y="200" fill="#1d2129" font-size="22" font-family="Microsoft YaHei,sans-serif">姓名  桑姣婧</text>
+         <text x="48" y="248" fill="#1d2129" font-size="22" font-family="Microsoft YaHei,sans-serif">性别  女    民族  汉</text>
+         <text x="48" y="296" fill="#1d2129" font-size="22" font-family="Microsoft YaHei,sans-serif">出生  1990年3月12日</text>
+         <text x="48" y="344" fill="#1d2129" font-size="22" font-family="Microsoft YaHei,sans-serif">住址  上海市浦东新区</text>
+         <text x="48" y="460" fill="#1d2129" font-size="24" font-family="Microsoft YaHei,sans-serif">公民身份号码</text>
+         <text x="48" y="496" fill="#1d2129" font-size="26" font-family="Microsoft YaHei,sans-serif">310115199003120028</text>`
+      : `<rect x="80" y="180" width="160" height="160" rx="8" fill="#1d2129"/>
+         <rect x="300" y="200" width="420" height="18" rx="4" fill="#e5e6eb"/>
+         <rect x="300" y="240" width="360" height="18" rx="4" fill="#e5e6eb"/>
+         <rect x="300" y="280" width="390" height="18" rx="4" fill="#e5e6eb"/>
+         <text x="80" y="400" fill="#4e5969" font-size="20" font-family="Microsoft YaHei,sans-serif">签发机关  上海市公安局浦东分局</text>
+         <text x="80" y="444" fill="#4e5969" font-size="20" font-family="Microsoft YaHei,sans-serif">有效期限  2020.03.12-2040.03.12</text>`}
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
+function openIdPhotoPage(){
+  document.getElementById("idFrontImg").src=idCardSrc("front");
+  document.getElementById("idBackImg").src=idCardSrc("back");
+  document.getElementById("detailPage").style.display="none";
+  document.getElementById("idPhotoPage").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeIdPhotoPage(){
+  document.getElementById("idPhotoPage").style.display="none";
+  document.getElementById("detailPage").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+let siteMedia=[];
+const SITE_VIDEO_MS=8000;
+let siteVideoRaf=null;
+function sitePhotoSrc(name, index){
+  const hues={厂房大门:210,仓库:28,养殖区域:140};
+  const h=hues[name]||200;
+  const shift=index*36;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
+    <rect width="720" height="480" fill="hsl(${h},32%,88%)"/>
+    <rect y="300" width="720" height="180" fill="hsl(${h},24%,70%)"/>
+    <rect x="${70+shift}" y="150" width="240" height="170" fill="hsl(${h},20%,52%)"/>
+    <polygon points="${70+shift},150 ${190+shift},78 ${310+shift},150" fill="hsl(${h},26%,38%)"/>
+    <rect x="${160+shift}" y="230" width="52" height="90" fill="hsl(${h},12%,28%)"/>
+    <text x="32" y="46" font-size="28" font-family="Microsoft YaHei,sans-serif" fill="#1d2129">${name}</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
+function openSiteMedia(idx){
+  const photo=siteMedia[idx];
+  if(!photo) return;
+  stopSiteVideos();
+  const items=photo.items&&photo.items.length?photo.items:[{type:"image"}];
+  document.getElementById("siteMediaTitle").textContent=photo.name||"现场资料";
+  const imgTotal=items.filter(it=>it.type!=="video").length;
+  let imgSeen=0;
+  document.getElementById("siteMediaBody").innerHTML=items.map(it=>{
+    if(it.type==="video"){
+      return `<div class="id-photo"><div class="cap">视频</div>
+        <div class="vplayer" data-name="${photo.name||""}">
+          <canvas width="720" height="405" onclick="toggleSiteVideo(this)"></canvas>
+          <button type="button" class="vplay" onclick="toggleSiteVideo(this)">播放</button>
+          <div class="vbar"><span class="track"><span class="fill"></span></span><span class="vtime">0:00 / 0:08</span></div>
+        </div>
+      </div>`;
+    }
+    imgSeen+=1;
+    const cap=imgTotal>1?`图片 ${imgSeen} / ${imgTotal}`:"图片";
+    return `<div class="id-photo"><div class="cap">${cap}</div><img alt="${photo.name||""}" src="${sitePhotoSrc(photo.name, imgSeen-1)}" /></div>`;
+  }).join("");
+  document.querySelectorAll("#siteMediaBody .vplayer").forEach(el=>drawSiteFrame(el,0));
+  document.getElementById("detailPage").style.display="none";
+  document.getElementById("siteMediaPage").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeSiteMedia(silent){
+  stopSiteVideos();
+  const page=document.getElementById("siteMediaPage");
+  if(!page||page.style.display==="none") return;
+  page.style.display="none";
+  if(!silent){
+    document.getElementById("detailPage").style.display="block";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+function fmtVideoTime(ms){
+  const s=Math.min(8, Math.floor(ms/1000));
+  return "0:0"+s;
+}
+function drawSiteFrame(el, p){
+  const canvas=el.querySelector("canvas");
+  if(!canvas) return;
+  const ctx=canvas.getContext("2d");
+  const w=canvas.width, h=canvas.height;
+  const name=el.dataset.name||"现场视频";
+  ctx.fillStyle="#8ec5e8";
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle="#c9b48a";
+  ctx.fillRect(0,h*0.62,w,h*0.38);
+  const x=36+p*(w*0.42);
+  ctx.fillStyle="#d2b48c";
+  ctx.fillRect(x,h*0.32,240,160);
+  ctx.fillStyle="#8d5a3c";
+  ctx.beginPath();
+  ctx.moveTo(x-18,h*0.32);
+  ctx.lineTo(x+120,h*0.14);
+  ctx.lineTo(x+258,h*0.32);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle="#5c4030";
+  ctx.fillRect(x+96,h*0.48,48,86);
+  ctx.fillStyle="#1d2129";
+  ctx.font="28px Microsoft YaHei,sans-serif";
+  ctx.fillText(name,28,46);
+}
+function toggleSiteVideo(btn){
+  const el=btn.closest(".vplayer");
+  if(!el) return;
+  if(el.classList.contains("playing")){
+    el.classList.remove("playing");
+    el._last=0;
+    return;
+  }
+  if((el._acc||0)>=SITE_VIDEO_MS) el._acc=0;
+  el.classList.add("playing");
+  el._last=0;
+  if(!siteVideoRaf) siteVideoRaf=requestAnimationFrame(siteVideoTick);
+}
+function siteVideoTick(now){
+  document.querySelectorAll("#siteMediaBody .vplayer.playing").forEach(el=>{
+    if(!el._last) el._last=now;
+    el._acc=Math.min(SITE_VIDEO_MS,(el._acc||0)+(now-el._last));
+    el._last=now;
+    const p=el._acc/SITE_VIDEO_MS;
+    drawSiteFrame(el,p);
+    const fill=el.querySelector(".fill");
+    const time=el.querySelector(".vtime");
+    if(fill) fill.style.width=(p*100)+"%";
+    if(time) time.textContent=fmtVideoTime(el._acc)+" / 0:08";
+    if(el._acc>=SITE_VIDEO_MS){
+      el.classList.remove("playing");
+      el._last=0;
+    }
+  });
+  if(document.querySelector("#siteMediaBody .vplayer.playing")) siteVideoRaf=requestAnimationFrame(siteVideoTick);
+  else siteVideoRaf=null;
+}
+function stopSiteVideos(){
+  if(siteVideoRaf){cancelAnimationFrame(siteVideoRaf);siteVideoRaf=null;}
+  document.querySelectorAll(".vplayer").forEach(el=>{
+    el.classList.remove("playing");
+    el._acc=0;
+    el._last=0;
+  });
 }
 function dCls(v){
   if(["齐全","已提交","通过","已收到","已上传","是","白条已开通"].includes(v)) return "ok";
@@ -578,10 +799,20 @@ function renderAuditStatus(t){
   return `<div class="card"><div class="sec">审核状态</div>
     <div class="check-box ${tone} status-panel">平台审核状态：${dTag(platform)}${tip}</div></div>`;
 }
-function dFile(name,ok){
-  return `<div class="file ${ok?"ok":""}"><div>${ok?"✓":"+"}</div><div>${name}</div></div>`;
+function dFile(name,ok,onclick){
+  const view=ok && (name==="法人身份证正反面" || !!onclick);
+  const act=onclick||(name==="法人身份证正反面"?"openIdPhotoPage()":"");
+  return `<div class="file ${ok?"ok":""}${view?" view":""}"${view?` onclick="${act}"`:""}><div>${ok?"✓":"+"}</div><div>${name}</div></div>`;
 }
 function dTag(v){return `<span class="tag ${dCls(v)||"muted"}">${v||"—"}</span>`}
+function bankPushAmt(v){
+  const n=Number(String(v||"").replace(/[^\d.]/g,""));
+  if(!n) return "—";
+  return n.toLocaleString("zh-CN")+"元";
+}
+function bankPushRow(name, status, amt){
+  return `<div class="bank-item"><span class="name">${name}</span><span class="bank-val">${dTag(status)}<span class="amt">${bankPushAmt(amt)}</span></span></div>`;
+}
 function buildDetailData(mode, cust){
   const base={
     pass:{
@@ -595,7 +826,11 @@ function buildDetailData(mode, cust){
         files:[{name:"近3个月经营场地水电费账单",ok:true},{name:"最近一次养殖资产买卖合同/首付款凭证",ok:true},{name:"经营场地权属证明",ok:true}]},
       salesApp:{status:"已提交", product:"预混料", applyQuota:50, canDeposit:"是", tier:"≥30万", sy:"50万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"0万", breed:"蛋鸡", scale:"2万羽", years:"7年",
         reason:"信誉结算良好，平台合作15次", tplFields:[["每月豆粕玉米需求","35吨"],["是否绑定销售预混料","是"]],
-        photos:["厂房大门","仓库","养殖区域"], crm:"2026-09-08 09:10 · 朱震 · 实地拜访",
+        photos:[
+          {name:"厂房大门", items:[{type:"image"},{type:"image"},{type:"image"}]},
+          {name:"仓库", items:[{type:"image"},{type:"image"}]},
+          {name:"养殖区域", items:[{type:"video"}]}
+        ], crm:"2026-09-08 09:10 · 朱震 · 实地拜访",
         dd:[["法人是否为实控人","是"],["实控人从业年限","5年以上"],["经营场所属性","自有"],["经营场所规模","约12亩"]]},
       bank:{syAmt:"500000", syPush:"已推送", syResult:"通过", xsAmt:"", xsPush:"未推送", xsResult:"—"},
       credit:{overdue:0,badLoan:0,settled:3}, trade:{months:5,tons:20,amt:150000,days:7},
@@ -612,7 +847,10 @@ function buildDetailData(mode, cust){
         files:[{name:"近3个月经营场地水电费账单",ok:true},{name:"最近一次养殖资产买卖合同/首付款凭证",ok:true},{name:"经营场地权属证明",ok:true}]},
       salesApp:{status:"缺失3项", product:"全价料", applyQuota:80, canDeposit:"是", tier:"≥30万", sy:"50万", syFreeDays:30, syAutoPay:"是", syMaxLoanMonths:12, xs:"30万", xsFreeDays:30, xsMaxLoanMonths:12, breed:"蛋鸡", scale:"3万羽", years:"6年",
         reason:"信誉结算良好，平台合作12次", tplFields:[["全价料每月吨数","40吨"],["全价料捆绑商品的吨数","1340.78吨"]],
-        photos:["厂房大门","仓库"], crm:"2026-09-15 09:20 · 朱震 · 实地拜访",
+        photos:[
+          {name:"厂房大门", items:[{type:"image"},{type:"image"}]},
+          {name:"仓库", items:[{type:"video"}]}
+        ], crm:"2026-09-15 09:20 · 朱震 · 实地拜访",
         dd:[["法人是否为实控人","否"],["实控人姓名","李实控"],["实控人身份证号","320102199001011234"],["实控人手机号","13800138000"],["实控人从业年限","2-5年"]]},
       bank:{syAmt:"500000", syPush:"未推送", syResult:"—", xsAmt:"300000", xsPush:"未推送", xsResult:"—"},
       credit:{overdue:0,badLoan:0,settled:2}, trade:{months:4,tons:18,amt:120000,days:5},
@@ -652,8 +890,7 @@ function buildDetailAttach(t){
   const baihangOk=hasFile("百行")||!!(f&&f.baihang&&f.baihang.ok);
   const chuShen=[
     dFile("营业执照", hasFile("营业执照")),
-    dFile("法人身份证正面", hasFile("身份证正面")||hasFile("法人身份证正面")),
-    dFile("法人身份证反面", hasFile("身份证反面")||hasFile("法人身份证反面")),
+    dFile("法人身份证正反面", hasFile("身份证正面")||hasFile("法人身份证正面")||hasFile("身份证反面")||hasFile("法人身份证反面")),
     dFile("信用分截图", hasFile("微信支付分")||hasFile("微信分")||hasFile("支付分")||hasFile("信用分")),
     dFile("法人征信报告", hasLegalCredit()),
   ].join("");
@@ -662,7 +899,15 @@ function buildDetailAttach(t){
     ddCards.push(dFile("实控人身份证正面", ctrlIdOk));
     ddCards.push(dFile("实控人身份证反面", ctrlIdOk));
   }
-  ((s&&s.photos)||[]).forEach(n=>ddCards.push(dFile(n,true)));
+  siteMedia=[];
+  ((s&&s.photos)||[]).forEach(raw=>{
+    const photo=typeof raw==="string"
+      ? {name:raw, items:[{type:"image"},{type:"image"},{type:"image"}]}
+      : raw;
+    const idx=siteMedia.length;
+    siteMedia.push(photo);
+    ddCards.push(dFile(photo.name, true, `openSiteMedia(${idx})`));
+  });
   const ddHtml=ddCards.length?ddCards.join(""):`<div class="empty-tip">${s?"暂无尽调附件":"业务员尚未提交尽调资料"}</div>`;
   let formalHtml="";
   if(!f){
@@ -777,8 +1022,8 @@ function renderDetailHtml(t){
     <div class="card"><div class="sec">征信信息</div>${dKv("逾期笔数",c.overdue??0,true)}${dKv("不良贷款笔数",c.badLoan??0,true)}${dKv("已结清贷款笔数",c.settled??0,true)}</div>
     <div class="card"><div class="sec">交易信息</div>${dKv("近6月累计交易月数",tr.months??0,true)}${dKv("近6月月均交易吨数",tr.tons??0,true)}${dKv("近6月月均交易金额(元)",tr.amt??0,true)}</div>
     <div class="card"><div class="sec">推送银行</div>
-      <div class="bank-item"><span class="name">上海银行</span>${dTag(b.syPush)}</div>
-      <div class="bank-item"><span class="name">锡商银行</span>${dTag(b.xsPush)}</div>
+      ${bankPushRow("上海银行", b.syPush, b.syAmt)}
+      ${bankPushRow("锡商银行", b.xsPush, b.xsAmt)}
     </div>
     <div class="card"><div class="sec">操作日志</div><div class="log">${logs||`<div class="empty-tip">暂无操作记录</div>`}</div></div>`;
 }

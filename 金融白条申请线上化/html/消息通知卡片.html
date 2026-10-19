@@ -34,57 +34,52 @@ h1{font-size:18px;margin:8px 4px 12px}
   <h1>步骤1 · 消息通知卡片</h1>
   <p class="desc">初审：客户提交后通知业务员与金融；覆盖 e 签宝失败、AI 拒绝、AI 通过待人审、人审结果等。正式进件（见《【需求】正式进件消息通知》）：⑧ 尽调提交→企微群通知客户补件；⑨ 尽调+正式件齐备→钉钉群通知金融审核；⑩ 正式审核结果→企微群通知销售与客户（通过时提醒去申请白条）。除⑨外均为企微群。</p>
 
-  <div class="h2">1. 客户已提交 → 业务员</div>
+  <div class="h2">1. 客户初审资料已提交 → 通知人：业务员</div>
   <div class="msg">
     <div class="msg-hd">
-      <div class="ico blue">提</div>
+      <div class="ico blue">企微</div>
       <div>
-        <div class="msg-title">客户已提交白条初审 <span class="chip">业务员</span></div>
+        <div class="msg-title">客户已提交白条初审 <span class="chip"></span></div>
         <div class="msg-time">2026-09-15 10:12</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 已完成证件上传，并提交初审。<br>
-      e 签宝三要素：校验中 / 待回传；后续将同步 AI 初审结果。
+      客户 <b>党闯养殖专业合作社</b> 已提交白条申请初审资料。<br>
     </div>
     <div class="msg-foot">
       <button class="btn btn-primary" type="button">查看进度</button>
     </div>
   </div>
 
-  <div class="h2">2. 客户已提交 → 金融审核</div>
+  <div class="h2">2. 钉钉消息@杨陈磊</div>
   <div class="msg">
     <div class="msg-hd">
-      <div class="ico blue">审</div>
+      <div class="ico blue">钉钉</div>
       <div>
-        <div class="msg-title">新初审进件待关注 <span class="chip">金融</span></div>
+        <div class="msg-title">初审进件审核提醒 <span class="chip"></span></div>
         <div class="msg-time">2026-09-15 10:12</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 已提交初审资料。<br>
-      列表已可查看提交记录；e 签宝与 AI 结果回传后可直接人审。
-    </div>
-    <div class="msg-foot">
-      <button class="btn btn-primary" type="button">打开审核台</button>
+      客户 <b>党闯养殖专业合作社</b> 已提交白条申请初审资料，请尽快审核。<br>
     </div>
   </div>
 
   <div class="h2">3. e 签宝三要素失败 → 业务员 / 客户</div>
   <div class="msg">
     <div class="msg-hd">
-      <div class="ico orange">签</div>
+      <div class="ico orange">企微</div>
       <div>
-        <div class="msg-title">三要素校验未通过 <span class="chip">业务员</span></div>
+        <div class="msg-title">白条初审申请未通过 <span class="chip">业务员</span></div>
         <div class="msg-time">2026-09-15 10:14</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> e 签宝校验失败。<br>
-      原因：法人手机号与证件主体不一致。请协助客户核对后重提。
+      客户 <b>党闯养殖专业合作社</b> <br>
+      原因：法人手机号与证件主体不一致。
     </div>
     <div class="msg-foot">
-      <button class="btn btn-primary" type="button">去协助重提</button>
+      <button class="btn btn-primary" type="button">重新申请</button>
     </div>
   </div>
 
@@ -98,16 +93,15 @@ h1{font-size:18px;margin:8px 4px 12px}
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>李明蛋鸡场</b> AI 初审拒绝。<br>
-      原因：法人身份证影像模糊；营业执照信息与主体不一致。<br>
-      请按原因补齐后重新进件。
+      客户 <b>李明蛋鸡场</b> 白条申请初审未通过。<br>
+      原因：法人身份证影像模糊；营业执照信息与主体不一致。
     </div>
     <div class="msg-foot">
-      <button class="btn btn-primary" type="button">去补资料重提</button>
+      <button class="btn btn-primary" type="button">重新申请</button>
     </div>
   </div>
 
-  <div class="h2">5. AI 初审通过 → 金融（进人审）</div>
+  <!-- <div class="h2">5. AI 初审通过 → 金融（进人审）</div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico green">AI</div>
@@ -138,9 +132,9 @@ h1{font-size:18px;margin:8px 4px 12px}
     <div class="msg-foot">
       <button class="btn btn-ghost" type="button">查看进度</button>
     </div>
-  </div>
+  </div> -->
 
-  <div class="h2">7. 金融人审通过 / 驳回 → 业务员</div>
+  <div class="h2">7. 金融人审通过 / 驳回 → 业务员，企微端</div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico green">✓</div>
@@ -151,7 +145,7 @@ h1{font-size:18px;margin:8px 4px 12px}
     </div>
     <div class="msg-body">
       客户 <b>党闯养殖专业合作社</b> 初审已通过。<br>
-      请尽快提交尽调资料和正式进件资料，如银行流水、财产证明。
+      请尽快提交尽调资料和正式进件资料，进行额度评估。
     </div>
     <div class="msg-foot">
       <!-- <button class="btn btn-primary" type="button">查看详情</button> -->
@@ -168,32 +162,47 @@ h1{font-size:18px;margin:8px 4px 12px}
     </div>
     <div class="msg-body">
       客户 <b>刘洋蛋鸡合作社</b> 初审驳回。<br>
-      原因：征信报告非近 1 个月内出具，请重新获取后重提。
+      原因：征信报告非近 1 个月内出具。
     </div>
     <div class="msg-foot">
-      <!-- <button class="btn btn-primary" type="button">去补资料重提</button> -->
+      <button class="btn btn-primary" type="button">重新申请</button>
+    </div>
+  </div>
+
+  <div class="h2">初审通过 → 金融人员（钉钉群）@杨陈磊</div>
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico blue">钉钉</div>
+      <div>
+        <div class="msg-title">初审已通过 <span class="chip">金融 · 钉钉群</span></div>
+        <div class="msg-time">2026-09-15 11:05</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>党闯养殖专业合作社</b> 白条初审已通过。<br>
+      请关注后续尽调资料与正式进件资料。
     </div>
   </div>
 
   <div class="h2">8. 正式进件 · 业务员已提交尽调资料 → 客户（企微）</div>
   <div class="msg">
     <div class="msg-hd">
-      <div class="ico blue">件</div>
+      <div class="ico blue">企微</div>
       <div>
-        <div class="msg-title">请补充正式进件资料 <span class="chip">客户 · 企微</span></div>
+        <div class="msg-title">补件通知 <span class="chip">客户 · 企微</span></div>
         <div class="msg-time">2026-10-12 14:30</div>
       </div>
     </div>
     <div class="msg-body">
       业务员已为您提交白条尽调资料。<br>
-      请尽快补充正式进件资料（如经营性流水、财产证明等），提交后进入金融正式审核。
+      请尽快补充营性流水、财产证明等资料，以便进行额度评估。
     </div>
     <div class="msg-foot">
       <button class="btn btn-primary" type="button">去补充资料</button>
     </div>
   </div>
 
-  <div class="h2">9. 正式进件 · 尽调 + 正式补件均已提交 → 金融（钉钉群）</div>
+  <div class="h2">9. 正式进件 · 尽调 + 正式补件均已提交 → 金融（钉钉群）at杨陈磊</div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico orange">钉</div>
@@ -203,23 +212,37 @@ h1{font-size:18px;margin:8px 4px 12px}
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 业务员尽调资料与客户正式进件资料均已提交。<br>
-      业务员：朱震 · 请尽快完成正式进件审核。
+      客户 <b>党闯养殖专业合作社</b> 业务员尽调资料与客户正式进件资料均已提交，请尽快审批。<br>
+  
     </div>
   </div>
 
-  <div class="h2">10. 正式进件审核结果 → 销售员 / 客户（企微群）</div>
+  <div class="h2">10. 正式进件审核结果 → 销售员（企微群）</div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico green">✓</div>
       <div>
-        <div class="msg-title">正式进件审核已通过 <span class="chip">销售 · 客户 · 企微</span></div>
+        <div class="msg-title">正式进件审核已通过 <span class="chip">销售 企微</span></div>
         <div class="msg-time">2026-10-13 16:05</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 正式进件审核已通过。<br>
-      请尽快引导客户去申请白条（按合作银行：上银 APP 申请 / 等待锡商推送开通）。
+      客户 <b>党闯养殖专业合作社</b> 上银白条审核已经通过。<br>
+      请尽快通知客户去【上银APP】申请白条。
+    </div>
+  </div>
+
+  <div class="msg">
+    <div class="msg-hd">
+      <div class="ico green">✓</div>
+      <div>
+        <div class="msg-title">正式进件审核已通过 <span class="chip">销售 企微</span></div>
+        <div class="msg-time">2026-10-13 16:06</div>
+      </div>
+    </div>
+    <div class="msg-body">
+      客户 <b>党闯养殖专业合作社</b> 锡商白条审核已经通过。<br>
+      请尽快通知客户去申请锡商白条。
     </div>
   </div>
 
@@ -227,7 +250,7 @@ h1{font-size:18px;margin:8px 4px 12px}
     <div class="msg-hd">
       <div class="ico red">驳</div>
       <div>
-        <div class="msg-title">正式进件审核被驳回 <span class="chip">销售 · 客户 · 企微</span></div>
+        <div class="msg-title">正式进件审核被驳回 <span class="chip">销售  企微</span></div>
         <div class="msg-time">2026-10-13 16:08</div>
       </div>
     </div>
@@ -240,30 +263,31 @@ h1{font-size:18px;margin:8px 4px 12px}
     </div>
   </div>
 
-  <div class="h2">11. 上海银行开通后 → 金融审核（钉钉群）/ 业务员（企微群）</div>
+  <div class="h2">11. 锡商白条银行开通后 → 金融审核（钉钉群））</div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico orange">钉</div>
       <div>
-        <div class="msg-title">上海银行白条已开通，请联系客户启用 <span class="chip">金融 · 钉钉群</span></div>
+        <div class="msg-title">锡商银行白条已开通，请联系客户启用 <span class="chip">金融 · 钉钉群</span></div>
         <div class="msg-time">2026-10-14 10:30</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 上海银行白条已开通。<br>
-      业务员：朱震 · 请尽快联系客户完成白条启用。
+      客户 <b>党闯养殖专业合作社</b> 锡商银行白条已开通。<br>
+      业务员：朱震<br>
+      站台/区域：溧河
     </div>
   </div>
   <div class="msg">
     <div class="msg-hd">
       <div class="ico green">业</div>
       <div>
-        <div class="msg-title">上海银行白条已开通，请配合启用 <span class="chip">业务员 · 企微</span></div>
+        <div class="msg-title">锡商银行白条已开通，请联系客户启用 <span class="chip">业务员 · 企微</span></div>
         <div class="msg-time">2026-10-14 10:30</div>
       </div>
     </div>
     <div class="msg-body">
-      客户 <b>党闯养殖专业合作社</b> 上海银行白条已开通。<br>
+      客户 <b>党闯养殖专业合作社</b> 锡商银行白条已开通。<br>
       金融审核人员将联系客户启用白条，请同步跟进配合。
     </div>
   </div>
