@@ -432,6 +432,27 @@ body{
 .modal-ft button+button{border-left:1px solid var(--line)}
 .modal-ft .cancel{color:#666}
 .modal-ft .ok{color:var(--orange);font-weight:600}
+.guide-modal{
+  width:100%;max-width:360px;max-height:86vh;background:#fff;border-radius:12px;overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.18);display:flex;flex-direction:column
+}
+.guide-modal .modal-bd{overflow:auto;-webkit-overflow-scrolling:touch;flex:1}
+.guide-modal .link-box{
+  background:#fff4ec;border:1px solid #ffd2b0;border-radius:8px;padding:10px 12px;margin-bottom:12px
+}
+.guide-modal .link-url{font-size:13px;color:#222;word-break:break-all;line-height:1.5}
+.guide-modal .link-actions{display:flex;gap:8px;margin-top:8px}
+.guide-modal .link-actions button{
+  flex:1;height:34px;border-radius:8px;border:1px solid var(--orange);background:#fff;
+  color:var(--orange);font-size:13px;font-weight:600;cursor:pointer
+}
+.guide-modal .link-actions button.primary{background:var(--orange);color:#fff}
+.guide-modal .step{margin-bottom:14px}
+.guide-modal .step-h{font-size:13px;font-weight:600;color:#222;margin-bottom:6px}
+.guide-modal .step img{
+  width:100%;border-radius:8px;border:1px solid #eee;display:block;background:#f7f7f7
+}
+.guide-modal .step-cap{font-size:12px;color:#999;margin-top:4px;line-height:1.4}
 
 /* 告知协议 */
 .notice-page .notice-hero{
@@ -1235,7 +1256,7 @@ body{
           <div class="ctrl">
             <div class="input-with-link">
               <input id="creditLoginName" placeholder="请输入登录名" />
-              <button type="button" class="text-link" onclick="alert('找回登录名（原型占位）')">找回登录名</button>
+              <button type="button" class="text-link" onclick="openFindLoginGuide()">找回登录名</button>
             </div>
           </div>
         </div>
@@ -1244,7 +1265,7 @@ body{
           <div class="ctrl">
             <div class="input-with-link">
               <input id="creditPwd" type="password" placeholder="请输入密码" />
-              <button type="button" class="text-link" onclick="alert('找回密码（原型占位）')">找回密码</button>
+              <button type="button" class="text-link" onclick="openFindPwdGuide()">找回密码</button>
             </div>
           </div>
         </div>
@@ -1721,6 +1742,86 @@ body{
 </div>
 
 
+<div class="modal-mask" id="findLoginGuideModal" onclick="if(event.target===this)closeFindLoginGuide()">
+  <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="findLoginGuideTitle">
+    <div class="modal-hd" id="findLoginGuideTitle">找回登录名</div>
+    <div class="modal-bd">
+      <div class="modal-tip" style="text-align:left;color:#666">请复制以下链接，用手机或电脑浏览器打开（人行征信中心官网）。</div>
+      <div class="link-box">
+        <div class="link-url" id="pbccrcLoginUrl">https://ipcrs.pbccrc.org.cn</div>
+        <div class="link-actions">
+          <button type="button" class="primary" onclick="copyPbccrcUrl()">复制链接</button>
+          <button type="button" onclick="window.open('https://ipcrs.pbccrc.org.cn','_blank')">打开链接</button>
+        </div>
+      </div>
+      <div class="step-h" style="margin-bottom:10px">操作指引</div>
+      <div class="step">
+        <div class="step-h">步骤1 · 打开官网后点右上角「登录」</div>
+        <img src="assets/征信找回登录名/step1-首页点登录.png" alt="步骤1：首页点击登录" />
+        <div class="step-cap">进入「个人信用信息服务平台」首页，点击右上角红色框内的【登录】。</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤2 · 在登录页点「找回登录名」</div>
+        <img src="assets/征信找回登录名/step2-点找回登录名.png" alt="步骤2：找回登录名" />
+        <div class="step-cap">在「登录名」输入框下方，点击红色框内的【找回登录名】。</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤3 · 填写身份信息并下一步</div>
+        <img src="assets/征信找回登录名/step3-填写身份信息.png" alt="步骤3：填写姓名证件号验证码" />
+        <div class="step-cap">填写姓名、证件类型、证件号码、验证码后点【下一步】。仅安全等级为中或高的用户可找回；等级为低或未设置时，需返回注册页重新注册。</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="ok" style="flex:1" onclick="closeFindLoginGuide()">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="findPwdGuideModal" onclick="if(event.target===this)closeFindPwdGuide()">
+  <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="findPwdGuideTitle">
+    <div class="modal-hd" id="findPwdGuideTitle">找回密码</div>
+    <div class="modal-bd">
+      <div class="modal-tip" style="text-align:left;color:#666">请复制以下链接，用手机或电脑浏览器打开（人行征信中心官网）。</div>
+      <div class="link-box">
+        <div class="link-url">https://ipcrs.pbccrc.org.cn</div>
+        <div class="link-actions">
+          <button type="button" class="primary" onclick="copyPbccrcUrl()">复制链接</button>
+          <button type="button" onclick="window.open('https://ipcrs.pbccrc.org.cn','_blank')">打开链接</button>
+        </div>
+      </div>
+      <div class="step-h" style="margin-bottom:10px">操作指引</div>
+      <div class="step">
+        <div class="step-h">步骤1 · 打开官网后点右上角「登录」</div>
+        <img src="assets/征信找回密码/step1-首页点登录.png" alt="步骤1：首页点击登录" />
+        <div class="step-cap">进入「个人信用信息服务平台」首页，点击右上角【登录】。</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤2 · 在登录页点「忘记密码？」</div>
+        <img src="assets/征信找回密码/step2-点忘记密码.png" alt="步骤2：忘记密码" />
+        <div class="step-cap">在「密码」输入框下方，点击【忘记密码？】进入重置密码流程。</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤3 · 填写身份信息</div>
+        <img src="assets/征信找回密码/step3-填写身份信息.png" alt="步骤3：填写登录名姓名证件号" />
+        <div class="step-cap">填写登录名、姓名、证件类型、证件号码、验证码后点【下一步】。</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤4 · 选择验证方式</div>
+        <img src="assets/征信找回密码/step4-选择验证方式.png" alt="步骤4：银行卡或数字证书验证" />
+        <div class="step-cap">选择「银行卡验证」或「数字证书验证」，然后点【下一步】。（指引以银行卡验证为例）</div>
+      </div>
+      <div class="step">
+        <div class="step-h">步骤5 · 完成银行卡身份验证</div>
+        <img src="assets/征信找回密码/step5-银行卡身份验证.png" alt="步骤5：银联银行卡验证" />
+        <div class="step-cap">按页填写银行卡卡号（62开头银联卡）、姓名、证件号、预留手机号及验证码，完成后继续后续设密步骤。</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="ok" style="flex:1" onclick="closeFindPwdGuide()">我知道了</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-mask" id="agreeNoticeModal">
   <div class="agree-modal" role="dialog" aria-modal="true" aria-labelledby="agreeNoticeTitle">
     <div class="modal-hd" id="agreeNoticeTitle">个人征信查询告知协议</div>
@@ -1891,6 +1992,41 @@ function syncCreditAuthPages(){
   if(agree && creditMode==="reg") agree.checked=!!creditNoticeAgreed;
 }
 
+function openFindLoginGuide(){
+  const m=document.getElementById("findLoginGuideModal");
+  if(m) m.classList.add("on");
+}
+function closeFindLoginGuide(){
+  const m=document.getElementById("findLoginGuideModal");
+  if(m) m.classList.remove("on");
+}
+function openFindPwdGuide(){
+  const m=document.getElementById("findPwdGuideModal");
+  if(m) m.classList.add("on");
+}
+function closeFindPwdGuide(){
+  const m=document.getElementById("findPwdGuideModal");
+  if(m) m.classList.remove("on");
+}
+function copyPbccrcUrl(){
+  const url="https://ipcrs.pbccrc.org.cn";
+  const done=()=>{
+    const t=document.getElementById("saveToast");
+    if(t){ t.textContent="链接已复制"; t.classList.add("on"); setTimeout(()=>{t.classList.remove("on");t.textContent="已保存";},1600); }
+    else alert("链接已复制");
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>{
+      const ta=document.createElement("textarea"); ta.value=url; document.body.appendChild(ta); ta.select();
+      try{document.execCommand("copy");}catch(e){}
+      document.body.removeChild(ta); done();
+    });
+  }else{
+    const ta=document.createElement("textarea"); ta.value=url; document.body.appendChild(ta); ta.select();
+    try{document.execCommand("copy");}catch(e){}
+    document.body.removeChild(ta); done();
+  }
+}
 function openAgreeNoticeModal(){
   const mask=document.getElementById("agreeNoticeModal");
   if(!mask) return;

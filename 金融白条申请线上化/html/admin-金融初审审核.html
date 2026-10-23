@@ -561,12 +561,13 @@ tr:hover td{background:var(--theme-table-hover)}
         </div>
       </div>
       <div class="filter-item">
-        <label>评审审核状态</label>
+        <label>平台审核状态</label>
         <div class="ctrl">
           <select id="fReviewStatus">
             <option value="">请选择</option>
             <option value="初审资料上传中">初审草稿</option>
             <option value="初审待审核">初审审核中</option>
+            <option value="初审通过">初审通过</option>
             <option value="初审驳回">初审驳回</option>
             <option value="正式进件补件中">正式进件草稿</option>
             <option value="正式进件审核中">正式进件审核中</option>
@@ -1778,6 +1779,7 @@ function displayAuditStatus(t){
   const s=t.stage||"—";
   const map={
     "初审待审核":"初审审核中",
+    "初审通过":"初审通过",
     "正式进件审核中":"正式进件审核中",
     "AI审核中":"AI审核中",
     "初审资料上传中":"初审草稿",
