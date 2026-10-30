@@ -396,6 +396,51 @@ tr:hover td{background:var(--theme-table-hover)}
 }
 .reject-modal textarea:focus{border-color:#409eff}
 .reject-modal .ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid #f0f0f0;margin-top:14px}
+/* 推送银行 · 类型不一致确认 */
+.sync-modal{
+  width:min(520px,100%);background:#fff;border-radius:var(--theme-radius);padding:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);overflow:hidden
+}
+.sync-modal .hd{
+  font-size:15px;font-weight:600;padding:14px 20px;border-bottom:1px solid #f0f0f0;color:#1f2329
+}
+.sync-modal .bd{padding:16px 20px 8px}
+.sync-modal .banner{
+  padding:10px 12px;border-radius:var(--theme-radius);font-size:13px;line-height:1.7;margin-bottom:14px
+}
+.sync-style-subject .banner{background:#fff7e6;border:1px solid #ffd591;color:#ad6800}
+.sync-style-cust .banner{background:#e6f7ff;border:1px solid #91d5ff;color:#096dd9}
+.sync-modal .banner b{color:#262626}
+.sync-modal .ask{font-size:13px;color:#333;line-height:1.7;margin-bottom:12px}
+.sync-modal .ask-warn{font-size:13px;color:#333;line-height:1.7;margin-bottom:4px}
+.sync-modal .ask-warn .lead{margin-bottom:8px}
+.sync-modal .ask-warn ol{
+  margin:0;padding-left:1.4em;list-style:decimal
+}
+.sync-modal .ask-warn ol li{margin:4px 0;padding-left:2px}
+.sync-compare{
+  display:flex;flex-direction:column;gap:8px;margin-bottom:12px
+}
+.sync-compare .box{padding:0;border:none;background:transparent}
+.sync-compare .box .lab{font-size:13px;color:#8c8c8c;margin-bottom:0;display:inline}
+.sync-compare .box .lab::after{content:"："}
+.sync-compare .box .val{font-size:13px;font-weight:400;color:#333;display:inline}
+.sync-compare .box .val.diff{color:#cf1322}
+.sync-table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:13px}
+.sync-table th,.sync-table td{border:1px solid #f0f0f0;padding:10px 12px;text-align:left}
+.sync-table th{background:#fafafa;color:#595959;font-weight:600;width:120px}
+.sync-table td.diff{color:#cf1322;font-weight:600}
+.sync-modal .ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 16px;border-top:1px solid #f0f0f0;margin-top:8px}
+.sync-demo-bar{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;
+  padding:8px 10px;background:#fffbe6;border:1px solid #ffe58f;border-radius:var(--theme-radius);font-size:12px;color:#ad6800
+}
+.sync-demo-bar .lab{margin-right:4px}
+.sync-demo-bar button{
+  height:26px;padding:0 10px;border:1px solid #dcdfe6;border-radius:var(--theme-radius);background:#fff;
+  color:#595959;font-size:12px;cursor:pointer;font-family:inherit
+}
+.sync-demo-bar button:hover{border-color:var(--theme-primary);color:var(--theme-primary)}
 .attach-modal{
   width:min(720px,100%);background:#fff;border-radius:var(--theme-radius);padding:0;
   box-shadow:0 4px 12px rgba(0,0,0,.15);overflow:hidden;max-height:min(80vh,640px);display:flex;flex-direction:column
@@ -474,6 +519,11 @@ tr:hover td{background:var(--theme-table-hover)}
       <div class="content">
         <div class="page-card">
           <div class="page-title">金融白条审核台</div>
+          <div class="sync-demo-bar">
+            <span class="lab">推送银行 · 类型不一致弹窗样式预览：</span>
+            <button type="button" onclick="previewSyncModal('subject')">样式1 · 主体类型不一致</button>
+            <button type="button" onclick="previewSyncModal('cust')">样式2 · 客户类型不一致</button>
+          </div>
     <div class="filter-panel" id="filterPanel">
       <div class="filter-item">
         <label>客户名称</label>
@@ -718,6 +768,16 @@ tr:hover td{background:var(--theme-table-hover)}
   </div>
 </div>
 
+<div class="reject-mask" id="syncModal" onclick="if(event.target===this)closeSyncModal('cancel')">
+  <div class="sync-modal sync-style-subject" id="syncModalPanel" role="dialog" aria-modal="true">
+    <div class="hd">
+      <span id="syncModalTitle">提醒：主体类型不一致</span>
+    </div>
+    <div class="bd" id="syncModalBody"></div>
+    <div class="ft" id="syncModalFt"></div>
+  </div>
+</div>
+
 <div class="reject-mask" id="attachModal" onclick="if(event.target===this)closeAttachModal()">
   <div class="attach-modal" role="dialog" aria-modal="true">
     <div class="hd" id="attachModalTitle">附件</div>
@@ -841,6 +901,9 @@ const TASKS=[
     id:5, custId:"C20260914005", name:"周敏蛋鸡场", subject:"周敏蛋鸡场",
     shangyinQuota:"80万", shangyinPushed:"是", shangyinResult:"审批中", xishangQuota:"—", xishangPushed:"否", xishangResult:"—",
     stage:"正式审核通过", bankStatus:"审批中", sourceType:"系统跑批", guarantee:"未提交", sales:"朱震", custKind:"企业", mobile:"13500004444", idNo:"341202198605051234", pushDate:"2026-09-14 17:20", pusher:"张敏", time:"2026-09-14 16:20",
+    /* 推送银行校验演示：白条 vs 客户档案类型不一致 */
+    subjectType:"个人", archiveSubjectType:"企业",
+    custType:"养殖户+鸡", archiveCustType:"养殖户+鸭",
     esign:"已提交", credit:"已提交", ai:"通过", status:"正式审核通过",
     fullPrice:false,
     files:["营业执照","法人身份证正面","法人身份证反面","微信支付分","百行征信报告"],
@@ -848,7 +911,7 @@ const TASKS=[
       legalCreditOk:true,
       status:"已提交",
       tier:"≥30万", product:"预混料", fullPrice:false,
-      subjectKind:"企业", breedType:"禽类", isRanch:false,
+      subjectKind:"个人", breedType:"禽类", isRanch:false,
       flow:{channels:["银行"], mailOk:true, pwds:{银行:"yh123456"}},
       baihang:{needed:false, ok:false},
       controller:{needed:false, creditOk:true},
@@ -2121,7 +2184,7 @@ function openTask(id, mode){
   }else if(canEdit){
     document.getElementById("d-foot").innerHTML=`
       <button class="btn btn-default" type="button" onclick="closeDetail()">取消</button>
-      <button class="btn btn-primary" type="button" onclick="saveEdit()">保存</button>`;
+      <button class="btn btn-primary" type="button" onclick="saveEdit()">保存并推送</button>`;
   }else{
     document.getElementById("d-foot").innerHTML=`
       <button class="btn btn-default" type="button" onclick="closeDetail()">返回</button>`;
@@ -2132,8 +2195,10 @@ function openTask(id, mode){
 }
 
 function saveEdit(){
+  const id=current&&current.id;
   alert("已保存");
   closeDetail();
+  if(id!=null) pushBank(id);
 }
 
 function isFormalDocsReady(t){
@@ -2256,9 +2321,133 @@ function doNotifyBankReject(id, reason){
   alert(`${t.name} · 已通知客户和销售\n平台审核状态：${displayAuditStatus(t)}\n银行状态：银行拒绝\n原因：${reason}\n已同步企微消息给客户与业务员（${t.sales}）`);
   render();
 }
-function pushBank(id){
+/** 白条资料 / 客户档案 · 主体类型、客户类型 */
+function baitiaoSubjectType(t){
+  return (t.subjectType||(t.formal&&t.formal.subjectKind)||custKindLabel(t)||"—").trim();
+}
+function archiveSubjectType(t){
+  return (t.archiveSubjectType||t.custKind||"—").trim();
+}
+function baitiaoCustType(t){
+  if(t.custType) return String(t.custType).trim();
+  const row=t.salesApp&&t.salesApp.tplFields&&t.salesApp.tplFields.find(x=>x[0]==="客户类型");
+  return (row&&row[1])||"—";
+}
+function archiveCustType(t){
+  return (t.archiveCustType||"—").trim();
+}
+
+let syncCtx=null; // {id, kind:'subject'|'cust', preview, queue:[], onDone}
+function openSyncModal(ctx){
+  syncCtx=ctx;
+  const t=TASKS.find(x=>x.id===ctx.id)||{
+    name:"示例客户", subjectType:"个人", archiveSubjectType:"企业",
+    custType:"养殖户+鸡", archiveCustType:"养殖户+鸭"
+  };
+  const panel=document.getElementById("syncModalPanel");
+  const title=document.getElementById("syncModalTitle");
+  const body=document.getElementById("syncModalBody");
+  const ft=document.getElementById("syncModalFt");
+  panel.classList.remove("sync-style-subject","sync-style-cust");
+  if(ctx.kind==="subject"){
+    panel.classList.add("sync-style-subject");
+    title.textContent="提醒：主体类型不一致";
+    const from=baitiaoSubjectType(t);
+    const to=archiveSubjectType(t);
+    body.innerHTML=`
+      <div class="sync-compare">
+        <div class="box"><div class="lab">白条资料·主体类型</div><div class="val diff">${from}</div></div>
+        <div class="box"><div class="lab">客户档案·主体类型</div><div class="val">${to}</div></div>
+      </div>
+      <div class="ask">是否更新白条资料中的主体类型「${from}」为「${to}」？</div>`;
+    ft.innerHTML=`
+      <button class="btn btn-default" type="button" onclick="closeSyncModal('cancel')">不更新</button>
+      <button class="btn btn-default" type="button" onclick="closeSyncModal('updateOnly')">更新不推送</button>
+      <button class="btn btn-primary" type="button" onclick="closeSyncModal('update')">更新并推送</button>`;
+  }else{
+    panel.classList.add("sync-style-cust");
+    title.textContent="提醒：客户类型不一致";
+    const from=baitiaoCustType(t);
+    const to=archiveCustType(t);
+    body.innerHTML=`
+      <div class="sync-compare">
+        <div class="box"><div class="lab">白条申请资料 ·客户类型</div><div class="val diff">${from}</div></div>
+        <div class="box"><div class="lab">客户档案 ·客户类型</div><div class="val diff">${to}</div></div>
+      </div>
+      <div class="ask-warn">
+        <div class="lead">请核实数据是否正确：</div>
+        <ol>
+          <li>如果客户档案中的客户类型不正确，请去【客户档案】中修改。</li>
+          <li>如果白条资料中的类型不正确，请选择【更新白条资料】。</li>
+        </ol>
+      </div>`;
+    ft.innerHTML=`
+      <button class="btn btn-default" type="button" onclick="closeSyncModal('cancel')">取消</button>
+      <button class="btn btn-default" type="button" onclick="closeSyncModal('update')">更新白条资料</button>
+      <button class="btn btn-default" type="button" onclick="closeSyncModal('edit')">修改客户档案</button>
+      <button class="btn btn-primary" type="button" onclick="closeSyncModal('continue')">继续推送</button>`;
+  }
+  document.getElementById("syncModal").classList.add("on");
+}
+function closeSyncModal(action){
+  document.getElementById("syncModal").classList.remove("on");
+  const ctx=syncCtx; syncCtx=null;
+  if(!ctx||ctx.preview) return;
+  const t=TASKS.find(x=>x.id===ctx.id);
+  if(action==="cancel"||action===false){
+    alert("已取消推送银行");
+    return;
+  }
+  if(action==="edit"){
+    alert((t?t.name:"该客户")+" · 请前往【客户档案】修改客户类型 / 养殖户类型");
+    return;
+  }
+  if(action==="update"||action==="updateOnly"){
+    if(!t) return;
+    if(ctx.kind==="subject"){
+      const to=archiveSubjectType(t);
+      t.subjectType=to;
+      if(t.formal) t.formal.subjectKind=to;
+    }else{
+      t.custType=archiveCustType(t);
+    }
+    if(action==="updateOnly"){
+      alert(t.name+" · 已更新主体类型为「"+baitiaoSubjectType(t)+"」，未推送银行");
+      render();
+      return;
+    }
+    continuePushBankChecks(ctx.id, ctx.queue||[], ctx.onDone);
+    return;
+  }
+  if(action==="continue"){
+    /* 不修改白条资料，跳过本项继续后续校验/推送 */
+    continuePushBankChecks(ctx.id, ctx.queue||[], ctx.onDone);
+  }
+}
+function previewSyncModal(kind){
+  const demo=TASKS.find(x=>x.id===5)||TASKS[0];
+  openSyncModal({id:demo.id, kind, preview:true, queue:[], onDone:null});
+}
+function continuePushBankChecks(id, queue, onDone){
   const t=TASKS.find(x=>x.id===id); if(!t) return;
-  if(t.stage!=="正式审核通过"){alert("仅正式进件审核通过的单据可推送银行");return}
+  while(queue.length){
+    const kind=queue.shift();
+    if(kind==="subject"){
+      if(baitiaoSubjectType(t)!==archiveSubjectType(t)){
+        openSyncModal({id, kind:"subject", preview:false, queue, onDone});
+        return;
+      }
+    }else if(kind==="cust"){
+      if(baitiaoCustType(t)!==archiveCustType(t) && archiveCustType(t)!=="—"){
+        openSyncModal({id, kind:"cust", preview:false, queue, onDone});
+        return;
+      }
+    }
+  }
+  if(typeof onDone==="function") onDone();
+}
+function doPushBankSelect(id){
+  const t=TASKS.find(x=>x.id===id); if(!t) return;
   const bank=prompt("请选择推送银行：输入 上银 或 锡商","上银");
   if(bank==null) return;
   const name=bank.trim();
@@ -2297,6 +2486,11 @@ function pushBank(id){
     alert(t.name+" · 已推送锡商\n平台审核状态：正式进件审核通过\n银行状态："+displayBankStatus(t)+"\n额度："+t.xishangQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
   }
   render();
+}
+function pushBank(id){
+  const t=TASKS.find(x=>x.id===id); if(!t) return;
+  if(t.stage!=="正式审核通过"){alert("仅正式进件审核通过的单据可推送银行");return}
+  continuePushBankChecks(id, ["subject","cust"], function(){ doPushBankSelect(id); });
 }
 function closeDetail(){
   document.getElementById("detailPage").classList.remove("on","view-mode");
