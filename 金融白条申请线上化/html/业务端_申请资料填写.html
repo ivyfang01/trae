@@ -220,6 +220,7 @@ body{
         <label><input type="radio" name="tpl" value="预混料" checked onchange="syncTpl()" />预混料</label>
         <label><input type="radio" name="tpl" value="全价料" onchange="syncTpl()" />全价料</label>
         <label><input type="radio" name="tpl" value="大宗" onchange="syncTpl()" />大宗免息白条</label>
+        <label><input type="radio" name="tpl" value="鸡蛋" onchange="syncTpl()" />鸡蛋白条</label>
       </div>
     </div>
     <div class="form-item" id="depositItem">
@@ -232,7 +233,8 @@ body{
     </div>
     <div class="form-item">
       <label><span class="req">*</span>申请额度</label>
-      <div class="unit"><input id="applyQuota" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="请输入数字" oninput="this.value=this.value.replace(/\D/g,'');syncFullPriceBundleTons()" /><span>万</span></div>
+      <div class="unit"><input id="applyQuota" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="请输入数字" oninput="this.value=this.value.replace(/\D/g,'');syncFullPriceBundleTons();syncEggQuotaTip()" /><span>万</span></div>
+      <div class="hint" id="eggQuotaHint" style="display:none">鸡蛋白条申请锡商银行额度，不超过 30 万</div>
     </div>
     <div class="form-item">
       <label><span class="req">*</span>上海银行额度</label>
@@ -280,7 +282,7 @@ body{
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="farmInfoCard">
     <div class="sec">客户养殖信息</div>
     <div class="form-item">
       <label>客户类型<span class="hint" style="display:inline;margin-left:6px">取养殖档案</span></label>
@@ -288,6 +290,7 @@ body{
         <option value="养殖户" selected>养殖户</option>
         <option value="次终端">次终端</option>
         <option value="饲料厂">饲料厂</option>
+        <option value="长协鸡蛋供应商">长协鸡蛋供应商</option>
       </select>
     </div>
     <div class="form-item" id="isRanchItem">
@@ -353,7 +356,7 @@ body{
       </div>
       <div id="pigScaleBlock" style="display:none">
         <div class="form-item">
-          <label><span class="req">*</span>有无防疫证</label>
+          <label><span class="req">*</span>动物防疫登记证或出栏防疫记录</label>
           <div class="seg">
             <label><input type="radio" name="pigVaccineCert" value="有" />有</label>
             <label><input type="radio" name="pigVaccineCert" value="无" checked />无</label>
@@ -463,6 +466,23 @@ body{
     <div class="form-item">
       <label><span class="req">*</span>每月豆粕需求总量</label>
       <div class="unit"><input type="number" placeholder="请输入" /><span>吨</span></div>
+    </div>
+  </div>
+
+  <div class="card tpl" id="tpl-鸡蛋">
+    <div class="sec">鸡蛋白条信息</div>
+    <div class="form-item">
+      <label>客户类型<span class="hint" style="display:inline;margin-left:6px">取档案 / 长协鸡蛋供应商</span></label>
+      <input id="eggCustType" value="长协鸡蛋供应商" readonly style="background:#f7f8fa" />
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>平台合作时间</label>
+      <div class="unit"><input id="eggCoopMonths" type="number" min="0" step="1" placeholder="请输入" /><span>月</span></div>
+      <div class="hint">客户信誉结算良好；与平台合作时间</div>
+    </div>
+    <div class="form-item">
+      <label><span class="req">*</span>月合作鸡蛋量</label>
+      <div class="unit"><input id="eggMonthVol" type="number" min="0" step="1" placeholder="请输入" /><span>件</span></div>
     </div>
   </div>
 
@@ -619,21 +639,40 @@ body{
 
   <div class="card">
     <div class="sec">现场照片或视频</div>
+    <div class="hint" id="eggPhotoHint" style="display:none;margin:-4px 0 10px">鸡蛋白条：请上传库存、办公场地、经营进门等照片，需带水印时间</div>
     <div id="sitePhotos">
-      <div class="site-group">
+      <div class="site-group" data-photo-kind="default">
         <div class="site-hd"><b>厂房大门</b><span>可多张</span></div>
         <div class="site-row">
           <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
         </div>
       </div>
-      <div class="site-group">
+      <div class="site-group" data-photo-kind="default">
         <div class="site-hd"><b>仓库</b><span>可多张</span></div>
         <div class="site-row">
           <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
         </div>
       </div>
-      <div class="site-group">
+      <div class="site-group" data-photo-kind="default">
         <div class="site-hd"><b>养殖区域</b><span>可多张</span></div>
+        <div class="site-row">
+          <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
+        </div>
+      </div>
+      <div class="site-group" data-photo-kind="egg" style="display:none">
+        <div class="site-hd"><b>库存</b><span>可多张 · 需水印时间</span></div>
+        <div class="site-row">
+          <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
+        </div>
+      </div>
+      <div class="site-group" data-photo-kind="egg" style="display:none">
+        <div class="site-hd"><b>办公场地</b><span>可多张 · 需水印时间</span></div>
+        <div class="site-row">
+          <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
+        </div>
+      </div>
+      <div class="site-group" data-photo-kind="egg" style="display:none">
+        <div class="site-hd"><b>经营进门</b><span>可多张 · 需水印时间</span></div>
         <div class="site-row">
           <button type="button" class="site-add" onclick="addSitePhoto(this)"><span class="plus">+</span><em>上传</em></button>
         </div>
@@ -918,10 +957,25 @@ function syncXsExtra(){
 function syncBreedByCustType(){
   document.getElementById("breedBlock").style.display=isSecondaryCust()?"none":"";
 }
+function syncEggQuotaTip(){
+  const tip=document.getElementById("eggQuotaHint");
+  if(!tip) return;
+  const isEgg=document.querySelector('input[name="tpl"]:checked')?.value==="鸡蛋";
+  tip.style.display=isEgg?"":"none";
+}
+function syncEggSitePhotos(isEgg){
+  const hint=document.getElementById("eggPhotoHint");
+  if(hint) hint.style.display=isEgg?"":"none";
+  document.querySelectorAll("#sitePhotos .site-group").forEach(el=>{
+    const kind=el.dataset.photoKind||"default";
+    el.style.display=(isEgg?(kind==="egg"):(kind==="default"))?"":"none";
+  });
+}
 function syncTpl(){
   const v=document.querySelector('input[name="tpl"]:checked')?.value||"预混料";
   document.querySelectorAll(".tpl").forEach(el=>el.classList.toggle("on", el.id==="tpl-"+v));
   const isFull=v==="全价料";
+  const isEgg=v==="鸡蛋";
   const showDeposit=v==="预混料"||v==="全价料";
   const secondary=isSecondaryCust();
   document.getElementById("depositItem").style.display=showDeposit?"":"none";
@@ -930,15 +984,29 @@ function syncTpl(){
     if(no) no.checked=true;
   }
   document.getElementById("xsQuotaItem").style.display="";
-  /* 客户养殖信息随客户类型；饲料信息仅随白条产品类型（.tpl 卡片），不按客户类型显隐 */
-  document.getElementById("coopEggManureBlock").style.display=(isFull||secondary)?"none":"";
+  /* 客户养殖信息随客户类型；饲料/鸡蛋信息仅随白条产品类型（.tpl 卡片） */
+  const farmCard=document.getElementById("farmInfoCard");
+  if(farmCard) farmCard.style.display=isEgg?"none":"";
+  if(isEgg){
+    const kind=document.getElementById("custKind");
+    if(kind) kind.value="长协鸡蛋供应商";
+    const eggType=document.getElementById("eggCustType");
+    if(eggType) eggType.value="长协鸡蛋供应商";
+    const sy=document.getElementById("syQuota");
+    if(sy && (sy.value===""||Number(sy.value)>0)){ sy.value="0"; syncSyReason(); }
+    const noSy=document.getElementById("noSyText");
+    if(noSy && !noSy.value.trim()) noSy.value="鸡蛋白条仅申请锡商银行";
+  }
+  document.getElementById("coopEggManureBlock").style.display=(isFull||secondary||isEgg)?"none":"";
   document.getElementById("supplierStockItem").style.display=isFull?"":"none";
   document.getElementById("premixBindBlock").style.display="";
   document.getElementById("premixBuyCountItem").style.display="";
-  document.getElementById("custStageItem").style.display=secondary?"":"none";
+  document.getElementById("custStageItem").style.display=(!isEgg&&secondary)?"":"none";
   syncBreedByCustType();
   syncPremix();
   syncFullPriceBundleTons();
+  syncEggQuotaTip();
+  syncEggSitePhotos(isEgg);
 }
 /** 全价料捆绑吨数 = 申请额度(万)×10000×6 ÷ 预混料商品最低单价(元/吨) */
 function syncFullPriceBundleTons(){
@@ -1220,6 +1288,13 @@ function submitSales(){
   if(applyQuota==="" || !/^\d+$/.test(applyQuota)){
     alert("请填写申请额度（仅数字，单位万）");return
   }
+  if(tpl==="鸡蛋" && Number(applyQuota)>30){
+    alert("鸡蛋白条申请额度不超过30万");return
+  }
+  if(tpl==="鸡蛋"){
+    if(document.getElementById("eggCoopMonths").value===""){alert("请填写平台合作时间（月）");return}
+    if(document.getElementById("eggMonthVol").value===""){alert("请填写月合作鸡蛋量（件）");return}
+  }
   if(tpl==="全价料"){
     syncFullPriceBundleTons();
     if(document.getElementById("fullPriceBundleTons").value===""){
@@ -1238,6 +1313,10 @@ function submitSales(){
   }
   const xs=document.getElementById("xsQuota").value;
   if(xs===""){alert("请填写锡商银行额度（不申请请填0）");return}
+  if(tpl==="鸡蛋"){
+    if(Number(xs)<=0){alert("鸡蛋白条请填写锡商银行额度（大于0，不超过30万）");return}
+    if(Number(xs)>30){alert("鸡蛋白条锡商额度不超过30万");return}
+  }
   if(Number(xs)>0){
     if(document.getElementById("xsFreeDays").value===""){alert("请填写锡商免息期（天）");return}
     if(document.getElementById("xsMaxLoanMonths").value===""){alert("请填写最长借款期限（月）");return}

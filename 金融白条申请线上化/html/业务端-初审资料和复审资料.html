@@ -1436,6 +1436,7 @@ body{
             <label><input type="radio" name="resupplyProduct" value="预混料" onchange="syncResupplyDocs()" />预混料</label>
             <label><input type="radio" name="resupplyProduct" value="全价料" checked onchange="syncResupplyDocs()" />全价料</label>
             <label><input type="radio" name="resupplyProduct" value="大宗" onchange="syncResupplyDocs()" />大宗白条</label>
+            <label><input type="radio" name="resupplyProduct" value="鸡蛋" onchange="syncResupplyDocs()" />鸡蛋白条</label>
           </div>
         </div>
       </div>
@@ -3064,6 +3065,9 @@ function getResupplyProduct(){
 function isResupplyFullPrice(){
   return getResupplyProduct()==="全价料";
 }
+function isResupplyEgg(){
+  return getResupplyProduct()==="鸡蛋";
+}
 function getResupplyBaihangWay(){
   return document.querySelector('input[name="resupplyBaihangWay"]:checked')?.value||"upload";
 }
@@ -3151,6 +3155,18 @@ function verifyResupplyBaihang(){
 }
 
 function buildResupplyDocList(){
+  if(isResupplyEgg()){
+    return [
+      {
+        key:"flow", req:true, type:"email",
+        title:"近1年对外经营收入明细流水",
+        tip:"下载后发送至邮箱 jinrongbu@shyuanyao.com（银行/微信/支付宝流水）"
+      },
+      {key:"egg-site-photos", req:true, title:"库存、办公场地、经营进门等照片", tip:"需使用水印时间拍摄"},
+      {key:"egg-sales-order", req:true, title:"近3个月下游鸡蛋销售合同或订单", tip:"合同或订单均可"},
+      {key:"egg-lease-proof", req:true, title:"经营场地或库房租赁合同及最新一期租金支付凭证", tip:"自有场地请提供相关产权证明"}
+    ];
+  }
   const ge30=getQuotaTier()==="ge30";
   const pig=getBreedType()==="猪牛羊";
   const ranch=getIsRanch();
@@ -3181,10 +3197,24 @@ function buildResupplyDocList(){
   return list;
 }
 
+function syncResupplyEggMeta(){
+  const egg=isResupplyEgg();
+  const breedField=[...document.querySelectorAll("#resupplyMetaBlock .field")].find(el=>/养殖类型/.test(el.textContent||""));
+  const ranchField=[...document.querySelectorAll("#resupplyMetaBlock .field")].find(el=>/是否牧场/.test(el.textContent||""));
+  if(breedField) breedField.style.display=egg?"none":"";
+  if(ranchField) ranchField.style.display=egg?"none":"";
+  const lt30=document.querySelector('input[name="quotaTier"][value="lt30"]');
+  if(egg && lt30 && !lt30.checked){
+    lt30.checked=true;
+  }
+}
+
 function syncResupplyDocs(){
   const wrap=document.getElementById("resupplyDocsBody");
   if(!wrap) return;
-  const ge30=getQuotaTier()==="ge30";
+  syncResupplyEggMeta();
+  const egg=isResupplyEgg();
+  const ge30=!egg && getQuotaTier()==="ge30";
   document.getElementById("subjectTypeField").style.display=ge30?"flex":"none";
   syncResupplyBaihang();
   syncControllerCreditBox();
@@ -3194,6 +3224,8 @@ function syncResupplyDocs(){
   });
   const prevChannel=flowChannelSelected.slice();
   const list=buildResupplyDocList();
+  const docsSec=document.querySelector("#resupplyDocs .sec");
+  if(docsSec) docsSec.textContent=egg?"鸡蛋白条经营证明资料":"经营证明资料";
   wrap.innerHTML=list.map((d,i)=>{
     if(d.type==="email"){
       const txt=prevChannel.length?prevChannel.join("、"):"请选择（可多选）";
