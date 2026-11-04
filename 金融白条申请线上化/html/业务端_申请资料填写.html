@@ -372,7 +372,7 @@ body{
 
   <div class="card tpl on" id="tpl-预混料">
     <div class="sec">饲料信息</div>
-    <div class="form-item" id="premixBuyCountItem" style="display:none">
+    <div class="form-item" id="premixBuyCountItem">
       <label>在平台购买次数<span class="hint" style="display:inline;margin-left:6px">平台统计</span></label>
       <input id="premixBuyCount" type="number" value="12" readonly style="background:#f7f8fa" />
     </div>
@@ -930,13 +930,14 @@ function syncTpl(){
     if(no) no.checked=true;
   }
   document.getElementById("xsQuotaItem").style.display="";
+  /* 客户养殖信息随客户类型；饲料信息仅随白条产品类型（.tpl 卡片），不按客户类型显隐 */
   document.getElementById("coopEggManureBlock").style.display=(isFull||secondary)?"none":"";
   document.getElementById("supplierStockItem").style.display=isFull?"":"none";
-  document.getElementById("premixBindBlock").style.display=secondary?"none":"";
-  document.getElementById("premixBuyCountItem").style.display=secondary?"":"none";
+  document.getElementById("premixBindBlock").style.display="";
+  document.getElementById("premixBuyCountItem").style.display="";
   document.getElementById("custStageItem").style.display=secondary?"":"none";
   syncBreedByCustType();
-  if(!secondary) syncPremix();
+  syncPremix();
   syncFullPriceBundleTons();
 }
 /** 全价料捆绑吨数 = 申请额度(万)×10000×6 ÷ 预混料商品最低单价(元/吨) */

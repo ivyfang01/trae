@@ -286,10 +286,15 @@ tr:hover td{background:var(--theme-table-hover)}
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:12px 14px;border:1px solid #eef0f4;border-radius:8px;background:#fafbfc
 }
+.bank-item.is-edit{background:#fff;border-color:#d6e4ff}
 .bank-item label.chk{display:flex;align-items:center;gap:6px;min-width:100px;font-size:13px;color:#1d2129;cursor:default}
+.bank-item.is-edit label.chk{cursor:pointer}
+.bank-item.is-edit label.chk.is-locked{cursor:default;opacity:.75}
 .bank-item input[type=checkbox]{width:14px;height:14px;accent-color:#409eff}
 .bank-item .amt{display:flex;align-items:center;gap:8px}
-.bank-item .amt input{width:200px;height:32px;border:1px solid var(--theme-border-input);border-radius:var(--theme-radius-sm);padding:0 11px;font-size:13px;background:#f5f5f5}
+.bank-item .amt input{width:200px;height:32px;border:1px solid var(--theme-border-input);border-radius:var(--theme-radius-sm);padding:0 11px;font-size:13px;background:#f5f5f5;color:#4e5969}
+.bank-item.is-edit .amt input:not([readonly]){background:#fff;color:#1d2129}
+.bank-item.is-edit .amt input:not([readonly]):focus{border-color:var(--theme-primary);outline:none;box-shadow:0 0 0 2px rgba(64,158,255,.15)}
 .bank-item .amt span{color:#86909c;font-size:13px}
 .xs-extra{margin:4px 0 20px}
 .xs-line{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -1479,6 +1484,45 @@ function parseQuota(q){
   if(String(q).includes("万")) return String(Math.round(parseFloat(m[1])*10000));
   return m[1];
 }
+function formatQuotaYuan(yuan){
+  const n=Number(yuan);
+  if(!Number.isFinite(n)||n<=0) return "—";
+  if(n%10000===0) return (n/10000)+"万";
+  return n+"元";
+}
+function bankItemHtml({key, label, checked, locked, editable, amt, pushed, result}){
+  const canEditRow=editable && !locked;
+  const itemCls=editable?"bank-item is-edit":"bank-item";
+  const chkCls=locked?"chk is-locked":"chk";
+  const chkDis=canEditRow?"":"disabled";
+  const amtRo=canEditRow?"":"readonly";
+  return `<div class="${itemCls}" data-bank="${key}">
+    <label class="${chkCls}"><input type="checkbox" id="bank-${key}-chk" ${chkDis} ${checked?"checked":""}/> ${label}</label>
+    <div class="amt"><input id="bank-${key}-amt" ${amtRo} value="${amt||""}" placeholder="请输入推送金额" inputmode="numeric" /><span>元</span></div>
+    <span class="tag ${tagClass(pushed)}">${pushed==="是"?"已推送":"未推送"}</span>
+    <span class="tag ${tagClass(result)}">${result||"—"}</span>
+  </div>`;
+}
+function readBankForm(){
+  const syChk=document.getElementById("bank-sy-chk");
+  const xsChk=document.getElementById("bank-xs-chk");
+  const syAmtEl=document.getElementById("bank-sy-amt");
+  const xsAmtEl=document.getElementById("bank-xs-amt");
+  return {
+    syOn:!!(syChk&&syChk.checked),
+    xsOn:!!(xsChk&&xsChk.checked),
+    syAmt:(syAmtEl&&syAmtEl.value||"").trim(),
+    xsAmt:(xsAmtEl&&xsAmtEl.value||"").trim()
+  };
+}
+function applyBankSelection(t, form){
+  t.shangyinSelected=!!form.syOn;
+  t.xishangSelected=!!form.xsOn;
+  if(form.syOn && form.syAmt) t.shangyinQuota=formatQuotaYuan(form.syAmt);
+  if(form.xsOn && form.xsAmt) t.xishangQuota=formatQuotaYuan(form.xsAmt);
+  if(!form.syOn && t.shangyinPushed!=="是") t.shangyinQuota=t.shangyinQuota||"—";
+  if(!form.xsOn && t.xishangPushed!=="是") t.xishangQuota=t.xishangQuota||"—";
+}
 function field(label, value, req, type){
   const v=String(value??"").replace(/"/g,"&quot;");
   const cls=type==="select"?"fg select":"fg";
@@ -2129,13 +2173,17 @@ function openTask(id, mode){
   page.classList.remove("view-mode");
   if(openMode==="view") page.classList.add("view-mode");
 
-  const syAmt=parseQuota(t.shangyinQuota);
-  const xsAmt=parseQuota(t.xishangQuota);
-  const syOn=t.shangyinPushed==="是"||!!syAmt;
-  const xsOn=t.xishangPushed==="是"||!!xsAmt;
+  const syAmt=parseQuota(t.shangyinQuota)||parseQuota(t.salesApp&&t.salesApp.sy);
+  const xsAmt=parseQuota(t.xishangQuota)||parseQuota(t.salesApp&&t.salesApp.xs);
+  const syPushed=t.shangyinPushed==="是";
+  const xsPushed=t.xishangPushed==="是";
+  const syOn=syPushed||t.shangyinSelected===true||(t.shangyinSelected!==false&&!!syAmt);
+  const xsOn=xsPushed||t.xishangSelected===true||(t.xishangSelected!==false&&!!xsAmt);
   const showBank=["正式进件审核中","正式审核通过","正式审核驳回"].includes(t.stage)
     || syOn || xsOn || !!syAmt || !!xsAmt || sideBankStatus(t,"shangyinResult")!=="—" || sideBankStatus(t,"xishangResult")!=="—";
   const showXsExtra=showBank && (xsOn || !!xsAmt || t.stage==="正式进件审核中");
+  const bankCanEdit=(canEdit && t.stage==="正式审核通过")
+    || (canAudit && t.stage==="正式进件审核中");
 
   let html=`
     ${auditStatusBlock(t)}
@@ -2150,18 +2198,8 @@ function openTask(id, mode){
     ${showXsExtra?xsExtraBlock(t):""}
     ${showBank?panel("推送银行","",`
     <div class="bank-row">
-      <div class="bank-item">
-        <label class="chk"><input type="checkbox" disabled ${syOn?"checked":""}/> 上海银行</label>
-        <div class="amt"><input readonly value="${syAmt||parseQuota(t.salesApp&&t.salesApp.sy)}" placeholder="请输入推送金额" /><span>元</span></div>
-        <span class="tag ${tagClass(t.shangyinPushed)}">${t.shangyinPushed==="是"?"已推送":"未推送"}</span>
-        <span class="tag ${tagClass(t.shangyinResult)}">${t.shangyinResult}</span>
-      </div>
-      <div class="bank-item">
-        <label class="chk"><input type="checkbox" disabled ${xsOn?"checked":""}/> 锡商银行</label>
-        <div class="amt"><input readonly value="${xsAmt||parseQuota(t.salesApp&&t.salesApp.xs)}" placeholder="请输入推送金额" /><span>元</span></div>
-        <span class="tag ${tagClass(t.xishangPushed)}">${t.xishangPushed==="是"?"已推送":"未推送"}</span>
-        <span class="tag ${tagClass(t.xishangResult)}">${t.xishangResult}</span>
-      </div>
+      ${bankItemHtml({key:"sy", label:"上海银行", checked:syOn, locked:syPushed, editable:bankCanEdit, amt:syAmt, pushed:t.shangyinPushed, result:t.shangyinResult})}
+      ${bankItemHtml({key:"xs", label:"锡商银行", checked:xsOn, locked:xsPushed, editable:bankCanEdit, amt:xsAmt, pushed:t.xishangPushed, result:t.xishangResult})}
     </div>`):""}
     ${logsBlock(t)}
   `;
@@ -2195,10 +2233,30 @@ function openTask(id, mode){
 }
 
 function saveEdit(){
-  const id=current&&current.id;
-  alert("已保存");
-  closeDetail();
-  if(id!=null) pushBank(id);
+  if(!current) return;
+  if(current.stage!=="正式审核通过"){alert("仅正式进件审核通过的单据可推送银行");return}
+  const form=readBankForm();
+  const syNeed=form.syOn && current.shangyinPushed!=="是";
+  const xsNeed=form.xsOn && current.xishangPushed!=="是";
+  if(!syNeed && !xsNeed){
+    if(current.shangyinPushed==="是"||current.xishangPushed==="是"){
+      alert("所选银行已推送，无需重复推送");return
+    }
+    alert("请至少勾选一家待推送银行");return
+  }
+  if(syNeed && !form.syAmt){alert("请填写上海银行推送金额");return}
+  if(xsNeed && !form.xsAmt){alert("请填写锡商银行推送金额");return}
+  applyBankSelection(current, form);
+  const id=current.id;
+  continuePushBankChecks(id, ["subject","cust"], function(){
+    const names=[];
+    if(syNeed){ doPushOneBank(id, "上银", form.syAmt); names.push("上银"); }
+    if(xsNeed){ doPushOneBank(id, "锡商", form.xsAmt); names.push("锡商"); }
+    const t=TASKS.find(x=>x.id===id);
+    alert((t?t.name:"该客户")+" · 已推送"+names.join("、")+"\n平台审核状态：正式进件审核通过\n银行状态："+(t?displayBankStatus(t):"—"));
+    closeDetail();
+    render();
+  });
 }
 
 function isFormalDocsReady(t){
@@ -2286,11 +2344,18 @@ function applyDecide(result, opinion){
     if(!isFormalDocsReady(current)||!isSalesDocsReady(current)){
       alert("客户正式进件资料或业务员尽调资料未补全，无法正式进件通过");return
     }
+    const form=readBankForm();
+    if(form.syOn && !form.syAmt){alert("已勾选上海银行，请填写推送金额");return}
+    if(form.xsOn && !form.xsAmt){alert("已勾选锡商银行，请填写推送金额");return}
+    applyBankSelection(current, form);
     current.status="正式审核通过";
     current.stage="正式审核通过";
     current.bankStatus=current.bankStatus||"—";
     current.passTime=new Date().toISOString().slice(0,16).replace("T"," ");
-    alert(current.name+" · 正式进件通过\n平台审核状态：正式进件审核通过\n银行状态：—\n可推送银行\n已通知业务员");
+    const bankTip=!form.syOn&&!form.xsOn
+      ?"未勾选推送银行，已按「未勾选推送」通知销售"
+      :(form.syOn&&form.xsOn?"已勾选上银+锡商":(form.syOn?"已勾选上银":"已勾选锡商"))+"，可后续推送银行";
+    alert(current.name+" · 正式进件通过\n平台审核状态：正式进件审核通过\n银行状态：—\n"+bankTip+"\n已通知业务员");
   }else if(result==="驳回"){
     const formalStages=["正式进件审核中","正式进件补件中","正式审核通过","正式审核驳回","待正式进件"];
     if(isFormal || formalStages.includes(current.stage)){
@@ -2446,51 +2511,35 @@ function continuePushBankChecks(id, queue, onDone){
   }
   if(typeof onDone==="function") onDone();
 }
-function doPushBankSelect(id){
-  const t=TASKS.find(x=>x.id===id); if(!t) return;
-  const bank=prompt("请选择推送银行：输入 上银 或 锡商","上银");
-  if(bank==null) return;
-  const name=bank.trim();
-  if(name!=="上银"&&name!=="锡商"){alert("请输入：上银 或 锡商");return}
+function doPushOneBank(id, name, yuanOverride){
+  const t=TASKS.find(x=>x.id===id); if(!t) return false;
   if(name==="上银"){
-    if(t.shangyinPushed==="是"){alert("上银已推送，无需重复推送");return}
-    if(!t.shangyinQuota||t.shangyinQuota==="—"){
-      const q=prompt("请填写上银推送额度（如：80万）","80万");
-      if(q==null||!q.trim()){alert("请填写推送额度");return}
-      t.shangyinQuota=q.trim();
-    }
+    if(t.shangyinPushed==="是") return false;
+    if(yuanOverride) t.shangyinQuota=formatQuotaYuan(yuanOverride);
+    if(!t.shangyinQuota||t.shangyinQuota==="—") return false;
     t.shangyinPushed="是";
     t.shangyinResult="审批中";
-    t.stage="正式审核通过";
-    t.status="正式审核通过";
-    if(getBankStatus(t)==="—"||getBankStatus(t)==="拒绝") t.bankStatus="审批中";
-    const now=new Date();
-    t.pushDate=now.toISOString().slice(0,10)+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
-    t.pusher=t.pusher||"张敏";
-    alert(t.name+" · 已推送上银\n平台审核状态：正式进件审核通过\n银行状态："+displayBankStatus(t)+"\n额度："+t.shangyinQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
-  }else{
-    if(t.xishangPushed==="是"){alert("锡商已推送，无需重复推送");return}
-    if(!t.xishangQuota||t.xishangQuota==="—"){
-      const q=prompt("请填写锡商推送额度（如：50万）","50万");
-      if(q==null||!q.trim()){alert("请填写推送额度");return}
-      t.xishangQuota=q.trim();
-    }
+    t.shangyinSelected=true;
+  }else if(name==="锡商"){
+    if(t.xishangPushed==="是") return false;
+    if(yuanOverride) t.xishangQuota=formatQuotaYuan(yuanOverride);
+    if(!t.xishangQuota||t.xishangQuota==="—") return false;
     t.xishangPushed="是";
     t.xishangResult="审批中";
-    t.stage="正式审核通过";
-    t.status="正式审核通过";
-    if(getBankStatus(t)==="—"||getBankStatus(t)==="拒绝") t.bankStatus="审批中";
-    const now=new Date();
-    t.pushDate=now.toISOString().slice(0,10)+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
-    t.pusher=t.pusher||"张敏";
-    alert(t.name+" · 已推送锡商\n平台审核状态：正式进件审核通过\n银行状态："+displayBankStatus(t)+"\n额度："+t.xishangQuota+"\n推送时间："+t.pushDate+"\n推送人："+t.pusher);
-  }
-  render();
+    t.xishangSelected=true;
+  }else return false;
+  t.stage="正式审核通过";
+  t.status="正式审核通过";
+  if(getBankStatus(t)==="—"||getBankStatus(t)==="拒绝") t.bankStatus="审批中";
+  const now=new Date();
+  t.pushDate=now.toISOString().slice(0,10)+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  t.pusher=t.pusher||"张敏";
+  return true;
 }
 function pushBank(id){
   const t=TASKS.find(x=>x.id===id); if(!t) return;
   if(t.stage!=="正式审核通过"){alert("仅正式进件审核通过的单据可推送银行");return}
-  continuePushBankChecks(id, ["subject","cust"], function(){ doPushBankSelect(id); });
+  continuePushBankChecks(id, ["subject","cust"], function(){ openTask(id, "edit"); });
 }
 function closeDetail(){
   document.getElementById("detailPage").classList.remove("on","view-mode");
